@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NavParishioner from '../../components/NavParishioner';
 import imageHeader from '../../assets/imageHeader.jpg';
 import Header from '../../components/Header';
@@ -6,9 +6,20 @@ import { Grid } from '@mui/material';
 import Footer from '../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCross, faQuestion } from '@fortawesome/free-solid-svg-icons';
-
+import RequestNotice from '../../components/RequestNotice';
 
 const Home = () => {
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const serviceNames = {
     position: 'absolute',
     bottom: 0,
@@ -34,38 +45,39 @@ const Home = () => {
           <button className='rounded-md border-0 border-gray-300 shadow-md shadow-slate-300 
           px-4 py-1 hover:bg-slate-100 xs:text-center'>Track Status of Request</button>
         </div>
+        <RequestNotice open={open} onClose={handleClose} />
 
         <Grid container spacing={1}>
-          <Grid item xs={12} md={3} style={{ position: 'relative' }}>
+          <Grid item xs={12} md={3} style={{ position: 'relative' }} onClick={handleClickOpen}>
             <img src={imageHeader} alt="Service 1" className="object-cover md:h-[380px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
            hover:scale-105 duration-300 hover:opacity-85" />
             <h1 style={serviceNames}>Wedding</h1>
           </Grid>
 
           <Grid item xs={12} md={3} style={{ position: 'relative' }}>
-            <div className='relative'>
+            <div className='relative' onClick={handleClickOpen}>
             <img src={imageHeader} alt="Service 2" className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 mb-2 cursor-pointer
              hover:scale-105 duration-300 hover:opacity-85" />
             <h1 style={serviceNames}>Baptism</h1>
             </div>
-            <img src={imageHeader} alt="Service 3" className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
+            <img src={imageHeader} alt="Service 3" onClick={handleClickOpen} className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
              hover:scale-105 duration-300 hover:opacity-85" />
             <h1 style={serviceNames}>Anointing of the Sick</h1>
           </Grid>
 
           <Grid item xs={12} md={3} style={{ position: 'relative' }}>
-            <img src={imageHeader} alt="Service 4" className="object-cover md:h-[380px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
+            <img src={imageHeader} alt="Service 4" onClick={handleClickOpen} className="object-cover md:h-[380px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
              hover:scale-105 duration-300 hover:opacity-85" />
             <h1 style={serviceNames}>Request a Mass</h1>
           </Grid>
           
           <Grid item xs={12} md={3} style={{ position: 'relative' }}>
-            <div className='relative'>
+            <div className='relative' onClick={handleClickOpen}>
             <img src={imageHeader} alt="Service 2" className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 mb-2 cursor-pointer
              hover:scale-105 duration-300 hover:opacity-85" />
             <h1 style={serviceNames}>Request a Blessing</h1>
             </div>
-            <img src={imageHeader} alt="Service 3" className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
+            <img src={imageHeader} alt="Service 3" onClick={handleClickOpen} className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
              hover:scale-105 duration-300 hover:opacity-85" />
             <h1 style={serviceNames}>Mass Intentions</h1>
           </Grid>
