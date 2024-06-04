@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavParishioner from '../../components/NavParishioner';
 import imageHeader from '../../assets/imageHeader.jpg';
 import Header from '../../components/Header';
@@ -7,6 +8,7 @@ import Footer from '../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCross, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import RequestNotice from '../../components/RequestNotice';
+import Certificates from './Certificate';
 
 const Home = () => {
 
@@ -30,6 +32,12 @@ const Home = () => {
     fontWeight: 'bold',
     fontSize: '24px'
   };
+
+
+  const navigate = useNavigate()
+  const NavCertificate = () => {
+    navigate('/certificates')
+  }
 
   return (
     <>
@@ -93,7 +101,7 @@ const Home = () => {
                   <p className='text-base'>Parokyano and Gethsemane Parish Staff will assist you!</p>
                 </div>
                 <button className='font-medium md:absolute md:right-4 bg-white shadow-lg rounded-2xl px-3 py-2
-                hover:scale-105 duration-300'>Request a Certificate</button>
+                hover:scale-105 duration-300' onClick={NavCertificate}>Request a Certificate</button>
               </div>
             </div>
 
