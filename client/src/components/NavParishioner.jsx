@@ -9,9 +9,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
+import { Link } from 'react-router-dom';
 
-
-const pages = ['Events', 'About', 'Services'];
+const pages = [
+  { name: 'Events', path: '' },
+  { name: 'About', path: '/about' },
+  { name: 'Services', path: '/' },
+];
 
 function NavParishioner() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -33,7 +37,7 @@ function NavParishioner() {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href='/'
             sx={{
               mr: 6,
               display: { xs: 'none', md: 'flex' },
@@ -76,9 +80,13 @@ function NavParishioner() {
                 color: '#000000'
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+              {pages.map((page, index) => (
+                <MenuItem key={index} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">
+                    <Link to={page.path}>
+                    {page.name}
+                    </Link>
+                    </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -87,7 +95,7 @@ function NavParishioner() {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href='/'
             sx={{
               mr: 4,
               display: { xs: 'flex', md: 'none' },
@@ -102,13 +110,13 @@ function NavParishioner() {
             PAROKYANO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+            {pages.map((page, index) => (
               <Button
-                key={page}
+                key={index}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: '#000000', display: 'block', textTransform: 'none' }}
               >
-                {page}
+              <Link to={page.path}>{page.name}</Link>
               </Button>
             ))}
           </Box>
