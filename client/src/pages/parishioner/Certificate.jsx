@@ -8,23 +8,11 @@ import Header from '../../components/Header';
 import { Grid, Card, CardContent, CardMedia, CardActionArea, Typography } from '@mui/material';
 import Footer from '../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCross, faQuestion } from '@fortawesome/free-solid-svg-icons';
-
+import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
+import { Link } from "react-router-dom";
 
 
 const Certificates = () => {
-
-    const certNames = {
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        padding: '8px',
-        marginRight: '20px',
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: '30px',
-    };
-    
 
     return(
         <>
@@ -33,12 +21,16 @@ const Certificates = () => {
                 backgroundImage={imageHeader}
                 title="Gethsemane Parish Pastoral Center"
             />
+            <Link to='/' className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
+                <FontAwesomeIcon icon={faArrowLeftLong}  className="ml-8 md:mr-2"/>
+              <p className="xs:hidden md:flex">Return to Home</p>
+            </Link>
+            <h1 align='center' className="font-bold text-xl font-[Arial]">Choose a type of Certificate</h1>
 
-            <h1 align='center'>Choose a type of Certificate</h1>
+            <Grid container spacing={1} padding={5} justifyContent={"center"}
+            sx={{marginBottom:"50px"}}>
 
-            <Grid container spacing={3} padding={5} justifyContent={"center"}>
-
-                <Grid item xs={12} md={3} style={{ position: 'relative' }}>
+                <Grid item xs={12} md={2} style={{ position: 'relative' }}>
                     <Card sx={{ maxWidth: 345,
                         transition: 'opacity 0.3s ease',
                         '&:hover': {
@@ -66,7 +58,7 @@ const Certificates = () => {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} md={3} style={{ position: 'relative' }}>
+                <Grid item xs={12} md={2} style={{ position: 'relative' }} sx={{marginX: {xs: 0, md: '100px'}}}>
                     <Card sx={{ maxWidth: 345,
                         transition: 'opacity 0.3s ease',
                         '&:hover': {
@@ -94,7 +86,7 @@ const Certificates = () => {
                     </Card>
                 </Grid>
                 
-                <Grid item xs={12} md={3} style={{ position: 'relative' }}>
+                <Grid item xs={12} md={2} style={{ position: 'relative' }}>
                     <Card sx={{ maxWidth: 345,
                         transition: 'opacity 0.3s ease',
                         '&:hover': {
