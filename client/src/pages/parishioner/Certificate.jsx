@@ -21,14 +21,17 @@ const Certificates = () => {
                 backgroundImage={imageHeader}
                 title="Gethsemane Parish Pastoral Center"
             />
-            <Link to='/' className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
+            <div className="max-w-[1440px] mt-6 mx-auto">
+            <Link to='/' className="mt-8 md:mb-10 items-center">
                 <FontAwesomeIcon icon={faArrowLeftLong}  className="ml-8 md:mr-2"/>
-              <p className="xs:hidden md:flex">Return to Home</p>
+              <p className="hidden md:inline">Return to Home</p>
             </Link>
+            </div>
+
             <h1 align='center' className="font-bold text-xl font-[Arial]">Choose a type of Certificate</h1>
 
             <Grid container spacing={1} padding={5} justifyContent={"center"}
-            sx={{marginBottom:"50px"}}>
+            sx={{marginBottom:"80px"}}>
 
                 <Grid item xs={12} md={2} style={{ position: 'relative' }}>
                     <Card sx={{ maxWidth: 345,
