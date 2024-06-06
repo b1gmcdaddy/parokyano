@@ -6,7 +6,7 @@ function SelectorCard({cardImg, serviceName}){
     return(
         <Grid item>
             <CardActionArea>
-                <Card sx={{height: 300, width: 310, bgcolor: '#E8E8E8', padding: 1, transition: '0.3s ease', '&:hover': {
+                <Card sx={{height: 300, width: 310, bgcolor: '#E8E8E8', boxShadow: 10, padding: 1, transition: '0.3s ease', '&:hover': {
                     transform: 'scale(1.05)'
                 }, '&:hover .MuiCardMedia-root': {
                     transition: '0.3s ease', 
