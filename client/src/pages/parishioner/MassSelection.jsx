@@ -32,9 +32,9 @@ const MassSelection = () => {
 
             <Grid container spacing={3} padding={5} justifyContent={"center"}
             sx={{marginBottom:"50px"}}>
-                <SelectorCard cardImg={wake} serviceName={'Wake'}/>
-                <SelectorCard cardImg={funeral} serviceName={'Funeral'}/>
-                <SelectorCard cardImg={outside} serviceName={'Outside Mass'}/>
+                <SelectorCard cardImg={wake} serviceName={'Wake'} path={'/wakemass'}/>
+                <SelectorCard cardImg={funeral} serviceName={'Funeral'} path={'/funeralmass'}/>
+                <SelectorCard cardImg={outside} serviceName={'Outside Mass'} path={'/outsidemass'}/>
             </Grid>
             <Footer />
         </>
