@@ -202,7 +202,7 @@ const Baptism = () => {
                 <label>Payment Method:</label>
                 <TextField fullWidth select variant="outlined" size="small" sx={inputstlying} required>
                   <MenuItem value="cash">Cash</MenuItem>
-                  <MenuItem value="card">GCash</MenuItem>
+                  <MenuItem value="gcash">GCash</MenuItem>
                 </TextField>
               </Grid>
 
