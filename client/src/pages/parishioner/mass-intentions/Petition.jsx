@@ -46,7 +46,7 @@ const Petition = () => {
             </Link>
             <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please input the following</h1>
 
-            <Container maxWidth="lg" sx={{ marginBottom: '50px' }}>
+            <Container maxWidth="md" sx={{ marginBottom: '50px' }}>
                 <form>
                     <Grid container spacing={4}>
                         <Grid item xs={12} sm={12}>
