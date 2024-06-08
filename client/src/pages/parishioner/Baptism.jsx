@@ -7,12 +7,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong, faXmark  } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import { TextField, MenuItem, Grid, Container, FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const inputstlying = {
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       boxShadow: '0 3px 2px rgba(0,0,0,0.1)',
-      bgcolor: 'white'
     },
     '&.Mui-focused fieldset': {
       borderColor: '#355173',
@@ -27,6 +27,12 @@ const Baptism = () => {
   const [churchMarried, setChurchMarried] = useState('');
   const [civilMarried, setCivilMarried] = useState('');
   const [liveIn, setLiveIn] = useState('');
+  const [captchaValue, setCaptchaValue] = useState(null);
+
+  const handleCaptchaChange = (value) => {
+    setCaptchaValue(value)
+  }
+  const isCaptchaChecked = captchaValue !== null;
 
   const handleChurchMarriedChange = (event) => {
     setChurchMarried(event.target.value);
@@ -326,13 +332,17 @@ const Baptism = () => {
             }
           </div>
 
-          <div className="mt-[1rem] flex justify-center">
-            <button className="text-white py-3 px-3 font-medium shadow-sm rounded-md bg-[#355173]"
-            type="submit"
-            >
-              SUBMIT REQUEST
-            </button>
-          </div>
+          <div className="mt-[3rem] flex justify-center">
+                        <ReCAPTCHA
+                            sitekey="6LeCEPMpAAAAANAqLQ48wTuNOGmTPaHcMxJh4xaJ"
+                            onChange={handleCaptchaChange}
+                        />
+                    </div>
+                    <div className="mt-[1rem] flex justify-center">
+                        <button className={`text-white py-3 px-3 font-medium shadow-sm rounded-md ${isCaptchaChecked ? 'bg-[#355173]' : 'bg-[#868686]'}`} disabled={!isCaptchaChecked} type="submit">
+                         SUBMIT REQUEST
+                        </button>
+                    </div>
         </form>
       </Container>
 
