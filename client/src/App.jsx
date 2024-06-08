@@ -10,6 +10,7 @@ import FuneralMass from './pages/parishioner/FuneralMass'
 import OutsideMass from './pages/parishioner/OutsideMass'
 import Blessing from './pages/parishioner/Blessing'
 import Anointing from './pages/parishioner/Anointing'
+import MassIntentions from './pages/parishioner/MassIntentions'
 //import CertificateBaptism from './pages/parishioner/certs-types/Certificate-Baptism'
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
       <Route path='/baptism' element={<Baptism />}/>
       <Route path='/blessing' element={<Blessing />}/>
       <Route path='/anointing' element={<Anointing />}/>
+      <Route path='/mass-intention-select' element={<MassIntentions/>}/>
     </Routes>
   </main>
   )

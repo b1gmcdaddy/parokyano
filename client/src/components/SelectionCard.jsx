@@ -27,7 +27,7 @@ function SelectorCard({cardImg, serviceName, path}){
                     image= {cardImg}
                     alt={serviceName}/>
                     <CardContent sx={{display: 'flex',justifyContent: 'center', alignItems:'center'}}> 
-                        <Typography variant='h4' sx={{marginTop: 1, fontWeight: 'bold'}}>
+                        <Typography variant='h5' sx={{marginTop: 1, fontWeight: 'bold'}}>
                             {serviceName}
                         </Typography>
                     </CardContent>

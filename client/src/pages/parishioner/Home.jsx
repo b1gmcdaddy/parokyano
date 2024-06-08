@@ -85,7 +85,7 @@ const Home = () => {
              hover:scale-105 duration-300 hover:opacity-85" />
             <h1 style={serviceNames}>Request a Blessing</h1>
             </div>
-            <img src={imageHeader} alt="Service 3" onClick={() => handleClickOpen('/')} className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
+            <img src={imageHeader} alt="Service 3" onClick={() => handleClickOpen('/mass-intention-select')} className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
              hover:scale-105 duration-300 hover:opacity-85" />
             <h1 style={serviceNames}>Mass Intentions</h1>
           </Grid>
