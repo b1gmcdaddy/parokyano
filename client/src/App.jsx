@@ -11,6 +11,9 @@ import OutsideMass from './pages/parishioner/OutsideMass'
 import Blessing from './pages/parishioner/Blessing'
 import Anointing from './pages/parishioner/Anointing'
 import MassIntentions from './pages/parishioner/MassIntentions'
+import Petition from './pages/parishioner/mass-intentions/Petition'
+import Thanksgiving from './pages/parishioner/mass-intentions/Thanksgiving'
+import Souls from './pages/parishioner/mass-intentions/Souls'
 //import CertificateBaptism from './pages/parishioner/certs-types/Certificate-Baptism'
 
 function App() {
@@ -30,6 +33,9 @@ function App() {
       <Route path='/blessing' element={<Blessing />}/>
       <Route path='/anointing' element={<Anointing />}/>
       <Route path='/mass-intention-select' element={<MassIntentions/>}/>
+      <Route path='/mass-intention-thanksgiving' element={<Thanksgiving/>}/>
+      <Route path='/mass-intention-petition' element={<Petition/>}/>
+      <Route path='/mass-intention-souls' element={<Souls/>}/>
     </Routes>
   </main>
   )

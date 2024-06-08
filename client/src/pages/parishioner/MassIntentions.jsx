@@ -32,9 +32,9 @@ const MassIntentions = () => {
 
             <Grid container spacing={3} padding={5} justifyContent={"center"}
             sx={{marginBottom:"50px"}}>
-                <SelectorCard cardImg={wake} serviceName={'Thanksgiving'} path={'/'}/>
-                <SelectorCard cardImg={funeral} serviceName={'Petition'} path={'/'}/>
-                <SelectorCard cardImg={outside} serviceName={'Souls'} path={'/'}/>
+                <SelectorCard cardImg={wake} serviceName={'Thanksgiving'} path={'/mass-intention-thanksgiving'}/>
+                <SelectorCard cardImg={funeral} serviceName={'Petition'} path={'/mass-intention-petition'}/>
+                <SelectorCard cardImg={outside} serviceName={'Souls'} path={'/mass-intention-souls'}/>
             </Grid>
             <Footer />
         </>
