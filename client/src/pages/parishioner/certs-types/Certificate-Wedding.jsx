@@ -8,7 +8,7 @@ import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { TextField, Box, Grid, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup, Button } from "@mui/material";
 import Header from "../../../components/Header";
 
-const CertificateBaptism = () => {
+const CertificateWedding = () => {
 
     // const [date, setDate] = useState('')
 
@@ -63,38 +63,32 @@ const CertificateBaptism = () => {
                     <div>
                         <TextField
                             required
-                            name="date"
-                            label="Date of Birth"
-                            type="date"
-                            defaultValue='2000-01-01'
+                            label="Spouse's First Name"
+                            placeholder="spouse's first name"
                         />
                         <TextField
                             required
-                            label="Place of Birth"
-                            placeholder="place"
+                            label="Spouse's Middle Name"
+                            placeholder="spouse's middle name"
                         />
                         <TextField
                             required
-                            label="Contact Number"
-                            placeholder="+63"
+                            label="Spouse's Last Name"
+                            placeholder="spouse's last name"
                         />
                     </div>
 
                     <div>
                         <TextField
                             required
-                            label="Father's Complete Name"
-                            placeholder="father"
+                            label="Date of Marriage"
+                            type="date"
+                            defaultValue='2000-01-01'
                         />
                         <TextField
                             required
-                            label="Mother's Complete Maiden Name"
-                            placeholder="mother"
-                        />
-                        <TextField
-                            label="Date of Baptism"
-                            type="date"
-                            defaultValue='2000-01-01'
+                            label="Contact Number"
+                            placeholder="contact #"
                         />
                     </div>
 
@@ -111,19 +105,13 @@ const CertificateBaptism = () => {
                                         }}
                                     >
                                         <Grid item xs={12} sm={4}>
-                                            <FormControlLabel labelPlacement="end" value="marriage" control={<Radio />} label="Marriage" />
-                                        </Grid>
-                                        <Grid item xs={12} sm={4}>
                                             <FormControlLabel labelPlacement="end" value="school" control={<Radio />} label="School" />
-                                        </Grid>
-                                        <Grid item xs={12} sm={4}>
-                                            <FormControlLabel labelPlacement="end" value="sss" control={<Radio />} label="SSS" />
                                         </Grid>
                                         <Grid item xs={12} sm={4}>
                                             <FormControlLabel labelPlacement="end" value="passport" control={<Radio />} label="Passport" />
                                         </Grid>
                                         <Grid item xs={12} sm={4}>
-                                            <FormControlLabel labelPlacement="end" value="late registration" control={<Radio />} label="Late Registration" />
+                                            <FormControlLabel labelPlacement="end" value="sss" control={<Radio />} label="SSS" />
                                         </Grid>
                                         <Grid item xs={12} sm={4}>
                                             <FormControlLabel labelPlacement="end" value="others" control={<Radio />} label="Others" />
@@ -167,4 +155,4 @@ const CertificateBaptism = () => {
 
 }
 
-export default CertificateBaptism
+export default CertificateWedding

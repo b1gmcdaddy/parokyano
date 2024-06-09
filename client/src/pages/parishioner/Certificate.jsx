@@ -33,9 +33,9 @@ const Certificates = () => {
 
             <Grid container spacing={3} padding={5} justifyContent={"center"}
             sx={{marginBottom:"50px"}}>
-                <SelectorCard cardImg={baptism} serviceName={'Baptism'} path={'/certificate-baptism'}/>
-                <SelectorCard cardImg={confirmation} serviceName={'Confirmation'}/>
-                <SelectorCard cardImg={wedding} serviceName={'Wedding'}/>
+                <SelectorCard cardImg={baptism} serviceName={'Baptism'} path={'/certificate-baptism'} />
+                <SelectorCard cardImg={confirmation} serviceName={'Confirmation'} path={'/certificate-confirmation'} />
+                <SelectorCard cardImg={wedding} serviceName={'Wedding'} path={'/certificate-wedding'} />
             </Grid>
 
             <Footer />

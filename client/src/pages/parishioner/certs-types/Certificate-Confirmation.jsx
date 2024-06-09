@@ -8,21 +8,14 @@ import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { TextField, Box, Grid, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup, Button } from "@mui/material";
 import Header from "../../../components/Header";
 
-const CertificateBaptism = () => {
-
-    // const [date, setDate] = useState('')
-
-    // const HandleDate = (e) => {
-    //     setDate({ ...date, [e.target.name]: e.target.value });
-    //     console.log(date)
-    // }
+const CertificateConfirmation = () => {
 
     return(
         <>
             <NavParishioner />
-            <Header
-                backgroundImage = {imageHeader}
-                title = 'Gethsemane Parish Pastoral Center'
+            <Header 
+                backgroundImage={imageHeader}
+                title="Gethsemane Parish Pastoral Center"
             />
 
             <Link to='/' className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
@@ -92,7 +85,7 @@ const CertificateBaptism = () => {
                             placeholder="mother"
                         />
                         <TextField
-                            label="Date of Baptism"
+                            label="Date of Confirmation"
                             type="date"
                             defaultValue='2000-01-01'
                         />
@@ -167,4 +160,4 @@ const CertificateBaptism = () => {
 
 }
 
-export default CertificateBaptism
+export default CertificateConfirmation
