@@ -8,7 +8,6 @@ import Footer from '../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCross, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import RequestNotice from '../../components/RequestNotice';
-import Certificates from './Certificate';
 
 const Home = () => {
   const [open, setOpen] = useState(false);
@@ -33,10 +32,15 @@ const Home = () => {
     fontWeight: 'bold',
     fontSize: '24px'
   };
-
+  
   const navigate = useNavigate()
+
   const NavCertificate = () => {
     navigate('/certificates')
+  }
+
+  const NavToStatusTracker = () => {
+    navigate('/track-status');
   }
 
   return (
@@ -51,7 +55,7 @@ const Home = () => {
         <div className='flex justify-between mb-8'>
           <h1 className='md:text-3xl font-bold xs:text-center xs:text-xl'>Services Offered</h1>
           <button className='rounded-md border-0 border-gray-300 shadow-md shadow-slate-300 
-          px-4 py-1 hover:bg-slate-100 xs:text-center'>Track Status of Request</button>
+          px-4 py-1 hover:bg-slate-100 xs:text-center' onClick={NavToStatusTracker}>Track Status of Request</button>
         </div>
         <RequestNotice open={open} onClose={handleClose} reqUrl={reqUrl} />
 
