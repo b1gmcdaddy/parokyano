@@ -14,7 +14,9 @@ import MassIntentions from './pages/parishioner/MassIntentions'
 import Petition from './pages/parishioner/mass-intentions/Petition'
 import Thanksgiving from './pages/parishioner/mass-intentions/Thanksgiving'
 import Souls from './pages/parishioner/mass-intentions/Souls'
-//import CertificateBaptism from './pages/parishioner/certs-types/Certificate-Baptism'
+import CertificateBaptism from './pages/parishioner/certs-types/Certificate-Baptism'
+import CertificateConfirmation from './pages/parishioner/certs-types/Certificate-Confirmation'
+import CertificateWedding from './pages/parishioner/certs-types/Certificate-Wedding'
 
 function App() {
 
@@ -23,7 +25,9 @@ function App() {
     <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/certificates' element={<Certificates />} />
-{/*<Route path='/certificate-baptism' element={<CertificateBaptism />} />*/}
+      <Route path='/certificate-baptism' element={<CertificateBaptism />} />
+      <Route path='/certificate-confirmation' element={<CertificateConfirmation />} />
+      <Route path='/certificate-wedding' element={<CertificateWedding />} />
       <Route path='/about' element={<About />} />
       <Route path='/mass-selection' element={<MassSelection/>}/>
       <Route path='/wakemass' element={<WakeMass/>}/>
