@@ -5,7 +5,7 @@ import Footer from "../../../components/Footer";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
-import { TextField, Box, Grid, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { TextField, Box, Grid, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup, Button } from "@mui/material";
 import Header from "../../../components/Header";
 
 const CertificateBaptism = () => {
@@ -99,36 +99,68 @@ const CertificateBaptism = () => {
                     </div>
 
                     <div>
-                        <FormControl>
-                            <FormLabel id="demo-controlled-radio-buttons-group">Purpose</FormLabel>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="demo-controlled-radio-buttons-group"
-                                    name="controlled-radio-buttons-group"
-                                    sx={{ 
-                                        '& .MuiFormControlLabel-root': { marginRight: 7 }, // Adjusts the space between radio buttons
-                                        '& .MuiRadio-root': { padding: 1.0 } // Adjusts the padding of the radio button itself
-                                    }}
-                                >
-                                    <FormControlLabel labelPlacement="end" value="marriage" control={<Radio />} label="Marriage" />
-                                    <FormControlLabel labelPlacement="end" value="school" control={<Radio />} label="School" />
-                                    <FormControlLabel labelPlacement="end" value="sss" control={<Radio />} label="SSS" />
-                                </RadioGroup>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="demo-controlled-radio-buttons-group"
-                                    name="controlled-radio-buttons-group"
-                                    sx={{ 
-                                        '& .MuiFormControlLabel-root': { marginRight: 7 }, // Adjusts the space between radio buttons
-                                        '& .MuiRadio-root': { padding: 1.0 } // Adjusts the padding of the radio button itself
-                                    }}
-                                >
-                                    <FormControlLabel labelPlacement="end" value="passport" control={<Radio />} label="Passport" />
-                                    <FormControlLabel labelPlacement="end" value="late registration" control={<Radio />} label="Late Registration" />
-                                    <FormControlLabel labelPlacement="end" value="others" control={<Radio />} label="Others" />
-                                </RadioGroup>
-                        </FormControl>
+                        <Grid container justifyContent={"center"}>
+                            <FormControl>
+                                <FormLabel id="demo-controlled-radio-buttons-group">Purpose</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="demo-controlled-radio-buttons-group"
+                                        name="controlled-radio-buttons-group"
+                                        sx={{ 
+                                            '& .MuiRadio-root': { padding: 1.0 } // Adjusts the padding of the radio button itself
+                                        }}
+                                    >
+                                        <Grid item xs={12} sm={4}>
+                                            <FormControlLabel labelPlacement="end" value="marriage" control={<Radio />} label="Marriage" />
+                                        </Grid>
+                                        <Grid item xs={12} sm={4}>
+                                            <FormControlLabel labelPlacement="end" value="school" control={<Radio />} label="School" />
+                                        </Grid>
+                                        <Grid item xs={12} sm={4}>
+                                            <FormControlLabel labelPlacement="end" value="sss" control={<Radio />} label="SSS" />
+                                        </Grid>
+                                        <Grid item xs={12} sm={4}>
+                                            <FormControlLabel labelPlacement="end" value="passport" control={<Radio />} label="Passport" />
+                                        </Grid>
+                                        <Grid item xs={12} sm={4}>
+                                            <FormControlLabel labelPlacement="end" value="late registration" control={<Radio />} label="Late Registration" />
+                                        </Grid>
+                                        <Grid item xs={12} sm={4}>
+                                            <FormControlLabel labelPlacement="end" value="others" control={<Radio />} label="Others" />
+                                            <TextField
+                                                label="Please specify"
+                                                placeholder="Specify other purpose"
+                                            />
+                                        </Grid>
+                                    </RadioGroup>
+                            </FormControl>
+                        </Grid>
                     </div>
+                    <hr/>
+                    <div>
+                        <TextField
+                            required
+                            label="Book Number"
+                            placeholder="book #"
+                        />
+                        <TextField
+                            required
+                            label="Page Number"
+                            placeholder="page #"
+                        />
+                        <TextField
+                            required
+                            label="Line Number"
+                            placeholder="line #"
+                        />
+                    </div>
+
+                    <Grid sx={{ display: 'flex', justifyContent: 'center', margin: 5 }}>
+                        <Button variant="contained" color="primary" type="submit">
+                            Submit
+                        </Button>
+                    </Grid>
+
                 </Box>
             </Grid>
 
