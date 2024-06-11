@@ -18,6 +18,9 @@ import CertificateBaptism from './pages/parishioner/certs-types/Certificate-Bapt
 import CertificateConfirmation from './pages/parishioner/certs-types/Certificate-Confirmation'
 import CertificateWedding from './pages/parishioner/certs-types/Certificate-Wedding'
 import Wedding from './pages/parishioner/Wedding'
+import TrackStatus from './pages/parishioner/TrackStatus'
+
+
 
 function App() {
 
@@ -42,6 +45,7 @@ function App() {
       <Route path='/mass-intention-petition' element={<Petition/>}/>
       <Route path='/mass-intention-souls' element={<Souls/>}/>
       <Route path='/wedding' element={<Wedding />} />
+      <Route path='/track-status' element={<TrackStatus />}/>
     </Routes>
   </main>
   )

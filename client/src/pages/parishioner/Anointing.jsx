@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"
+import MassTransacNum from "../../components/TransacNumMassBleAn";
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -23,6 +24,11 @@ const inputstlying = {
 
 const Anointing = () => {
     const [captchaValue, setCaptchaValue] = useState(null);
+    const [open, setOpen] = useState(false);
+
+    const handlesubmit = () =>{
+        setOpen(true);
+    }
 
     const handleCaptchaChange = (value) => {
         setCaptchaValue(value)
@@ -42,6 +48,7 @@ const Anointing = () => {
                 <p className="xs:hidden md:flex">Return to Home</p>
             </Link>
             <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please input the following</h1>
+            <MassTransacNum open={open}/>
 
             <Container maxWidth="lg" sx={{ marginBottom: '50px' }}>
                 <form>
@@ -110,7 +117,7 @@ const Anointing = () => {
                         />
                     </div>
                     <div className="mt-[1rem] flex justify-center">
-                        <button className={`text-white py-3 px-3 font-medium shadow-sm rounded-md ${isCaptchaChecked ? 'bg-[#355173]' : 'bg-[#868686]'}`} disabled={!isCaptchaChecked} type="submit">
+                        <button className={`text-white py-3 px-3 font-medium shadow-sm rounded-md ${isCaptchaChecked ? 'bg-[#355173]' : 'bg-[#868686]'}`} disabled={!isCaptchaChecked} onClick={handlesubmit} type="button">
                          SUBMIT REQUEST
                         </button>
                     </div>
