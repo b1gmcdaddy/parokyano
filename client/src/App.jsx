@@ -17,6 +17,7 @@ import Souls from './pages/parishioner/mass-intentions/Souls'
 import CertificateBaptism from './pages/parishioner/certs-types/Certificate-Baptism'
 import CertificateConfirmation from './pages/parishioner/certs-types/Certificate-Confirmation'
 import CertificateWedding from './pages/parishioner/certs-types/Certificate-Wedding'
+import Wedding from './pages/parishioner/Wedding'
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
       <Route path='/mass-intention-thanksgiving' element={<Thanksgiving/>}/>
       <Route path='/mass-intention-petition' element={<Petition/>}/>
       <Route path='/mass-intention-souls' element={<Souls/>}/>
+      <Route path='/wedding' element={<Wedding />} />
     </Routes>
   </main>
   )

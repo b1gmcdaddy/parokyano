@@ -8,7 +8,6 @@ import Footer from '../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCross, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import RequestNotice from '../../components/RequestNotice';
-import Certificates from './Certificate';
 
 const Home = () => {
   const [open, setOpen] = useState(false);
@@ -56,7 +55,7 @@ const Home = () => {
         <RequestNotice open={open} onClose={handleClose} reqUrl={reqUrl} />
 
         <Grid container spacing={1}>
-          <Grid item xs={12} md={3} style={{ position: 'relative' }} onClick={() => handleClickOpen('/')}>
+          <Grid item xs={12} md={3} style={{ position: 'relative' }} onClick={() => handleClickOpen('wedding')}>
             <img src={imageHeader} alt="Service 1" className="object-cover md:h-[380px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
            hover:scale-105 duration-300 hover:opacity-85" />
             <h1 style={serviceNames}>Wedding</h1>
