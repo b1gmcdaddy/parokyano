@@ -33,15 +33,12 @@ const Home = () => {
     fontSize: '24px'
   };
   
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const NavCertificate = () => {
-    navigate('/certificates')
+  const navigateToPage = (url) => {
+    navigate(`/${url}`);
   }
-
-  const NavToStatusTracker = () => {
-    navigate('/track-status');
-  }
+  
 
   return (
     <>
@@ -55,7 +52,7 @@ const Home = () => {
         <div className='flex justify-between mb-8'>
           <h1 className='md:text-3xl font-bold xs:text-center xs:text-xl'>Services Offered</h1>
           <button className='rounded-md border-0 border-gray-300 shadow-md shadow-slate-300 
-          px-4 py-1 hover:bg-slate-100 xs:text-center' onClick={NavToStatusTracker}>Track Status of Request</button>
+          px-4 py-1 hover:bg-slate-100 xs:text-center' onClick={() => navigateToPage('track-status')}>Track Status of Request</button>
         </div>
         <RequestNotice open={open} onClose={handleClose} reqUrl={reqUrl} />
 
@@ -105,7 +102,7 @@ const Home = () => {
                   <p className='text-base'>Parokyano and Gethsemane Parish Staff will assist you!</p>
                 </div>
                 <button className='font-medium md:absolute md:right-4 bg-white shadow-lg rounded-2xl px-3 py-2
-                hover:scale-105 duration-300' onClick={NavCertificate}>Request a Certificate</button>
+                hover:scale-105 duration-300' onClick={() => navigateToPage('certificates')}>Request a Certificate</button>
               </div>
             </div>
 
@@ -117,7 +114,7 @@ const Home = () => {
                     <p className='text-base'>Visit our FAQs Section to Learn More!</p>
                   </div>
                   <button className='text-white font-medium md:absolute md:right-6 shadow-lg rounded-2xl px-3 py-2
-                  hover:scale-105 duration-300' style={{backgroundColor:'#355173'}}>Visit FAQs</button>
+                  hover:scale-105 duration-300' style={{backgroundColor:'#355173'}} onClick={() => navigateToPage('frequently-asked')}>Visit FAQs</button>
                 </div>
               </div>
           </div>
