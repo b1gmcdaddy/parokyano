@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import Home from './pages/parishioner/Home'
 import Certificates from './pages/parishioner/Certificate'
 import About from './pages/parishioner/About'
+import Events from './pages/parishioner/Events'
 import MassSelection from './pages/parishioner/MassSelection'
 import Baptism from './pages/parishioner/Baptism'
 import WakeMass from './pages/parishioner/WakeMass'
@@ -33,6 +34,7 @@ function App() {
       <Route path='/certificate-confirmation' element={<CertificateConfirmation />} />
       <Route path='/certificate-wedding' element={<CertificateWedding />} />
       <Route path='/about' element={<About />} />
+      <Route path='/events' element={<Events />} />
       <Route path='/mass-selection' element={<MassSelection/>}/>
       <Route path='/wakemass' element={<WakeMass/>}/>
       <Route path='/funeralmass' element={<FuneralMass/>}/>
