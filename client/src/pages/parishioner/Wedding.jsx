@@ -6,10 +6,30 @@ import { Link } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowLeft, faArrowLeftLong } from "@fortawesome/free-solid-svg-icons"
 import { MenuItem, Select, Grid, Box, TextField, Button, FormControl, RadioGroup, FormControlLabel, Radio } from "@mui/material"
-import React from "react"
+import { React, useState } from "react"
+import CashPaymentModal from "../../components/CashPaymentModal"
 
 
 const Wedding = () => {
+
+    const [open, setOpen] = useState(false)
+
+    const dummyData = [{
+        fee: null,
+        requirements: [
+            'Clear copy of the Certificate of Live Birth or Birth Certificate (either NSO or Local Birth)', 
+            'Baptismal Certificate - Marriage Purposes (issued within last 3 months)', 
+            'Confirmation Certificate - Marriage Purposes (issued within last 3 months)'
+        ],
+        message: 'Please wait for the parish to verify if the requested date and time is possible.We will communicate with you once the request has been approved and for other purposes.'
+    }]
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        console.log("not open modal")
+        setOpen(true)
+        console.log("open modal")
+    }
 
     return(
         <>
@@ -26,6 +46,8 @@ const Wedding = () => {
 
             <h1 align='center'>Please Input the Following</h1>
 
+            <CashPaymentModal open={open} data={dummyData[0]} />
+
             <Grid container justifyContent={"center"} alignItems={"center"} sx={{marginTop:"50px", marginBottom:"20px"}}>
                 <Box
                     component="form"
@@ -34,6 +56,7 @@ const Wedding = () => {
                     }}
                     noValidate
                     autoComplete="off"
+                    onSubmit={handleSubmit}
                     >
 
                     <div>
