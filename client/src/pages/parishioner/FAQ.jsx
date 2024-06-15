@@ -50,7 +50,7 @@ const FAQ = () => {
                 <div className="mb-10">
                     {sampleFAQs.map((faq, index) => (
                         <div key={index}>
-                        <Accordion className="py-3 rounded-full mb-5" sx={{border:'solid', borderWidth:'0.1px', boxShadow:'2px 4px #D3D3D3'}}>
+                        <Accordion className="py-3 rounded-full mb-5" >
                           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1-content" id="panel1-header"
                           className="font-bold text-lg">
                             {faq.title}
