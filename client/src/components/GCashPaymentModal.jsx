@@ -4,8 +4,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Check from '../assets/check.png';
 import {DefaultCopyField} from '@eisberg-labs/mui-copy-field';
-import { Grid, Typography } from '@mui/material';
+import { Grid, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import qrCode from '../assets/sampleQRCode.png'
 
 
 const inputstyling = {
@@ -31,7 +32,7 @@ const inputstyling = {
     },
 };
 
-const CashPaymentModal = ({open, data}) => {
+const GCashPaymentModal = ({open, data}) => {
     const navigate = useNavigate()
 
     const handleClick = () => {
@@ -72,18 +73,6 @@ const CashPaymentModal = ({open, data}) => {
                             <DefaultCopyField fullWidth disabled value={"040124<hash>"} sx={inputstyling}/>
                         </Grid>
                         <Grid container justifyContent={"center"} sx={{bgcolor:'#E8E8E8', padding: 2, margin: 2}}>
-                            {/* <Grid container justifyContent={"center"} >
-                            {data.fee !== null && (
-                                <>
-                                    <Typography variant='subtitle2' sx={{marginRight: 4}}>
-                                        <p><strong>Fee:</strong></p>
-                                    </Typography>
-                                    <Typography variant='subtitle2' sx={{textAlign: 'left'}}>
-                                        {data.fee}
-                                    </Typography>
-                                </>
-                            )}
-                            </Grid> */}
                             <Typography variant='subtitle2' sx={{marginRight: 4}}>
                                 {data.fee !== null && (
                                     <p><strong>Fee:</strong></p>
@@ -109,18 +98,31 @@ const CashPaymentModal = ({open, data}) => {
                                 {data.message}
                             </Typography>
                         </Grid>
-            
+                        <Grid container justifyContent={"center"}>
+                            <img src={qrCode} alt='qr code' />
+                        </Grid>
+                        <Grid container justifyContent={"center"}>
+                            <Grid item sm={12}>
+                                <Typography variant='subtitle1' sx={{textAlign: 'center', color: '#950000'}}>
+                                    Enter GCash Reference no.
+                                </Typography>
+                            </Grid>
+                            <Grid item sm={12} sx={{textAlign: 'center'}}>
+                                <TextField
+                                    placeholder='enter gcash reference no.'
+                                />
+                            </Grid>
+                        </Grid>
                         <Grid item sm={12}>
                             <div className="mt-[1rem] mb-[1rem] flex justify-center">
                                 <button className={`text-white py-3 px-3 font-medium shadow-sm rounded-md bg-[#355173]`} onClick={handleClick} type="button">
-                                    Go back to Home
+                                    SUBMIT
                                 </button>
                             </div>
                         </Grid>
-            
                         <Grid item sm={12}>
                             <Typography variant='subtitle2' sx={{textAlign: 'center'}}>
-                                You may call us at (032) 346-9560 / +63969-021-7771 for any concerns.
+                                If you need help, kindly contact our office at (032) 346-9560 / +63969-021-7771 for any concerns.
                             </Typography>
                         </Grid>
                     </Grid>
@@ -130,4 +132,4 @@ const CashPaymentModal = ({open, data}) => {
       );
 }   
 
-export default CashPaymentModal
+export default GCashPaymentModal

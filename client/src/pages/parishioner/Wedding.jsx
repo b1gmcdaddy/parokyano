@@ -9,7 +9,6 @@ import { MenuItem, Select, Grid, Box, TextField, Button, FormControl, RadioGroup
 import { React, useState } from "react"
 import CashPaymentModal from "../../components/CashPaymentModal"
 
-
 const Wedding = () => {
 
     const [open, setOpen] = useState(false)
@@ -170,7 +169,6 @@ const Wedding = () => {
                                     required
                                     label="Age"
                                     placeholder="sponsor age"
-                                    type="number"
                                 />
                             </Grid>
                             <Grid item>
@@ -209,7 +207,6 @@ const Wedding = () => {
                                     required
                                     label="Age"
                                     placeholder="sponsor age"
-                                    type="number"
                                 />
                             </Grid>
                             <Grid item>
@@ -248,7 +245,6 @@ const Wedding = () => {
                                     required
                                     label="Age"
                                     placeholder="sponsor age"
-                                    type="number"
                                 />
                             </Grid>
                             <Grid item>
@@ -287,7 +283,6 @@ const Wedding = () => {
                                     required
                                     label="Age"
                                     placeholder="sponsor age"
-                                    type="number"
                                 />
                             </Grid>
                             <Grid item>

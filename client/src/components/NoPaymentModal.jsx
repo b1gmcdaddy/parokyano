@@ -31,7 +31,7 @@ const inputstyling = {
     },
 };
 
-const CashPaymentModal = ({open, data}) => {
+const CashPaymentModal = ({open, message}) => {
     const navigate = useNavigate()
 
     const handleClick = () => {
@@ -48,7 +48,7 @@ const CashPaymentModal = ({open, data}) => {
                 aria-describedby="alert-dialog-description"
             >
 
-            {/* <DialogTitle id="alert-dialog-title">
+            <DialogTitle id="alert-dialog-title">
                 <Grid container spacing={1} justifyContent={"center"}>
                     <Grid item>
                         <img src={Check} style={{ width: 50, height: 50 }} className='xs:mx-auto' />
@@ -59,7 +59,7 @@ const CashPaymentModal = ({open, data}) => {
                         </Typography>
                     </Grid>
                 </Grid>
-            </DialogTitle> */}
+            </DialogTitle>
         
                 <DialogContent>
                     <Grid container spacing={1} justifyContent={"center"}>
@@ -71,42 +71,14 @@ const CashPaymentModal = ({open, data}) => {
                         <Grid item sm={12}>
                             <DefaultCopyField fullWidth disabled value={"040124<hash>"} sx={inputstyling}/>
                         </Grid>
-                        <Grid container justifyContent={"center"} sx={{bgcolor:'#E8E8E8', padding: 2, margin: 2}}>
-                            {/* <Grid container justifyContent={"center"} >
-                            {data.fee !== null && (
-                                <>
-                                    <Typography variant='subtitle2' sx={{marginRight: 4}}>
-                                        <p><strong>Fee:</strong></p>
-                                    </Typography>
-                                    <Typography variant='subtitle2' sx={{textAlign: 'left'}}>
-                                        {data.fee}
-                                    </Typography>
-                                </>
-                            )}
-                            </Grid> */}
-                            <Typography variant='subtitle2' sx={{marginRight: 4}}>
-                                {data.fee !== null && (
-                                    <p><strong>Fee:</strong></p>
-                                )}
-                                <p><strong>Requirements:</strong></p>
-                            </Typography>
-                            <Typography variant='subtitle2' sx={{textAlign: 'left'}}>
-                                {data.fee !== null && (
-                                    <p>{data.fee}</p>
-                                )}
-                                {data.requirements.map((req, index) => (
-                                    <p key={index}>{req}</p>
-                                ))}
-                            </Typography>
-                        </Grid>
                         <Grid item sm={12}>
                             <Typography variant='subtitle1' sx={{textAlign: 'center', color: '#950000'}}>
-                                Save the transaction number above to track the status of your request.
+                                Save the transaction number above and use this for further queries.
                             </Typography>
                         </Grid>
                         <Grid item sm={12}>
                             <Typography variant='subtitle2' sx={{textAlign: 'center', padding: 2}}>
-                                {data.message}
+                                {message}
                             </Typography>
                         </Grid>
             
