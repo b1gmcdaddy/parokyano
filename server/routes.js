@@ -3,12 +3,13 @@ const app = express();
 const cors = require('cors');
 
 //will define routes here
+const requestRoute = require('./routes/requestRoute');
 
 
 //not sure ani kay wa ko ka g sa CORS policies
 app.use(cors({
     origin: [process.env.CORS_ORIGIN],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
 
@@ -22,5 +23,6 @@ app.use((req, res, next => {
 app.use(express.json());
 
 //app.use('route', routefile)
+app.use('/request', requestRoute);
 
 module.exports = app
