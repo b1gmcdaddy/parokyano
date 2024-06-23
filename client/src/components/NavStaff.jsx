@@ -1,4 +1,4 @@
-import { Avatar, Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Container } from '@mui/material'
+import { Avatar, Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material'
 
 //all icons are temporary
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -9,6 +9,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import BadgeIcon from '@mui/icons-material/Badge';
 import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 
 import React from 'react'
@@ -22,10 +23,23 @@ const NavStaff = () => {
                         color: 'white'
                     }
                 }} 
-            variant='permanent' anchor='left' >
+                variant='permanent' anchor='left'>
 
-                <Box justifyContent='center' sx={{backgroundColor: 'pink'}}>
-                    <Avatar src={<PersonIcon />} />
+                {/* avatar and staff name goes here */}
+                <Box container justifyContent='center' alignItems='center' 
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        margin: 2,
+                    }}>
+                    <div>
+                        <Avatar sx={{width: 100, height: 100}} src={<PersonIcon />} />
+                    </div>
+                    <div>
+                        <Typography variant='h6'>
+                            Hello World!
+                        </Typography>
+                    </div>
                 </Box>
 
                 <List>
@@ -84,6 +98,17 @@ const NavStaff = () => {
                         <ListItemText primary="Schedule" />
                     </ListItemButton>
                 </List>     
+
+                <Box container position='fixed' justifyContent='center' bottom={5} left={2}>
+                    <List>
+                        <ListItemButton>
+                            <ListItemIcon sx={{color: 'white'}}>
+                                <LogoutIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Logout" />
+                        </ListItemButton>
+                    </List>
+                </Box>
             </Drawer>
         </>
     )

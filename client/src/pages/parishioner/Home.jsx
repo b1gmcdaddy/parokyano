@@ -8,7 +8,6 @@ import Footer from '../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCross, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import RequestNotice from '../../components/RequestNotice';
-import NavStaff from '../../components/NavStaff';
 
 const Home = () => {
   const [open, setOpen] = useState(false);
@@ -43,7 +42,7 @@ const Home = () => {
 
   return (
     <>
-      <NavStaff />
+      <NavParishioner />
       <Header  
         backgroundImage={imageHeader}
         title="Request a Service with Gethsemane Parish"
