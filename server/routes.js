@@ -13,16 +13,16 @@ app.use(cors({
     credentials: true
 }));
 
-app.use((req, res, next => {
-    res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGIN);
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next()
-}))
+// app.use((req, res, next => {
+//     res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGIN);
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//     next()
+// }))
 
 app.use(express.json());
 
-//app.use('route', routefile)
-app.use('/request', requestRoute);
+//there is a problem with this, will troubleshoot later
+// app.use('/request', requestRoute);
 
 module.exports = app
