@@ -1,16 +1,19 @@
+//this file is mostly for server and db connectivity
+
+
 const mysql = require('mysql');
 const bp = require('body-parser')
 const app = require('./routes');
 
-//will setup db in cloud first
-const connection = mysql.createConnection({
+const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
     database: 'parokyano'
 });
+const PORT = process.env.PORT
 
-connection.connect((err) => {
+pool.getConnection((err, connection) => {
     if(err){
         console.log('error connecting to db', err.stack);
         return;
@@ -28,4 +31,6 @@ app.get('/', (req, res) => {
     })
 })
 
-app.listen(process.env.PORT || 5000);
+app.listen(process.env.PORT || 5000, () => {
+    console.log(`port running on ${PORT}`)
+});

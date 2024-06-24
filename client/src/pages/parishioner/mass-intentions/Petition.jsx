@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from 'axios';
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from '../../../assets/imageHeader.jpg';
 import Header from '../../../components/Header';
@@ -35,17 +36,24 @@ const Petition = () => {
         donation_amount: ''
     })
 
-    //show change in data
-    console.log(data)
-
     //change value of data with whatever user is typing
     const handleChange = (e) => {
         setData({...data, [e.target.name]: e.target.value})
     }
  
-    const handleSubmit = () => {
-        alert("submit!")
-    }
+    //need some work atm
+    
+    // const handleSubmit = (e) => {
+    //     e.preventDefault()
+    //     axios.post(`http://localhost:5000/request/create-intention`, data)
+    //     .then(function(response){
+    //         console.log(response)
+    //         alert(data)
+    //     })
+    //     .catch(function(error){
+    //         console.log(error)
+    //     })
+    // }
 
     const handleCaptchaChange = (value) => {
         setCaptchaValue(value)
@@ -113,8 +121,8 @@ const Petition = () => {
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying} >
-                            <MenuItem value="time slot 1">time slot 1</MenuItem>
-                            <MenuItem value="sdf">time slot 2</MenuItem>
+                            <MenuItem value="06:00:00">6 AM</MenuItem>
+                            <MenuItem value="17:30:00">5:30 PM</MenuItem>
                             </TextField>
                         </Grid>
                     
