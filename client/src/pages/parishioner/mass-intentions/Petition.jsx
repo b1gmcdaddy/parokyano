@@ -26,7 +26,7 @@ const inputstlying = {
 const Petition = () => {
 
     const [captchaValue, setCaptchaValue] = useState(null);
-    const [schedule, setSchedule] = useState([])
+    const [schedule, setSchedule] = useState({slots: ['00:00:00']})
 
     // refers to the FORM's data which will be sent to REQUEST table
     const [data, setData] = useState({
@@ -41,6 +41,7 @@ const Petition = () => {
 
     // upon picking date
     useEffect(() => {
+        // console.log(schedule)
         const fetchSchedule = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/service/retrieve-schedule`, {
@@ -50,7 +51,7 @@ const Petition = () => {
                     }
                 });
                 setSchedule(response.data);
-                console.log(schedule)
+                
             } catch (error) {
                 console.error('error fetching schedule', error)
             }
@@ -80,8 +81,9 @@ const Petition = () => {
         setCaptchaValue(value)
     }
 
+    // validators
     const isCaptchaChecked = captchaValue !== null;
-
+    const isDateSelected = data.mass_date !== '';
 
   return (
     <>
@@ -141,7 +143,8 @@ const Petition = () => {
                                 select 
                                 variant="outlined" 
                                 size="small" 
-                                sx={inputstlying} >
+                                sx={inputstlying} 
+                                disabled={!isDateSelected}>
                             {schedule.slots.map((time, index) => {
                                 return(
                                     <MenuItem key={index} value={time}>{time}</MenuItem>

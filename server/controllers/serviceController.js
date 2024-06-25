@@ -18,7 +18,6 @@ const retrieveAll = (req, res) => {
 const retrieveSchedule = (req, res) => {
     const service_id = parseInt(req.query.id)
     const mass_date = req.query.date
-    console.log(service_id)
 
     db.query(`SELECT * FROM serviceschedule WHERE service_id = ? AND day = WEEKDAY(?) + 1`, 
         [service_id, mass_date], (err, result) => {
@@ -32,8 +31,9 @@ const retrieveSchedule = (req, res) => {
                 timeArray.push(slot)
             }
 
-            console.log(result);
-            console.log(timeArray);
+            // debugs
+            // console.log(result);
+            // console.log(timeArray);
 
             res.status(200).json({
                 schedules: result,
