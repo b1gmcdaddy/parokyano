@@ -36,7 +36,7 @@ const retrieveSchedule = (req, res) => {
             console.log(timeArray);
 
             res.status(200).json({
-                data: result,
+                schedules: result,
                 slots: timeArray
             })        
         }
