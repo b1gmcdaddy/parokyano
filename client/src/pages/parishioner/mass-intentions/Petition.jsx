@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from '../../../assets/imageHeader.jpg';
@@ -25,35 +25,61 @@ const inputstlying = {
 
 const Petition = () => {
 
-  const [captchaValue, setCaptchaValue] = useState(null);
+    const [captchaValue, setCaptchaValue] = useState(null);
+    const [schedule, setSchedule] = useState([])
 
+    // refers to the FORM's data which will be sent to REQUEST table
     const [data, setData] = useState({
         intention_details: '',
         offered_by: '',
         mass_date: '',
         mass_time: '',
         payment_method: '',
-        donation_amount: ''
+        donation_amount: '',
+        service_id: '1',  // 1 = for all mass intentions
     })
 
-    //change value of data with whatever user is typing
+    // upon picking date
+    useEffect(() => {
+        const fetchSchedule = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/service/retrieve-schedule`, {
+                    params: {
+                        id: '1',
+                        date: data.mass_date
+                    }
+                });
+                setSchedule(response.data);
+                console.log(schedule)
+            } catch (error) {
+                console.error('error fetching schedule', error)
+            }
+        }
+        fetchSchedule();
+    }, [data.mass_date])
+
+    // change value of data with whatever user is typing
     const handleChange = (e) => {
         setData({...data, [e.target.name]: e.target.value})
     }
  
-    //need some work atm
-    
-    // const handleSubmit = (e) => {
-    //     e.preventDefault()
-    //     axios.post(`http://localhost:5000/request/create-intention`, data)
-    //     .then(function(response){
-    //         console.log(response)
-    //         alert(data)
-    //     })
-    //     .catch(function(error){
-    //         console.log(error)
-    //     })
-    // }
+    // change value of DATE and retrieve all TIME SLOTS
+    const handleDate = (e) => {
+        setData({...date, [e.target.name]: e.target.value})
+    }
+
+    // need some work atm
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        // axios.post(`http://localhost:5000/request/create-intention`, data)
+        // .then(function(response){
+        //     console.log(response)
+        //     alert(data)
+        // })
+        // .catch(function(error){
+        //     console.log(error)
+        // })
+    }
 
     const handleCaptchaChange = (value) => {
         setCaptchaValue(value)
@@ -121,8 +147,11 @@ const Petition = () => {
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying} >
-                            <MenuItem value="06:00:00">6 AM</MenuItem>
-                            <MenuItem value="17:30:00">5:30 PM</MenuItem>
+                            {schedule.slots.map((time, index) => {
+                                return(
+                                    <MenuItem key={index} value={time}>{time}</MenuItem>
+                                )
+                            })}
                             </TextField>
                         </Grid>
                     
