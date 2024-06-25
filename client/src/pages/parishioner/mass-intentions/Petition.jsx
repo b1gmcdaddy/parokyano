@@ -62,11 +62,6 @@ const Petition = () => {
     const handleChange = (e) => {
         setData({...data, [e.target.name]: e.target.value})
     }
- 
-    // change value of DATE and retrieve all TIME SLOTS
-    const handleDate = (e) => {
-        setData({...date, [e.target.name]: e.target.value})
-    }
 
     // need some work atm
     const handleSubmit = (e) => {
