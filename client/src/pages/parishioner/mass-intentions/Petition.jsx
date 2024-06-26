@@ -28,20 +28,28 @@ const Petition = () => {
     const [captchaValue, setCaptchaValue] = useState(null);
     const [schedule, setSchedule] = useState({slots: ['00:00:00']})
 
-    // refers to the FORM's data which will be sent to REQUEST table
+    // this is a layout of the whole request
     const [data, setData] = useState({
+        // first_name: null,
+        // middle_name: null,
+        // last_name: null,
+        // age: null,
+        // address: null,
+        // relationship: null,
+        // patient_status: null,
+
         intention_details: '',
-        offered_by: '',
+        offered_by: '', //in db, this is requested_by
         mass_date: '',
         mass_time: '',
         payment_method: '',
         donation_amount: '',
+        contact_no: '',
         service_id: '1',  // 1 = for all mass intentions
     })
 
     // upon picking date
     useEffect(() => {
-        // console.log(schedule)
         const fetchSchedule = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/service/retrieve-schedule`, {
@@ -65,8 +73,15 @@ const Petition = () => {
     }
 
     // need some work atm
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
+        try{
+            const response = await axios.post('http://localhost:5000/request/create-intention', data);
+            console.log('form submitted')
+        } catch(err) {
+            console.error('error submitting the form', err)
+        }
+
         // axios.post(`http://localhost:5000/request/create-intention`, data)
         // .then(function(response){
         //     console.log(response)
@@ -110,6 +125,7 @@ const Petition = () => {
                                 variant="outlined" 
                                 size="medium" 
                                 sx={inputstlying} 
+                                required
                                 multiline maxRows={Infinity} />
                         </Grid>
                         
@@ -120,6 +136,7 @@ const Petition = () => {
                                 fullWidth 
                                 variant="outlined" 
                                 size="small" 
+                                required
                                 sx={inputstlying} />
                         </Grid>
 
@@ -131,6 +148,7 @@ const Petition = () => {
                                 variant="outlined" 
                                 type="date" 
                                 size="small" 
+                                required
                                 sx={inputstlying} />
                         </Grid>
 
@@ -143,6 +161,7 @@ const Petition = () => {
                                 select 
                                 variant="outlined" 
                                 size="small" 
+                                required
                                 sx={inputstlying} 
                                 disabled={!isDateSelected}>
                             {schedule.slots.map((time, index) => {
@@ -163,6 +182,7 @@ const Petition = () => {
                                 select 
                                 variant="outlined" 
                                 size="small" 
+                                required
                                 sx={inputstlying} >
                             <MenuItem value="cash">Cash</MenuItem>
                             <MenuItem value="gcash">GCash</MenuItem>
@@ -176,9 +196,20 @@ const Petition = () => {
                                 fullWidth 
                                 variant="outlined" 
                                 size="small" 
+                                required
                                 sx={inputstlying} />
                         </Grid>
 
+                        <Grid item xs={12} sm={4}>
+                            <label>Contact Number:</label>
+                            <TextField name="contact_no"
+                                onChange={handleChange} 
+                                fullWidth 
+                                variant="outlined" 
+                                size="small" 
+                                required
+                                sx={inputstlying} />
+                        </Grid>
 
 
                     </Grid>
