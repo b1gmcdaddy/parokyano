@@ -9,6 +9,7 @@ import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"
 import Footer from "../../../components/Footer";
+import CashPaymentModal from "../../../components/CashPaymentModal";
 
 
 const inputstlying = {
@@ -25,71 +26,98 @@ const inputstlying = {
 
 const Petition = () => {
 
+    const [open, setOpen] = useState(false)
     const [captchaValue, setCaptchaValue] = useState(null);
     const [schedule, setSchedule] = useState({slots: ['00:00:00']})
+    const [serviceInfo, setServiceInfo] = useState({});
+    const id = 1    // 1 = for all mass intentions
 
-    // this is a layout of the whole request
-    const [data, setData] = useState({
-        // first_name: null,
-        // middle_name: null,
-        // last_name: null,
-        // age: null,
-        // address: null,
-        // relationship: null,
-        // patient_status: null,
-
+    // form data
+    const [formData, setFormData] = useState({
         intention_details: '',
-        offered_by: '', //in db, this is requested_by
+        offered_by: '', //in db, this is 'requested_by'
         mass_date: '',
         mass_time: '',
         payment_method: '',
         donation_amount: '',
         contact_no: '',
-        service_id: '1',  // 1 = for all mass intentions
+        service_id: id, 
     })
 
-    // upon picking date
+    // modal data
+    const [modalData, setModalData] = useState({})
+
+    // getters
     useEffect(() => {
         const fetchSchedule = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/service/retrieve-schedule`, {
                     params: {
-                        id: '1',
-                        date: data.mass_date
+                        id: id,
+                        date: formData.mass_date
                     }
                 });
                 setSchedule(response.data);
-                
             } catch (error) {
                 console.error('error fetching schedule', error)
             }
         }
         fetchSchedule();
-    }, [data.mass_date])
+    }, [formData.mass_date])
 
-    // change value of data with whatever user is typing
+    useEffect(() => {
+        axios.get('http://localhost:5000/service/retrieveByParams', {
+            params: {
+                id: id
+            }
+        })
+        .then(function(response){
+            setServiceInfo(response.data)
+            console.log(response.data)
+        })
+        .catch(function(err){
+            console.error('error fetching service info', err)
+        })
+        // const fetchServiceInfo = async () => {
+        //     try {
+        //         const response = await axios.get('http://localhost:5000/service/retrieveByParams', {
+        //             params: {
+        //                 id: id
+        //             }
+        //         })
+        //         setServiceInfo(response.data.service[0])
+        //     } catch (err) {
+        //         console.error('failed to fetch serviceInfo', err);
+        //     }
+        // }
+        // fetchServiceInfo()
+        // console.log(serviceInfo)
+    }, [])
+
+
+
+    // event handlers
     const handleChange = (e) => {
-        setData({...data, [e.target.name]: e.target.value})
+        setFormData({...formData, [e.target.name]: e.target.value})
     }
 
-    // need some work atm
+    // change message depending on which service
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
-            const response = await axios.post('http://localhost:5000/request/create-intention', data);
+            const response = await axios.post('http://localhost:5000/request/create-intention', formData);
+            const paymentInfo = {
+                transaction_no: 'example123',
+                fee: serviceInfo.fee,
+                requirements: serviceInfo.requirements,
+                message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!',
+            }
+            setModalData(paymentInfo);
+            setOpen(true)
             console.log('form submitted')
         } catch(err) {
             console.error('error submitting the form', err)
         }
-
-        // axios.post(`http://localhost:5000/request/create-intention`, data)
-        // .then(function(response){
-        //     console.log(response)
-        //     alert(data)
-        // })
-        // .catch(function(error){
-        //     console.log(error)
-        // })
     }
 
     const handleCaptchaChange = (value) => {
@@ -98,7 +126,7 @@ const Petition = () => {
 
     // validators
     const isCaptchaChecked = captchaValue !== null;
-    const isDateSelected = data.mass_date !== '';
+    const isDateSelected = formData.mass_date !== '';
 
   return (
     <>
@@ -112,6 +140,8 @@ const Petition = () => {
                 <span className="xs:hidden md:flex">Return to Selection</span>
             </Link>
             <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please input the following</h1>
+
+            <CashPaymentModal open={open} data={modalData} />
 
             <Container maxWidth="md" sx={{ marginBottom: '50px' }}>
                 <form onSubmit={handleSubmit}>
@@ -156,7 +186,7 @@ const Petition = () => {
                             <label>Time Slot:</label>
                             <TextField name="mass_time"
                                 onChange={handleChange} 
-                                value={data.mass_time}
+                                value={formData.mass_time}
                                 fullWidth 
                                 select 
                                 variant="outlined" 
@@ -176,7 +206,7 @@ const Petition = () => {
                         <Grid item xs={12} sm={4}>
                             <label>Payment Method:</label>
                             <TextField name="payment_method" 
-                                value={data.payment_method}
+                                value={formData.payment_method}
                                 onChange={handleChange} 
                                 fullWidth 
                                 select 
