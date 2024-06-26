@@ -4,6 +4,7 @@ import imageHeader from '../../assets/imageHeader.jpg';
 import Footer from '../../components/Footer';
 import { Typography } from "@mui/material";
 import ReCAPTCHA from "react-google-recaptcha"
+import { Link } from "react-router-dom";
 
 const containerStyle = {
   backgroundImage: `url(${imageHeader})`,
@@ -44,9 +45,11 @@ const TrackStatus = () => {
                         />
                     </div>
                     <div className="mt-5 flex justify-center">
+                      <Link to="/track-request">
                         <button className={`text-white py-2 px-6 font-medium shadow-sm rounded-md ${isCaptchaChecked ? 'bg-[#355173]' : 'bg-[#868686]'}`} disabled={!isCaptchaChecked} type="button">
                          Confirm
                         </button>
+                        </Link>
                     </div>
                     </form>
                 </div>

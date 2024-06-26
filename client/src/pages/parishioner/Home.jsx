@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCross, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import RequestNotice from '../../components/RequestNotice';
 
+
 const Home = () => {
   const [open, setOpen] = useState(false);
   const [reqUrl, setReqUrl] = useState('');
