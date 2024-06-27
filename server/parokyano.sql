@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2024 at 10:39 AM
+-- Generation Time: Jun 27, 2024 at 04:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -121,36 +121,54 @@ CREATE TABLE `priestschedule` (
 --
 
 CREATE TABLE `request` (
-  `request_id` bigint(20) NOT NULL,
-  `first_name` varchar(100) NOT NULL,
+  `requestID` bigint(20) NOT NULL,
+  `first_name` varchar(100) DEFAULT NULL,
   `middle_name` varchar(100) DEFAULT NULL,
-  `last_name` varchar(100) NOT NULL,
-  `age` int(6) NOT NULL,
-  `address` varchar(255) NOT NULL,
+  `last_name` varchar(100) DEFAULT NULL,
+  `age` int(6) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
   `contact_no` varchar(11) NOT NULL,
   `relationship` varchar(100) DEFAULT NULL,
   `requested_by` varchar(255) DEFAULT NULL,
   `patient_status` varchar(100) DEFAULT NULL,
   `purpose` text DEFAULT NULL,
+  `intention_details` text DEFAULT NULL,
+  `type` varchar(50) DEFAULT NULL,
   `preferred_date` date NOT NULL,
   `preferred_time` time NOT NULL,
   `preferred_priest` varchar(255) DEFAULT NULL,
   `date_requested` date NOT NULL,
   `payment_method` enum('cash','gcash') NOT NULL,
-  `transaction_date` date NOT NULL,
+  `transaction_date` date DEFAULT NULL,
   `interview_date` date DEFAULT NULL,
   `isPrenuptial` tinyint(1) DEFAULT NULL,
   `isRequirement` tinyint(1) DEFAULT NULL,
   `isParishioner` tinyint(1) DEFAULT NULL,
   `isSponsor` tinyint(1) DEFAULT NULL,
   `status` enum('pending','approved','cancelled','finished','archived') NOT NULL,
-  `payment_status` enum('paid','unpaid') NOT NULL,
+  `donation` int(11) DEFAULT NULL,
+  `payment_status` enum('paid','unpaid') NOT NULL DEFAULT 'unpaid',
   `transaction_no` int(11) NOT NULL,
   `service_id` bigint(20) NOT NULL,
-  `user_id` bigint(20) NOT NULL,
-  `priestSched_id` bigint(20) NOT NULL,
-  `venueSched_id` bigint(20) NOT NULL
+  `user_id` bigint(20) DEFAULT NULL,
+  `priestSched_id` bigint(20) DEFAULT NULL,
+  `venueSched_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `request`
+--
+
+INSERT INTO `request` (`requestID`, `first_name`, `middle_name`, `last_name`, `age`, `address`, `contact_no`, `relationship`, `requested_by`, `patient_status`, `purpose`, `intention_details`, `type`, `preferred_date`, `preferred_time`, `preferred_priest`, `date_requested`, `payment_method`, `transaction_date`, `interview_date`, `isPrenuptial`, `isRequirement`, `isParishioner`, `isSponsor`, `status`, `donation`, `payment_status`, `transaction_no`, `service_id`, `user_id`, `priestSched_id`, `venueSched_id`) VALUES
+(1, NULL, NULL, NULL, NULL, NULL, '', NULL, 'john', NULL, NULL, NULL, NULL, '2024-06-27', '06:00:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
+(2, NULL, NULL, NULL, NULL, NULL, '', NULL, 'john', NULL, NULL, NULL, NULL, '2024-06-16', '05:00:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
+(3, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, '2024-06-29', '17:30:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
+(4, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, '\"petition 1\"', NULL, '2024-06-30', '16:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
+(5, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, '\"petition 2\"', NULL, '2024-06-28', '17:30:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
+(6, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, '\"test 3\"', NULL, '2024-06-28', '17:30:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
+(7, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, '\"test 4\"', NULL, '2024-06-30', '16:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', 0, 1, NULL, NULL, NULL),
+(8, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, '\"test 4\"', NULL, '2024-06-29', '06:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', 0, 1, NULL, NULL, NULL),
+(9, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, '\"test 5\"', 'Petition', '2024-06-29', '06:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', 0, 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -159,12 +177,19 @@ CREATE TABLE `request` (
 --
 
 CREATE TABLE `service` (
-  `service_id` bigint(11) NOT NULL,
+  `serviceID` bigint(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `requirements` text NOT NULL,
-  `service_fee` int(11) DEFAULT NULL,
-  `duration` int(11) NOT NULL
+  `requirements` text DEFAULT NULL,
+  `fee` int(11) DEFAULT NULL,
+  `duration` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `service`
+--
+
+INSERT INTO `service` (`serviceID`, `name`, `requirements`, `fee`, `duration`) VALUES
+(1, 'Mass Intention', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -173,11 +198,36 @@ CREATE TABLE `service` (
 --
 
 CREATE TABLE `serviceschedule` (
-  `schedule_id` int(11) NOT NULL,
+  `scheduleID` int(11) NOT NULL,
   `day` enum('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') NOT NULL,
   `time` time NOT NULL,
   `service_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `serviceschedule`
+--
+
+INSERT INTO `serviceschedule` (`scheduleID`, `day`, `time`, `service_id`) VALUES
+(1, 'Monday', '06:00:00', 1),
+(2, 'Tuesday', '06:00:00', 1),
+(3, 'Wednesday', '06:00:00', 1),
+(4, 'Thursday', '06:00:00', 1),
+(5, 'Friday', '06:00:00', 1),
+(6, 'Saturday', '06:00:00', 1),
+(7, 'Monday', '17:30:00', 1),
+(8, 'Tuesday', '17:30:00', 1),
+(9, 'Wednesday', '17:30:00', 1),
+(10, 'Thursday', '17:30:00', 1),
+(11, 'Friday', '17:30:00', 1),
+(12, 'Saturday', '17:30:00', 1),
+(13, 'Sunday', '05:00:00', 1),
+(14, 'Sunday', '06:30:00', 1),
+(15, 'Sunday', '08:00:00', 1),
+(16, 'Sunday', '09:30:00', 1),
+(17, 'Sunday', '16:00:00', 1),
+(18, 'Sunday', '17:30:00', 1),
+(19, 'Sunday', '19:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -207,13 +257,20 @@ CREATE TABLE `user` (
   `last_name` varchar(100) NOT NULL,
   `user_type` enum('staff','admin') NOT NULL,
   `date_started` date NOT NULL,
-  `date_ended` date NOT NULL,
+  `date_ended` date DEFAULT NULL,
   `contact_no` varchar(11) NOT NULL,
   `email` varchar(255) NOT NULL,
   `username` varchar(20) NOT NULL,
   `password` varchar(50) NOT NULL,
   `status` enum('active','inactive') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `user_type`, `date_started`, `date_ended`, `contact_no`, `email`, `username`, `password`, `status`) VALUES
+(1, 'John', 'Titor', 'staff', '2024-06-24', NULL, '09123456789', 'travel0@gmail.com', 'john', 'staff', 'active');
 
 -- --------------------------------------------------------
 
@@ -308,7 +365,7 @@ ALTER TABLE `priestschedule`
 -- Indexes for table `request`
 --
 ALTER TABLE `request`
-  ADD PRIMARY KEY (`request_id`),
+  ADD PRIMARY KEY (`requestID`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `service_id` (`service_id`),
   ADD KEY `venueSched_id` (`venueSched_id`),
@@ -318,13 +375,13 @@ ALTER TABLE `request`
 -- Indexes for table `service`
 --
 ALTER TABLE `service`
-  ADD PRIMARY KEY (`service_id`);
+  ADD PRIMARY KEY (`serviceID`);
 
 --
 -- Indexes for table `serviceschedule`
 --
 ALTER TABLE `serviceschedule`
-  ADD PRIMARY KEY (`schedule_id`),
+  ADD PRIMARY KEY (`scheduleID`),
   ADD KEY `service_id` (`service_id`);
 
 --
@@ -407,19 +464,19 @@ ALTER TABLE `priestschedule`
 -- AUTO_INCREMENT for table `request`
 --
 ALTER TABLE `request`
-  MODIFY `request_id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `requestID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
-  MODIFY `service_id` bigint(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `serviceID` bigint(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `serviceschedule`
 --
 ALTER TABLE `serviceschedule`
-  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `scheduleID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `sponsor`
@@ -431,7 +488,7 @@ ALTER TABLE `sponsor`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `venue`
@@ -465,20 +522,20 @@ ALTER TABLE `announcement`
 -- Constraints for table `baptism`
 --
 ALTER TABLE `baptism`
-  ADD CONSTRAINT `baptism_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `request` (`request_id`);
+  ADD CONSTRAINT `baptism_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `request` (`requestID`);
 
 --
 -- Constraints for table `confirmation`
 --
 ALTER TABLE `confirmation`
-  ADD CONSTRAINT `confirmation_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `request` (`request_id`);
+  ADD CONSTRAINT `confirmation_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `request` (`requestID`);
 
 --
 -- Constraints for table `logs`
 --
 ALTER TABLE `logs`
   ADD CONSTRAINT `logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  ADD CONSTRAINT `logs_ibfk_2` FOREIGN KEY (`request_id`) REFERENCES `request` (`request_id`);
+  ADD CONSTRAINT `logs_ibfk_2` FOREIGN KEY (`request_id`) REFERENCES `request` (`requestID`);
 
 --
 -- Constraints for table `priestschedule`
@@ -491,7 +548,7 @@ ALTER TABLE `priestschedule`
 --
 ALTER TABLE `request`
   ADD CONSTRAINT `request_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  ADD CONSTRAINT `request_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`),
+  ADD CONSTRAINT `request_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `service` (`serviceID`),
   ADD CONSTRAINT `request_ibfk_3` FOREIGN KEY (`venueSched_id`) REFERENCES `venueschedule` (`schedule_id`),
   ADD CONSTRAINT `request_ibfk_4` FOREIGN KEY (`priestSched_id`) REFERENCES `priestschedule` (`schedule_id`);
 
@@ -499,7 +556,7 @@ ALTER TABLE `request`
 -- Constraints for table `serviceschedule`
 --
 ALTER TABLE `serviceschedule`
-  ADD CONSTRAINT `serviceschedule_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`);
+  ADD CONSTRAINT `serviceschedule_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `service` (`serviceID`);
 
 --
 -- Constraints for table `sponsor`
@@ -520,7 +577,7 @@ ALTER TABLE `venueschedule`
 -- Constraints for table `wedding`
 --
 ALTER TABLE `wedding`
-  ADD CONSTRAINT `wedding_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `request` (`request_id`);
+  ADD CONSTRAINT `wedding_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `request` (`requestID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
