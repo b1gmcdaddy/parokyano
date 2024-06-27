@@ -27,14 +27,15 @@ const inputstlying = {
 const Petition = () => {
 
     const [open, setOpen] = useState(false)
-    const [captchaValue, setCaptchaValue] = useState(null);
+    const [captchaValue, setCaptchaValue] = useState(true);
     const [schedule, setSchedule] = useState({slots: ['00:00:00']})
-    const [serviceInfo, setServiceInfo] = useState({});
-    const id = 1    // 1 = for all mass intentions
-
+    const id = 1  
+    var dateToday = new Date().toJSON().slice(0,10);
+    
     // form data
     const [formData, setFormData] = useState({
         intention_details: '',
+        type: 'Petition',
         offered_by: '', //in db, this is 'requested_by'
         mass_date: '',
         mass_time: '',
@@ -42,6 +43,7 @@ const Petition = () => {
         donation_amount: '',
         contact_no: '',
         service_id: id, 
+        date_requested: dateToday
     })
 
     // modal data
@@ -65,37 +67,6 @@ const Petition = () => {
         fetchSchedule();
     }, [formData.mass_date])
 
-    useEffect(() => {
-        axios.get('http://localhost:5000/service/retrieveByParams', {
-            params: {
-                id: id
-            }
-        })
-        .then(function(response){
-            setServiceInfo(response.data)
-            console.log(response.data)
-        })
-        .catch(function(err){
-            console.error('error fetching service info', err)
-        })
-        // const fetchServiceInfo = async () => {
-        //     try {
-        //         const response = await axios.get('http://localhost:5000/service/retrieveByParams', {
-        //             params: {
-        //                 id: id
-        //             }
-        //         })
-        //         setServiceInfo(response.data.service[0])
-        //     } catch (err) {
-        //         console.error('failed to fetch serviceInfo', err);
-        //     }
-        // }
-        // fetchServiceInfo()
-        // console.log(serviceInfo)
-    }, [])
-
-
-
     // event handlers
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})
@@ -105,16 +76,16 @@ const Petition = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
-            const response = await axios.post('http://localhost:5000/request/create-intention', formData);
+            await axios.post('http://localhost:5000/request/create-intention', formData);
             const paymentInfo = {
-                transaction_no: 'example123',
-                fee: serviceInfo.fee,
-                requirements: serviceInfo.requirements,
+                transaction_no: 'example123',   //needs work
+                fee: formData.donation_amount,
+                requirements: null,
                 message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!',
             }
             setModalData(paymentInfo);
             setOpen(true)
-            console.log('form submitted')
+            // console.log(paymentInfo)
         } catch(err) {
             console.error('error submitting the form', err)
         }
@@ -128,7 +99,7 @@ const Petition = () => {
     const isCaptchaChecked = captchaValue !== null;
     const isDateSelected = formData.mass_date !== '';
 
-  return (
+    return (
     <>
       <NavParishioner />
             <Header  
@@ -258,7 +229,7 @@ const Petition = () => {
             </Container>
             <Footer />
     </>
-  )
+    )
 }
 
 export default Petition
