@@ -58,7 +58,7 @@ const CashPaymentModal = ({open, data}) => {
                         <Grid item sm={12}>
                             <DefaultCopyField fullWidth disabled value={data.transaction_no} sx={inputstyling}/>
                         </Grid>
-                        {data.fee != null || data.requirements != null && (
+                        {(data.fee != null || data.requirements != null) && (
                             <Grid container justifyContent={"center"} sx={{bgcolor:'#E8E8E8', padding: 2, margin: 2}}>
                                 <Typography variant='subtitle2' sx={{marginRight: 4}}>
                                     {data.fee != null && (
