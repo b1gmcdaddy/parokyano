@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from '../../../assets/imageHeader.jpg';
 import Header from '../../../components/Header';
@@ -8,6 +8,7 @@ import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
+import config from '../../../config';
 
 const inputstlying = {
   '& .MuiOutlinedInput-root': {
@@ -22,6 +23,12 @@ const inputstlying = {
 };
 
 const Thanksgiving = () => {
+
+  const [captchaValue, setCaptchaValue] = useState(true);
+  const [isChecked, setIsChecked] = useState({ honorOfSaints: false, weddingAnniversary: false, successOf: false, birthdayOf: false, others: false,});
+  const id = 1
+  const dateToday = new Date().toJSON().slice(0,10)
+  const [schedule, setSchedule] = useState({slots: ['00:00:00']})
 
   // form data
   const [formData, setFormData] = useState({
@@ -39,13 +46,28 @@ const Thanksgiving = () => {
     donation_amount: ''
   })
 
-  const [captchaValue, setCaptchaValue] = useState(true);
-  const [isChecked, setIsChecked] = useState({ honorOfSaints: false, weddingAnniversary: false, successOf: false, birthdayOf: false, others: false,});
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try{
+        const response = await axios.get(`${config.API}/service/retrieve-schedule`, {
+          params: {
+            id: id,
+            date: formData.mass_date
+          }
+        })
+        setSchedule(response)
+        console.log(schedule)
+      } catch (err) {
+        console.error('error fetching schedule', err)
+      }
+      fetchSchedule();
+    }
+  }, [formData.mass_date])
 
+  
   // event handlers for data values
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value})
-    console.log(formData)
   }
   const handleIntention = (e) => {
     setFormData({...formData.intention,[e.target.name]: e.target.value})
@@ -79,93 +101,129 @@ const Thanksgiving = () => {
           <Grid container spacing={4}>
             
                 <Grid item xs={12} sm={6}>
-                  <FormControlLabel control={<Checkbox checked={isChecked.honorOfSaints} onChange={allowInput} name="honorOfSaints" />} label="In Honor of Saints" />
-                  <TextField 
-                    variant="outlined" 
-                    size="small" 
-                    sx={inputstlying} 
-                    label="Please input the details" 
-                    fullWidth 
-                    disabled={!isChecked.honorOfSaints}
-                    name='saint'
-                    onChange={handleIntention} />
+                    <FormControlLabel control={<Checkbox checked={isChecked.honorOfSaints} onChange={allowInput} name="honorOfSaints" />} label="In Honor of Saints" />
+                    <TextField 
+                      variant="outlined" 
+                      size="small" 
+                      sx={inputstlying} 
+                      label="Please input the details" 
+                      fullWidth 
+                      disabled={!isChecked.honorOfSaints}
+                      name='saint'
+                      onChange={handleIntention} />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <FormControlLabel control={<Checkbox checked={isChecked.weddingAnniversary} onChange={allowInput} name="weddingAnniversary" />} label="Wedding Anniversary of" />
-                  <TextField variant="outlined" 
-                    size="small" 
-                    sx={inputstlying} 
-                    label="Please input the details" 
-                    fullWidth 
-                    disabled={!isChecked.weddingAnniversary}
-                    name='wedding'
-                    onChange={handleIntention} />
+                    <FormControlLabel control={<Checkbox checked={isChecked.weddingAnniversary} onChange={allowInput} name="weddingAnniversary" />} label="Wedding Anniversary of" />
+                    <TextField variant="outlined" 
+                      size="small" 
+                      sx={inputstlying} 
+                      label="Please input the details" 
+                      fullWidth 
+                      disabled={!isChecked.weddingAnniversary}
+                      name='wedding'
+                      onChange={handleIntention} />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <FormControlLabel control={<Checkbox checked={isChecked.successOf} onChange={allowInput} name="successOf" />} label="For the success of" />
-                  <TextField variant="outlined" 
-                    size="small" 
-                    sx={inputstlying} 
-                    label="Please input the details" 
-                    fullWidth 
-                    disabled={!isChecked.successOf}
-                    name='success'
-                    onChange={handleIntention} />
+                    <FormControlLabel control={<Checkbox checked={isChecked.successOf} onChange={allowInput} name="successOf" />} label="For the success of" />
+                    <TextField variant="outlined" 
+                      size="small" 
+                      sx={inputstlying} 
+                      label="Please input the details" 
+                      fullWidth 
+                      disabled={!isChecked.successOf}
+                      name='success'
+                      onChange={handleIntention} />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <FormControlLabel control={<Checkbox checked={isChecked.birthdayOf} onChange={allowInput} name="birthdayOf" />} label="For the birthday of" />
-                  <TextField variant="outlined" 
-                    size="small" 
-                    sx={inputstlying} 
-                    label="Please input the details" 
-                    fullWidth 
-                    disabled={!isChecked.birthdayOf}
-                    name='birthday'
-                    onChange={handleIntention} />
+                    <FormControlLabel control={<Checkbox checked={isChecked.birthdayOf} onChange={allowInput} name="birthdayOf" />} label="For the birthday of" />
+                    <TextField variant="outlined" 
+                      size="small" 
+                      sx={inputstlying} 
+                      label="Please input the details" 
+                      fullWidth 
+                      disabled={!isChecked.birthdayOf}
+                      name='birthday'
+                      onChange={handleIntention} />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <FormControlLabel control={<Checkbox checked={isChecked.others} onChange={allowInput} name="others" />} label="Others" />
-                  <TextField variant="outlined" 
-                    size="small" 
-                    sx={inputstlying} 
-                    label="Please input the details" 
-                    fullWidth 
-                    disabled={!isChecked.others}
-                    name='others'
-                    onChange={handleIntention} />
+                    <FormControlLabel control={<Checkbox checked={isChecked.others} onChange={allowInput} name="others" />} label="Others" />
+                    <TextField variant="outlined" 
+                      size="small" 
+                      sx={inputstlying} 
+                      label="Please input the details" 
+                      fullWidth 
+                      disabled={!isChecked.others}
+                      name='others'
+                      onChange={handleIntention} />
                 </Grid>
 
                 <Grid item xs={12} sm={3} sx={{marginTop: {md: '18px'}}}>
                     <label>Mass Date:</label>
-                            <TextField fullWidth variant="outlined" type="date" size="small" sx={inputstlying} required />           
+                    <TextField fullWidth 
+                      variant="outlined" 
+                      type="date" 
+                      size="small" 
+                      sx={inputstlying} 
+                      name='mass_date'
+                      onChange={handleChange}
+                      required />           
                 </Grid>
+
                 <Grid item xs={12} sm={3} sx={{marginTop: {md: '18px'}}}>
-                      <label>Time Slot:</label>
-                            <TextField fullWidth select variant="outlined" size="small" sx={inputstlying} required >
-                                <MenuItem value="time slot 1">time slot 1</MenuItem>
-                                <MenuItem value="sdf">time slot 2</MenuItem>
-                            </TextField>
+                    <label>Time Slot:</label>
+                    <TextField fullWidth 
+                      select variant="outlined" 
+                      size="small" 
+                      sx={inputstlying} 
+                      name='mass_time'
+                      onChange={handleChange}
+                      required >
+                        <MenuItem value="time slot 1">time slot 1</MenuItem>
+                        <MenuItem value="sdf">time slot 2</MenuItem>
+                    </TextField>
                 </Grid> 
+
                 <Grid item xs={12} sm={6}>
-                            <label>Offered by:</label>
-                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
-                        </Grid>  
+                    <label>Offered by:</label>
+                    <TextField fullWidth 
+                      variant="outlined" 
+                      size="small" 
+                      sx={inputstlying} 
+                      name='offered_by'
+                      onChange={handleChange}
+                      required />
+                </Grid>  
+
                 <Grid item xs={12} sm={3}>
-                            <label>Payment Method:</label>
-                            <TextField fullWidth select variant="outlined" size="small" sx={inputstlying} required>
-                            <MenuItem value="cash">Cash</MenuItem>
-                            <MenuItem value="gcash">GCash</MenuItem>
-                            </TextField>
-                        </Grid>
-                        <Grid item xs={12} sm={3}>
-                            <label>Donation Amount:</label>
-                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
-                        </Grid>  
+                    <label>Payment Method:</label>
+                    <TextField fullWidth select 
+                      variant="outlined" 
+                      size="small" 
+                      sx={inputstlying}
+                      name='payment_method'
+                      onChange={handleChange} 
+                      required>
+                        <MenuItem value="cash">Cash</MenuItem>
+                        <MenuItem value="gcash">GCash</MenuItem>
+                    </TextField>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                    <label>Donation Amount:</label>
+                    <TextField fullWidth 
+                      variant="outlined" 
+                      size="small" 
+                      sx={inputstlying} 
+                      name='donation_amount'
+                      onChange={handleChange}
+                      required />
+                </Grid>  
           </Grid>
+
           <div className="mt-[4rem] flex justify-center">
             <ReCAPTCHA
               sitekey="6LeCEPMpAAAAANAqLQ48wTuNOGmTPaHcMxJh4xaJ"
