@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
 import config from '../../../config';
+import axios from 'axios';
+import CashPaymentModal from '../../../components/CashPaymentModal';
 
 const inputstlying = {
   '& .MuiOutlinedInput-root': {
@@ -29,13 +31,15 @@ const Thanksgiving = () => {
   const id = 1
   const dateToday = new Date().toJSON().slice(0,10)
   const [schedule, setSchedule] = useState({slots: ['00:00:00']})
+  const [modalData, setModalData] = useState({})
+  const [open, setOpen] = useState(false)
 
   // form data
   const [formData, setFormData] = useState({
-    intention: {
+    intention_details: {
       saint: '',
       wedding: '',
-      sucess: '',
+      success: '',
       birthday: '',
       others: ''
     },
@@ -43,34 +47,57 @@ const Thanksgiving = () => {
     mass_time: '',
     offered_by: '',
     payment_method: '',
-    donation_amount: ''
+    donation_amount: '',
+    type: 'Thanksgiving',
+    contact_no: '',
+    date_requested: dateToday,
+    service_id: id
   })
 
+  console.log(formData.intention_details)
+
   useEffect(() => {
-    const fetchSchedule = async () => {
-      try{
-        const response = await axios.get(`${config.API}/service/retrieve-schedule`, {
-          params: {
-            id: id,
-            date: formData.mass_date
-          }
-        })
-        setSchedule(response)
-        console.log(schedule)
-      } catch (err) {
-        console.error('error fetching schedule', err)
-      }
-      fetchSchedule();
-    }
-  }, [formData.mass_date])
+        const fetchSchedule = async () => {
+            try {
+                const response = await axios.get(`${config.API}/service/retrieve-schedule`, {
+                    params: {
+                        id: id,
+                        date: formData.mass_date
+                    }
+                });
+                setSchedule(response.data);
+            } catch (error) {
+                console.error('error fetching schedule', error)
+            }
+        }
+        fetchSchedule();
+    }, [formData.mass_date])
 
   
   // event handlers for data values
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value})
   }
-  const handleIntention = (e) => {
-    setFormData({...formData.intention,[e.target.name]: e.target.value})
+  const handleIntention = (e) => setFormData(prevState => ({
+    ...prevState,
+    intention_details: { ...prevState.intention_details, [e.target.name]: e.target.value }
+  }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+        await axios.post(`${config.API}/request/create-intention`, formData);
+        const paymentInfo = {
+          transaction_no: 'example',
+          fee: formData.donation_amount,
+          requirements: null,
+          message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
+        }
+        setModalData(paymentInfo)
+        setOpen(true)
+    } catch (err) {
+        console.error('error submitting form data', err)
+    }
   }
 
   const handleCaptchaChange = (value) => {
@@ -96,8 +123,10 @@ const Thanksgiving = () => {
       </Link>
       <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please input the following</h1>
 
+      <CashPaymentModal open={open} data={modalData}/>
+
       <Container maxWidth="md" sx={{ marginBottom: '50px' }}>
-        <form>
+        <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             
                 <Grid item xs={12} sm={6}>
@@ -181,9 +210,13 @@ const Thanksgiving = () => {
                       sx={inputstlying} 
                       name='mass_time'
                       onChange={handleChange}
+                      value={formData.mass_time}
                       required >
-                        <MenuItem value="time slot 1">time slot 1</MenuItem>
-                        <MenuItem value="sdf">time slot 2</MenuItem>
+                        {schedule.slots.map((time, index) => {
+                            return(
+                              <MenuItem key={index} value={time}>{time}</MenuItem>
+                            )
+                        })}              
                     </TextField>
                 </Grid> 
 
@@ -206,6 +239,7 @@ const Thanksgiving = () => {
                       sx={inputstlying}
                       name='payment_method'
                       onChange={handleChange} 
+                      value={formData.payment_method}
                       required>
                         <MenuItem value="cash">Cash</MenuItem>
                         <MenuItem value="gcash">GCash</MenuItem>

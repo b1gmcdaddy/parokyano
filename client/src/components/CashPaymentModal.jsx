@@ -62,7 +62,7 @@ const CashPaymentModal = ({open, data}) => {
                             <Grid container justifyContent={"center"} sx={{bgcolor:'#E8E8E8', padding: 2, margin: 2}}>
                                 <Typography variant='subtitle2' sx={{marginRight: 4}}>
                                     {data.fee != null && (
-                                        <p><strong>Fee:</strong></p>
+                                        <p><strong>Amount:</strong></p>
                                     )}
                                     {data.requirements != null && (
                                         <p><strong>Requirements:</strong></p>

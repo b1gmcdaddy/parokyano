@@ -6,6 +6,7 @@ const db = require('./db')
 const createIntention = (req, res) => {
     const data = req.body
     const intention = JSON.stringify(data.intention_details)
+    console.log(data.intention_details)
 
     //requested_by = offered_by
     //preferred_date = mass_date

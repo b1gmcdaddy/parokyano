@@ -30,7 +30,6 @@ const Petition = () => {
     const [open, setOpen] = useState(false)
     const [captchaValue, setCaptchaValue] = useState(null);
     const [schedule, setSchedule] = useState({slots: ['00:00:00']})
-    console.log(schedule)
     const id = 1  
     var dateToday = new Date().toJSON().slice(0,10);
     
