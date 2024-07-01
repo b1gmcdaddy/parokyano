@@ -47,7 +47,7 @@ const retrieveSchedule = (req, res) => {
             }
 
             // debugs
-            // console.log(result);
+            console.log(result);
             // console.log(timeArray);
 
             return res.status(200).json({

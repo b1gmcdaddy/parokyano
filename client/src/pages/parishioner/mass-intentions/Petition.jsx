@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"
 import Footer from "../../../components/Footer";
 import CashPaymentModal from "../../../components/CashPaymentModal";
+import config from "../../../config"
 
 
 const inputstlying = {
@@ -27,8 +28,9 @@ const inputstlying = {
 const Petition = () => {
 
     const [open, setOpen] = useState(false)
-    const [captchaValue, setCaptchaValue] = useState(true);
+    const [captchaValue, setCaptchaValue] = useState(null);
     const [schedule, setSchedule] = useState({slots: ['00:00:00']})
+    console.log(schedule)
     const id = 1  
     var dateToday = new Date().toJSON().slice(0,10);
     
@@ -53,7 +55,7 @@ const Petition = () => {
     useEffect(() => {
         const fetchSchedule = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/service/retrieve-schedule`, {
+                const response = await axios.get(`${config.API}/service/retrieve-schedule`, {
                     params: {
                         id: id,
                         date: formData.mass_date
@@ -76,7 +78,7 @@ const Petition = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
-            await axios.post('http://localhost:5000/request/create-intention', formData);
+            await axios.post(`${config.API}/request/create-intention`, formData);
             const paymentInfo = {
                 transaction_no: 'example123',   //needs work
                 fee: formData.donation_amount,

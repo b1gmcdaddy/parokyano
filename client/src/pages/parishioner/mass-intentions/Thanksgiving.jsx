@@ -22,8 +22,34 @@ const inputstlying = {
 };
 
 const Thanksgiving = () => {
-  const [captchaValue, setCaptchaValue] = useState(null);
+
+  // form data
+  const [formData, setFormData] = useState({
+    intention: {
+      saint: '',
+      wedding: '',
+      sucess: '',
+      birthday: '',
+      others: ''
+    },
+    mass_date: '',
+    mass_time: '',
+    offered_by: '',
+    payment_method: '',
+    donation_amount: ''
+  })
+
+  const [captchaValue, setCaptchaValue] = useState(true);
   const [isChecked, setIsChecked] = useState({ honorOfSaints: false, weddingAnniversary: false, successOf: false, birthdayOf: false, others: false,});
+
+  // event handlers for data values
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value})
+    console.log(formData)
+  }
+  const handleIntention = (e) => {
+    setFormData({...formData.intention,[e.target.name]: e.target.value})
+  }
 
   const handleCaptchaChange = (value) => {
     setCaptchaValue(value);
@@ -51,26 +77,68 @@ const Thanksgiving = () => {
       <Container maxWidth="md" sx={{ marginBottom: '50px' }}>
         <form>
           <Grid container spacing={4}>
+            
                 <Grid item xs={12} sm={6}>
                   <FormControlLabel control={<Checkbox checked={isChecked.honorOfSaints} onChange={allowInput} name="honorOfSaints" />} label="In Honor of Saints" />
-                  <TextField variant="outlined" size="small" sx={inputstlying} label="Please input the details" fullWidth disabled={!isChecked.honorOfSaints} />
+                  <TextField 
+                    variant="outlined" 
+                    size="small" 
+                    sx={inputstlying} 
+                    label="Please input the details" 
+                    fullWidth 
+                    disabled={!isChecked.honorOfSaints}
+                    name='saint'
+                    onChange={handleIntention} />
                 </Grid>
+
                 <Grid item xs={12} sm={6}>
                   <FormControlLabel control={<Checkbox checked={isChecked.weddingAnniversary} onChange={allowInput} name="weddingAnniversary" />} label="Wedding Anniversary of" />
-                  <TextField variant="outlined" size="small" sx={inputstlying} label="Please input the details" fullWidth disabled={!isChecked.weddingAnniversary} />
+                  <TextField variant="outlined" 
+                    size="small" 
+                    sx={inputstlying} 
+                    label="Please input the details" 
+                    fullWidth 
+                    disabled={!isChecked.weddingAnniversary}
+                    name='wedding'
+                    onChange={handleIntention} />
                 </Grid>
+
                 <Grid item xs={12} sm={6}>
                   <FormControlLabel control={<Checkbox checked={isChecked.successOf} onChange={allowInput} name="successOf" />} label="For the success of" />
-                  <TextField variant="outlined" size="small" sx={inputstlying} label="Please input the details" fullWidth disabled={!isChecked.successOf} />
+                  <TextField variant="outlined" 
+                    size="small" 
+                    sx={inputstlying} 
+                    label="Please input the details" 
+                    fullWidth 
+                    disabled={!isChecked.successOf}
+                    name='success'
+                    onChange={handleIntention} />
                 </Grid>
+
                 <Grid item xs={12} sm={6}>
                   <FormControlLabel control={<Checkbox checked={isChecked.birthdayOf} onChange={allowInput} name="birthdayOf" />} label="For the birthday of" />
-                  <TextField variant="outlined" size="small" sx={inputstlying} label="Please input the details" fullWidth disabled={!isChecked.birthdayOf} />
+                  <TextField variant="outlined" 
+                    size="small" 
+                    sx={inputstlying} 
+                    label="Please input the details" 
+                    fullWidth 
+                    disabled={!isChecked.birthdayOf}
+                    name='birthday'
+                    onChange={handleIntention} />
                 </Grid>
+
                 <Grid item xs={12} sm={6}>
                   <FormControlLabel control={<Checkbox checked={isChecked.others} onChange={allowInput} name="others" />} label="Others" />
-                  <TextField variant="outlined" size="small" sx={inputstlying} label="Please input the details" fullWidth disabled={!isChecked.others} />
+                  <TextField variant="outlined" 
+                    size="small" 
+                    sx={inputstlying} 
+                    label="Please input the details" 
+                    fullWidth 
+                    disabled={!isChecked.others}
+                    name='others'
+                    onChange={handleIntention} />
                 </Grid>
+
                 <Grid item xs={12} sm={3} sx={{marginTop: {md: '18px'}}}>
                     <label>Mass Date:</label>
                             <TextField fullWidth variant="outlined" type="date" size="small" sx={inputstlying} required />           
