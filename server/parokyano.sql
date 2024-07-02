@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 27, 2024 at 04:21 PM
+-- Generation Time: Jul 02, 2024 at 12:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,6 +34,13 @@ CREATE TABLE `announcement` (
   `date_announced` date NOT NULL,
   `user_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `announcement`
+--
+
+INSERT INTO `announcement` (`announcement_id`, `title`, `description`, `date_announced`, `user_id`) VALUES
+(1, 'Christmas Eve Mass', 'Mass on December 24 8PM', '2024-07-02', 1);
 
 -- --------------------------------------------------------
 
@@ -132,6 +139,10 @@ CREATE TABLE `request` (
   `requested_by` varchar(255) DEFAULT NULL,
   `patient_status` varchar(100) DEFAULT NULL,
   `purpose` text DEFAULT NULL,
+  `mother_name` varchar(100) DEFAULT NULL,
+  `father_name` varchar(100) DEFAULT NULL,
+  `birthDate` date DEFAULT NULL,
+  `baptismDate` date DEFAULT NULL,
   `intention_details` text DEFAULT NULL,
   `type` varchar(50) DEFAULT NULL,
   `preferred_date` date NOT NULL,
@@ -148,7 +159,7 @@ CREATE TABLE `request` (
   `status` enum('pending','approved','cancelled','finished','archived') NOT NULL,
   `donation` int(11) DEFAULT NULL,
   `payment_status` enum('paid','unpaid') NOT NULL DEFAULT 'unpaid',
-  `transaction_no` int(11) NOT NULL,
+  `transaction_no` varchar(30) NOT NULL,
   `service_id` bigint(20) NOT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `priestSched_id` bigint(20) DEFAULT NULL,
@@ -159,16 +170,32 @@ CREATE TABLE `request` (
 -- Dumping data for table `request`
 --
 
-INSERT INTO `request` (`requestID`, `first_name`, `middle_name`, `last_name`, `age`, `address`, `contact_no`, `relationship`, `requested_by`, `patient_status`, `purpose`, `intention_details`, `type`, `preferred_date`, `preferred_time`, `preferred_priest`, `date_requested`, `payment_method`, `transaction_date`, `interview_date`, `isPrenuptial`, `isRequirement`, `isParishioner`, `isSponsor`, `status`, `donation`, `payment_status`, `transaction_no`, `service_id`, `user_id`, `priestSched_id`, `venueSched_id`) VALUES
-(1, NULL, NULL, NULL, NULL, NULL, '', NULL, 'john', NULL, NULL, NULL, NULL, '2024-06-27', '06:00:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
-(2, NULL, NULL, NULL, NULL, NULL, '', NULL, 'john', NULL, NULL, NULL, NULL, '2024-06-16', '05:00:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
-(3, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, '2024-06-29', '17:30:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
-(4, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, '\"petition 1\"', NULL, '2024-06-30', '16:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
-(5, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, '\"petition 2\"', NULL, '2024-06-28', '17:30:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
-(6, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, '\"test 3\"', NULL, '2024-06-28', '17:30:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', 0, 1, NULL, NULL, NULL),
-(7, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, '\"test 4\"', NULL, '2024-06-30', '16:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', 0, 1, NULL, NULL, NULL),
-(8, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, '\"test 4\"', NULL, '2024-06-29', '06:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', 0, 1, NULL, NULL, NULL),
-(9, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, '\"test 5\"', 'Petition', '2024-06-29', '06:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', 0, 1, NULL, NULL, NULL);
+INSERT INTO `request` (`requestID`, `first_name`, `middle_name`, `last_name`, `age`, `address`, `contact_no`, `relationship`, `requested_by`, `patient_status`, `purpose`, `mother_name`, `father_name`, `birthDate`, `baptismDate`, `intention_details`, `type`, `preferred_date`, `preferred_time`, `preferred_priest`, `date_requested`, `payment_method`, `transaction_date`, `interview_date`, `isPrenuptial`, `isRequirement`, `isParishioner`, `isSponsor`, `status`, `donation`, `payment_status`, `transaction_no`, `service_id`, `user_id`, `priestSched_id`, `venueSched_id`) VALUES
+(1, NULL, NULL, NULL, NULL, NULL, '', NULL, 'john', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-06-27', '06:00:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', '0', 1, NULL, NULL, NULL),
+(2, NULL, NULL, NULL, NULL, NULL, '', NULL, 'john', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-06-16', '05:00:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', '0', 1, NULL, NULL, NULL),
+(3, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-06-29', '17:30:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', '0', 1, NULL, NULL, NULL),
+(4, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"petition 1\"', NULL, '2024-06-30', '16:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', '0', 1, NULL, NULL, NULL),
+(5, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"petition 2\"', NULL, '2024-06-28', '17:30:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', '0', 1, NULL, NULL, NULL),
+(6, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 3\"', NULL, '2024-06-28', '17:30:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', '0', 1, NULL, NULL, NULL),
+(7, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 4\"', NULL, '2024-06-30', '16:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(8, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 4\"', NULL, '2024-06-29', '06:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(9, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 5\"', 'Petition', '2024-06-29', '06:00:00', NULL, '2024-06-27', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(10, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"\",\"wedding\":\"\",\"success\":\"research 1\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-10', '06:00:00', NULL, '2024-07-01', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(11, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"\",\"wedding\":\"\",\"success\":\"research 1\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-10', '06:00:00', NULL, '2024-07-01', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(12, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"\",\"wedding\":\"\",\"success\":\"research 1\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-10', '06:00:00', NULL, '2024-07-01', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 200, 'unpaid', '0', 1, NULL, NULL, NULL),
+(13, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test6\"', 'Petition', '2024-07-03', '06:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(14, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 7\"', 'Petition', '2024-07-13', '06:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(15, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 8\"', 'Petition', '2024-07-07', '08:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(16, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'john', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 9\"', 'Petition', '2024-07-11', '06:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(17, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 10\"', 'Petition', '2024-07-14', '05:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(18, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 11\"', 'Petition', '2024-07-03', '06:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '0', 1, NULL, NULL, NULL),
+(19, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 12\"', 'Petition', '2024-07-07', '06:30:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024', 1, NULL, NULL, NULL),
+(20, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 13\"', 'Petition', '2024-07-06', '06:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-024ea5c508a6566e762405', 1, NULL, NULL, NULL),
+(21, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 14\"', 'Petition', '2024-07-04', '06:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-024ea5c508a6566e762405', 1, NULL, NULL, NULL),
+(22, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 15\"', 'Petition', '2024-07-03', '17:30:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-023a57bcaec3bee8ec8d0e', 1, NULL, NULL, NULL),
+(23, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 16\"', 'Petition', '2024-07-07', '09:30:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-029fb975236248daae62d2', 1, NULL, NULL, NULL),
+(24, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"St.Joseph\",\"wedding\":\"\",\"success\":\"\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-07', '09:30:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-02955690f0855f3f297074', 1, NULL, NULL, NULL),
+(25, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"\",\"wedding\":\"\",\"success\":\"research 2\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-03', '06:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-02afb2944991acffd7f8ba', 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -428,7 +455,7 @@ ALTER TABLE `wedding`
 -- AUTO_INCREMENT for table `announcement`
 --
 ALTER TABLE `announcement`
-  MODIFY `announcement_id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `announcement_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `baptism`
@@ -464,7 +491,7 @@ ALTER TABLE `priestschedule`
 -- AUTO_INCREMENT for table `request`
 --
 ALTER TABLE `request`
-  MODIFY `requestID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `requestID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `service`
