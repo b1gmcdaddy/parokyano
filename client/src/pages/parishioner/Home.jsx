@@ -50,7 +50,7 @@ const Home = () => {
         instruction="Choose from a variety of services available!"
       />
       <div className='max-w-[1440px] mx-auto mt-8'>
-        <div className='flex justify-between mb-8'>
+        <div className='flex justify-between mb-8 mx-5'>
           <h1 className='md:text-3xl font-bold xs:text-center xs:text-xl'>Services Offered</h1>
           <button className='rounded-md border-0 border-gray-300 shadow-md shadow-slate-300 
           px-4 py-1 hover:bg-slate-100 xs:text-center' onClick={() => navigateToPage('track-status')}>Track Status of Request</button>
