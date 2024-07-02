@@ -10,12 +10,11 @@ import Header from "../../../components/Header";
 
 const CertificateBaptism = () => {
 
-    // const [date, setDate] = useState('')
+    const [formData, setFormData] = useState({})
 
-    // const HandleDate = (e) => {
-    //     setDate({ ...date, [e.target.name]: e.target.value });
-    //     console.log(date)
-    // }
+    const handleChange = (e) => {
+        setFormData({...formData, [e.target.name]: e.target.value})
+    }
 
     return(
         <>
@@ -47,54 +46,71 @@ const CertificateBaptism = () => {
                             required
                             label="First Name"
                             placeholder="first name"
+                            name='first_name'
+                            onChange={handleChange}
                         />
                         <TextField
                             required
                             label="Middle Name"
                             placeholder="middle name"
+                            name="middle_name"
+                            onChange={handleChange}
                         />
                         <TextField
                             required
                             label="Last Name"
                             placeholder="last name"
+                            name="last_name"
+                            onChange={handleChange}
                         />
                     </div>
                     
                     <div>
                         <TextField
                             required
-                            name="date"
                             label="Date of Birth"
                             type="date"
                             defaultValue='2000-01-01'
+                            name="birthDate"
+                            onChange={handleChange}
                         />
-                        <TextField
+                        <TextField  //////////////////////////////////////
                             required
                             label="Place of Birth"
                             placeholder="place"
+                            name="address"
+                            onChange={handleChange}
                         />
                         <TextField
                             required
                             label="Contact Number"
                             placeholder="+63"
+                            name="contact_no"
+                            onChange={handleChange}
                         />
                     </div>
 
                     <div>
-                        <TextField
+                        <TextField  //////////////////////////////////////
                             required
                             label="Father's Complete Name"
                             placeholder="father"
+                            name="father_name"
+                            onChange={handleChange}
                         />
-                        <TextField
+                        <TextField  //////////////////////////////////////
                             required
                             label="Mother's Complete Maiden Name"
                             placeholder="mother"
+                            name="mother_name"
+                            onChange={handleChange}
                         />
-                        <TextField
+                        <TextField  //////////////////////////////////////
                             label="Date of Baptism"
                             type="date"
                             defaultValue='2000-01-01'
+                            name="baptismDate"
+                            onChange={handleChange}
                         />
                     </div>
 
@@ -105,10 +121,11 @@ const CertificateBaptism = () => {
                                     <RadioGroup
                                         row
                                         aria-labelledby="demo-controlled-radio-buttons-group"
-                                        name="controlled-radio-buttons-group"
                                         sx={{ 
                                             '& .MuiRadio-root': { padding: 1.0 } // Adjusts the padding of the radio button itself
                                         }}
+                                        name="purpose"
+                                        onChange={handleChange}
                                     >
                                         <Grid item xs={12} sm={4}>
                                             <FormControlLabel labelPlacement="end" value="marriage" control={<Radio />} label="Marriage" />
@@ -127,13 +144,24 @@ const CertificateBaptism = () => {
                                         </Grid>
                                         <Grid item xs={12} sm={4}>
                                             <FormControlLabel labelPlacement="end" value="others" control={<Radio />} label="Others" />
-                                            <TextField
-                                                label="Please specify"
-                                                placeholder="Specify other purpose"
-                                            />
                                         </Grid>
                                     </RadioGroup>
                             </FormControl>
+
+                            {/* PLEASE HELP  */}
+                            {/* {formData.purpose === 'others' && (
+                                <Grid item xs={12}>
+                                    <TextField
+                                    fullWidth
+                                    label="Please specify"
+                                    name="purpose"
+                                    placeholder="Specify other purpose"
+                                    onChange={handleChange}
+                                    />
+                                </Grid>
+                            )} */}
+
+
                         </Grid>
                     </div>
                     <hr/>

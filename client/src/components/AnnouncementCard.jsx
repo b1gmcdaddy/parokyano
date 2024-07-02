@@ -2,9 +2,10 @@ import { Grid, Card, Typography, CardContent, IconButton, Collapse, CardActions 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { React, useState } from "react"
 
-const AnnouncementCard = ({ title, date_posted, details}) => {
+const AnnouncementCard = ({ title, date_announced, description}) => {
 
     const [expanded, setExpanded] = useState(false);
+    // const dateLocal = date_announced.toLocaleTimeString()
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -20,7 +21,7 @@ const AnnouncementCard = ({ title, date_posted, details}) => {
                                 {title}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {date_posted}
+                                {date_announced}
                             </Typography>
                         </CardContent>
 
@@ -42,7 +43,7 @@ const AnnouncementCard = ({ title, date_posted, details}) => {
                         <Collapse in={expanded} timeout="auto" unmountOnExit>
                             <CardContent>
                                 <Typography paragraph>
-                                    {details}
+                                    {description}
                                 </Typography>
                             </CardContent>
                         </Collapse>

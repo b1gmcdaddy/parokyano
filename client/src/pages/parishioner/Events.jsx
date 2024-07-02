@@ -4,30 +4,26 @@ import imageHeader from '../../assets/imageHeader.jpg'
 import NavParishioner from "../../components/NavParishioner";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { React, useState } from "react"
+import { React, useEffect, useState } from "react"
+import config from "../../config";
+import axios from "axios";
 
 const Events = () => {
 
-    const dummyData = [
-        {
-            title: "Anouncement 1",
-            date_posted: "June 12",
-            details: "further details here"
-        },
-        {
-            title: "Anouncement 2",
-            date_posted: "June 12",
-            details: "further details here"
-        },
-        {
-            title: "Anouncement 3",
-            date_posted: "June 12",
-            details: "further details here"
+    const [announcement, setAnnouncement] = useState([])
+
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try{
+                const response = await axios.get(`${config.API}/announcement/retrieve-all`)
+                setAnnouncement(response.data)
+            } catch (err) {
+                console.error('error retrieving from server', err)
+            }
+        
         }
-    ];
-
-    console.log(dummyData)
-
+        fetchAnnouncements()
+    }, [])
 
     return(
         <>
@@ -37,12 +33,12 @@ const Events = () => {
                 backgroundImage={imageHeader}
             />
                 <Grid spacing={2} container justifyContent={"center"} sx={{margin: 5}}>
-                    {dummyData.map((data, index) => (
+                    {announcement != null && announcement.map((event, index) => (
                         <Grid item key={index}>
                             <AnnouncementCard
-                                title={data.title}
-                                date_posted={data.date_posted}
-                                details={data.details}
+                                title={event.title}
+                                date_announced={event.date_announced}
+                                description={event.description}
                             />
                         </Grid>
                     ))}

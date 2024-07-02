@@ -21,14 +21,15 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 
-//will define routes here
+// define routes here
 const requestRoute = require('./routes/requestRoute');
 const serviceRoute = require('./routes/serviceRoute');
+const announcementRoute = require('./routes/announcementRoute');
 
 
 app.use('/request', requestRoute);
 app.use('/service', serviceRoute);
-
+app.use('/announcement', announcementRoute)
 
 
 

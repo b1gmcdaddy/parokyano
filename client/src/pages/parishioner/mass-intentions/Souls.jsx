@@ -25,6 +25,15 @@ const Souls = () => {
   const [captchaValue, setCaptchaValue] = useState(null);
   const [moreSouls, setMoreSouls] = useState(false);
 
+  const [formData, setFormData] = useState({
+    intention_details: [],
+    offered_by: '',
+    mass_date: '',
+    mass_time: '',
+    payment_method: '',
+    donation_amount: '',
+  })
+
     const addMoreSouls = () => {
       setMoreSouls(true);
     }
@@ -55,15 +64,23 @@ const Souls = () => {
             <Container maxWidth="md" sx={{ marginBottom: '50px' }}>
                 <form>
                     <Grid container spacing={4}>
-                    <Grid item xs={12} sm={12} >
-                            <h5 className='mb-0 pb-0'>For the Souls of:</h5>
-        
+
+                        <Grid item xs={12} sm={12} >
+                              <h5 className='mb-0 pb-0'>For the Souls of:</h5>
                         </Grid>
                         <Grid item xs={12} sm={6} className='flex items-center justify-center' sx={{marginTop:'-30px'}}>
-                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
+                            <TextField fullWidth 
+                                variant="outlined" 
+                                size="small" 
+                                sx={inputstlying} 
+                                name=''
+                                required />
                         </Grid>
                         <Grid item xs={12} sm={6} className='flex items-center justify-center' sx={{marginTop:'-30px'}}>
-                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}  />
+                            <TextField fullWidth 
+                                variant="outlined" 
+                                size="small" 
+                                sx={inputstlying}  />
                         </Grid>
                         <Grid item xs={12} sm={6} className='flex items-center justify-center' sx={{marginTop:'-20px'}}>
                             <TextField fullWidth variant="outlined" size="small" sx={inputstlying}  />
@@ -131,9 +148,6 @@ const Souls = () => {
                             <label>Donation Amount:</label>
                             <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
                         </Grid>
-                        
-
-
 
                     </Grid>
                     <div className="mt-[4rem] flex justify-center">
