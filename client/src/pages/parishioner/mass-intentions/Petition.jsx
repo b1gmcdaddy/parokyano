@@ -11,6 +11,7 @@ import ReCAPTCHA from "react-google-recaptcha"
 import Footer from "../../../components/Footer";
 import CashPaymentModal from "../../../components/CashPaymentModal";
 import config from "../../../config"
+import CryptoJS from 'crypto-js'
 
 
 const inputstlying = {
@@ -23,17 +24,25 @@ const inputstlying = {
         borderWidth: '0.5px'
       },
     },
-  };
+};
+
+// function for generating a unique transaction number
+// just make sure to page refresh to avoid duplicating hash since formData.transaction_no will not update until window is refreshed
+const generateHash = () => {
+    const input = Date.now()    // Date.now() returns unique number, this removes duplicate hashes
+    return CryptoJS.SHA256(input.toString()).toString(CryptoJS.enc.Hex)
+}
 
 const Petition = () => {
 
     const [open, setOpen] = useState(false)
     const [captchaValue, setCaptchaValue] = useState(null);
     const [schedule, setSchedule] = useState({slots: ['00:00:00']})
+    const [modalData, setModalData] = useState({})
     const id = 1  
     var dateToday = new Date().toJSON().slice(0,10);
     
-    // form data
+    // form data layout
     const [formData, setFormData] = useState({
         intention_details: '',
         type: 'Petition',
@@ -44,11 +53,9 @@ const Petition = () => {
         donation_amount: '',
         contact_no: '',
         service_id: id, 
-        date_requested: dateToday
+        date_requested: dateToday,
+        transaction_no: dateToday + generateHash().slice(0,20) 
     })
-
-    // modal data
-    const [modalData, setModalData] = useState({})
 
     // getters
     useEffect(() => {
@@ -73,20 +80,19 @@ const Petition = () => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
 
-    // change message depending on which service
+    // just change message depending on which service
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
             await axios.post(`${config.API}/request/create-intention`, formData);
             const paymentInfo = {
-                transaction_no: 'example123',   //needs work
+                transaction_no: formData.transaction_no,   
                 fee: formData.donation_amount,
                 requirements: null,
                 message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!',
             }
             setModalData(paymentInfo);
             setOpen(true)
-            // console.log(paymentInfo)
         } catch(err) {
             console.error('error submitting the form', err)
         }

@@ -11,6 +11,7 @@ import Footer from "../../../components/Footer";
 import config from '../../../config';
 import axios from 'axios';
 import CashPaymentModal from '../../../components/CashPaymentModal';
+import CryptoJS from 'crypto-js';
 
 const inputstlying = {
   '& .MuiOutlinedInput-root': {
@@ -23,6 +24,11 @@ const inputstlying = {
     },
   },
 };
+
+const generateHash = () => {
+  const input = Date.now()
+  return CryptoJS.SHA256(input.toString()).toString(CryptoJS.enc.Hex)
+}
 
 const Thanksgiving = () => {
 
@@ -51,10 +57,9 @@ const Thanksgiving = () => {
     type: 'Thanksgiving',
     contact_no: '',
     date_requested: dateToday,
-    service_id: id
+    service_id: id,
+    transaction_no: dateToday + generateHash().slice(0,20)
   })
-
-  console.log(formData.intention_details)
 
   useEffect(() => {
         const fetchSchedule = async () => {
@@ -88,7 +93,7 @@ const Thanksgiving = () => {
     try {
         await axios.post(`${config.API}/request/create-intention`, formData);
         const paymentInfo = {
-          transaction_no: 'example',
+          transaction_no: formData.transaction_no,
           fee: formData.donation_amount,
           requirements: null,
           message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
