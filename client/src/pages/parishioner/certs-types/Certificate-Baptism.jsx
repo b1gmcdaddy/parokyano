@@ -5,8 +5,20 @@ import Footer from "../../../components/Footer";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
-import { TextField, Box, Grid, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup, Button } from "@mui/material";
+import { TextField, Container, Grid, FormControlLabel, Radio, RadioGroup, Button } from "@mui/material";
 import Header from "../../../components/Header";
+
+const inputstlying = {
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        boxShadow: '0 3px 2px rgba(0,0,0,0.1)',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#355173',
+        borderWidth: '0.5px'
+      },
+    },
+  };
 
 const CertificateBaptism = () => {
 
@@ -21,174 +33,107 @@ const CertificateBaptism = () => {
             <NavParishioner />
             <Header
                 backgroundImage = {imageHeader}
-                title = 'Gethsemane Parish Pastoral Center'
+                title = 'Baptismal Certificate'
             />
 
-            <Link to='/' className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
+            <Link to='/certificates' className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
                 <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
-                <p className="xs:hidden md:flex">Return to Home</p>
+                <p className="xs:hidden md:flex">Return to Selection</p>
             </Link>
 
-            <h1 align='center'>Please Input the Following</h1>
+            <h1 align='center' className="mb-8 font-bold">Please Input the Following</h1>
 
-            <Grid container justifyContent={"center"} sx={{marginTop:"50px", marginBottom:"20px"}}>
-                <Box
-                    component="form"
-                    sx={{
-                        '& .MuiTextField-root': { m: 2, width: '40ch' },
-                    }}
-                    noValidate
-                    autoComplete="off"
-                    >
-
-                    <div>
-                        <TextField
-                            required
-                            label="First Name"
-                            placeholder="first name"
-                            name='first_name'
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            required
-                            label="Middle Name"
-                            placeholder="middle name"
-                            name="middle_name"
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            required
-                            label="Last Name"
-                            placeholder="last name"
-                            name="last_name"
-                            onChange={handleChange}
-                        />
-                    </div>
-                    
-                    <div>
-                        <TextField
-                            required
-                            label="Date of Birth"
-                            type="date"
-                            defaultValue='2000-01-01'
-                            name="birthDate"
-                            onChange={handleChange}
-                        />
-                        <TextField  //////////////////////////////////////
-                            required
-                            label="Place of Birth"
-                            placeholder="place"
-                            name="address"
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            required
-                            label="Contact Number"
-                            placeholder="+63"
-                            name="contact_no"
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div>
-                        <TextField  //////////////////////////////////////
-                            required
-                            label="Father's Complete Name"
-                            placeholder="father"
-                            name="father_name"
-                            onChange={handleChange}
-                        />
-                        <TextField  //////////////////////////////////////
-                            required
-                            label="Mother's Complete Maiden Name"
-                            placeholder="mother"
-                            name="mother_name"
-                            onChange={handleChange}
-                        />
-                        <TextField  //////////////////////////////////////
-                            label="Date of Baptism"
-                            type="date"
-                            defaultValue='2000-01-01'
-                            name="baptismDate"
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div>
-                        <Grid container justifyContent={"center"}>
-                            <FormControl>
-                                <FormLabel id="demo-controlled-radio-buttons-group">Purpose</FormLabel>
-                                    <RadioGroup
-                                        row
-                                        aria-labelledby="demo-controlled-radio-buttons-group"
-                                        sx={{ 
-                                            '& .MuiRadio-root': { padding: 1.0 } // Adjusts the padding of the radio button itself
-                                        }}
-                                        name="purpose"
-                                        onChange={handleChange}
-                                    >
-                                        <Grid item xs={12} sm={4}>
-                                            <FormControlLabel labelPlacement="end" value="marriage" control={<Radio />} label="Marriage" />
-                                        </Grid>
-                                        <Grid item xs={12} sm={4}>
-                                            <FormControlLabel labelPlacement="end" value="school" control={<Radio />} label="School" />
-                                        </Grid>
-                                        <Grid item xs={12} sm={4}>
-                                            <FormControlLabel labelPlacement="end" value="sss" control={<Radio />} label="SSS" />
-                                        </Grid>
-                                        <Grid item xs={12} sm={4}>
-                                            <FormControlLabel labelPlacement="end" value="passport" control={<Radio />} label="Passport" />
-                                        </Grid>
-                                        <Grid item xs={12} sm={4}>
-                                            <FormControlLabel labelPlacement="end" value="late registration" control={<Radio />} label="Late Registration" />
-                                        </Grid>
-                                        <Grid item xs={12} sm={4}>
-                                            <FormControlLabel labelPlacement="end" value="others" control={<Radio />} label="Others" />
-                                        </Grid>
-                                    </RadioGroup>
-                            </FormControl>
-
-                            {/* PLEASE HELP  */}
-                            {/* {formData.purpose === 'others' && (
-                                <Grid item xs={12}>
-                                    <TextField
-                                    fullWidth
-                                    label="Please specify"
-                                    name="purpose"
-                                    placeholder="Specify other purpose"
-                                    onChange={handleChange}
-                                    />
-                                </Grid>
-                            )} */}
-
-
+            <Container maxWidth="lg" sx={{marginBottom: '60px'}}>
+                <form>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12} sm={4}>
+                            <label><span className="text-red-600 font-bold">*</span>First Name:</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="first_name" onChange={handleChange} autoComplete="off" required />
                         </Grid>
-                    </div>
-                    <hr/>
-                    <div>
-                        <TextField
-                            label="Book Number"
-                            placeholder="book #"
-                        />
-                        <TextField
-                            label="Page Number"
-                            placeholder="page #"
-                        />
-                        <TextField
-                            label="Line Number"
-                            placeholder="line #"
-                        />
-                    </div>
+                        <Grid item xs={12} sm={4}>
+                            <label>Middle Name:</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="middle_name" onChange={handleChange} autoComplete="off" />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label><span className="text-red-600 font-bold">*</span>Last Name:</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="last_name" onChange={handleChange} autoComplete="off" required />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label><span className="text-red-600 font-bold">*</span>Date of Birth:</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="birthDate" onChange={handleChange} autoComplete="off" type="date" required />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label><span className="text-red-600 font-bold">*</span>Place of Birth:</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying} 
+                            name="address" onChange={handleChange} autoComplete="off" required />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label><span className="text-red-600 font-bold">*</span>Contact Number:</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="contact_no" onChange={handleChange} autoComplete="off" required />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label><span className="text-red-600 font-bold">*</span>Father's Complete Name:</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="father_name" onChange={handleChange} autoComplete="off" required />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label><span className="text-red-600 font-bold">*</span>Mother's Complete Maiden Name:</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="mother_name" onChange={handleChange} autoComplete="off" required />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label>Date of Baptism:</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="baptismDate" onChange={handleChange} autoComplete="off" type="date" />
+                        </Grid>
+                    </Grid>
+                    
+                    <Grid container spacing={4} sx={{ marginTop: '8px', marginBottom: '60px' }}>
+                        <Grid item xs={12}>
+                            <label><span className="text-red-600 font-bold">*</span>Purpose:</label>
+                            <RadioGroup row name="purpose" className="" onChange={handleChange}>
+                            <FormControlLabel value="marriage" control={<Radio size="small" />} label="Marriage" sx={{marginRight: '2em'}} />
+                            <FormControlLabel value="passport" control={<Radio size="small" />} label="Passport" sx={{marginRight: '2em'}} />
+                            <FormControlLabel value="school" control={<Radio size="small" />} label="School" sx={{marginRight: '2em'}} />
+                            <FormControlLabel value="late registration" control={<Radio size="small" />} label="Late Registration" sx={{marginRight: '2em'}} />
+                            <FormControlLabel value="sss" control={<Radio size="small" />} label="SSS" sx={{marginRight: '2em'}} />
+                            <FormControlLabel value="others" control={<Radio size="small" />} label="Others" />
+                            {formData.purpose === 'others' && (
+                                <TextField label="Please Specify" fullWidth sx={inputstlying} />
+                            )}
+                            </RadioGroup>
+                        </Grid>
 
-                    <Grid sx={{ display: 'flex', justifyContent: 'center', margin: 5 }}>
-                        <Button variant="contained" color="primary" type="submit">
+                        <Grid item xs={12} sm={4}>
+                            <label>Book No.</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="contact_no" onChange={handleChange} autoComplete="off"  />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label>Page No.</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="father_name" onChange={handleChange} autoComplete="off"  />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label>Line No.</label>
+                            <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
+                            name="mother_name" onChange={handleChange} autoComplete="off"  />
+                        </Grid>
+                    </Grid>  
+
+                    <Grid item sx={{ display: 'flex', justifyContent: 'center', marginTop: "10px"}}>
+                        <Button variant="contained" type="submit" sx={{backgroundColor:"#355173"}}>
                             Submit Request
                         </Button>
                     </Grid>
-
-                </Box>
-            </Grid>
-
+                    
+                </form>
+            </Container>
             <Footer />
         </>
     )
