@@ -35,19 +35,23 @@ const FAQ = () => {
             </Link>
             </div>
 
-            <div className="max-w-[1040px] mt-5 mx-auto py-10 rounded-xl bg-[#CDAB52] shadow-lg shadow-gray-400">
+            <div className="max-w-[1040px] md:mt-5 mx-auto py-10 rounded-xl shadow-gray-400">
                 <div className="flex justify-center items-center font-[tahoma]">
-                    <span className="font-bold text-6xl">F</span>
-                    <h1 className="font-bold text-lg mr-2">requently</h1>
-                    <span className="font-bold text-6xl">A</span>
-                    <h1 className="font-bold text-lg mr-2">sked</h1>
-                    <span className="font-bold text-6xl">Q</span>
-                    <h1 className="font-bold text-lg">uestions</h1>
+                    <span className="font-bold md:text-6xl xs:text-3xl">F</span>
+                    <h1 className="font-bold md:text-4xl xs:text-xl mr-2">requently</h1>
+                    <span className="font-bold md:text-6xl xs:text-3xl">A</span>
+                    <h1 className="font-bold md:text-4xl xs:text-xl mr-2">sked</h1>
+                    <span className="font-bold md:text-6xl xs:text-3xl">Q</span>
+                    <h1 className="font-bold md:text-4xl xs:text-xl">uestions</h1>
+                </div>
+                <div className="md:mt-8 xs:mt-4 md:text-center xs:text-justify xs:px-4 md:max-w-[600px] mx-auto">
+                    <h3>Find questions and answers related to Gethsemane Parish and
+                    Parokyano's service request system, updates, and support.</h3>
                 </div>
             </div>
 
-            <div className="mt-12 max-w-[1040px] mx-auto ">
-                <div className="mb-10">
+            <div className="mt-6 max-w-[1040px] mx-auto ">
+                <div className="mb-20">
                     {sampleFAQs.map((faq, index) => (
                         <div key={index}>
                         <Accordion className="py-3 rounded-full mb-5" >
