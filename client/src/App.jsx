@@ -22,6 +22,7 @@ import Wedding from './pages/parishioner/Wedding'
 import TrackStatus from './pages/parishioner/TrackStatus'
 import FAQ from './pages/parishioner/FAQ'
 import TrackRequest from './pages/parishioner/TrackRequest'
+import StaffDashboard from './pages/staff/StaffDashboard'
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
   return (
     <main>
     <Routes>
+      {/*  -----------PARISHIONER-----------  */}
       <Route path='/' element={<Home />} />
       <Route path='/certificates' element={<Certificates />} />
       <Route path='/certificate-baptism' element={<CertificateBaptism />} />
@@ -51,6 +53,10 @@ function App() {
       <Route path='/track-status' element={<TrackStatus />}/>
       <Route path='/track-request' element={<TrackRequest/>}/>
       <Route path='/frequently-asked' element={<FAQ />} />
+
+      {/*  unya na nani e lahi2 og routes ang parishioner & staff... diri lang sa tanan  */}
+      {/*  -----------STAFF-----------  */}
+      <Route path='/dashboard' element={<StaffDashboard/>} />
     </Routes>
   </main>
   )

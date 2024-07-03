@@ -1,6 +1,6 @@
-import { Avatar, Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material'
-
+import * as React from 'react';
 //all icons are temporary
+import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -10,108 +10,172 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import BadgeIcon from '@mui/icons-material/Badge';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { Avatar }  from '@mui/material';
+import PropTypes from 'prop-types';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import MenuIcon from '@mui/icons-material/Menu';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 
 
-import React from 'react'
+const drawerWidth = 240;
 
-const NavStaff = () => {
-    return(
-        <>      
-            <Drawer PaperProps={{
-                    sx: {
-                        backgroundColor: '#355173',
-                        color: 'white'
-                    }
-                }} 
-                variant='permanent' anchor='left'>
+const sideBarItems = [
+  {icon: <DashboardIcon/>, label: "Dashboard"},
+  {icon: <CampaignIcon/>, label: "Announcements"},
+  {icon: <AssignmentIcon/>, label: "Service Requests"},
+  {icon: <BadgeIcon/>, label: "Certificate Requests"},
+  {icon: <FormatListBulletedIcon/>, label: "Mass Intentions"},
+  {icon: <ReceiptLongIcon/>, label: "Transactions"},
+  {icon: <CalendarMonthIcon/>, label: "Schedules"},
+]
 
-                {/* avatar and staff name goes here */}
-                <Box container justifyContent='center' alignItems='center' 
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        margin: 2,
-                    }}>
+const NavStaff = (props) => {
+  const { window } = props;
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [isClosing, setIsClosing] = React.useState(false);
+
+  const handleDrawerClose = () => {
+    setIsClosing(true);
+    setMobileOpen(false);
+  };
+
+  const handleDrawerTransitionEnd = () => {
+    setIsClosing(false);
+  };
+
+  const handleDrawerToggle = () => {
+    if (!isClosing) {
+      setMobileOpen(!mobileOpen);
+    }
+  };
+
+  const drawer = (
+    <div style={{backgroundColor: "#355173", height: "100vh"}}>
+      <Toolbar />
+      <Box justifyContent='center' alignItems='center' sx={{ display: 'flex', flexDirection: 'column', margin: 2 }}>
                     <div>
-                        <Avatar sx={{width: 100, height: 100}} src={<PersonIcon />} />
+                        <Avatar sx={{width: 100, height: 100}}>
+                          <PersonIcon sx={{width: 70, height: 70}}/>
+                        </Avatar>
                     </div>
                     <div>
-                        <Typography variant='h6'>
+                        <Typography variant='h6' sx={{marginTop: "14px", color:"whitesmoke"}}>
                             Hello World!
                         </Typography>
                     </div>
                 </Box>
 
-                <List>
-                    <ListItemButton>
-                        <ListItemIcon sx={{color: 'white'}}>
-                            <DashboardIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Dashboard" />
-                    </ListItemButton>
-                </List>
-                <List>
-                    <ListItemButton>
-                        <ListItemIcon sx={{color: 'white'}}>
-                            <CampaignIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Announcements" />
-                    </ListItemButton>
-                </List>
-                <List>
-                    <ListItemButton>
-                        <ListItemIcon sx={{color: 'white'}}>
-                            <AssignmentIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Request Services" />
-                    </ListItemButton>
-                </List>
-                <List>
-                    <ListItemButton>
-                        <ListItemIcon sx={{color: 'white'}}>
-                            <BadgeIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Request Certificates" />
-                    </ListItemButton>
-                </List>
-                <List>
-                     <ListItemButton>
-                        <ListItemIcon sx={{color: 'white'}}>
-                            <FormatListBulletedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Mass Intentions" />
-                    </ListItemButton>
-                </List>
-                <List>
-                    <ListItemButton>
-                        <ListItemIcon sx={{color: 'white'}}>
-                            <ReceiptLongIcon />
-                            </ListItemIcon>
-                        <ListItemText primary="Transactions" />
-                    </ListItemButton>
-                </List>
-                <List>
-                    <ListItemButton>
-                        <ListItemIcon sx={{color: 'white'}}>
-                            <CalendarMonthIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Schedule" />
-                    </ListItemButton>
-                </List>     
+      <List sx={{color: 'whitesmoke'}}>
+        {sideBarItems.map((items, index) => (
+          <ListItem key={index} disablePadding>
+            <ListItemButton>
+              <ListItemIcon sx={{color: 'white'}}>
+                {items.icon}
+              </ListItemIcon>
+              <ListItemText primary={items.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
 
-                <Box container position='fixed' justifyContent='center' bottom={5} left={2}>
+      <Box justifyContent='center' sx={{position: 'fixed', bottom: '1em', left: '1.5em'}}>
                     <List>
                         <ListItemButton>
                             <ListItemIcon sx={{color: 'white'}}>
                                 <LogoutIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Logout" />
+                            <ListItemText primary="Logout" sx={{color: 'white'}} />
                         </ListItemButton>
                     </List>
                 </Box>
-            </Drawer>
-        </>
-    )
+    </div>
+  );
+
+  // Remove this const when copying and pasting into your project.
+  const container = window !== undefined ? () => window().document.body : undefined;
+
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+          backgroundColor: "#D9D9D9"
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="black"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{letterSpacing: "3px", color: "#00000e", flexGrow: 1}}>
+            Parokyano
+          </Typography>
+          <SettingsRoundedIcon className='md:mr-8 text-neutral-950' />
+        </Toolbar>
+      </AppBar>
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="mailbox folders"
+      >
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Drawer
+          container={container}
+          variant="temporary"
+          open={mobileOpen}
+          onTransitionEnd={handleDrawerTransitionEnd}
+          onClose={handleDrawerClose}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+     
+    </Box>
+  );
 }
 
-export default NavStaff
+NavStaff.propTypes = {
+  /**
+   * Injected by the documentation to work in an iframe.
+   * Remove this when copying and pasting into your project.
+   */
+  window: PropTypes.func,
+};
+
+
+export default NavStaff;
