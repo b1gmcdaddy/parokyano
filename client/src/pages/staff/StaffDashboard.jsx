@@ -1,25 +1,77 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import NavStaff from '../../components/NavStaff';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import { Button, Typography } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowDown, faChurch, faStamp, faHandsPraying } from '@fortawesome/free-solid-svg-icons';
 
-const drawerWidth = 240;
+const sideBarWidth = 240;
+
+const sampleStatistics = {
+  noServiceReq: 18,
+  noCertReq: 2,
+  noMassIntentions: 30
+};
+
+const sampleRecentServices = [
+  {type: "Funeral Mass", requestor: "John Doe", dateRequested: "April 11, 2024"},
+  {type: "Baptism", requestor: "John Doe", dateRequested: "April 08, 2024"},
+  {type: "Wake Mass", requestor: "John Doe", dateRequested: "April 05, 2024"},
+  {type: "Outside Mass", requestor: "John Doe", dateRequested: "April 01, 2024"},
+];
 
 const StaffDashboard = () => {
+
+  const [statistics, setStatistics] = useState({});
+  const [recentServices, setRecentServices] = useState([]);
+
+  useEffect(() => {
+    setStatistics(sampleStatistics);
+    setRecentServices(sampleRecentServices);
+  }, []);
+
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', mx: { md: '30px' } }}>
       <NavStaff />
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-      >
-        <Toolbar />
-        <Typography paragraph>
-          Hello, World Hello, WorldHello, WorldHello, WorldHello, WorldHello, WorldHello, WorldHello, World
-          Hello, WorldHello, WorldHello, WorldHello, WorldHello, WorldHello, WorldHello, WorldHello, WorldHello, World
-          Hello, WorldHello, WorldHello, WorldHello, WorldHello, World
-        </Typography>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${sideBarWidth}px)` } }} >
+          <Toolbar />
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', 
+            marginTop: '8px', alignItems: 'center' }}>
+            <h1 className='text-xl font-semibold'>Dashboard</h1>
+            <Button variant="contained" type="button" sx={{backgroundColor:"#355173"}}>Generate Reports</Button>
+          </Box>
+          <div className='mt-8 border-1 border-neutral-900 inline-block'>
+            <select className='outline-none'>
+              <option>Today</option>
+              <option>This Week</option>
+              <option>This Month</option>
+            </select>
+          </div>
+          <Box sx={{ display: { md: 'flex'}, justifyContent: 'space-between', marginTop: '30px' }}>
+            <Paper sx={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', backgroundColor: "#D9D9D9" }} >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <FontAwesomeIcon icon={faChurch} />
+                  <Typography sx={{ marginLeft: '8px' }}>Service Requests</Typography>
+                </Box>
+                <Typography sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>{statistics.noServiceReq}</Typography>
+            </Paper>
+            <Paper sx={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', backgroundColor: "#D9D9D9" }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <FontAwesomeIcon icon={faStamp} />
+                  <Typography sx={{ marginLeft: '8px' }}>Certificate Requests</Typography>
+                </Box>
+                <Typography sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>{statistics.noCertReq}</Typography>
+            </Paper>
+            <Paper sx={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', backgroundColor: "#D9D9D9" }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <FontAwesomeIcon icon={faHandsPraying} />
+                  <Typography sx={{ marginLeft: '8px' }}>Mass Intentions</Typography>
+                </Box>
+                <Typography sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>{statistics.noMassIntentions}</Typography>
+            </Paper>
+          </Box>
       </Box>
     </Box>
   );
