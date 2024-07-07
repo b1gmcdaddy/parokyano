@@ -22,7 +22,9 @@ import Wedding from './pages/parishioner/Wedding'
 import TrackStatus from './pages/parishioner/TrackStatus'
 import FAQ from './pages/parishioner/FAQ'
 import TrackRequest from './pages/parishioner/TrackRequest'
+import Login from './pages/staff/Login'
 import StaffDashboard from './pages/staff/StaffDashboard'
+
 
 
 function App() {
@@ -56,6 +58,7 @@ function App() {
 
       {/*  unya na nani e lahi2 og routes ang parishioner & staff... diri lang sa tanan  */}
       {/*  -----------STAFF-----------  */}
+      <Route path='/login' element={<Login />} />
       <Route path='/dashboard' element={<StaffDashboard/>} />
     </Routes>
   </main>
