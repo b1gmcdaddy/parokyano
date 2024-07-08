@@ -12,7 +12,7 @@ import Footer from "../../../components/Footer";
 import CashPaymentModal from "../../../components/CashPaymentModal";
 import config from "../../../config"
 import CryptoJS from 'crypto-js'
-
+import generateHash from "../../../components/GenerateHash";
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -26,13 +26,6 @@ const inputstlying = {
     },
 };
 
-// function for generating a unique transaction number
-// just make sure to page refresh to avoid duplicating hash since formData.transaction_no will not update until window is refreshed
-const generateHash = () => {
-    const input = Date.now()    // Date.now() returns unique number, this removes duplicate hashes
-    return CryptoJS.SHA256(input.toString()).toString(CryptoJS.enc.Hex)
-}
-
 const Petition = () => {
 
     const [open, setOpen] = useState(false)
@@ -41,6 +34,7 @@ const Petition = () => {
     const [modalData, setModalData] = useState({})
     const id = 1  
     var dateToday = new Date().toJSON().slice(0,10);
+    const hash = dateToday + generateHash().slice(0,20) 
     
     // form data layout
     const [formData, setFormData] = useState({
@@ -54,7 +48,7 @@ const Petition = () => {
         contact_no: '',
         service_id: id, 
         date_requested: dateToday,
-        transaction_no: dateToday + generateHash().slice(0,20) 
+        transaction_no: hash
     })
 
     // getters

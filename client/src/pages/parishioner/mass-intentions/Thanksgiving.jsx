@@ -12,6 +12,7 @@ import config from '../../../config';
 import axios from 'axios';
 import CashPaymentModal from '../../../components/CashPaymentModal';
 import CryptoJS from 'crypto-js';
+import generateHash from '../../../components/GenerateHash';
 
 const inputstlying = {
   '& .MuiOutlinedInput-root': {
@@ -25,11 +26,6 @@ const inputstlying = {
   },
 };
 
-const generateHash = () => {
-  const input = Date.now()
-  return CryptoJS.SHA256(input.toString()).toString(CryptoJS.enc.Hex)
-}
-
 const Thanksgiving = () => {
 
   const [captchaValue, setCaptchaValue] = useState(true);
@@ -39,6 +35,7 @@ const Thanksgiving = () => {
   const [schedule, setSchedule] = useState({slots: ['00:00:00']})
   const [modalData, setModalData] = useState({})
   const [open, setOpen] = useState(false)
+  const hash = dateToday + generateHash().slice(0,20)
 
   // form data
   const [formData, setFormData] = useState({
@@ -58,7 +55,7 @@ const Thanksgiving = () => {
     contact_no: '',
     date_requested: dateToday,
     service_id: id,
-    transaction_no: dateToday + generateHash().slice(0,20)
+    transaction_no: hash
   })
 
   useEffect(() => {
@@ -98,6 +95,7 @@ const Thanksgiving = () => {
           requirements: null,
           message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
         }
+        console.log(formData)
         setModalData(paymentInfo)
         setOpen(true)
     } catch (err) {
@@ -258,6 +256,17 @@ const Thanksgiving = () => {
                       size="small" 
                       sx={inputstlying} 
                       name='donation_amount'
+                      onChange={handleChange}
+                      required />
+                </Grid>  
+
+                <Grid item xs={12} sm={6}>
+                    <label>Contact number:</label>
+                    <TextField fullWidth 
+                      variant="outlined" 
+                      size="small" 
+                      sx={inputstlying} 
+                      name='contact_no'
                       onChange={handleChange}
                       required />
                 </Grid>  
