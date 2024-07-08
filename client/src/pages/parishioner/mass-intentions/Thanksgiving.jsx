@@ -10,8 +10,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
 import config from '../../../config';
 import axios from 'axios';
-import CashPaymentModal from '../../../components/PaymentModal';
-import CryptoJS from 'crypto-js';
+import all from '../../../components/PaymentModal'
 import generateHash from '../../../components/GenerateHash';
 
 const inputstlying = {
@@ -34,7 +33,8 @@ const Thanksgiving = () => {
   const dateToday = new Date().toJSON().slice(0,10)
   const [schedule, setSchedule] = useState({slots: ['00:00:00']})
   const [modalData, setModalData] = useState({})
-  const [open, setOpen] = useState(false)
+  const [openCash, setOpenCash] = useState(false)
+  const [openGCash, setOpenGCash] = useState(false)
   const hash = dateToday + generateHash().slice(0,20)
 
   // form data
@@ -95,9 +95,8 @@ const Thanksgiving = () => {
           requirements: null,
           message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
         }
-        console.log(formData)
         setModalData(paymentInfo)
-        setOpen(true)
+        if(formData.transaction_no === 'cash'){setOpenCash(true)} else {setOpenGCash(true)}
     } catch (err) {
         console.error('error submitting form data', err)
     }
@@ -126,7 +125,8 @@ const Thanksgiving = () => {
       </Link>
       <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please input the following</h1>
 
-      <CashPaymentModal open={open} data={modalData}/>
+      <all.CashPaymentModal open={openCash} data={modalData}/>
+      <all.GCashPaymentModal open={openGCash} data={modalData}/>
 
       <Container maxWidth="md" sx={{ marginBottom: '50px' }}>
         <form onSubmit={handleSubmit}>

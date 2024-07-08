@@ -9,9 +9,8 @@ import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"
 import Footer from "../../../components/Footer";
-import CashPaymentModal from "../../../components/PaymentModal";
 import config from "../../../config"
-import CryptoJS from 'crypto-js'
+import all from '../../../components/PaymentModal'
 import generateHash from "../../../components/GenerateHash";
 
 const inputstlying = {
@@ -28,7 +27,8 @@ const inputstlying = {
 
 const Petition = () => {
 
-    const [open, setOpen] = useState(false)
+    const [openCash, setOpenCash] = useState(false)
+    const [openGCash, setOpenGCash] = useState(false)
     const [captchaValue, setCaptchaValue] = useState(null);
     const [schedule, setSchedule] = useState({slots: ['00:00:00']})
     const [modalData, setModalData] = useState({})
@@ -86,7 +86,7 @@ const Petition = () => {
                 message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!',
             }
             setModalData(paymentInfo);
-            setOpen(true)
+            if(formData.payment_method === 'cash') {setOpenCash(true)} else {setOpenGCash(true)}
         } catch(err) {
             console.error('error submitting the form', err)
         }
@@ -113,7 +113,8 @@ const Petition = () => {
             </Link>
             <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please input the following</h1>
 
-            <CashPaymentModal open={open} data={modalData} />
+            <all.CashPaymentModal open={openCash} data={modalData} />
+            <all.GCashPaymentModal open={openGCash} data={modalData} />
 
             <Container maxWidth="md" sx={{ marginBottom: '50px' }}>
                 <form onSubmit={handleSubmit}>
