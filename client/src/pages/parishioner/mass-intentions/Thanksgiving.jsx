@@ -10,7 +10,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
 import config from '../../../config';
 import axios from 'axios';
-import CashPaymentModal from '../../../components/CashPaymentModal';
+import CashPaymentModal from '../../../components/PaymentModal';
 import CryptoJS from 'crypto-js';
 import generateHash from '../../../components/GenerateHash';
 

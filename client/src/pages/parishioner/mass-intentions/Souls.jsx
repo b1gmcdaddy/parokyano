@@ -11,7 +11,7 @@ import Footer from "../../../components/Footer";
 import config from '../../../config';
 import axios from 'axios';
 import generateHash from '../../../components/GenerateHash';
-import CashPaymentModal from '../../../components/CashPaymentModal';
+import all from '../../../components/PaymentModal'
 
 const inputstlying = {
   '& .MuiOutlinedInput-root': {
@@ -31,7 +31,8 @@ const Souls = () => {
   const dateToday = new Date().toJSON().slice(0,10)
   const [captchaValue, setCaptchaValue] = useState(null);
   const [modalData, setModalData] = useState({});
-  const [open, setOpen] = useState(false)
+  const [openCash, setOpenCash] = useState(false)
+  const [openGCash, setOpenGCash] = useState(false)
   const hash = dateToday + generateHash().slice(0,20)
 
   const [formData, setFormData] = useState({
@@ -78,7 +79,7 @@ const Souls = () => {
             message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
         }
         setModalData(paymentInfo)
-        setOpen(true)
+        if(formData.payment_method === 'cash') {setOpenCash(true)} else {setOpenGCash(true)}
     } catch (err) {
         console.error('error submitting data', err)
     }
@@ -126,7 +127,8 @@ const Souls = () => {
             </Link>
             <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please input the following</h1>
 
-            <CashPaymentModal open={open} data={modalData} />
+            <all.CashPaymentModal open={openCash} data={modalData} />
+            <all.GCashPaymentModal open={openGCash} data={modalData} />
 
             <Container maxWidth="md" sx={{ marginBottom: '50px' }}>
                 <form onSubmit={handleSubmit}>

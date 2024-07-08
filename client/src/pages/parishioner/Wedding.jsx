@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons"
 import { MenuItem, Grid, TextField, Button, FormControl, RadioGroup, FormControlLabel, Radio, Container } from "@mui/material"
 import { React, useState } from "react"
-import CashPaymentModal from "../../components/CashPaymentModal"
+// import CashPaymentModal from "../../components/CashPaymentModal"
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -59,7 +59,7 @@ const Wedding = () => {
 
             <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please Input the Following</h1>
 
-            <CashPaymentModal open={open} data={dummyData[0]} />
+            {/* <CashPaymentModal open={open} data={dummyData[0]} /> */}
 
             <Container maxWidth="md" sx={{marginBottom: '60px'}}>
                 <form onSubmit={handleSubmit}>

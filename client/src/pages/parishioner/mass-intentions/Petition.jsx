@@ -9,7 +9,7 @@ import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"
 import Footer from "../../../components/Footer";
-import CashPaymentModal from "../../../components/CashPaymentModal";
+import CashPaymentModal from "../../../components/PaymentModal";
 import config from "../../../config"
 import CryptoJS from 'crypto-js'
 import generateHash from "../../../components/GenerateHash";
