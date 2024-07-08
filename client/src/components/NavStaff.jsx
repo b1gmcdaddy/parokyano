@@ -27,7 +27,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 
-const drawerWidth = 240;
+const sideBarWidth = 240;
 
 const sideBarItems = [
   {icon: <DashboardIcon/>, label: "Dashboard"},
@@ -110,9 +110,9 @@ const NavStaff = (props) => {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          backgroundColor: "#D9D9D9"
+          width: { sm: `calc(100% - ${sideBarWidth}px)` },
+          ml: { sm: `${sideBarWidth}px` },
+          backgroundColor: "#D9D9D9",
         }}
       >
         <Toolbar>
@@ -125,15 +125,15 @@ const NavStaff = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{letterSpacing: "3px", color: "#00000e", flexGrow: 1}}>
+          <Typography variant="h6" noWrap component="div" sx={{letterSpacing: "3px", color: "#00000e", flexGrow: 1, mx: { md: '30px' }}}>
             Parokyano
           </Typography>
-          <SettingsRoundedIcon className='md:mr-8 text-neutral-950' />
+          <SettingsRoundedIcon className='md:mr-8 text-neutral-950' sx={{mx: { md: '30px' }}} />
         </Toolbar>
       </AppBar>
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        sx={{ width: { sm: sideBarWidth }, flexShrink: { sm: 0 } }}
         aria-label="mailbox folders"
       >
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
@@ -148,7 +148,7 @@ const NavStaff = (props) => {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: sideBarWidth },
           }}
         >
           {drawer}
@@ -157,7 +157,7 @@ const NavStaff = (props) => {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: sideBarWidth },
           }}
           open
         >
