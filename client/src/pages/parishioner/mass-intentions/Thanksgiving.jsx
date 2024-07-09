@@ -53,7 +53,6 @@ const Thanksgiving = () => {
     donation_amount: '',
     type: 'Thanksgiving',
     contact_no: '',
-    date_requested: dateToday,
     service_id: id,
     transaction_no: hash
   })

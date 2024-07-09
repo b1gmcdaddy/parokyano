@@ -21,10 +21,7 @@ const retrieveByParams = (req, res) => {
         if(err){
             console.log(err);
         } else {
-            console.log(result)
-            res.status(200).json({
-                service: result[0]
-            })
+            res.status(200).send(result[0])
         }
     })
 }
