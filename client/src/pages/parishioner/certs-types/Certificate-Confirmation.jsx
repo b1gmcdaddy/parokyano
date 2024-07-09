@@ -52,6 +52,7 @@ const CertificateConfirmation = () => {
         service_id: id,
         transaction_no: hash,
         date_requested: dateToday,
+        purpose: ''
     })
 
     useEffect(() => {
@@ -81,10 +82,10 @@ const CertificateConfirmation = () => {
         setFormData(prevState => ({...prevState, archive_info: {...formData.archive_info, [e.target.name]: e.target.value}}))
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${config.API}/request/create-certificate`, formData)
+            axios.post(`${config.API}/request/create-certificate`, formData)
             const paymentInfo = {
                 fee: serviceInfo.fee,
                 transaction_no: formData.transaction_no,
