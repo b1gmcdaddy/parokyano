@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 //all icons are temporary
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -30,14 +31,14 @@ import Typography from '@mui/material/Typography';
 const sideBarWidth = 240;
 
 const sideBarItems = [
-  {icon: <DashboardIcon/>, label: "Dashboard"},
-  {icon: <CampaignIcon/>, label: "Announcements"},
-  {icon: <AssignmentIcon/>, label: "Service Requests"},
-  {icon: <BadgeIcon/>, label: "Certificate Requests"},
-  {icon: <FormatListBulletedIcon/>, label: "Mass Intentions"},
-  {icon: <ReceiptLongIcon/>, label: "Transactions"},
-  {icon: <CalendarMonthIcon/>, label: "Schedules"},
-]
+  { icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard" },
+  { icon: <CampaignIcon />, label: "Announcements", path: "" },
+  { icon: <AssignmentIcon />, label: "Service Requests", path: "/service-requests" },
+  { icon: <BadgeIcon />, label: "Certificate Requests", path: "" },
+  { icon: <FormatListBulletedIcon />, label: "Mass Intentions", path: "" },
+  { icon: <ReceiptLongIcon />, label: "Transactions", path: "" },
+  { icon: <CalendarMonthIcon />, label: "Schedules", path: "" },
+];
 
 const NavStaff = (props) => {
   const { window } = props;
@@ -78,7 +79,7 @@ const NavStaff = (props) => {
       <List sx={{color: 'whitesmoke'}}>
         {sideBarItems.map((items, index) => (
           <ListItem key={index} disablePadding>
-            <ListItemButton>
+            <ListItemButton component={Link} to={items.path}>
               <ListItemIcon sx={{color: 'white'}}>
                 {items.icon}
               </ListItemIcon>

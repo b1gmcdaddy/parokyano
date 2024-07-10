@@ -7,7 +7,6 @@ import { Button, Typography, Container } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faChurch, faStamp, faHandsPraying } from '@fortawesome/free-solid-svg-icons';
 
-const sideBarWidth = 240;
 
 const sampleStatistics = {
   noServiceReq: 18,
@@ -37,11 +36,11 @@ const StaffDashboard = () => {
   return (
     <Box sx={{ display: 'flex', mx: { md: '30px' } }}>
       <NavStaff />
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${sideBarWidth}px)` } }} >
+      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }} >
           <Toolbar />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', 
             marginTop: '8px', alignItems: 'center' }}>
-            <h1 className='text-xl font-semibold'>Dashboard</h1>
+            <Typography sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>Dashboard</Typography> 
             <Button variant="contained" type="button" sx={{backgroundColor:"#355173"}}>Generate Reports</Button>
           </Box>
           <div className='mt-8 border-1 border-neutral-900 inline-block'>
