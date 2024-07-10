@@ -43,11 +43,12 @@ const CertificateConfirmation = () => {
         contact_no: '',
         father_name: '',
         mother_name: '',
-        confirmation_date: null,
+        spouse_name: null,
+        preferred_date: null,
         archive_info: {
             book_no: '',
-            line_no: '',
             page_no: '',
+            line_no: '',
         },   
         service_id: id,
         transaction_no: hash,
@@ -152,18 +153,6 @@ const CertificateConfirmation = () => {
                                 required />
                         </Grid>
                         <Grid item xs={12} sm={4}>
-                            <label><span className="text-red-600 font-bold">*</span>Date of Birth:</label>
-                            <TextField 
-                                fullWidth 
-                                variant="outlined" 
-                                size="small" 
-                                sx={inputstlying}
-                                name="birth_date" 
-                                onChange={handleChange} 
-                                type="date" 
-                                required />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
                             <label><span className="text-red-600 font-bold">*</span>Place of Birth:</label>
                             <TextField 
                                 fullWidth 
@@ -171,17 +160,6 @@ const CertificateConfirmation = () => {
                                 size="small" 
                                 sx={inputstlying} 
                                 name="address" 
-                                onChange={handleChange} 
-                                required />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <label><span className="text-red-600 font-bold">*</span>Contact Number:</label>
-                            <TextField 
-                                fullWidth 
-                                variant="outlined" 
-                                size="small" 
-                                sx={inputstlying}
-                                name="contact_no" 
                                 onChange={handleChange} 
                                 required />
                         </Grid>
@@ -214,9 +192,20 @@ const CertificateConfirmation = () => {
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying}
-                                name="confirmation_date" 
+                                name="preferred_date" 
                                 onChange={handleChange} 
                                 type="date" />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <label><span className="text-red-600 font-bold">*</span>Contact Number:</label>
+                            <TextField 
+                                fullWidth 
+                                variant="outlined" 
+                                size="small" 
+                                sx={inputstlying}
+                                name="contact_no" 
+                                onChange={handleChange} 
+                                required />
                         </Grid>
                     </Grid>
                     

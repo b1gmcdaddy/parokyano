@@ -27,10 +27,13 @@ const createRequestIntention = (req, res) => {
 const createRequestCertificate = (req, res) => {
     const request = req.body
     const archive = JSON.stringify(request.archive_info)
+    const spouse = JSON.stringify(request.spouse_name)
+    console.log(request)
 
     // did not include payment method in query since it is cash by default && all certificates are to be paid in cash
-    db.query('INSERT INTO request (first_name, middle_name, last_name, birth_date, address, contact_no, father_name, mother_name, confirmation_date, details, service_id, transaction_no, date_requested, purpose) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [request.first_name, request.middle_name, request.last_name, request.birth_date, request.address, request.contact_no, request.father_name, request.mother_name, request.confirmation_date, archive, request.service_id, request.transaction_no, dateToday, request.purpose],
+    // baptism, confirmation, and wedding dates are stored in PREFERRED DATE to save some space and lessen query length:>
+    db.query('INSERT INTO request (first_name, middle_name, last_name, birth_date, address, contact_no, father_name, mother_name, preferred_date, details, service_id, transaction_no, date_requested, purpose, spouse_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [request.first_name, request.middle_name, request.last_name, request.birth_date, request.address, request.contact_no, request.father_name, request.mother_name, request.preferred_date, archive, request.service_id, request.transaction_no, dateToday, request.purpose, spouse],
         (err, result) => {
             if(err){
                 console.error('error submitting to db', err)
