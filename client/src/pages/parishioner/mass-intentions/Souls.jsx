@@ -7,15 +7,12 @@ import {
   Grid,
   TextField,
   MenuItem,
-  Box,
   Button,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Typography,
+  InputAdornment,
+  IconButton
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeftLong, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
@@ -123,10 +120,10 @@ const Souls = () => {
     });
   };
 
-  // need removal function for names
-  // const undoAddSouls = () => {
-  //   setMoreSouls(false);
-  // }
+   const removeSoul = (index) => {
+    const temp = formData.intention_details.filter((_, i) => i !== index);
+    setFormData({ ...formData, intention_details: temp });
+  };
 
   const handleCaptchaChange = (value) => {
     setCaptchaValue(value);
@@ -155,29 +152,40 @@ const Souls = () => {
       <Container maxWidth="md" sx={{ marginBottom: "50px" }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
-            <Grid item xs={12} sm={12} textAlign={"center"}>
-              <h5 className="mb-0 pb-0">For the Souls of:</h5>
-            </Grid>
-
-            {/* dynamic rendering of textfields */}
-            <Grid
-              container
-              justifyContent={"center"}
-              alignItems={"center"}
-              direction={"column"}
-            >
+            <Grid item xs={12}>
+              <label>For the souls of:</label>
               {formData.intention_details.map((name, index) => (
-                <Grid item key={index} container justifyContent={"center"}>
-                  <TextField
-                    type="text"
-                    onChange={(e) => handleSouls(index, e)}
-                    placeholder="enter name"
-                  />
-                </Grid>
+                <TextField
+                  key={index}
+                  type="text"
+                  fullWidth
+                  sx={inputstlying}
+                  variant="outlined"
+                  size="small"
+                  value={name}
+                  onChange={(e) => handleSouls(index, e)}
+                  required
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          color="secondary"
+                          onClick={() => removeSoul(index)}
+                        >
+                          <FontAwesomeIcon icon={faMinus} className="text-sm text-red-700"/>
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  style={{ marginBottom: "1rem" }}
+                />
               ))}
-              <Button type="button" onClick={addMoreSouls}>
-                Add Name
-              </Button>
+              <Button type="button" onClick={addMoreSouls} variant="contained" sx={{color: "#355173", padding: 0.8,
+                backgroundColor: "white", float: "right",
+                "&:hover": {
+                  backgroundColor: "white", 
+                  color: "#355173"
+                }}}> Add Soul</Button>
             </Grid>
 
             <Grid item xs={12} sm={4}>
