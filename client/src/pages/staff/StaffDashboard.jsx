@@ -14,6 +14,7 @@ const sampleStatistics = {
   noMassIntentions: 30
 };
 
+// kani siya is mga under 'upcoming' status lang nya bai...
 const sampleRecentServices = [
   {type: "Funeral Mass", requestor: "John Doe", dateRequested: "April 11, 2024"},
   {type: "Baptism", requestor: "John Doe", dateRequested: "April 08, 2024"},
