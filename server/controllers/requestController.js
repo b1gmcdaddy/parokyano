@@ -28,7 +28,6 @@ const createRequestCertificate = (req, res) => {
     const request = req.body
     const archive = JSON.stringify(request.archive_info)
     const spouse = JSON.stringify(request.spouse_name)
-    console.log(request)
 
     // did not include payment method in query since it is cash by default && all certificates are to be paid in cash
     // baptism, confirmation, and wedding dates are stored in PREFERRED DATE to save some space and lessen query length:>
@@ -43,7 +42,21 @@ const createRequestCertificate = (req, res) => {
     )
 }
 
+const retrieveByParams = (req, res) => {
+    const {col, val} = req.query
+
+    db.query(`SELECT * from request WHERE ?? = ?`, [col, val], 
+        (err, result) => {
+            if (err) {
+                console.error('error retrieving from db', err);
+            }
+            return res.status(200).send(result)
+        }
+    )
+}
+
 module.exports = {
     createRequestIntention,
-    createRequestCertificate
+    createRequestCertificate,
+    retrieveByParams
 }
