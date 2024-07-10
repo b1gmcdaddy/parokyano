@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 02, 2024 at 12:50 PM
+-- Generation Time: Jul 10, 2024 at 11:25 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -141,12 +141,12 @@ CREATE TABLE `request` (
   `purpose` text DEFAULT NULL,
   `mother_name` varchar(100) DEFAULT NULL,
   `father_name` varchar(100) DEFAULT NULL,
-  `birthDate` date DEFAULT NULL,
-  `baptismDate` date DEFAULT NULL,
-  `intention_details` text DEFAULT NULL,
+  `birth_date` date DEFAULT NULL,
+  `spouse_name` text DEFAULT NULL,
+  `details` text DEFAULT NULL,
   `type` varchar(50) DEFAULT NULL,
-  `preferred_date` date NOT NULL,
-  `preferred_time` time NOT NULL,
+  `preferred_date` date DEFAULT NULL,
+  `preferred_time` time DEFAULT NULL,
   `preferred_priest` varchar(255) DEFAULT NULL,
   `date_requested` date NOT NULL,
   `payment_method` enum('cash','gcash') NOT NULL,
@@ -170,7 +170,7 @@ CREATE TABLE `request` (
 -- Dumping data for table `request`
 --
 
-INSERT INTO `request` (`requestID`, `first_name`, `middle_name`, `last_name`, `age`, `address`, `contact_no`, `relationship`, `requested_by`, `patient_status`, `purpose`, `mother_name`, `father_name`, `birthDate`, `baptismDate`, `intention_details`, `type`, `preferred_date`, `preferred_time`, `preferred_priest`, `date_requested`, `payment_method`, `transaction_date`, `interview_date`, `isPrenuptial`, `isRequirement`, `isParishioner`, `isSponsor`, `status`, `donation`, `payment_status`, `transaction_no`, `service_id`, `user_id`, `priestSched_id`, `venueSched_id`) VALUES
+INSERT INTO `request` (`requestID`, `first_name`, `middle_name`, `last_name`, `age`, `address`, `contact_no`, `relationship`, `requested_by`, `patient_status`, `purpose`, `mother_name`, `father_name`, `birth_date`, `spouse_name`, `details`, `type`, `preferred_date`, `preferred_time`, `preferred_priest`, `date_requested`, `payment_method`, `transaction_date`, `interview_date`, `isPrenuptial`, `isRequirement`, `isParishioner`, `isSponsor`, `status`, `donation`, `payment_status`, `transaction_no`, `service_id`, `user_id`, `priestSched_id`, `venueSched_id`) VALUES
 (1, NULL, NULL, NULL, NULL, NULL, '', NULL, 'john', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-06-27', '06:00:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', '0', 1, NULL, NULL, NULL),
 (2, NULL, NULL, NULL, NULL, NULL, '', NULL, 'john', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-06-16', '05:00:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', '0', 1, NULL, NULL, NULL),
 (3, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-06-29', '17:30:00', NULL, '0000-00-00', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'paid', '0', 1, NULL, NULL, NULL),
@@ -195,7 +195,36 @@ INSERT INTO `request` (`requestID`, `first_name`, `middle_name`, `last_name`, `a
 (22, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 15\"', 'Petition', '2024-07-03', '17:30:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-023a57bcaec3bee8ec8d0e', 1, NULL, NULL, NULL),
 (23, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 16\"', 'Petition', '2024-07-07', '09:30:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-029fb975236248daae62d2', 1, NULL, NULL, NULL),
 (24, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"St.Joseph\",\"wedding\":\"\",\"success\":\"\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-07', '09:30:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-02955690f0855f3f297074', 1, NULL, NULL, NULL),
-(25, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"\",\"wedding\":\"\",\"success\":\"research 2\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-03', '06:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-02afb2944991acffd7f8ba', 1, NULL, NULL, NULL);
+(25, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"\",\"wedding\":\"\",\"success\":\"research 2\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-03', '06:00:00', NULL, '2024-07-02', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-02afb2944991acffd7f8ba', 1, NULL, NULL, NULL),
+(26, NULL, NULL, NULL, NULL, NULL, '', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"\",\"wedding\":\"\",\"success\":\"research 3\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-10', '06:00:00', NULL, '2024-07-08', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-082b981b83bf4cabcd6877', 1, NULL, NULL, NULL),
+(27, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"\",\"wedding\":\"\",\"success\":\"research 4\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-14', '09:30:00', NULL, '2024-07-08', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-084b9724abc272fa7230c2', 1, NULL, NULL, NULL),
+(28, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"\",\"wedding\":\"\",\"success\":\"research 4\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-14', '06:30:00', NULL, '2024-07-08', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-08c381406868dd3e47be7b', 1, NULL, NULL, NULL),
+(29, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"St.Joseph\",\"wedding\":\"\",\"success\":\"\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-14', '08:00:00', NULL, '2024-07-08', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-08750304cb441b3f47bb18', 1, NULL, NULL, NULL),
+(30, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '[\"Lucas\"]', 'Souls', '2024-07-14', '08:00:00', NULL, '2024-07-08', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-08730407542183048c8add', 1, NULL, NULL, NULL),
+(31, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '[\"Matthew\"]', 'Souls', '2024-07-20', '17:30:00', NULL, '2024-07-08', 'gcash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-08d5bf4559a767e1464335', 1, NULL, NULL, NULL),
+(32, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '[\"Matthew\"]', 'Souls', '2024-07-20', '17:30:00', NULL, '2024-07-08', 'gcash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-08d5bf4559a767e1464335', 1, NULL, NULL, NULL),
+(33, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '[\"Matthew\"]', 'Souls', '2024-07-20', '17:30:00', NULL, '2024-07-08', 'gcash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-08d5bf4559a767e1464335', 1, NULL, NULL, NULL),
+(34, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '[\"Lucas\"]', 'Souls', '2024-07-13', '06:00:00', NULL, '2024-07-08', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-08e5d82b1054b46cd9cb30', 1, NULL, NULL, NULL),
+(35, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '[\"Clyde\"]', 'Souls', '2024-07-13', '06:00:00', NULL, '2024-07-08', 'gcash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-0888aa528ce2b73fbc6190', 1, NULL, NULL, NULL),
+(36, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '{\"saint\":\"St.Peter\",\"wedding\":\"\",\"success\":\"\",\"birthday\":\"\",\"others\":\"\"}', 'Thanksgiving', '2024-07-10', '06:00:00', NULL, '2024-07-08', 'gcash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-08972b8c4227d87e966c5f', 1, NULL, NULL, NULL),
+(37, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'joseph', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 17\"', 'Petition', '2024-07-13', '17:30:00', NULL, '2024-07-08', 'gcash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-084d099cede9f883cf32ff', 1, NULL, NULL, NULL),
+(38, NULL, NULL, NULL, NULL, NULL, '19103541', NULL, 'francis', NULL, NULL, NULL, NULL, NULL, NULL, '\"test 18\"', 'Petition', '2024-07-12', '06:00:00', NULL, '2024-07-08', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', 100, 'unpaid', '2024-07-08de526129976e02cf1d2c', 1, NULL, NULL, NULL),
+(39, 'Joseph', '', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-10', NULL, NULL, NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-093cad31a418e76d4035ec', 2, NULL, NULL, NULL),
+(40, 'Joseph', '', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-10', NULL, NULL, NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-093cad31a418e76d4035ec', 2, NULL, NULL, NULL),
+(41, 'Joseph', '', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-11', NULL, NULL, NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-0935763fb9bb041d3637ad', 2, NULL, NULL, NULL),
+(42, 'Joseph', '', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-11', NULL, '{\"book_no\":\"\",\"line_no\":\"\",\"page_no\":\"\"}', NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-0935763fb9bb041d3637ad', 2, NULL, NULL, NULL),
+(43, 'Joseph', '', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-17', NULL, '{\"book_no\":\"\",\"line_no\":\"\",\"page_no\":\"\"}', NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-09fb864e52a1a58158e069', 2, NULL, NULL, NULL),
+(44, 'Joseph', '', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-17', NULL, '{\"book_no\":\"\",\"line_no\":\"\",\"page_no\":\"\"}', NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-09fb864e52a1a58158e069', 2, NULL, NULL, NULL),
+(45, 'Joseph', 'test 20', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-10', NULL, '{\"book_no\":\"\",\"line_no\":\"\",\"page_no\":\"\"}', NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-0954db24d7c375fadf2806', 2, NULL, NULL, NULL),
+(46, 'Joseph', 'test 20', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-10', NULL, '{\"book_no\":\"\",\"line_no\":\"\",\"page_no\":\"\"}', NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-0954db24d7c375fadf2806', 2, NULL, NULL, NULL),
+(47, 'Joseph', 'test 20', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-10', NULL, '{\"book_no\":\"\",\"line_no\":\"\",\"page_no\":\"\"}', NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-0954db24d7c375fadf2806', 2, NULL, NULL, NULL),
+(48, 'Joseph', 'test 20', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, NULL, 'Mother', 'Father', '2024-07-10', NULL, '{\"book_no\":\"\",\"line_no\":\"\",\"page_no\":\"\"}', NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-0954db24d7c375fadf2806', 2, NULL, NULL, NULL),
+(49, 'Joseph', 'test 21', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, 'school', 'Mother', 'Father', '2024-07-03', NULL, '{\"book_no\":\"2\",\"line_no\":\"4\",\"page_no\":\"3\"}', NULL, '0000-00-00', '00:00:00', NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-09d0f896f3213b8daabb94', 2, NULL, NULL, NULL),
+(50, 'Joseph', 'test 22', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, 'school', 'Mother', 'Father', '2024-07-01', NULL, '{\"book_no\":\"1\",\"line_no\":\"3\",\"page_no\":\"2\"}', NULL, NULL, NULL, NULL, '2024-07-09', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-0960cd8691b8ff22d1fc20', 2, NULL, NULL, NULL),
+(51, 'Joseph', 'test 23', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, 'late registration', 'Mother', 'Father', '0000-00-00', NULL, '{\"book_no\":\"1\",\"line_no\":\"3\",\"page_no\":\"2\"}', NULL, NULL, NULL, NULL, '2024-07-10', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-1037c4e3decedd408af414', 2, NULL, NULL, NULL),
+(52, 'Joseph', 'test 24', 'JOJO', NULL, 'Cebu', '19103541', NULL, NULL, NULL, 'passport', 'Mother', 'Father', '2024-07-12', NULL, '{\"book_no\":\"1\",\"line_no\":\"1\",\"page_no\":\"1\"}', NULL, '2024-07-12', NULL, NULL, '2024-07-10', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-10a27c12f3d1fd5e5002f6', 2, NULL, NULL, NULL),
+(53, 'Joseph', '', 'JOJO', NULL, '', '19103541', NULL, NULL, NULL, 'school', NULL, NULL, '0000-00-00', '{\"firstName\":\"Mary\",\"middleName\":\"\",\"lastName\":\"JOJO\"}', '{\"book_no\":\"1\",\"page_no\":\"1\",\"line_no\":\"1\"}', NULL, '2024-07-11', NULL, NULL, '2024-07-10', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-10f828b7c27d3460e72a12', 4, NULL, NULL, NULL),
+(54, 'Joseph', 'test 25', 'JOJO', NULL, NULL, '19103541', NULL, NULL, NULL, 'school', NULL, NULL, NULL, '{\"firstName\":\"Mary\",\"middleName\":\"\",\"lastName\":\"JOJO\"}', '{\"book_no\":\"1\",\"page_no\":\"1\",\"line_no\":\"1\"}', NULL, '2024-07-12', NULL, NULL, '2024-07-10', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-10e25ece1e013e455d8fc1', 4, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -216,7 +245,10 @@ CREATE TABLE `service` (
 --
 
 INSERT INTO `service` (`serviceID`, `name`, `requirements`, `fee`, `duration`) VALUES
-(1, 'Mass Intention', NULL, NULL, NULL);
+(1, 'Mass Intention', NULL, NULL, NULL),
+(2, 'Certificate - Confirmation', NULL, 50, NULL),
+(3, 'Certificate - Baptism', NULL, 100, NULL),
+(4, 'Certificate - Marriage', NULL, 150, NULL);
 
 -- --------------------------------------------------------
 
@@ -491,13 +523,13 @@ ALTER TABLE `priestschedule`
 -- AUTO_INCREMENT for table `request`
 --
 ALTER TABLE `request`
-  MODIFY `requestID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `requestID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
-  MODIFY `serviceID` bigint(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `serviceID` bigint(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `serviceschedule`
