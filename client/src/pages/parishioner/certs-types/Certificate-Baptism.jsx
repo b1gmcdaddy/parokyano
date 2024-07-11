@@ -40,8 +40,8 @@ const CertificateBaptism = () => {
         birth_date: '',
         address: '',
         contact_no: '',
-        father_name: null,
-        mother_name: null,
+        father_name: '',
+        mother_name: '',
         spouse_name: null,
         preferred_date: null,
         archive_info: {
