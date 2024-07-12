@@ -41,10 +41,10 @@ const Souls = () => {
   const [modalData, setModalData] = useState({});
   const [openCash, setOpenCash] = useState(false);
   const [openGCash, setOpenGCash] = useState(false);
-  const hash = dateToday + generateHash().slice(0, 20);
+  const hash = dateToday + generateHash().slice(0,20);
 
   const [formData, setFormData] = useState({
-    intention_details: [""],
+    intention_details: [''],
     offered_by: "",
     mass_date: "",
     mass_time: "",
@@ -106,7 +106,7 @@ const Souls = () => {
       }
       return name;
     });
-    setFormData({ ...formData, intention_details: temp });
+    setFormData(prevState => ({ ...prevState, intention_details: temp }));
   };
 
   const handleChange = (e) => {
@@ -114,10 +114,10 @@ const Souls = () => {
   };
 
   const addMoreSouls = () => {
-    setFormData({
-      ...formData.intention_details,
-      intention_details: [...formData.intention_details, ""],
-    });
+    setFormData(prevState => ({
+      ...prevState,
+      intention_details: [...prevState.intention_details, ''],
+    }));
   };
 
    const removeSoul = (index) => {

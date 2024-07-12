@@ -38,7 +38,7 @@ const CertificateBaptism = () => {
         middle_name: '',
         last_name: '',
         birth_date: '',
-        address: '',
+        birth_place: '',
         contact_no: '',
         father_name: '',
         mother_name: '',
@@ -166,7 +166,7 @@ const CertificateBaptism = () => {
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying} 
-                                name="address" 
+                                name="birth_place" 
                                 onChange={handleChange} 
                                 required />
                         </Grid>

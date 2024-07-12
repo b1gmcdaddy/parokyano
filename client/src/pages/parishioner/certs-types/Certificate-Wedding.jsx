@@ -38,7 +38,7 @@ const CertificateWedding = () => {
         middle_name: '',
         last_name: '', 
         birth_date: null,
-        address: null, 
+        birth_place: null, 
         contact_no: '',
         father_name: null,
         mother_name: null,

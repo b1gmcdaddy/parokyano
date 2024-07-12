@@ -32,8 +32,23 @@ const createRequestCertificate = (req, res) => {
 
     // did not include payment method in query since it is cash by default && all certificates are to be paid in cash
     // baptism, confirmation, and wedding dates are stored in PREFERRED DATE to save some space and lessen query length:>
-    db.query('INSERT INTO request (first_name, middle_name, last_name, birth_date, address, contact_no, father_name, mother_name, preferred_date, details, service_id, transaction_no, date_requested, purpose, spouse_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [request.first_name, request.middle_name, request.last_name, request.birth_date, request.address, request.contact_no, request.father_name, request.mother_name, request.preferred_date, archive, request.service_id, request.transaction_no, dateToday, request.purpose, spouse],
+    db.query('INSERT INTO request (first_name, middle_name, last_name, birth_date, birth_place, contact_no, father_name, mother_name, preferred_date, details, service_id, transaction_no, date_requested, purpose, spouse_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [request.first_name, request.middle_name, request.last_name, request.birth_date, request.birth_place, request.contact_no, request.father_name, request.mother_name, request.preferred_date, archive, request.service_id, request.transaction_no, dateToday, request.purpose, spouse],
+        (err, result) => {
+            if(err){
+                console.error('error submitting to db', err)
+            }
+            return res.status(200)
+        }
+    )
+}
+
+const createRequestByBaptism = (req, res) => {
+    const request = req.body
+    const details = JSON.stringify(request.details)
+
+    db.query('INSERT INTO request (first_name, middle_name, last_name, birth_date, birth_place, gender, father_name, mother_name, details, address, contact_no, isChurchMarried, isCivilMarried, isLiveIn, preffered_date, preferred_time, priest_id, payment_method, transaction_no, date_requested, service_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+        [request.first_name, request.middle_name, request.last_name, request.birth_date, request.birth_place, request.gender, request.father_name, request.mother_name, details, request.address, request.contact_no, request.isChurchMarried, request.isCivilMarried, request.isLiveIn, request.preferred_date, request.preferred_time, request.priest_id, request.payment_method, request.transaction_no, request.date_requested, request.service_id],
         (err, result) => {
             if(err){
                 console.error('error submitting to db', err)

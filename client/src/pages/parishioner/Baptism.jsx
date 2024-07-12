@@ -29,6 +29,38 @@ const Baptism = () => {
   const [liveIn, setLiveIn] = useState('');
   const [captchaValue, setCaptchaValue] = useState(null);
 
+  const [formData, setFormData] = useState({
+    first_name: '',
+    middle_name: '',
+    last_name: '',
+    birth_date: '',
+    birth_place: '',
+    gender: '',
+    father_name: '',
+    mother_name: '',
+    details: {
+      father_age: '',
+      mother_age: '',
+      marriage_date: '',
+      liveIn_years: '',
+      godparents: [{      // why add it in details and not make a separate field?
+        name: '',         // in the case dili siya iaccept, no need to make additional queries on multiple tables
+        isCatholic: ''
+      }]           
+    },                         
+    address: '',
+    contact_no: '',
+    isChurchMarried: null,
+    isCivilMarried: null,
+    isLiveIn: null,
+    preferred_date: '',
+    preferred_time: '',
+    priest_id: '',      // priest_id = preferred priest (make rako separate controller for fetching lists of priest by saturday)
+    payment_method: '',
+    transaction_no: '',
+    service_id: ''    
+  })
+
   const handleCaptchaChange = (value) => {
     setCaptchaValue(value)
   }
@@ -98,8 +130,8 @@ const Baptism = () => {
             <Grid item xs={12} sm={3}>
               <label>Gender:</label>
               <TextField fullWidth select size="small" variant="outlined" sx={inputstlying} required>
-                <MenuItem value="Male">Male</MenuItem>
-                <MenuItem value="Female">Female</MenuItem>
+                <MenuItem value="male">Male</MenuItem>
+                <MenuItem value="female">Female</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={9}>
