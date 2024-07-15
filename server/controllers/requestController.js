@@ -18,6 +18,7 @@ const createRequestIntention = (req, res) => {
         [intention, data.type, data.offered_by, data.contact_no, data.mass_date, data.mass_time, data.payment_method, data.donation_amount, data.service_id, dateToday, data.transaction_no],
         (err, result) => {
             if(err){
+                console.error('error submitting to db', err)
                 return res.status(500).json({status: 500, success: false})
             }
             return res.status(200).json({ success: true})
@@ -37,13 +38,14 @@ const createRequestCertificate = (req, res) => {
         (err, result) => {
             if(err){
                 console.error('error submitting to db', err)
+                return res.status(500)
             }
             return res.status(200)
         }
     )
 }
 
-const createRequestByBaptism = (req, res) => {
+const createRequestBaptism = (req, res) => {
     const request = req.body
     const details = JSON.stringify(request.details)
 
@@ -52,6 +54,7 @@ const createRequestByBaptism = (req, res) => {
         (err, result) => {
             if(err){
                 console.error('error submitting to db', err)
+                return res.status(500)
             }
             return res.status(200)
         }
@@ -67,6 +70,7 @@ const retrieveByParams = (req, res) => {
         (err, result) => {
             if (err) {
                 console.error('error retrieving from db', err);
+                return res.status(500)
             }
 
             // not working for some reason
@@ -93,5 +97,6 @@ const retrieveByParams = (req, res) => {
 module.exports = {
     createRequestIntention,
     createRequestCertificate,
+    createRequestBaptism,
     retrieveByParams
 }
