@@ -51,7 +51,7 @@ const Wedding = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log(formData)
+        console.log(formData.spouse_name.firstName + formData.spouse_name.lastName)
     }
 
     const handleSponsor = (e, index, field) => {
