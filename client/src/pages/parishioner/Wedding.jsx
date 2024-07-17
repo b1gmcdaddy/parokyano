@@ -40,7 +40,7 @@ const Wedding = () => {
         relationship: '',
         isCatholic: null,
         isChurchMarried: null,
-        sponsor: [{
+        sponsor: [{                     // will be sent to db field: 'details'
             sponsor_name: '',
             sponsor_age: '',
             marital_status: null,

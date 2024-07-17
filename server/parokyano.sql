@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 17, 2024 at 02:50 PM
+-- Generation Time: Jul 17, 2024 at 03:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -254,7 +254,9 @@ INSERT INTO `service` (`serviceID`, `name`, `requirements`, `fee`, `duration`) V
 (1, 'Mass Intention', NULL, NULL, NULL),
 (2, 'Certificate - Confirmation', NULL, 50, NULL),
 (3, 'Certificate - Baptism', NULL, 100, NULL),
-(4, 'Certificate - Marriage', NULL, 150, NULL);
+(4, 'Certificate - Marriage', NULL, 150, NULL),
+(5, 'Baptism - Appointment', '[\"Photocopy of Birth Certificate\", \"Photocopy of Parent-Marriage Certificate\"]', 1600, 1),
+(6, 'Baptism - General', '[\"Photocopy of Birth Certificate\", \"Photocopy of Parent-Marriage Certificate\"]', 800, 1);
 
 -- --------------------------------------------------------
 
@@ -535,7 +537,7 @@ ALTER TABLE `request`
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
-  MODIFY `serviceID` bigint(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `serviceID` bigint(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `serviceschedule`
