@@ -71,6 +71,7 @@ const createRequestWedding = (req, res) => {
         (err, result) => {
             if (err) {
                 console.error('error submitting to db', err)
+                return res.status(500)
             } 
             return res.status(200)
         }
