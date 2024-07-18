@@ -53,7 +53,6 @@ const Souls = () => {
     contact_no: "",
     type: "Souls",
     transaction_no: hash,
-    date_requested: dateToday,
     service_id: id,
   });
 

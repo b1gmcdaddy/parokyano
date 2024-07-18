@@ -61,6 +61,22 @@ const createRequestBaptism = (req, res) => {
     )
 }
 
+const createRequestWedding = (req, res) => {
+    const request = req.body
+    const spouse = request.spouse_name.firstName + ' ' + request.spouse_name.middleName + ' ' + request.spouse_name.lastName
+    const sponsor = JSON.stringify(request.sponsor_details)
+    
+    db.query('INSERT INTO request (first_name, middle_name, last_name, spouse_name, contact_no, relationship, isCatholic, isChurchMarried, details, transaction_no, service_id, date_requested) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [request.first_name, request.middle_name, request.last_name, spouse, request.contact_no, request.relationship, request.isCatholic, request.isChurchMarried, sponsor, request.transaction_no, request.service_id, dateToday],
+        (err, result) => {
+            if (err) {
+                console.error('error submitting to db', err)
+            } 
+            return res.status(200)
+        }
+    )
+}
+
 const retrieveByParams = (req, res) => {
     const {col, val} = req.query
     const parsedDetails = []
@@ -98,5 +114,6 @@ module.exports = {
     createRequestIntention,
     createRequestCertificate,
     createRequestBaptism,
+    createRequestWedding,
     retrieveByParams
 }

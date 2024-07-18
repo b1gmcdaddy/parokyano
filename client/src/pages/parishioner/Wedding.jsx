@@ -6,8 +6,10 @@ import { Link } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons"
 import { MenuItem, Grid, TextField, Button, FormControl, RadioGroup, FormControlLabel, Radio, Container } from "@mui/material"
-import { React, useState } from "react"
+import { React, useEffect, useState } from "react"
 import generateHash from "../../components/GenerateHash"
+import config from "../../config"
+import axios from "axios"
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -25,7 +27,10 @@ const Wedding = () => {
 
     const [open, setOpen] = useState(false)
     const dateToday = new Date().toJSON().slice(0,10)
-    const hash = generateHash().slice(0,20)
+    const hash = dateToday + generateHash().slice(0,20)
+    const id = 7        // sa database, sunday wedding ang gi list ra, since there is no way of securing a
+                        // date ahead of time without consulting the priest, default lang sah siya na sunday wedding(1000PHP). 
+                        // change lang ang amount when date is changed to a non sunday date on admin side.
 
     const [formData, setFormData] = useState({
         first_name: '',
@@ -37,31 +42,37 @@ const Wedding = () => {
             lastName: ''
         },
         contact_no: '',
-        relationship: '',
+        relationship: '',               // marital status ni
         isCatholic: null,
         isChurchMarried: null,
-        sponsor: [{                     // will be sent to db field: 'details'
+        sponsor_details: [{                     // will be sent to db field: 'details'
             sponsor_name: '',
             sponsor_age: '',
-            marital_status: null,
+            isMarrried: null,
             catholic: null
         }],
-        transaction_no: dateToday + hash
+        transaction_no: hash,
+        service_id: id
     })
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log(formData.spouse_name.firstName + formData.spouse_name.lastName)
+        try{
+            await axios.post(`${config.API}/request/create-wedding`, formData)
+        } catch (err) {
+            console.log(err)
+        }
+        console.log(formData)
     }
 
     const handleSponsor = (e, index, field) => {
-        const temp = [...formData.sponsor]
+        const temp = [...formData.sponsor_details]
         temp[index][field] = e.target.value
-        setFormData(prevState => ({...prevState, sponsor: temp}))
+        setFormData(prevState => ({...prevState, sponsor_details: temp}))
     }
 
     const addSponsor = (e) => {
-        setFormData(prevState => ({...prevState, sponsor: [...formData.sponsor, {'sponsor_name': '', 'sponsor_age': '', 'marital_status': '', 'catholic': ''}]}))
+        setFormData(prevState => ({...prevState, sponsor_details: [...formData.sponsor_details, {'sponsor_name': '', 'sponsor_age': '', 'isMarrried': '', 'catholic': ''}]}))
     }
 
     const handleSpouse = (e) => {
@@ -220,7 +231,7 @@ const Wedding = () => {
                         
                     <Container maxWidth="md" className="bg-neutral-100 md:p-8 rounded-lg mb-5">
                         <Grid container spacing={3}>
-                            {formData.sponsor.map((s, index) => (
+                            {formData.sponsor_details.map((s, index) => (
                                 <>
                                     <Grid item key={index} xs={9} md={4}>
                                         <label>Sponsor's Full Name:</label>
@@ -230,7 +241,7 @@ const Wedding = () => {
                                             size="small" 
                                             sx={inputstlying}
                                             name="sponsor_name" 
-                                            value={formData.sponsor.sponsor_name}
+                                            value={formData.sponsor_details.sponsor_name}
                                             onChange={(e) => handleSponsor(e,index,'sponsor_name')}
                                             className="bg-white" />
                                     </Grid> 
@@ -242,7 +253,7 @@ const Wedding = () => {
                                             size="small" 
                                             sx={inputstlying}
                                             name="sponsor_age" 
-                                            value={formData.sponsor.sponsor_age}
+                                            value={formData.sponsor_details.sponsor_age}
                                             onChange={(e) => handleSponsor(e,index,'sponsor_age')}
                                             className="bg-white" />
                                     </Grid>
@@ -255,9 +266,9 @@ const Wedding = () => {
                                             variant="outlined" 
                                             sx={inputstlying} 
                                             className="bg-white" 
-                                            name="marital_status"
-                                            value={formData.sponsor.marital_status}
-                                            onChange={(e) => handleSponsor(e,index,'marital_status')}>
+                                            name="isMarrried"
+                                            value={formData.sponsor_details.isMarrried}
+                                            onChange={(e) => handleSponsor(e,index,'isMarrried')}>
                                                 <MenuItem value="1">Married</MenuItem>
                                                 <MenuItem value="0">Not Married</MenuItem>
                                         </TextField>
@@ -269,7 +280,7 @@ const Wedding = () => {
                                                 row 
                                                 className="ml-2"
                                                 name="catholic"
-                                                value={formData.sponsor.catholic}
+                                                value={formData.sponsor_details.catholic}
                                                 onChange={(e) => handleSponsor(e,index,'catholic')}>
                                             <FormControlLabel value="1" control={<Radio size="small" />} label="Yes" />
                                             <FormControlLabel value="0" control={<Radio size="small" />} label="No" />

@@ -46,7 +46,6 @@ const Petition = () => {
     donation_amount: "",
     contact_no: "",
     service_id: id,
-    date_requested: dateToday,
     transaction_no: hash,
   });
 
