@@ -31,7 +31,7 @@ const inputstyling = {
     },
 };
 
-const CashPaymentModal = ({open, message}) => {
+const NoPaymentModal = ({open, data}) => {
     const navigate = useNavigate()
 
     const handleClick = () => {
@@ -65,7 +65,7 @@ const CashPaymentModal = ({open, message}) => {
                     <Grid container spacing={1} justifyContent={"center"}>
                         <Grid item sm={12}>
                             <Typography variant='h6' sx={{textAlign: 'center'}}>
-                                Transaction Number
+                                {data.transaction_no}
                             </Typography>
                         </Grid>
                         <Grid item sm={12}>
@@ -76,9 +76,25 @@ const CashPaymentModal = ({open, message}) => {
                                 Save the transaction number above and use this for further queries.
                             </Typography>
                         </Grid>
+                        <Grid container justifyContent={"center"} sx={{bgcolor:'#E8E8E8', padding: 2, margin: 2}}>
+                            <Grid item sm={12}>
+                                <Typography variant='subtitle1' sx={{textAlign: 'center'}}>
+                                    {data.req !== null && (
+                                        <p>Please prepare the following:</p>
+                                    )}
+                                </Typography>
+                                <Typography variant='subtitle2' sx={{textAlign: 'left', marginLeft: 2}}>
+                                
+                                    {data.req !== null && data.req.map((item, index) => (
+                                        <p key={index}>{item}</p> 
+                                    ))}
+                                
+                                </Typography>
+                            </Grid>
+                        </Grid>
                         <Grid item sm={12}>
                             <Typography variant='subtitle2' sx={{textAlign: 'center', padding: 2}}>
-                                {message}
+                                {data.message}
                             </Typography>
                         </Grid>
             
@@ -102,4 +118,4 @@ const CashPaymentModal = ({open, message}) => {
       );
 }   
 
-export default CashPaymentModal
+export default NoPaymentModal

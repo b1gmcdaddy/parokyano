@@ -10,6 +10,7 @@ import { React, useEffect, useState } from "react"
 import generateHash from "../../components/GenerateHash"
 import config from "../../config"
 import axios from "axios"
+import NoPaymentModal from "../../components/NoPaymentModal"
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -55,10 +56,17 @@ const Wedding = () => {
         service_id: id
     })
 
+    const modalData = {
+        message: 'Please wait for the parish to communicate for further instructions. You may call us at (032) 346-9560 / +63969-021-7771 to follow-up after 2 days',
+        req: ['Copy of Birth Certificate', 'Baptismal Certificate - Marriage Purposes (issued within last 3 months)', 'Confirmation Certificate - Marriage Purposes (issued within last 3 months)'],
+        transaction_no: formData.transaction_no
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
             await axios.post(`${config.API}/request/create-wedding`, formData)
+            setOpen(true)
         } catch (err) {
             console.log(err)
         }
@@ -100,7 +108,7 @@ const Wedding = () => {
 
             <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please Input the Following</h1>
 
-            {/* <CashPaymentModal open={open} data={dummyData[0]} /> */}
+            <NoPaymentModal open={open} data={modalData}/>
 
             <Container maxWidth="md" sx={{marginBottom: '4em'}}>
                 <form onSubmit={handleSubmit}>
