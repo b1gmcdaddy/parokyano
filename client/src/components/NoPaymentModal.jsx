@@ -76,12 +76,11 @@ const NoPaymentModal = ({open, data}) => {
                                 Save the transaction number above and use this for further queries.
                             </Typography>
                         </Grid>
+                        {data.req !== null && (
                         <Grid container justifyContent={"center"} sx={{bgcolor:'#E8E8E8', padding: 2, margin: 2}}>
                             <Grid item sm={12}>
-                                <Typography variant='subtitle1' sx={{textAlign: 'center'}}>
-                                    {data.req !== null && (
-                                        <p>Please prepare the following:</p>
-                                    )}
+                                <Typography variant='subtitle1' sx={{textAlign: 'center'}}> 
+                                    <p>Please prepare the following:</p>
                                 </Typography>
                                 <Typography variant='subtitle2' sx={{textAlign: 'left', marginLeft: 2}}>
                                 
@@ -92,6 +91,7 @@ const NoPaymentModal = ({open, data}) => {
                                 </Typography>
                             </Grid>
                         </Grid>
+                         )}
                         <Grid item sm={12}>
                             <Typography variant='subtitle2' sx={{textAlign: 'center', padding: 2}}>
                                 {data.message}

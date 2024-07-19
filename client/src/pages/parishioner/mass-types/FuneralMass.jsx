@@ -1,26 +1,26 @@
 import React, { useState } from "react";
-import NavParishioner from "../../components/NavParishioner";
-import imageHeader from '../../assets/imageHeader.jpg';
-import Header from '../../components/Header';
+import NavParishioner from "../../../components/NavParishioner";
+import imageHeader from '../../../assets/imageHeader.jpg';
+import Header from '../../../components/Header';
 import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio } from '@mui/material';
-import Footer from '../../components/Footer';
+import Footer from '../../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"
-import MassTransacNum from "../../components/TransacNumMassBleAn";
+// import MassTransacNum from "../../../components/TransacNumMassBleAn";
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        boxShadow: '0 3px 2px rgba(0,0,0,0.1)',
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#355173',
-        borderWidth: '0.5px'
-      },
+        '& fieldset': {
+            boxShadow: '0 3px 2px rgba(0,0,0,0.1)',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: '#355173',
+            borderWidth: '0.5px'
+        },
     },
-  };
+};
 
 const FuneralMass = () => {
     const [open, setOpen] = useState(false);
@@ -48,7 +48,8 @@ const FuneralMass = () => {
                 <p className="xs:hidden md:flex">Return to mass selection</p>
             </Link>
             <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please input the following</h1>
-            <MassTransacNum open={open}/>
+
+            {/* <MassTransacNum open={open}/> */}
 
             <Container maxWidth="lg" sx={{ marginBottom: '50px' }}>
                 <form>
