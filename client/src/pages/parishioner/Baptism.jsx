@@ -27,7 +27,7 @@ const inputstlying = {
 
 const Baptism = () => {
 
-  const id = 5;
+  const id = 5; 
   const dateToday = new Date().toJSON().slice(0, 10);
   const hash = dateToday + generateHash().slice(0,20);
   const [captchaValue, setCaptchaValue] = useState(null);
@@ -52,8 +52,8 @@ const Baptism = () => {
       liveIn_years: '',
       churchMarriedDate: '',
       churchMarriedPlace: '',
-      godparents: [{      // why add it in details and not make a separate field?
-        name: '',         // in the case dili siya iaccept, no need to make additional queries on multiple tables
+      godparents: [{      
+        name: '',         
         isCatholic: ''
       }]           
     },                         
@@ -64,7 +64,7 @@ const Baptism = () => {
     isLiveIn: null,
     preferred_date: '',
     preferred_time: '',
-    priest_id: '',      // priest_id = preferred priest (make rako separate controller for fetching lists of priest by saturday)
+    priest_id: '',      
     payment_method: '',
     transaction_no: hash,
     date_requested: dateToday,
@@ -79,6 +79,16 @@ const Baptism = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value});
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${config.API}/request/create-baptism`, formData)
+    } catch (error) {
+      console.log(error);
+    }
+    console.log("forn was succesfully submittedd..")
+  }
 
   return (
     <>
@@ -96,89 +106,88 @@ const Baptism = () => {
       <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please Input the Following:</h1>
 
       <Container maxWidth="lg" sx={{ marginBottom: '50px' }}>
-        <form>
+        <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
     
             <Grid item xs={12} sm={4}>
               <label>Child's First Name:</label>
-              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
+              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="first_name" onChange={handleChange} required />
             </Grid>
             <Grid item xs={12} sm={4}>
               <label>Child's Middle Name:</label>
-              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
+              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="middle_name" onChange={handleChange} required />
             </Grid>
             <Grid item xs={12} sm={4}>
               <label>Child's Last Name:</label>
-              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
+              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="last_name" onChange={handleChange} required />
             </Grid>
            
             <Grid item xs={12} sm={3}>
               <label>Date of Birth:</label>
-              <TextField fullWidth type="date" size="small" variant="outlined" sx={inputstlying} InputLabelProps={{ shrink: true }} required />
+              <TextField fullWidth type="date" size="small" variant="outlined" name="birth_date" onChange={handleChange} sx={inputstlying} InputLabelProps={{ shrink: true }} required />
             </Grid>
             <Grid item xs={12} sm={6}>
               <label>Place of Birth:</label>
-              <TextField fullWidth size="small" variant="outlined" sx={inputstlying} required />
+              <TextField fullWidth size="small" variant="outlined" sx={inputstlying} name="birth_place" onChange={handleChange} required />
             </Grid>
             <Grid item xs={12} sm={3}>
               <label>Gender:</label>
-              <TextField fullWidth select size="small" variant="outlined" sx={inputstlying} required>
+              <TextField fullWidth select size="small" variant="outlined" sx={inputstlying} name="gender" onChange={handleChange} value={formData.gender} required>
                 <MenuItem value="male">Male</MenuItem>
                 <MenuItem value="female">Female</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={9}>
               <label>Father's Complete Name:</label>
-              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
+              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="father_name" onChange={handleChange} required />
             </Grid>
             <Grid item xs={12} sm={3}>
               <label>Father's Age:</label>
-              <TextField fullWidth type="number" variant="outlined" sx={inputstlying} size="small" required />
+              <TextField fullWidth type="number" variant="outlined" sx={inputstlying} name="father_age" onChange={handleChange} size="small" required />
             </Grid>
             <Grid item xs={12} sm={9}>
               <label>Mother's Complete Maiden Name:</label>
-              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
+              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="mother_name" onChange={handleChange} required />
             </Grid>
             <Grid item xs={12} sm={3}>
               <label>Mother's Age:</label>
-              <TextField fullWidth type="number" variant="outlined" sx={inputstlying} size="small" required />
+              <TextField fullWidth type="number" variant="outlined" sx={inputstlying} name="mother_age" onChange={handleChange} size="small" required />
             </Grid>
-            <Grid item xs={12} sm={9}>
+            <Grid item xs={12} sm={6}>
               <label>Present Address:</label>
-              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} required />
+              <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="address" onChange={handleChange} required />
             </Grid>
             <Grid item xs={12} sm={3}>
               <label>Contact Number:</label>
-              <TextField fullWidth type="tel" variant="outlined" sx={inputstlying} size="small" required />
+              <TextField fullWidth type="tel" variant="outlined" sx={inputstlying} name="contact_no" onChange={handleChange} size="small" required />
             </Grid>
+               <Grid item xs={12} sm={3}>
+                <label>Payment Method:</label>
+                <TextField fullWidth select variant="outlined" size="small" name="payment_method" value={formData.payment_method} onChange={handleChange} sx={inputstlying} required>
+                  <MenuItem value="cash">Cash</MenuItem>
+                  <MenuItem value="gcash">GCash</MenuItem>
+                </TextField>
+              </Grid>
 
 
                 {/*------------preferrrd sched and priest----------*/}
 
               <Grid item xs={12} sm={4}>
                 <label>Preferred Date:</label>
-                <TextField fullWidth type="date" select variant="outlined" sx={inputstlying} size="small" required />
+                <TextField fullWidth type="date" variant="outlined" sx={inputstlying} size="small" name="preferred_date" onChange={handleChange} InputLabelProps={{ shrink: true }} required />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <label>Preferred Time:</label>
-                <TextField fullWidth type="time" select variant="outlined" sx={inputstlying} size="small" required />
+                <TextField fullWidth type="time" variant="outlined" sx={inputstlying} size="small" name="preferred_time" onChange={handleChange} required />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <label>Preferred Priest:</label>
-                <TextField fullWidth variant="outlined" select size="small" sx={inputstlying} required />
+                <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="priest_id" onChange={handleChange} required />
               </Grid>
-              <Grid item xs={12}>
-                <label>Payment Method:</label>
-                <TextField fullWidth select variant="outlined" size="small" sx={inputstlying} required>
-                  <MenuItem value="cash">Cash</MenuItem>
-                  <MenuItem value="gcash">GCash</MenuItem>
-                </TextField>
-              </Grid>
+           
    
 
           {/*-------------church married, etc? section---------------- */}
- 
-   
             <Grid item xs={4} sm={2}>
               <FormControl component="fieldset">
                 <label>Church Married?</label>
@@ -225,7 +234,7 @@ const Baptism = () => {
                 {formData.isLiveIn === 'yes' && (
                   <Grid item xs={12} sm={6}>
                     <label>How many years?</label>
-                    <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="liveInYears" value={formData.liveInYears} onChange={handleChange} />
+                    <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="liveIn_years" value={formData.liveIn_years} onChange={handleChange} />
                   </Grid>
                 )}
               </>
