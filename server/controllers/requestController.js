@@ -49,8 +49,8 @@ const createRequestBaptism = (req, res) => {
     const request = req.body
     const details = JSON.stringify(request.details)
 
-    db.query('INSERT INTO request (type, first_name, middle_name, last_name, birth_date, birth_place, gender, father_name, mother_name, details, address, contact_no, isChurchMarried, isCivilMarried, isLiveIn, preffered_date, preferred_time, priest_id, payment_method, transaction_no, date_requested, service_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-        [request.type, request.first_name, request.middle_name, request.last_name, request.birth_date, request.birth_place, request.gender, request.father_name, request.mother_name, details, request.address, request.contact_no, request.isChurchMarried, request.isCivilMarried, request.isLiveIn, request.preferred_date, request.preferred_time, request.priest_id, request.payment_method, request.transaction_no, request.date_requested, request.service_id],
+    db.query('INSERT INTO request (first_name, middle_name, last_name, birth_date, birth_place, gender, father_name, mother_name, details, address, contact_no, isChurchMarried, isCivilMarried, isLiveIn, preferred_date, preferred_time, payment_method, transaction_no, date_requested, service_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+        [request.first_name, request.middle_name, request.last_name, request.birth_date, request.birth_place, request.gender, request.father_name, request.mother_name, details, request.address, request.contact_no, request.isChurchMarried, request.isCivilMarried, request.isLiveIn, request.preferred_date, request.preferred_time, request.payment_method, request.transaction_no, dateToday, request.service_id],
         (err, result) => {
             if(err){
                 console.error('error submitting to db', err)

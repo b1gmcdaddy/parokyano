@@ -4,7 +4,7 @@ import imageHeader from '../../assets/imageHeader.jpg';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeftLong, faXmark  } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import { TextField, MenuItem, Grid, Container, FormControl, FormControlLabel, Radio, RadioGroup, Button } from "@mui/material";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -36,7 +36,6 @@ const Baptism = () => {
   const [openGCash, setOpenGCash] = useState(false);
 
   const [formData, setFormData] = useState({
-    type: 'Baptism',
     first_name: '',
     middle_name: '',
     last_name: '',
@@ -59,15 +58,13 @@ const Baptism = () => {
     },                         
     address: '',
     contact_no: '',
-    isChurchMarried: null,
-    isCivilMarried: null,
-    isLiveIn: null,
+    isChurchMarried: '',
+    isCivilMarried: '',
+    isLiveIn: '',
     preferred_date: '',
-    preferred_time: '',
-    priest_id: '',      
+    preferred_time: '',    
     payment_method: '',
     transaction_no: hash,
-    date_requested: dateToday,
     service_id: id,   
   })
 
@@ -80,15 +77,54 @@ const Baptism = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value});
   };
 
+  const handleDetails = (e) => {
+    setFormData(prevState => ({...prevState, details: {...prevState.details, [e.target.name]: e.target.value }}));
+  };
+
+  const handleGodparentChange = (index, e) => {
+    const updatedGodparents = formData.details.godparents.map((godparent, i) =>
+      i === index ? { ...godparent, [e.target.name]: e.target.value } : godparent
+    );
+    setFormData(prevState => ({...prevState, details: { ...prevState.details, godparents: updatedGodparents }}));
+  };
+
+  const handleAddGodparent = () => {
+    if (formData.details.godparents.length < 8) {
+      setFormData(prevState => ({...prevState, details: { ...prevState.details, godparents: [...prevState.details.godparents, { name: '', isCatholic: '' }] }}));
+    }
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    console.log(formData);
     try {
       await axios.post(`${config.API}/request/create-baptism`, formData)
+
+      const cashModalInfo = {
+        transaction_no: formData.transaction_no,
+        fee: '800 PHP', // temp fee
+        requirements: 'Photocopy of Birth Certificate',
+        message: 'Note: Kindly go to the parish office during office hours to pay. Please submit the requirement and pay within 2 days to avoid cancellation.'
+      }
+
+      const gcashModalInfo = {
+        transaction_no: formData.transaction_no,
+        fee: '800 PHP', // temp
+        requirements: 'Photocopy of Birth Certificate',
+        message: 'Note: We will use your mobile number to communicate with you. Please submit the requirements to the office as soon as possible so that we can start processing your request.'
+      }
+
+      if (formData.payment_method === "cash") {
+        setModalData(cashModalInfo);
+        setOpenCash(true);
+      } else {
+        setModalData(gcashModalInfo);
+        setOpenGCash(true);
+      }
     } catch (error) {
       console.log(error);
     }
-    console.log("forn was succesfully submittedd..")
-  }
+  };
 
   return (
     <>
@@ -105,9 +141,12 @@ const Baptism = () => {
       </div>
       <h1 align='center' className="font-bold text-md font-[Arial] mb-8">Please Input the Following:</h1>
 
-      <Container maxWidth="lg" sx={{ marginBottom: '50px' }}>
+      <all.CashPaymentModal open={openCash} data={modalData} />
+      <all.GCashPaymentModal open={openGCash} data={modalData} />
+
+      <Container maxWidth="md" sx={{ marginBottom: '50px' }}>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{marginBottom: '10px'}}>
     
             <Grid item xs={12} sm={4}>
               <label>Child's First Name:</label>
@@ -143,7 +182,7 @@ const Baptism = () => {
             </Grid>
             <Grid item xs={12} sm={3}>
               <label>Father's Age:</label>
-              <TextField fullWidth type="number" variant="outlined" sx={inputstlying} name="father_age" onChange={handleChange} size="small" required />
+              <TextField fullWidth type="number" variant="outlined" sx={inputstlying} name="father_age" onChange={handleDetails} size="small" required />
             </Grid>
             <Grid item xs={12} sm={9}>
               <label>Mother's Complete Maiden Name:</label>
@@ -151,7 +190,7 @@ const Baptism = () => {
             </Grid>
             <Grid item xs={12} sm={3}>
               <label>Mother's Age:</label>
-              <TextField fullWidth type="number" variant="outlined" sx={inputstlying} name="mother_age" onChange={handleChange} size="small" required />
+              <TextField fullWidth type="number" variant="outlined" sx={inputstlying} name="mother_age" onChange={handleDetails} size="small" required />
             </Grid>
             <Grid item xs={12} sm={6}>
               <label>Present Address:</label>
@@ -169,26 +208,9 @@ const Baptism = () => {
                 </TextField>
               </Grid>
 
-
-                {/*------------preferrrd sched and priest----------*/}
-
-              <Grid item xs={12} sm={4}>
-                <label>Preferred Date:</label>
-                <TextField fullWidth type="date" variant="outlined" sx={inputstlying} size="small" name="preferred_date" onChange={handleChange} InputLabelProps={{ shrink: true }} required />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Preferred Time:</label>
-                <TextField fullWidth type="time" variant="outlined" sx={inputstlying} size="small" name="preferred_time" onChange={handleChange} required />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Preferred Priest:</label>
-                <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="priest_id" onChange={handleChange} required />
-              </Grid>
-           
-   
-
+              
           {/*-------------church married, etc? section---------------- */}
-            <Grid item xs={4} sm={2}>
+            <Grid item xs={5} sm={3}>
               <FormControl component="fieldset">
                 <label>Church Married?</label>
                 <RadioGroup row name="isChurchMarried" value={formData.isChurchMarried} onChange={handleChange}>
@@ -199,19 +221,19 @@ const Baptism = () => {
             </Grid>
             {formData.isChurchMarried === 'yes' && (
               <>
-                <Grid item xs={12} sm={4} sx={{ marginRight: '15px' }}>
+                <Grid item xs={12} sm={3} sx={{ marginRight: {md: '15px' } }}>
                   <label>When?</label>
-                  <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="churchMarriedDate" value={formData.churchMarriedDate} onChange={handleChange} />
+                  <TextField fullWidth type="date" variant="outlined" size="small" sx={inputstlying} name="churchMarriedDate" value={formData.details.churchMarriedDate} onChange={handleDetails} />
                 </Grid>
-                <Grid item xs={12} sm={4} sx={{ marginBottom: '14px' }}>
+                <Grid item xs={12} sm={3} sx={{ marginBottom: '14px' }}>
                   <label>Where?</label>
-                  <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="churchMarriedPlace" value={formData.churchMarriedPlace} onChange={handleChange} />
+                  <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="churchMarriedPlace" value={formData.details.churchMarriedPlace} onChange={handleDetails} />
                 </Grid>
               </>
             )}
             {formData.isChurchMarried === 'no' && (
               <>
-                <Grid item xs={4} sm={2}>
+                <Grid item xs={5} sm={3}>
                   <FormControl component="fieldset">
                     <label>Civilly Married?</label>
                     <RadioGroup row name="isCivilMarried" value={formData.isCivilMarried} onChange={handleChange}>
@@ -221,7 +243,7 @@ const Baptism = () => {
                   </FormControl>
                 </Grid>
                 {formData.isCivilMarried === 'no' && (
-                  <Grid item xs={4} sm={2}>
+                  <Grid item xs={5} sm={3}>
                     <FormControl component="fieldset">
                       <label>Live-in?</label>
                       <RadioGroup row name="isLiveIn" value={formData.isLiveIn} onChange={handleChange}>
@@ -232,23 +254,76 @@ const Baptism = () => {
                   </Grid>
                 )}
                 {formData.isLiveIn === 'yes' && (
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={3}>
                     <label>How many years?</label>
-                    <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="liveIn_years" value={formData.liveIn_years} onChange={handleChange} />
+                    <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="liveIn_years" value={formData.details.liveIn_years} onChange={handleDetails} />
                   </Grid>
                 )}
               </>
             )}
-          </Grid>
-            
+            </Grid>
 
-          <div className="mt-[3rem] flex justify-center">
-                        <ReCAPTCHA
-                            sitekey="6LeCEPMpAAAAANAqLQ48wTuNOGmTPaHcMxJh4xaJ"
-                            onChange={handleCaptchaChange}
-                        />
-                    </div>
-                    <Grid item sx={{ display: 'flex', justifyContent: 'center', marginTop: '1em' }}>
+                {/*------------preferrrd sched and priest----------*/}
+            <Grid container spacing={2} sx={{marginBottom: '1.5em'}}>
+              <Grid item xs={12} sm={4}>
+                <label>Preferred Date:</label>
+                <TextField fullWidth type="date" variant="outlined" sx={inputstlying} size="small" name="preferred_date" onChange={handleChange} InputLabelProps={{ shrink: true }} required />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <label>Preferred Time:</label>
+                <TextField fullWidth type="time" variant="outlined" sx={inputstlying} size="small" name="preferred_time" onChange={handleChange} required />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <label>Preferred Priest:</label>
+                <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="priest_id" onChange={handleChange} disabled />
+              </Grid>
+            </Grid>
+
+               {formData.details.godparents.map((godparent, index) => (
+                <Grid container spacing={2} key={index} sx={{marginBottom: '6px'}}>
+                  <Grid item xs={12} sm={9}>
+                    <label>{`Godparent ${index + 1}:`}</label>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      size="small"
+                      sx={inputstlying}
+                      name="name"
+                      value={godparent.name}
+                      onChange={(e) => handleGodparentChange(index, e)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <label>Catholic?</label>
+                    <TextField
+                      fullWidth
+                      select
+                      variant="outlined"
+                      size="small"
+                      sx={inputstlying}
+                      name="isCatholic"
+                      value={godparent.isCatholic}
+                      onChange={(e) => handleGodparentChange(index, e)}
+                    >
+                      <MenuItem value="yes">Yes</MenuItem>
+                      <MenuItem value="no">No</MenuItem>
+                      </TextField>
+                  </Grid>
+                </Grid>
+              ))}
+              {formData.details.godparents.length < 8 && (
+                <Button
+                  variant="outlined"
+                  onClick={handleAddGodparent}
+                  sx={{ marginBottom: '2em', marginTop: '16px' }}
+                >
+                 Add Godparent
+                </Button>
+              )}
+       
+           
+      
+                    <Grid item sx={{ display: 'flex', justifyContent: 'center', marginTop: '3em' }}>
                         <Button variant="contained" type="submit" sx={{backgroundColor:"#355173"}}>
                             Submit Request
                         </Button>
