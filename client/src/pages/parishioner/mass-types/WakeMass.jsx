@@ -34,6 +34,7 @@ const WakeMass = () => {
 
     const [formData, setFormData] = useState({
         first_name: '',            // full name ni sa deceased
+        address: null,   
         contact_no: '',
         requested_by: '',
         relationship: '',
@@ -42,7 +43,8 @@ const WakeMass = () => {
         preferred_priest: null,
         isParishioner: '',
         transaction_no: hash,
-        service_id: id
+        service_id: id,
+        type: null
     })
 
     const modalData = {

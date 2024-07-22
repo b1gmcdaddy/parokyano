@@ -65,11 +65,11 @@ const NoPaymentModal = ({open, data}) => {
                     <Grid container spacing={1} justifyContent={"center"}>
                         <Grid item sm={12}>
                             <Typography variant='h6' sx={{textAlign: 'center'}}>
-                                {data.transaction_no}
+                                Transaction Number
                             </Typography>
                         </Grid>
                         <Grid item sm={12}>
-                            <DefaultCopyField fullWidth disabled value={"040124<hash>"} sx={inputstyling}/>
+                            <DefaultCopyField fullWidth disabled value={data.transaction_no} sx={inputstyling}/>
                         </Grid>
                         <Grid item sm={12}>
                             <Typography variant='subtitle1' sx={{textAlign: 'center', color: '#950000'}}>
