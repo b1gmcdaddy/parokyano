@@ -179,12 +179,7 @@ const Souls = () => {
                   style={{ marginBottom: "1rem" }}
                 />
               ))}
-              <Button type="button" onClick={addMoreSouls} variant="contained" sx={{color: "#355173", padding: 0.8,
-                backgroundColor: "white", float: "right",
-                "&:hover": {
-                  backgroundColor: "white", 
-                  color: "#355173"
-                }}}> Add Soul</Button>
+              <Button type="button" onClick={addMoreSouls} variant="outlined" sx={{float: "right",}}> Add Soul</Button>
             </Grid>
 
             <Grid item xs={12} sm={4}>

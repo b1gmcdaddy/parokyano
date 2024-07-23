@@ -1,8 +1,6 @@
 import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Check from '../assets/check.png';
 import {DefaultCopyField} from '@eisberg-labs/mui-copy-field';
 import { Grid, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
