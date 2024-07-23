@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 18, 2024 at 02:40 PM
+-- Generation Time: Jul 23, 2024 at 02:40 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -103,8 +103,18 @@ CREATE TABLE `priest` (
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) NOT NULL,
   `contact_no` varchar(11) NOT NULL,
+  `year_started` char(4) NOT NULL,
+  `year_ended` char(4) DEFAULT NULL,
   `status` enum('active','inactive') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `priest`
+--
+
+INSERT INTO `priest` (`priestID`, `first_name`, `last_name`, `contact_no`, `year_started`, `year_ended`, `status`) VALUES
+(1, 'Priest', 'Test A', '09123456789', '2024', NULL, 'active'),
+(2, 'Priest', 'Test B', '09876543210', '2023', NULL, 'active');
 
 -- --------------------------------------------------------
 
@@ -233,7 +243,22 @@ INSERT INTO `request` (`requestID`, `first_name`, `middle_name`, `last_name`, `a
 (56, 'Joseph', 'test 56', 'JOJO', NULL, NULL, NULL, '19103541', 'Civilly Married', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Mary  JOJO', '[{\"sponsor_name\":\"sponsor1\",\"sponsor_age\":\"32\",\"isMarrried\":\"1\",\"catholic\":\"1\"},{\"sponsor_name\":\"sponsor2\",\"sponsor_age\":\"31\",\"isMarrried\":\"1\",\"catholic\":\"1\"}]', NULL, NULL, NULL, '2024-07-18', 'cash', NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-18d394d5b506a1293a43d8', 7, NULL, NULL, NULL),
 (57, 'Joseph', 'test 56', 'JOJO', NULL, NULL, NULL, '19103541', 'Civilly Married', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Mary  JOJO', '[{\"sponsor_name\":\"sponsor1\",\"sponsor_age\":\"32\",\"isMarrried\":\"1\",\"catholic\":\"1\"},{\"sponsor_name\":\"sponsor2\",\"sponsor_age\":\"31\",\"isMarrried\":\"1\",\"catholic\":\"1\"}]', NULL, NULL, NULL, '2024-07-18', 'cash', NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-18d394d5b506a1293a43d8', 7, NULL, NULL, NULL),
 (58, 'Joseph', 'test 57', 'JOJO', NULL, NULL, NULL, '19103541', 'Civilly Married', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Mary  JOJO', '[{\"sponsor_name\":\"sponsor1\",\"sponsor_age\":\"32\",\"isMarrried\":\"1\",\"catholic\":\"1\"},{\"sponsor_name\":\"sponsor2\",\"sponsor_age\":\"31\",\"isMarrried\":\"1\",\"catholic\":\"1\"}]', NULL, NULL, NULL, '2024-07-18', 'cash', NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-18aa32c046ac61098625c0', 7, NULL, NULL, NULL),
-(59, 'Joseph', 'test 57', 'JOJO', NULL, NULL, NULL, '19103541', 'Civilly Married', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Mary  JOJO', '[{\"sponsor_name\":\"sponsor1\",\"sponsor_age\":\"32\",\"isMarrried\":\"1\",\"catholic\":\"1\"},{\"sponsor_name\":\"sponsor2\",\"sponsor_age\":\"31\",\"isMarrried\":\"1\",\"catholic\":\"1\"}]', NULL, NULL, NULL, '2024-07-18', 'cash', NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-18aa32c046ac61098625c0', 7, NULL, NULL, NULL);
+(59, 'Joseph', 'test 57', 'JOJO', NULL, NULL, NULL, '19103541', 'Civilly Married', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Mary  JOJO', '[{\"sponsor_name\":\"sponsor1\",\"sponsor_age\":\"32\",\"isMarrried\":\"1\",\"catholic\":\"1\"},{\"sponsor_name\":\"sponsor2\",\"sponsor_age\":\"31\",\"isMarrried\":\"1\",\"catholic\":\"1\"}]', NULL, NULL, NULL, '2024-07-18', 'cash', NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, 'pending', NULL, 'unpaid', '2024-07-18aa32c046ac61098625c0', 7, NULL, NULL, NULL),
+(62, 'Joseph', NULL, NULL, NULL, NULL, NULL, '19103541', 'Friend', 'test 58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-20', '00:00:00', '2024-07-19', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-19fae51b42b2b3477fdf11', 9, NULL, NULL, NULL),
+(63, 'Joseph', NULL, NULL, NULL, NULL, NULL, '', 'Friend', 'test 58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-20', '00:00:00', '2024-07-19', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-19240529f5051e2cb5d461', 9, NULL, NULL, NULL),
+(64, 'Joseph', NULL, NULL, NULL, NULL, NULL, '', 'Friend', 'test 58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-20', '00:00:00', '2024-07-19', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-19240529f5051e2cb5d461', 9, NULL, NULL, NULL),
+(65, 'Joseph', NULL, NULL, NULL, NULL, NULL, '19103541', 'Friend', 'test 58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-20', '00:00:00', '2024-07-19', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-19da69b1a3b95036a26b02', 9, NULL, NULL, NULL),
+(66, 'Joseph', NULL, NULL, NULL, NULL, 'Cebu', '19103541', '', 'Numyz', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-17', '00:00:00', '2024-07-22', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-2287904d29be0a1ffcb137', 9, NULL, NULL, NULL),
+(67, 'Joseph', NULL, NULL, NULL, NULL, 'Cebu', '19103541', NULL, 'Tritor', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-23', '00:00:00', '2024-07-22', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-220142dd6118c2c1dc4bc2', 9, NULL, NULL, NULL),
+(68, 'Joseph', NULL, NULL, NULL, NULL, 'Cebu', '19103541', NULL, 'Tritor', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'test 58', '2024-07-23', '00:00:00', '2024-07-22', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-220142dd6118c2c1dc4bc2', 9, NULL, NULL, NULL),
+(69, 'Joseph', NULL, NULL, NULL, NULL, 'Cebu', '19103541', '', 'Numyz', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'cxxasasas', '2024-07-17', '00:00:00', '2024-07-22', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-2287904d29be0a1ffcb137', 9, NULL, NULL, NULL),
+(70, 'Joseph', NULL, NULL, NULL, NULL, 'Cebu', '19103541', NULL, 'Tritor', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'test 58', '2024-07-23', '00:00:00', '2024-07-22', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-220142dd6118c2c1dc4bc2', 9, NULL, NULL, NULL),
+(71, 'Joseph', NULL, NULL, NULL, NULL, 'Cebu', '19103541', NULL, 'Tritor', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'test 59', '2024-07-23', '00:00:00', '2024-07-22', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-2264112042e108a9eb2b7b', 10, NULL, NULL, NULL),
+(72, 'Joseph', NULL, NULL, NULL, NULL, 'Cebu', '19103541', NULL, 'Tritor', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'test 59', '2024-07-23', '00:00:00', '2024-07-22', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-2264112042e108a9eb2b7b', 10, NULL, NULL, NULL),
+(73, 'Dio', NULL, NULL, NULL, NULL, NULL, '19103541', 'test 60', 'Joseph', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-23', '00:00:00', '2024-07-22', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-2267c25b180b7addbc4efe', 11, NULL, NULL, NULL),
+(76, 'test 61', NULL, NULL, 32, NULL, 'Cebu', '19103541', 'Friend', 'Tritor', 'Critical', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-24', NULL, '2024-07-23', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-2319dfd6f82cdfe98859cf', 12, NULL, NULL, NULL),
+(77, 'test 62', NULL, NULL, 32, NULL, 'Cebu', '19103541', 'Friend', 'Tritor', 'Critical', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-24', NULL, '2024-07-23', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-2319dfd6f82cdfe98859cf', 12, NULL, NULL, NULL),
+(78, 'test 62', NULL, NULL, 32, NULL, 'Cebu', '19103541', 'Friend', 'Tritor', 'Critical', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-24', NULL, '2024-07-23', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'pending', NULL, 'unpaid', '2024-07-2319dfd6f82cdfe98859cf', 12, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -260,7 +285,11 @@ INSERT INTO `service` (`serviceID`, `name`, `requirements`, `fee`, `duration`) V
 (4, 'Certificate - Marriage', NULL, 150, NULL),
 (5, 'Baptism - Appointment', '[\"Photocopy of Birth Certificate\", \"Photocopy of Parent-Marriage Certificate\"]', 1600, 1),
 (6, 'Baptism - General', '[\"Photocopy of Birth Certificate\", \"Photocopy of Parent-Marriage Certificate\"]', 800, 1),
-(7, 'Wedding - Civilly Married', '[\"Birth Certificate(with purpose:Marriage)\", \"Confirmation Certificate(with purpose:Marriage)\", \"Marriage Bann\", \"Civil Marriage Contract\", \'Pre-Cana Seminar\", \"General Confession\", \"Pre-Nuptial Interview\"]', 1000, 2);
+(7, 'Wedding - Civilly Married', '[\"Birth Certificate(with purpose:Marriage)\", \"Confirmation Certificate(with purpose:Marriage)\", \"Marriage Bann\", \"Civil Marriage Contract\", \'Pre-Cana Seminar\", \"General Confession\", \"Pre-Nuptial Interview\"]', 1000, 2),
+(9, 'Wake Mass', NULL, NULL, 1),
+(10, 'Outside Mass', NULL, NULL, 1),
+(11, 'Funeral Mass', NULL, NULL, 1),
+(12, 'Anointing of the sick', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -523,7 +552,7 @@ ALTER TABLE `logs`
 -- AUTO_INCREMENT for table `priest`
 --
 ALTER TABLE `priest`
-  MODIFY `priestID` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `priestID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `priestschedule`
@@ -535,13 +564,13 @@ ALTER TABLE `priestschedule`
 -- AUTO_INCREMENT for table `request`
 --
 ALTER TABLE `request`
-  MODIFY `requestID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `requestID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
-  MODIFY `serviceID` bigint(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `serviceID` bigint(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `serviceschedule`
