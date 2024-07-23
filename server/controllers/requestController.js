@@ -81,8 +81,23 @@ const createRequestWedding = (req, res) => {
 const createRequestMass = (req, res) => {
     const request = req.body
 
-    db.query('INSERT into request (first_name, address, contact_no, requested_by, relationship, preferred_date, preferred_time, priest_id, isParishioner, transaction_no, service_id, date_requested, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    db.query('INSERT INTO request (first_name, address, contact_no, requested_by, relationship, preferred_date, preferred_time, priest_id, isParishioner, transaction_no, service_id, date_requested, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [request.first_name, request.address, request.contact_no, request.requested_by, request.relationship, request.preferred_date, request.preferred_time, request.preferred_priest, request.isParishioner, request.transaction_no, request.service_id, dateToday, request.type],
+        (err, result) => {
+            if (err) {
+                console.error('error submitting to db', err)
+                return res.status(500)
+            }
+            return res.status(200)
+        }
+    )
+}
+
+const createRequestAnointing = (req, res) => {
+    const request = req.body
+
+    db.query('INSERT INTO request (first_name, age, contact_no, requested_by, address, relationship, patient_status, preferred_date, preferred_time, priest_id, isParishioner, transaction_no, service_id, date_requested) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [request.first_name, request.age, request.contact_no, request.requested_by, request.address, request.relationship, request.patient_status, request.preferred_date, request.preferred_time, request.preferred_priest, request.isParishioner, request.transaction_no, request.service_id, dateToday],
         (err, result) => {
             if (err) {
                 console.error('error submitting to db', err)
@@ -132,5 +147,6 @@ module.exports = {
     createRequestBaptism,
     createRequestWedding,
     createRequestMass,
+    createRequestAnointing,
     retrieveByParams
 }
