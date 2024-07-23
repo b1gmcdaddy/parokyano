@@ -25,11 +25,13 @@ app.use(express.json());
 const requestRoute = require('./routes/requestRoute');
 const serviceRoute = require('./routes/serviceRoute');
 const announcementRoute = require('./routes/announcementRoute');
+const priestRoute = require('./routes/priestRoute')
 
 
 app.use('/request', requestRoute);
 app.use('/service', serviceRoute);
 app.use('/announcement', announcementRoute)
+app.use('/priest', priestRoute)
 
 
 
