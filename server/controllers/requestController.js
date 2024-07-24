@@ -108,6 +108,21 @@ const createRequestAnointing = (req, res) => {
     )
 }
 
+const createRequestBlessing = (req, res) => {
+    const request = req.body
+
+    db.query('INSERT INTO request (type, first_name, address, requested_by, contact_no, preferred_date, preferred_time, priest_id, isParishioner, transaction_no, service_id, date_requested) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+        [request.type, request.first_name, request.address, request.requested_by, request.contact_no, request.preferred_date, request.preferred_time, request.preferred_priest, request.isParishioner, request.transaction_no, request.service_id, dateToday],
+        (err, result) => {
+            if (err) {
+                console.error('error submitting to db', err)
+                return res.status(500)
+            }
+            return res.status(200)
+        }
+    )
+}
+
 const retrieveByParams = (req, res) => {
     const {col, val} = req.query
     const parsedDetails = []
@@ -148,5 +163,6 @@ module.exports = {
     createRequestWedding,
     createRequestMass,
     createRequestAnointing,
+    createRequestBlessing,
     retrieveByParams
 }
