@@ -3,6 +3,10 @@ import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from '../../../assets/imageHeader.jpg';
 import Header from '../../../components/Header';
 import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio } from '@mui/material';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Footer from '../../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
@@ -31,6 +35,8 @@ const FuneralMass = () => {
     const [open, setOpen] = useState(false);
     const [captchaValue, setCaptchaValue] = useState(null);
     const hash = dateToday + generateHash().slice(0,20)
+
+    // const timeslot = ['07:30:00','08:00:00','10:30:00','13:00:00','14:30:00','16:00:00','17:30:00']
 
     const [formData, setFormData] = useState({
         first_name: '',            // in the case of outside mass, this is the field for the celebration/celebrator
@@ -67,7 +73,7 @@ const FuneralMass = () => {
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
-
+    console.log(formData)
     const handleCaptchaChange = (value) => {
         setCaptchaValue(value)
     }
@@ -152,15 +158,19 @@ const FuneralMass = () => {
                         </Grid>
                         <Grid item xs={12} sm={3}>
                             <label>Preferred Time:</label>
-                            <TextField 
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <TimePicker
                                 fullWidth 
-                                // select 
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying}
                                 name="preferred_time"
                                 onChange={handleChange} 
+                                timeSteps={{ minutes: 30 }}
+                                // minTime={dayjs().set('hour', 7)}
+                                // maxTime={dayjs().set('hour', 16)}
                                 required />
+                            </LocalizationProvider>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <label>Preferred Priest:</label>

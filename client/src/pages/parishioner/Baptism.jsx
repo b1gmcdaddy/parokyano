@@ -103,14 +103,14 @@ const Baptism = () => {
       const cashModalInfo = {
         transaction_no: formData.transaction_no,
         fee: '800 PHP', // temp fee
-        requirements: 'Photocopy of Birth Certificate',
+        requirements: ['Photocopy of Birth Certificate'],
         message: 'Note: Kindly go to the parish office during office hours to pay. Please submit the requirement and pay within 2 days to avoid cancellation.'
       }
 
       const gcashModalInfo = {
         transaction_no: formData.transaction_no,
         fee: '800 PHP', // temp
-        requirements: 'Photocopy of Birth Certificate',
+        requirements: ['Photocopy of Birth Certificate'],
         message: 'Note: We will use your mobile number to communicate with you. Please submit the requirements to the office as soon as possible so that we can start processing your request.'
       }
 
