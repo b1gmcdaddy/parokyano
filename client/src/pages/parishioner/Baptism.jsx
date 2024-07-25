@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from '../../assets/imageHeader.jpg';
 import Header from '../../components/Header';
@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import { TextField, MenuItem, Grid, Container, FormControl, FormControlLabel, Radio, RadioGroup, Button } from "@mui/material";
-import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
 import config from "../../config";
 import all from "../../components/PaymentModal";
@@ -34,6 +33,7 @@ const Baptism = () => {
   const [modalData, setModalData] = useState({});
   const [openCash, setOpenCash] = useState(false);
   const [openGCash, setOpenGCash] = useState(false);
+  const [priests, setPriests] = useState([]);
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -62,11 +62,28 @@ const Baptism = () => {
     isCivilMarried: '',
     isLiveIn: '',
     preferred_date: '',
-    preferred_time: '',    
+    preferred_time: '',   
+    priest_id: '', 
     payment_method: '',
     transaction_no: hash,
     service_id: id,   
   })
+
+  useEffect(() => {
+  const getPriests = async () => {
+    try {
+      const listPriest = await axios.get(`${config.API}/priest/retrieve`, 
+        {
+        params: { col: 'status', val: 'active' }
+      });
+      setPriests(listPriest.data);
+    } catch (error) {
+      console.error("Error fetching priests:", error);
+    }
+  };
+  getPriests();
+}, []);
+
 
   const handleCaptchaChange = (value) => {
     setCaptchaValue(value)
@@ -275,36 +292,27 @@ const Baptism = () => {
               </Grid>
               <Grid item xs={12} sm={4}>
                 <label>Preferred Priest:</label>
-                <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="priest_id" onChange={handleChange} disabled />
+                <TextField fullWidth select size="small" variant="outlined" sx={inputstlying} name="priest_id" onChange={handleChange} value={formData.priest_id} required>
+                {priests.map((priest) => (
+                  <MenuItem key={priest.priestID} value={priest.priestID}>
+                    {priest.first_name} {priest.last_name}
+                  </MenuItem>
+                ))}
+              </TextField>
               </Grid>
             </Grid>
 
+
+              {/*---------------------godParents sectiom--------------------------------*/}
                {formData.details.godparents.map((godparent, index) => (
                 <Grid container spacing={2} key={index} sx={{marginBottom: '6px'}}>
                   <Grid item xs={12} sm={9}>
                     <label>{`Godparent ${index + 1}:`}</label>
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      sx={inputstlying}
-                      name="name"
-                      value={godparent.name}
-                      onChange={(e) => handleGodparentChange(index, e)}
-                    />
+                    <TextField fullWidth variant="outlined" size="small" sx={inputstlying} name="name" value={godparent.name} onChange={(e) => handleGodparentChange(index, e)} />
                   </Grid>
                   <Grid item xs={12} sm={3}>
                     <label>Catholic?</label>
-                    <TextField
-                      fullWidth
-                      select
-                      variant="outlined"
-                      size="small"
-                      sx={inputstlying}
-                      name="isCatholic"
-                      value={godparent.isCatholic}
-                      onChange={(e) => handleGodparentChange(index, e)}
-                    >
+                    <TextField fullWidth select variant="outlined" size="small" sx={inputstlying} name="isCatholic" value={godparent.isCatholic} onChange={(e) => handleGodparentChange(index, e)} >
                       <MenuItem value="yes">Yes</MenuItem>
                       <MenuItem value="no">No</MenuItem>
                       </TextField>
@@ -312,17 +320,9 @@ const Baptism = () => {
                 </Grid>
               ))}
               {formData.details.godparents.length < 8 && (
-                <Button
-                  variant="outlined"
-                  onClick={handleAddGodparent}
-                  sx={{ marginBottom: '2em', marginTop: '16px' }}
-                >
-                 Add Godparent
-                </Button>
+                <Button variant="outlined" onClick={handleAddGodparent} sx={{ marginBottom: '2em', marginTop: '16px' }} > Add Godparent</Button>
               )}
        
-           
-      
                     <Grid item sx={{ display: 'flex', justifyContent: 'center', marginTop: '3em' }}>
                         <Button variant="contained" type="submit" sx={{backgroundColor:"#355173"}}>
                             Submit Request

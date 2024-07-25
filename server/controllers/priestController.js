@@ -15,7 +15,7 @@ const retrieveByParams = (req, res) => {
 
             // para dili na hasol add2 ug 'Fr.' na title sa frontend:
             for(const i in result){
-                result[i].first_name = 'Fr. ' + result[i].first_name
+                result[i].first_name = 'Fr. ' + result[i].first_name;
             }
             return res.status(200).send(result)
         }
