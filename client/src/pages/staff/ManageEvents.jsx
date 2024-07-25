@@ -3,9 +3,9 @@ import NavStaff from '../../components/NavStaff';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
-import { Button, Typography, Container, Grid } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faChurch, faStamp, faHandsPraying } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { Button, Typography, Grid } from '@mui/material';
 import config from "../../config";
 import axios from "axios";
 
@@ -37,12 +37,24 @@ const ManageEvents = () => {
                 <Button variant="contained" type="button" sx={{backgroundColor:"#355173"}}>Add Announcement</Button>
             </Box>
 
-            <Grid container spacing={2}>
-                <Grid item xs={3}>NAME</Grid>
-                <Grid item xs={4}>PUBLISH DATE</Grid>
-                <Grid item xs={3}>STATUS</Grid>
+            <Grid container spacing={2} sx={{ marginY: '2em', fontSize: '12px', textAlign: 'center'}}>
+                <Grid item xs={3}>TITLE</Grid>
+                <Grid item xs={5}>DESCRIPTION</Grid>
+                <Grid item xs={2}>PUBLISH DATE</Grid>
                 <Grid item xs={2}>ACTION</Grid>
             </Grid>
+                {
+                    announcement.map((anncmt) => (
+                        <Paper className='py-8 mb-5' sx={{ backgroundColor: '#D9D9D9', borderRadius: '8px' }}>
+                            <Grid container sx={{ textAlign: 'center' }}>
+                                <Grid item xs={3} sx={{fontWeight: 'bold'}}>{anncmt.title}</Grid>
+                                <Grid item xs={5}>{anncmt.description}</Grid>
+                                <Grid item xs={2}>{anncmt.date_announced}</Grid>
+                                <Grid item xs={2}><FontAwesomeIcon icon={faEllipsis} className='ml-3 cursor-pointer text-2xl'/></Grid>
+                            </Grid>
+                        </Paper>
+                    ))
+                }
         </Box>
     </Box>
 )
