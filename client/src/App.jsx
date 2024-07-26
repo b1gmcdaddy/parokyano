@@ -25,6 +25,7 @@ import TrackRequest from "./pages/parishioner/TrackRequest";
 import Login from "./pages/staff/Login";
 import StaffDashboard from "./pages/staff/StaffDashboard";
 import ServiceRequests from "./pages/staff/ServiceRequests";
+import ManageEvents from "./pages/staff/ManageEvents";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
         {/*  -----------STAFF-----------  */}
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<StaffDashboard />} />
+        <Route path="/staff-events" element={<ManageEvents />}/>
         <Route path="/service-requests" element={<ServiceRequests />} />
       </Routes>
     </main>

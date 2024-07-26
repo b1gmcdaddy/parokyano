@@ -32,7 +32,7 @@ const sideBarWidth = 240;
 
 const sideBarItems = [
   { icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard" },
-  { icon: <CampaignIcon />, label: "Announcements", path: "" },
+  { icon: <CampaignIcon />, label: "Announcements", path: "/staff-events" },
   { icon: <AssignmentIcon />, label: "Service Requests", path: "/service-requests" },
   { icon: <BadgeIcon />, label: "Certificate Requests", path: "" },
   { icon: <FormatListBulletedIcon />, label: "Mass Intentions", path: "" },
