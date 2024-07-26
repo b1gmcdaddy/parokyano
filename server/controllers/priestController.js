@@ -4,7 +4,6 @@ const db = require('./db')
 
 const retrieveByParams = (req, res) => {
     const {col, val} = req.query
-    console.log(req.query)
 
     db.query(`SELECT * FROM priest where ?? = ?`, [col, val],
         (err, result) => {

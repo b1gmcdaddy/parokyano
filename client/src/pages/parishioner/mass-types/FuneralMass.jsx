@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from '../../../assets/imageHeader.jpg';
 import Header from '../../../components/Header';
-import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio } from '@mui/material';
+import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio, Menu, MenuItem } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -35,8 +35,26 @@ const FuneralMass = () => {
     const [open, setOpen] = useState(false);
     const [captchaValue, setCaptchaValue] = useState(null);
     const hash = dateToday + generateHash().slice(0,20)
+    const [priestList, setPriestList] = useState([])
 
-    // const timeslot = ['07:30:00','08:00:00','10:30:00','13:00:00','14:30:00','16:00:00','17:30:00']
+    useEffect(() => {
+        const fetchPriest = async () => {
+            try{
+                const response = await axios(`${config.API}/priest/retrieve`, {
+                    params: {
+                        col: 'status',
+                        val: 'active'
+                    }
+                })    
+                setPriestList(response.data)
+            } catch(err) {
+                console.error(err)
+            }
+        }
+        fetchPriest()
+    }, [])
+
+    console.log(priestList)
 
     const [formData, setFormData] = useState({
         first_name: '',            // in the case of outside mass, this is the field for the celebration/celebrator
@@ -73,7 +91,7 @@ const FuneralMass = () => {
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
-    console.log(formData)
+
     const handleCaptchaChange = (value) => {
         setCaptchaValue(value)
     }
@@ -166,9 +184,9 @@ const FuneralMass = () => {
                                 sx={inputstlying}
                                 name="preferred_time"
                                 onChange={handleChange} 
-                                timeSteps={{ minutes: 30 }}
-                                // minTime={dayjs().set('hour', 7)}
-                                // maxTime={dayjs().set('hour', 16)}
+                                timeSteps ={{hours:30, minutes: 30}}    // if mabuang, delete hours
+                                minTime={dayjs().set('hour', 7)}
+                                maxTime={dayjs().set('hour', 16)}
                                 required />
                             </LocalizationProvider>
                         </Grid>
@@ -176,13 +194,17 @@ const FuneralMass = () => {
                             <label>Preferred Priest:</label>
                             <TextField 
                                 fullWidth 
-                                // select 
+                                select 
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying} 
                                 name="preferred_priest" 
                                 onChange={handleChange}
-                                required />
+                                required>
+                                    {priestList.map((priest, index) => (
+                                        <MenuItem key={index} value={priest.priestID}>{priest.first_name}</MenuItem>
+                                    ))}
+                            </TextField>
                         </Grid>
 
                         <Grid item xs={6} sm={2} sx={{ display: 'flex', justifyContent: { xs: 'center', sm: 'flex-start' } }}>

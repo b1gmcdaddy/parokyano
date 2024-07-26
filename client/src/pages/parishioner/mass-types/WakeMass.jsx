@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from '../../../assets/imageHeader.jpg';
 import Header from '../../../components/Header';
-import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio } from '@mui/material';
+import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio, MenuItem } from '@mui/material';
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Footer from '../../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +14,7 @@ import generateHash from "../../../components/GenerateHash";
 import NoPaymentModal from "../../../components/NoPaymentModal";
 import config from "../../../config";
 import axios from "axios";
+
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -31,6 +34,24 @@ const WakeMass = () => {
     const [captchaValue, setCaptchaValue] = useState(null);
     const dateToday = new Date().toJSON().slice(0,10)
     const hash = dateToday + generateHash().slice(0,20)
+    const [priestList, setPriestList] = useState([])
+
+    useEffect(() => {
+        const fetchPriest = async () => {
+            try{
+                const response = await axios(`${config.API}/priest/retrieve`, {
+                    params: {
+                        col: 'status',
+                        val: 'active'
+                    }
+                })    
+                setPriestList(response.data)
+            } catch(err) {
+                console.error(err)
+            }
+        }
+        fetchPriest()
+    }, [])
 
     const [formData, setFormData] = useState({
         first_name: '',            // full name ni sa deceased
@@ -154,17 +175,21 @@ const WakeMass = () => {
                         </Grid>
                         <Grid item xs={12} sm={3}>
                             <label>Preferred Time:</label>
-                            <TextField 
-                                fullWidth 
-                                select 
-                                variant="outlined" 
-                                size="small" 
-                                sx={inputstlying} 
-                                name="preferred_time"
-                                onChange={handleChange}
-                                required />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <TimePicker
+                                    fullWidth 
+                                    variant="outlined" 
+                                    size="small" 
+                                    sx={inputstlying} 
+                                    timeSteps ={{hours:30, minutes: 30}}    // if mabuang, delete hours
+                                    minTime={dayjs().set('hour', 7)}
+                                    maxTime={dayjs().set('hour', 16)}
+                                    name="preferred_time"
+                                    onChange={handleChange}
+                                    required />
+                            </LocalizationProvider>
                         </Grid>
-                        {/* <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={6}>
                             <label>Preferred Priest:</label>
                             <TextField 
                                 fullWidth 
@@ -174,8 +199,12 @@ const WakeMass = () => {
                                 sx={inputstlying} 
                                 name="preferred_priest"
                                 onChange={handleChange}
-                                required />
-                        </Grid> */}
+                                required>
+                                    {priestList.map((priest, index) => (
+                                        <MenuItem key={index} value={priest.priestID}>{priest.first_name}</MenuItem>
+                                    ))}
+                            </TextField>
+                        </Grid>
 
                         <Grid item xs={6} sm={2} sx={{ display: 'flex', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
                             <label>Are you a Parishioner?</label>
