@@ -201,7 +201,7 @@ const WakeMass = () => {
                                 onChange={handleChange}
                                 required>
                                     {priestList.map((priest, index) => (
-                                        <MenuItem key={index} value={priest.priestID}>{priest.first_name}</MenuItem>
+                                        <MenuItem key={index} value={priest.priestID}>{priest.first_name + ' ' + priest.last_name}</MenuItem>
                                     ))}
                             </TextField>
                         </Grid>

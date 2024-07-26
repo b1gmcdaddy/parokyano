@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from '../../assets/imageHeader.jpg';
 import Header from '../../components/Header';
-import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio } from '@mui/material';
+import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio, MenuItem } from '@mui/material';
 import Footer from '../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +12,8 @@ import generateHash from '../../components/GenerateHash'
 import axios from 'axios'
 import config from "../../config";
 import NoPaymentModal from "../../components/NoPaymentModal";
+import { LocalizationProvider, TimeField, TimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -31,6 +33,24 @@ const Anointing = () => {
     const [open, setOpen] = useState(false);
     const dateToday = new Date().toJSON().slice(0,10)
     const hash = dateToday + generateHash().slice(0,20)
+    const [priestList, setPriestList] = useState([])
+
+    useEffect(() => {
+        const fetchPriest = async () => {
+            try{
+                const response = await axios(`${config.API}/priest/retrieve`, {
+                    params: {
+                        col: 'status',
+                        val: 'active'
+                    }
+                })    
+                setPriestList(response.data)
+            } catch(err) {
+                console.error(err)
+            }
+        }
+        fetchPriest()
+    }, [])
 
     const [formData, setFormData] = useState({
         first_name: '',
@@ -187,15 +207,17 @@ const Anointing = () => {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label>Preferred Time:</label>
-                            <TextField 
-                                fullWidth 
-                                select 
-                                variant="outlined" 
-                                size="small" 
-                                sx={inputstlying} 
-                                name="preferred_time" 
-                                onChange={handleChange}
-                                required />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <TimePicker
+                                    fullWidth 
+                                    variant="outlined" 
+                                    size="small" 
+                                    sx={inputstlying} 
+                                    timeSteps={{hours:30, minutes:30}}
+                                    name="preferred_time" 
+                                    onChange={handleChange}
+                                    required />
+                            </LocalizationProvider>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label>Preferred Priest:</label>
@@ -207,7 +229,11 @@ const Anointing = () => {
                                 sx={inputstlying} 
                                 name="preferred_priest"
                                 onChange={handleChange}
-                                required />
+                                required>
+                                    {priestList.map((priest, index) => (
+                                        <MenuItem key={index} value={priest.priestID}>{priest.first_name + ' ' + priest.last_name}</MenuItem>
+                                    ))}
+                                </TextField>
                         </Grid>
 
                         <Grid item xs={6} sm={2} sx={{ display: 'flex', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
