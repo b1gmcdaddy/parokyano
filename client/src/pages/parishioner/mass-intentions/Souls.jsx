@@ -18,7 +18,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
 import config from "../../../config";
 import axios from "axios";
-import generateHash from "../../../components/GenerateHash";
+import generateHash from "../../../utils/GenerateHash";
 import all from "../../../components/PaymentModal";
 
 const inputstlying = {

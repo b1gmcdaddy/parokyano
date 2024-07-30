@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { TextField, Grid, Container, FormControlLabel, Radio, RadioGroup, Button, Divider } from "@mui/material";
 import Header from "../../../components/Header";
-import generateHash from '../../../components/GenerateHash'
+import generateHash from '../../../utils/GenerateHash'
 import all from '../../../components/PaymentModal'
 import axios from 'axios'
 import config from "../../../config"

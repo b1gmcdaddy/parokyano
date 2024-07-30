@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from '../../../assets/imageHeader.jpg';
 import Header from '../../../components/Header';
-import { Container, Grid, TextField, MenuItem, FormControlLabel, FormGroup, Checkbox } from '@mui/material';
+import { Container, Grid, TextField, MenuItem, FormControlLabel, FormGroup, Checkbox, FormHelperText } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
@@ -11,7 +11,9 @@ import Footer from "../../../components/Footer";
 import config from '../../../config';
 import axios from 'axios';
 import all from '../../../components/PaymentModal'
-import generateHash from '../../../components/GenerateHash';
+import generateHash from '../../../utils/GenerateHash';
+import validateForm from '../../../utils/Validators'
+
 
 const inputstlying = {
   '& .MuiOutlinedInput-root': {
@@ -36,6 +38,7 @@ const Thanksgiving = () => {
   const [openCash, setOpenCash] = useState(false)
   const [openGCash, setOpenGCash] = useState(false)
   const hash = dateToday + generateHash().slice(0,20)
+  const [errors, setErrors] = useState({})
 
   // form data
   const [formData, setFormData] = useState({
@@ -86,20 +89,21 @@ const Thanksgiving = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    try {
-        // await axios.post(`${config.API}/request/create-intention`, formData);
-        console.log(formData)
-        const paymentInfo = {
-          transaction_no: formData.transaction_no,
-          fee: formData.donation_amount,
-          requirements: null,
-          message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
-        }
-        setModalData(paymentInfo)
-        if(formData.payment_method === 'cash'){setOpenCash(true)} else {setOpenGCash(true)}
-    } catch (err) {
-        console.error('error submitting form data', err)
-    }
+    setErrors(validateForm(formData))
+    // console.log(errors)
+        // try {
+        //     await axios.post(`${config.API}/request/create-intention`, formData);
+        //     const paymentInfo = {
+        //         transaction_no: formData.transaction_no,
+        //         fee: formData.donation_amount,
+        //         requirements: null,
+        //         message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
+        //     }
+        //     setModalData(paymentInfo)
+        //     if(formData.payment_method === 'cash'){setOpenCash(true)} else {setOpenGCash(true)}
+        // }catch (err) {
+        //     console.error('error submitting form data', err)
+        // } 
   }
 
   const handleCaptchaChange = (value) => {
@@ -273,9 +277,13 @@ const Thanksgiving = () => {
                       variant="outlined" 
                       size="small" 
                       sx={inputstlying} 
+                      inputProps={{maxLength:11}}
                       name='contact_no'
                       onChange={handleChange}
                       required />
+                      {errors.contact_no != null && (
+                        <FormHelperText sx={{color: 'red'}}>{errors.contact_no}</FormHelperText>
+                      )}
                 </Grid>  
           </Grid>
 

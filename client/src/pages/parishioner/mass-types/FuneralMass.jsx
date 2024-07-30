@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"
-import generateHash from "../../../components/GenerateHash";
+import generateHash from "../../../utils/GenerateHash";
 import config from "../../../config";
 import NoPaymentModal from "../../../components/NoPaymentModal";
 import axios from "axios";

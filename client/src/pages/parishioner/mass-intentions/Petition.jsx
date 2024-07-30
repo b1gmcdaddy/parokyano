@@ -11,7 +11,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
 import config from "../../../config";
 import all from "../../../components/PaymentModal";
-import generateHash from "../../../components/GenerateHash";
+import generateHash from "../../../utils/GenerateHash";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {

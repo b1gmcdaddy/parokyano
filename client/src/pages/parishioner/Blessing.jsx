@@ -9,7 +9,7 @@ import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"
 import NoPaymentModal from "../../components/NoPaymentModal";
-import generateHash from "../../components/GenerateHash";
+import generateHash from "../../utils/GenerateHash";
 import axios from "axios";
 import config from "../../config";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";

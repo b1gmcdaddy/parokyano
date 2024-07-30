@@ -9,7 +9,7 @@ import { TextField, Container, Grid, FormControlLabel, Radio, RadioGroup, Button
 import Header from "../../../components/Header";
 import axios from "axios";
 import config from "../../../config";
-import generateHash from "../../../components/GenerateHash";
+import generateHash from "../../../utils/GenerateHash";
 import all from '../../../components/PaymentModal'
 
 const inputstlying = {
