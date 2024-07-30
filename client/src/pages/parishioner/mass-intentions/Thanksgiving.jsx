@@ -213,7 +213,10 @@ const Thanksgiving = () => {
                       sx={inputstlying} 
                       name='mass_date'
                       onChange={handleChange}
-                      required />           
+                      required />  
+                      {errors.mass_date != null && (
+                        <FormHelperText sx={{color: 'red'}}>{errors.mass_date}</FormHelperText>
+                      )}         
                 </Grid>
 
                 <Grid item xs={12} sm={3} sx={{marginTop: {md: '18px'}}}>
