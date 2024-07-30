@@ -28,7 +28,7 @@ const inputstlying = {
 const Thanksgiving = () => {
 
   const [captchaValue, setCaptchaValue] = useState(true);
-  const [isChecked, setIsChecked] = useState({ honorOfSaints: false, weddingAnniversary: false, successOf: false, birthdayOf: false, others: false,});
+  const [isChecked, setIsChecked] = useState({ saint: false, wedding: false, success: false, birthday: false, others: false,});
   const id = 1
   const dateToday = new Date().toJSON().slice(0,10)
   const [schedule, setSchedule] = useState({slots: ['00:00:00']})
@@ -87,7 +87,8 @@ const Thanksgiving = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-        await axios.post(`${config.API}/request/create-intention`, formData);
+        // await axios.post(`${config.API}/request/create-intention`, formData);
+        console.log(formData)
         const paymentInfo = {
           transaction_no: formData.transaction_no,
           fee: formData.donation_amount,
@@ -95,7 +96,7 @@ const Thanksgiving = () => {
           message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
         }
         setModalData(paymentInfo)
-        if(formData.transaction_no === 'cash'){setOpenCash(true)} else {setOpenGCash(true)}
+        if(formData.payment_method === 'cash'){setOpenCash(true)} else {setOpenGCash(true)}
     } catch (err) {
         console.error('error submitting form data', err)
     }
@@ -108,7 +109,9 @@ const Thanksgiving = () => {
   const isCaptchaChecked = captchaValue !== null;
 
   const allowInput = (e) => {
+    setFormData(prevState => ({...prevState, intention_details: {...prevState.intention_details, [e.target.name]: ""}}))
     setIsChecked({...isChecked, [e.target.name]: e.target.checked,});
+    console.log("clicked")
   };
 
   return (
@@ -132,51 +135,55 @@ const Thanksgiving = () => {
           <Grid container spacing={4}>
             
                 <Grid item xs={12} sm={6}>
-                    <FormControlLabel control={<Checkbox checked={isChecked.honorOfSaints} onChange={allowInput} name="honorOfSaints" />} label="In Honor of Saints" />
+                    <FormControlLabel control={<Checkbox checked={isChecked.saint} onChange={allowInput} name="saint" />} label="In Honor of Saints" />
                     <TextField 
                       variant="outlined" 
                       size="small" 
                       sx={inputstlying} 
                       label="Please input the details" 
                       fullWidth 
-                      disabled={!isChecked.honorOfSaints}
+                      disabled={!isChecked.saint}
                       name='saint'
+                      value={formData.intention_details.saint}
                       onChange={handleIntention} />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <FormControlLabel control={<Checkbox checked={isChecked.weddingAnniversary} onChange={allowInput} name="weddingAnniversary" />} label="Wedding Anniversary of" />
+                    <FormControlLabel control={<Checkbox checked={isChecked.wedding} onChange={allowInput} name="wedding" />} label="Wedding Anniversary of" />
                     <TextField variant="outlined" 
                       size="small" 
                       sx={inputstlying} 
                       label="Please input the details" 
                       fullWidth 
-                      disabled={!isChecked.weddingAnniversary}
+                      disabled={!isChecked.wedding}
                       name='wedding'
+                      value={formData.intention_details.wedding}
                       onChange={handleIntention} />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <FormControlLabel control={<Checkbox checked={isChecked.successOf} onChange={allowInput} name="successOf" />} label="For the success of" />
+                    <FormControlLabel control={<Checkbox checked={isChecked.success} onChange={allowInput} name="success" />} label="For the success of" />
                     <TextField variant="outlined" 
                       size="small" 
                       sx={inputstlying} 
                       label="Please input the details" 
                       fullWidth 
-                      disabled={!isChecked.successOf}
+                      disabled={!isChecked.success}
                       name='success'
+                      value={formData.intention_details.success}
                       onChange={handleIntention} />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <FormControlLabel control={<Checkbox checked={isChecked.birthdayOf} onChange={allowInput} name="birthdayOf" />} label="For the birthday of" />
+                    <FormControlLabel control={<Checkbox checked={isChecked.birthday} onChange={allowInput} name="birthday" />} label="For the birthday of" />
                     <TextField variant="outlined" 
                       size="small" 
                       sx={inputstlying} 
                       label="Please input the details" 
                       fullWidth 
-                      disabled={!isChecked.birthdayOf}
+                      disabled={!isChecked.birthday}
                       name='birthday'
+                      value={formData.intention_details.birthday}
                       onChange={handleIntention} />
                 </Grid>
 
@@ -189,6 +196,7 @@ const Thanksgiving = () => {
                       fullWidth 
                       disabled={!isChecked.others}
                       name='others'
+                      value={formData.intention_details.others}
                       onChange={handleIntention} />
                 </Grid>
 
