@@ -9,7 +9,8 @@ import {
   MenuItem,
   Button,
   InputAdornment,
-  IconButton
+  IconButton,
+  FormHelperText
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong, faMinus } from "@fortawesome/free-solid-svg-icons";
@@ -20,6 +21,7 @@ import config from "../../../config";
 import axios from "axios";
 import generateHash from "../../../utils/GenerateHash";
 import all from "../../../components/PaymentModal";
+import ValidateForm from "../../../utils/Validators";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -42,6 +44,7 @@ const Souls = () => {
   const [openCash, setOpenCash] = useState(false);
   const [openGCash, setOpenGCash] = useState(false);
   const hash = dateToday + generateHash().slice(0,20);
+  const [errors, setErrors] = useState({})
 
   const [formData, setFormData] = useState({
     intention_details: [''],
@@ -78,23 +81,27 @@ const Souls = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post(`${config.API}/request/create-intention`, formData);
-      const paymentInfo = {
-        transaction_no: formData.transaction_no,
-        fee: formData.donation_amount,
-        requirements: null,
-        message:
-          "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!",
-      };
-      setModalData(paymentInfo);
-      if (formData.payment_method === "cash") {
-        setOpenCash(true);
-      } else {
-        setOpenGCash(true);
+    let validate = ValidateForm(formData)
+    setErrors(validate)
+    if(Object.keys(validate).length === 0 && validate.constructor === Object){
+      try {
+        await axios.post(`${config.API}/request/create-intention`, formData);
+        const paymentInfo = {
+          transaction_no: formData.transaction_no,
+          fee: formData.donation_amount,
+          requirements: null,
+          message:
+            "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!",
+        };
+        setModalData(paymentInfo);
+        if (formData.payment_method === "cash") {
+          setOpenCash(true);
+        } else {
+          setOpenGCash(true);
+        }
+      } catch (err) {
+        console.error("error submitting data", err);
       }
-    } catch (err) {
-      console.error("error submitting data", err);
     }
   };
 
@@ -206,6 +213,9 @@ const Souls = () => {
                 onChange={handleChange}
                 required
               />
+              {errors.mass_date != null && (
+                  <FormHelperText sx={{color: 'red'}}>{errors.mass_date}</FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12} sm={4}>
               <label>Time Slot:</label>
@@ -238,6 +248,9 @@ const Souls = () => {
                 onChange={handleChange}
                 required
               />
+              {errors.contact_no != null && (
+                <FormHelperText sx={{color: 'red'}}>{errors.contact_no}</FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12} sm={4}>
               <label>Payment Method:</label>
@@ -267,6 +280,9 @@ const Souls = () => {
                 onChange={handleChange}
                 required
               />
+              {errors.donation_amount != null && (
+                <FormHelperText sx={{color: 'red'}}>{errors.donation_amount}</FormHelperText>
+              )}
             </Grid>
           </Grid>
           <div className="mt-[4rem] flex justify-center">

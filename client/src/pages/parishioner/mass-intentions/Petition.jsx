@@ -3,7 +3,7 @@ import axios from "axios";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from "../../../assets/imageHeader.jpg";
 import Header from "../../../components/Header";
-import { Container, Grid, TextField, MenuItem } from "@mui/material";
+import { Container, Grid, TextField, MenuItem, FormHelperText } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -12,6 +12,7 @@ import Footer from "../../../components/Footer";
 import config from "../../../config";
 import all from "../../../components/PaymentModal";
 import generateHash from "../../../utils/GenerateHash";
+import ValidateForm from "../../../utils/Validators";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -34,6 +35,7 @@ const Petition = () => {
   const id = 1;
   var dateToday = new Date().toJSON().slice(0, 10);
   const hash = dateToday + generateHash().slice(0, 20);
+  const [errors, setErrors] = useState({})
 
   // form data layout
   const [formData, setFormData] = useState({
@@ -78,25 +80,30 @@ const Petition = () => {
   // just change message depending on which service
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post(`${config.API}/request/create-intention`, formData);
-      const paymentInfo = {
-        transaction_no: formData.transaction_no,
-        fee: formData.donation_amount,
-        requirements: null,
-        message:
-          "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!",
-      };
-      setModalData(paymentInfo);
-      if (formData.payment_method === "cash") {
-        setOpenCash(true);
-      } else {
-        setOpenGCash(true);
-      }
-    } catch (err) {
-      console.error("error submitting the form", err);
-    }
-  };
+    let validate = ValidateForm(formData)
+    setErrors(validate)
+    if(Object.keys(validate).length === 0 && validate.constructor === Object){
+        try {
+            await axios.post(`${config.API}/request/create-intention`, formData);
+            const paymentInfo = {
+              transaction_no: formData.transaction_no,
+              fee: formData.donation_amount,
+              requirements: null,
+              message:
+                "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!",
+            };
+            setModalData(paymentInfo);
+            if (formData.payment_method === "cash") {
+              setOpenCash(true);
+            } else {
+              setOpenGCash(true);
+            }
+        } catch (err) {
+            console.error("error submitting the form", err);
+        }
+    };
+  }
+    
 
   const handleCaptchaChange = (value) => {
     setCaptchaValue(value);
@@ -167,6 +174,9 @@ const Petition = () => {
                 required
                 sx={inputstlying}
               />
+              {errors.mass_date != null && (
+                <FormHelperText sx={{color: 'red'}}>{errors.mass_date}</FormHelperText>
+              )}
             </Grid>
 
             <Grid item xs={12} sm={4}>
@@ -222,6 +232,9 @@ const Petition = () => {
                 required
                 sx={inputstlying}
               />
+              {errors.donation_amount != null && (
+                <FormHelperText sx={{color: 'red'}}>{errors.donation_amount}</FormHelperText>
+              )}
             </Grid>
 
             <Grid item xs={12} sm={4}>
@@ -234,7 +247,11 @@ const Petition = () => {
                 size="small"
                 required
                 sx={inputstlying}
+                inputProps={{maxLength: 11}}
               />
+              {errors.contact_no != null && (
+                <FormHelperText sx={{color: 'red'}}>{errors.contact_no}</FormHelperText>
+              )}
             </Grid>
           </Grid>
           <div className="mt-[4rem] flex justify-center">

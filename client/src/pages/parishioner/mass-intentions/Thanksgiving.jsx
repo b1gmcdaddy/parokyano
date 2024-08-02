@@ -89,21 +89,24 @@ const Thanksgiving = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setErrors(validateForm(formData))
-    // console.log(errors)
-        // try {
-        //     await axios.post(`${config.API}/request/create-intention`, formData);
-        //     const paymentInfo = {
-        //         transaction_no: formData.transaction_no,
-        //         fee: formData.donation_amount,
-        //         requirements: null,
-        //         message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
-        //     }
-        //     setModalData(paymentInfo)
-        //     if(formData.payment_method === 'cash'){setOpenCash(true)} else {setOpenGCash(true)}
-        // }catch (err) {
-        //     console.error('error submitting form data', err)
-        // } 
+    let validate = validateForm(formData)
+    setErrors(validate)
+    if(Object.keys(validate).length === 0 && validate.constructor === Object){
+        try {
+            await axios.post(`${config.API}/request/create-intention`, formData);
+            const paymentInfo = {
+                transaction_no: formData.transaction_no,
+                fee: formData.donation_amount,
+                requirements: null,
+                message: 'Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!'
+            }
+            setModalData(paymentInfo)
+            if(formData.payment_method === 'cash'){setOpenCash(true)} else {setOpenGCash(true)}
+        }catch (err) {
+            console.error('error submitting form data', err)
+        } 
+    }
+
   }
 
   const handleCaptchaChange = (value) => {
@@ -272,6 +275,9 @@ const Thanksgiving = () => {
                       name='donation_amount'
                       onChange={handleChange}
                       required />
+                      {errors.donation_amount != null && (
+                        <FormHelperText sx={{color: 'red'}}>{errors.donation_amount}</FormHelperText>
+                      )}
                 </Grid>  
 
                 <Grid item xs={12} sm={6}>

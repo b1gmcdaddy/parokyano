@@ -22,14 +22,11 @@ export default function ValidateForm (data) {
         const dateToday = new Date().toJSON().slice(0,10)
         const minimum = new Date()
         minimum.setDate(new Date().getDate()+3)
-        console.log(data.mass_date)
-        console.log(dateToday)
-        console.log(minimum.toJSON().slice(0,10))
 
         if(data.mass_date !== dateToday && data.mass_date < dateToday){
             errors.mass_date = "Invalid date"
         }
-        if(data.mass_date == new Date().toJSON().slice(0,10)){
+        if(data.mass_date == dateToday){
             errors.mass_date = "Cannot schedule appointments/services on the same day"
         }
         if(data.mass_date > dateToday && data.mass_date < minimum.toJSON().slice(0,10)){
@@ -37,6 +34,11 @@ export default function ValidateForm (data) {
         }
     }
 
+    if(data.donation_amount !== null){
+        if(isNaN(Number(data.donation_amount))){
+            errors.donation_amount = "Not a valid amount"
+        }
+    }
 
     return errors
 }
