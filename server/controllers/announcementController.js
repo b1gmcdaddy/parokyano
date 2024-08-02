@@ -16,7 +16,7 @@ const retrieveAll = (req, res) => {
     })
 }
 
-const createAnnouncement = () => {
+const createAnnouncement = (req, res) => {
     const data = req.body
     const user = data.user_id
 
@@ -31,7 +31,23 @@ const createAnnouncement = () => {
     )
 }
 
+const editAnnouncement = (req, res) => {
+    const data = req.body
+    const announcementID = req.params.id
+
+    db.query('UPDATE announcement SET title=?, description=? WHERE announcementID=?',
+        [data.title, data.description, announcementID], (err, result) => {
+            if (err) {
+                console.error('error updating db', err);
+                return res.status(500)
+            }
+            return res.status(200)
+        }
+    ) 
+}
+
 module.exports = {
     retrieveAll,
-    createAnnouncement
+    createAnnouncement,
+    editAnnouncement
 }
