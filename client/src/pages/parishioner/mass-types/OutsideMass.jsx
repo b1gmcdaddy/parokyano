@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from '../../../assets/imageHeader.jpg';
 import Header from '../../../components/Header';
-import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio, MenuItem } from '@mui/material';
+import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio, MenuItem, FormHelperText } from '@mui/material';
 import Footer from '../../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
@@ -12,8 +12,10 @@ import generateHash from "../../../utils/GenerateHash";
 import axios from "axios";
 import config from "../../../config";
 import NoPaymentModal from "../../../components/NoPaymentModal";
-import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import ValidateForm from "../../../utils/Validators";
+import dayjs from "dayjs";
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -35,6 +37,7 @@ const OutsideMass = () => {
     const [radioValue, setRadioValue] = useState("");
     const [open, setOpen] = useState(false);
     const [priestList, setPriestList] = useState([])
+    const [errors, setErrors] = useState({})
 
     useEffect(() => {
         const fetchPriest = async () => {
@@ -65,7 +68,8 @@ const OutsideMass = () => {
         isParishioner: '',
         transaction_no: hash,
         service_id: id,
-        type: ''
+        type: null,
+        mass_date: null
     })
 
     const modalData = {
@@ -78,19 +82,30 @@ const OutsideMass = () => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
 
+    const handleDateChange = (name, date) => {
+        setFormData({...formData, [name]: date.format("YYYY-MM-DD")})
+    }
+
+    const handleTimeChange = (name, time) => {
+        setFormData({...formData, [name]: time.format("HH:mm:ss")})
+    }
+
     const handleCaptchaChange = (value) => {
         setCaptchaValue(value)
     }
 
     const handlesubmit = (e) =>{
         e.preventDefault()
-        console.log(formData)
-        try{
-            axios.post(`${config.API}/request/create-mass`, formData)
-            setOpen(true)
-            console.log('success!')
-        } catch (err) {
-            console.error('error submitting to server', err)
+        const validate = ValidateForm(formData)
+        setErrors(validate)
+        if(Object.keys(validate) === 0 && validate.constructor === Object){
+            try{
+                axios.post(`${config.API}/request/create-mass`, formData)
+                setOpen(true)
+                console.log('success!')
+            } catch (err) {
+                console.error('error submitting to server', err)
+            }
         }
     }
 
@@ -148,6 +163,9 @@ const OutsideMass = () => {
                                             disabled={!isOtherSelected} 
                                             onChange={handleOtherChange}/>
                                     </Grid>
+                                    {formData.type == null && (
+                                        <FormHelperText sx={{color: 'red'}}><p>please choose a type</p></FormHelperText>
+                                    )}
                             </RadioGroup>
                         </Grid>
                         
@@ -191,22 +209,33 @@ const OutsideMass = () => {
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying} 
+                                inputProps={{maxLength: 11}}
                                 name="contact_no"
                                 onChange={handleChange} 
                                 required />
+                            {errors.contact_no != null && (
+                                <FormHelperText sx={{color: 'red'}}>{errors.contact_no}</FormHelperText>
+                            )}
                         </Grid>
                         
                         <Grid item xs={12} sm={3}>
                             <label>Preferred Date:</label>
-                            <TextField 
-                                fullWidth 
-                                variant="outlined" 
-                                size="small" 
-                                sx={inputstlying} 
-                                type="date"
-                                name="preferred_date" 
-                                onChange={handleChange}
-                                required />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    fullWidth 
+                                    variant="outlined" 
+                                    size="small" 
+                                    sx={inputstlying} 
+                                    disablePast
+                                    name="preferred_date" 
+                                    onChange={(date) => handleDateChange('preferred_date', date)}
+                                    renderInput={(params) => <TextField {...params} required />}
+                                    required />
+                                {errors.preferred_date != null && (
+                                    <FormHelperText sx={{color: 'red'}}>{errors.preferred_date}</FormHelperText>
+                                )}
+                            </LocalizationProvider>
+                            
                         </Grid>
                         <Grid item xs={12} sm={3}>
                             <label>Preferred Time:</label>
@@ -220,7 +249,8 @@ const OutsideMass = () => {
                                     minTime={dayjs().set('hour', 7)}
                                     maxTime={dayjs().set('hour', 16)}
                                     name="preferred_time" 
-                                    onChange={handleChange}
+                                    onChange={(time) => handleTimeChange('preferred_time', time)}
+                                    renderInput={(params) => <TextField {...params} required />}
                                     required />
                                 </LocalizationProvider>
                         </Grid>

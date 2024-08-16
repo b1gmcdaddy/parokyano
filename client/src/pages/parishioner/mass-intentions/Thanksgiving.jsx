@@ -13,6 +13,8 @@ import axios from 'axios';
 import all from '../../../components/PaymentModal'
 import generateHash from '../../../utils/GenerateHash';
 import validateForm from '../../../utils/Validators'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 
 const inputstlying = {
@@ -49,6 +51,7 @@ const Thanksgiving = () => {
       birthday: '',
       others: ''
     },
+    preferred_date: null,
     mass_date: '',
     mass_time: '',
     offered_by: '',
@@ -87,12 +90,17 @@ const Thanksgiving = () => {
     intention_details: { ...prevState.intention_details, [e.target.name]: e.target.value }
   }));
 
+  const handleDateChange = (name, date) => {
+    setFormData({...formData, [name]: date})
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     let validate = validateForm(formData)
     setErrors(validate)
     if(Object.keys(validate).length === 0 && validate.constructor === Object){
         try {
+          console.log('success')
             await axios.post(`${config.API}/request/create-intention`, formData);
             const paymentInfo = {
                 transaction_no: formData.transaction_no,
@@ -209,14 +217,18 @@ const Thanksgiving = () => {
 
                 <Grid item xs={12} sm={3} sx={{marginTop: {md: '18px'}}}>
                     <label>Mass Date:</label>
-                    <TextField fullWidth 
-                      variant="outlined" 
-                      type="date" 
-                      size="small" 
-                      sx={inputstlying} 
-                      name='mass_date'
-                      onChange={handleChange}
-                      required />  
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          fullWidth 
+                          variant="outlined" 
+                          disablePast
+                          size="small" 
+                          sx={inputstlying} 
+                          name='mass_date'
+                          onChange={(date) => handleDateChange('mass_date', date)}
+                          renderInput={(params) => <TextField {...params} required />}
+                          required />  
+                    </LocalizationProvider>
                       {errors.mass_date != null && (
                         <FormHelperText sx={{color: 'red'}}>{errors.mass_date}</FormHelperText>
                       )}         
@@ -275,8 +287,8 @@ const Thanksgiving = () => {
                       name='donation_amount'
                       onChange={handleChange}
                       required />
-                      {errors.donation_amount != null && (
-                        <FormHelperText sx={{color: 'red'}}>{errors.donation_amount}</FormHelperText>
+                      {errors.amount != null && (
+                        <FormHelperText sx={{color: 'red'}}>{errors.amount}</FormHelperText>
                       )}
                 </Grid>  
 

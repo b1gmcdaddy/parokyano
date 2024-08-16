@@ -13,6 +13,8 @@ import config from "../../../config";
 import all from "../../../components/PaymentModal";
 import generateHash from "../../../utils/GenerateHash";
 import ValidateForm from "../../../utils/Validators";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -41,7 +43,8 @@ const Petition = () => {
   const [formData, setFormData] = useState({
     intention_details: "",
     type: "Petition",
-    offered_by: "", //in db, this is 'requested_by'
+    offered_by: "",          // in db, this is 'requested_by'
+    preferred_date: null,         // DO NOT change or delete this!
     mass_date: "",
     mass_time: "",
     payment_method: "",
@@ -50,6 +53,7 @@ const Petition = () => {
     service_id: id,
     transaction_no: hash,
   });
+
 
   // getters
   useEffect(() => {
@@ -75,6 +79,10 @@ const Petition = () => {
   // event handlers
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleDateChange = (name, date) => {
+    setFormData({...formData, [name]: date});
   };
 
   // just change message depending on which service
@@ -164,16 +172,19 @@ const Petition = () => {
 
             <Grid item xs={12} sm={4}>
               <label>Mass Date:</label>
-              <TextField
-                name="mass_date"
-                onChange={handleChange}
-                fullWidth
-                variant="outlined"
-                type="date"
-                size="small"
-                required
-                sx={inputstlying}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  name="mass_date"
+                  fullWidth
+                  variant="outlined"
+                  disablePast
+                  size="small"
+                  required
+                  sx={inputstlying}
+                  onChange={(date) => handleDateChange('mass_date', date)}
+                  renderInput={(params) => <TextField {...params} required />}
+                />
+              </LocalizationProvider>
               {errors.mass_date != null && (
                 <FormHelperText sx={{color: 'red'}}>{errors.mass_date}</FormHelperText>
               )}

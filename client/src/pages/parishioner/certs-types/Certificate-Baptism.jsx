@@ -5,12 +5,16 @@ import Footer from "../../../components/Footer";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
-import { TextField, Container, Grid, FormControlLabel, Radio, RadioGroup, Button } from "@mui/material";
+import { TextField, Container, Grid, FormControlLabel, Radio, RadioGroup, Button, FormHelperText } from "@mui/material";
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Header from "../../../components/Header";
 import axios from "axios";
 import config from "../../../config";
 import generateHash from "../../../utils/GenerateHash";
 import all from '../../../components/PaymentModal'
+import ValidateForm from "../../../utils/Validators";
+import { Dayjs } from "dayjs";
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -32,6 +36,7 @@ const CertificateBaptism = () => {
     const[ serviceInfo, setServiceInfo] = useState({})
     const [open, setOpen] = useState(false)
     const [modalData, setModalData] = useState({})
+    const [errors, setErrors]  = useState({})
 
     const [formData, setFormData] = useState({
         first_name: '',
@@ -81,18 +86,24 @@ const CertificateBaptism = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        try {
-            axios.post(`${config.API}/request/create-certificate`, formData)
-            const paymentInfo = {
-                fee: serviceInfo.fee,
-                transaction_no: formData.transaction_no,
-                requirements: serviceInfo.requirements,
-                message: 'Note: Kindly wait for our confirmation message to claim your certificate. Please claim it on time during our office hours. Disclaimer: Your requested document may not be available. Since it is possible that the sacrament was not received in our parish.'
+        const validate = ValidateForm(formData)
+        setErrors(validate)
+        setErrors({...errors, preferred_date: null})
+        console.log(errors)
+        if (Object.keys(validate).length === 0 && validate.constructor === Object){
+            try {
+                axios.post(`${config.API}/request/create-certificate`, formData)
+                const paymentInfo = {
+                    fee: serviceInfo.fee,
+                    transaction_no: formData.transaction_no,
+                    requirements: serviceInfo.requirements,
+                    message: 'Note: Kindly wait for our confirmation message to claim your certificate. Please claim it on time during our office hours. Disclaimer: Your requested document may not be available. Since it is possible that the sacrament was not received in our parish.'
+                }
+                setModalData(paymentInfo)
+                setOpen(true)
+            } catch (err) {
+                console.error('error submitting to server', err)
             }
-            setModalData(paymentInfo)
-            setOpen(true)
-        } catch (err) {
-            console.error('error submitting to server', err)
         }
     }
 
@@ -149,15 +160,19 @@ const CertificateBaptism = () => {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label><span className="text-red-600 font-bold">*</span>Date of Birth:</label>
-                            <TextField 
+                            <TextField
                                 fullWidth 
                                 variant="outlined" 
+                                disableFuture
                                 size="small" 
                                 sx={inputstlying}
                                 name="birth_date" 
                                 onChange={handleChange} 
-                                type="date" 
+                                type="date"
                                 required />
+                            {errors.birth_date != null && (
+                                <FormHelperText sx={{color: 'red'}}>{errors.birth_date}</FormHelperText>
+                            )}
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label><span className="text-red-600 font-bold">*</span>Place of Birth:</label>
@@ -177,9 +192,13 @@ const CertificateBaptism = () => {
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying}
+                                inputProps={{maxLength: 11}}
                                 name="contact_no" 
                                 onChange={handleChange} 
                                 required />
+                            {errors.contact_no != null && (
+                                <FormHelperText sx={{color: 'red'}}>{errors.contact_no}</FormHelperText>
+                            )}
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label><span className="text-red-600 font-bold">*</span>Father's Complete Name:</label>
@@ -205,14 +224,16 @@ const CertificateBaptism = () => {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label>Date of Baptism:</label>
-                            <TextField 
+                            <TextField
                                 fullWidth 
                                 variant="outlined" 
+                                disableFuture
                                 size="small" 
                                 sx={inputstlying}
                                 name="preferred_date" 
                                 onChange={handleChange}
-                                type="date" />
+                                type="date"
+                            />
                         </Grid>
                     </Grid>
                     
@@ -224,6 +245,7 @@ const CertificateBaptism = () => {
                                 name="purpose" 
                                 value={formData.purpose} 
                                 onChange={handleChange}
+                                required
                             >
                                 <FormControlLabel value="marriage" control={<Radio size="small" />} label="Marriage" sx={{marginRight: '2em'}} />
                                 <FormControlLabel value="passport" control={<Radio size="small" />} label="Passport" sx={{marginRight: '2em'}} />
@@ -235,6 +257,9 @@ const CertificateBaptism = () => {
                                 <TextField label="Please Specify" fullWidth sx={inputstlying} />
                             )}
                             </RadioGroup>
+                            {formData.purpose === "" && (
+                                <FormHelperText sx={{color: 'red'}}>Please choose a purpose</FormHelperText>
+                            )}
                         </Grid>
 
                         <Grid item xs={12} sm={4}>
@@ -245,7 +270,8 @@ const CertificateBaptism = () => {
                                 size="small" 
                                 sx={inputstlying}
                                 name="book_no" 
-                                onChange={handleArchive} />
+                                onChange={handleArchive} 
+                                type="number"/>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label>Page No.</label>
@@ -255,7 +281,8 @@ const CertificateBaptism = () => {
                                 size="small" 
                                 sx={inputstlying}
                                 name="page_no" 
-                                onChange={handleArchive} />
+                                onChange={handleArchive}
+                                type="number" />
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label>Line No.</label>
@@ -265,7 +292,8 @@ const CertificateBaptism = () => {
                                 size="small" 
                                 sx={inputstlying}
                                 name="line_no" 
-                                onChange={handleArchive} />
+                                onChange={handleArchive}
+                                type="number" />
                         </Grid>
                     </Grid>  
 

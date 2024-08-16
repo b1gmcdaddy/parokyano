@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from '../../../assets/imageHeader.jpg';
 import Header from '../../../components/Header';
-import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio, MenuItem } from '@mui/material';
-import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { Container, Grid, RadioGroup, TextField, FormControlLabel, Radio, MenuItem, FormHelperText } from '@mui/material';
+import { LocalizationProvider, TimePicker, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Footer from '../../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,6 +14,9 @@ import generateHash from "../../../utils/GenerateHash";
 import NoPaymentModal from "../../../components/NoPaymentModal";
 import config from "../../../config";
 import axios from "axios";
+import dayjs from "dayjs";
+import ValidateForm from "../../../utils/Validators";
+
 
 
 const inputstlying = {
@@ -35,6 +38,7 @@ const WakeMass = () => {
     const dateToday = new Date().toJSON().slice(0,10)
     const hash = dateToday + generateHash().slice(0,20)
     const [priestList, setPriestList] = useState([])
+    const [errors, setErrors] = useState({})
 
     useEffect(() => {
         const fetchPriest = async () => {
@@ -65,7 +69,8 @@ const WakeMass = () => {
         isParishioner: '',
         transaction_no: hash,
         service_id: id,
-        type: null
+        type: null,
+        mass_date: null,        // DO NOT DELETE
     })
 
     const modalData = {
@@ -76,18 +81,31 @@ const WakeMass = () => {
 
     const handlesubmit = (e) =>{
         e.preventDefault()
-        try {
-            axios.post(`${config.API}/request/create-mass`, formData)
-            setOpen(true)
+        console.log(formData)
+        const validate = ValidateForm(formData)
+        setErrors(validate)
+        if(Object.keys(validate).length === 0 && validate.constructor === Object){
+            try {
+                axios.post(`${config.API}/request/create-mass`, formData)
+                setOpen(true)
+            }
+            catch (err) {
+                console.error('error submitting to server', err)
+            }
+            console.log(formData);
         }
-        catch (err) {
-            console.error('error submitting to server', err)
-        }
-        console.log(formData);
     }
 
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})
+    }
+
+    const handleDateChange = (name, date) => {
+        setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    };
+
+    const handleTimeChange = (name, time) => {
+        setFormData({...formData, [name]: time.format("HH-mm-ss")})
     }
 
     const handleCaptchaChange = (value) => {
@@ -133,9 +151,13 @@ const WakeMass = () => {
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying}
+                                inputProps={{maxLength: 11}}
                                 name="contact_no" 
                                 onChange={handleChange}
                                 required />
+                            {errors.contact_no != null && (
+                                <FormHelperText sx={{color: 'red'}}>{errors.contact_no}</FormHelperText>
+                            )}
                         </Grid> 
 
                         <Grid item xs={12} sm={6}>
@@ -163,15 +185,22 @@ const WakeMass = () => {
 
                         <Grid item xs={12} sm={3}>
                             <label>Preferred Date:</label>
-                            <TextField 
-                                fullWidth 
-                                variant="outlined" 
-                                size="small" 
-                                sx={inputstlying} 
-                                name="preferred_date" 
-                                onChange={handleChange}
-                                type='date'
-                                required />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    fullWidth 
+                                    variant="outlined" 
+                                    size="small" 
+                                    sx={inputstlying} 
+                                    disablePast
+                                    name="preferred_date" 
+                                    onChange={(date) => handleDateChange('preferred_date', date)}
+                                    renderInput={(params) => <TextField {...params} required />}
+                                    required />
+                            </LocalizationProvider>
+                            
+                            {errors.preferred_date != null && (
+                                <FormHelperText sx={{color: 'red'}}>{errors.preferred_date}</FormHelperText>
+                            )}
                         </Grid>
                         <Grid item xs={12} sm={3}>
                             <label>Preferred Time:</label>
@@ -185,7 +214,8 @@ const WakeMass = () => {
                                     minTime={dayjs().set('hour', 7)}
                                     maxTime={dayjs().set('hour', 16)}
                                     name="preferred_time"
-                                    onChange={handleChange}
+                                    onChange={(time) => handleTimeChange('preferred_time', time)}
+                                    renderInput={(params) => <TextField {...params} required />}
                                     required />
                             </LocalizationProvider>
                         </Grid>

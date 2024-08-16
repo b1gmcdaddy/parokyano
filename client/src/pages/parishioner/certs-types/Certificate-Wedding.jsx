@@ -5,12 +5,17 @@ import Footer from "../../../components/Footer";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
-import { TextField, Grid, Container, FormControlLabel, Radio, RadioGroup, Button } from "@mui/material";
+import { TextField, Grid, Container, FormControlLabel, Radio, RadioGroup, Button, FormHelperText } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Header from "../../../components/Header";
 import generateHash from "../../../utils/GenerateHash";
 import axios from "axios";
 import config from "../../../config";
 import all from '../../../components/PaymentModal'
+import ValidateForm from "../../../utils/Validators";
+import { validateDate } from "@mui/x-date-pickers/internals";
 
 const inputstlying = {
     '& .MuiOutlinedInput-root': {
@@ -32,6 +37,7 @@ const CertificateWedding = () => {
     const [serviceInfo, setServiceInfo] = useState({})
     const [modalData, setModalData] = useState({})
     const [open, setOpen] = useState(false)
+    const [errors, setErrors] = useState({})
 
     const [formData, setFormData] = useState({
         first_name: '',
@@ -89,18 +95,22 @@ const CertificateWedding = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        try{
-            axios.post(`${config.API}/request/create-certificate`, formData)
-            const paymentInfo = {
-                fee: serviceInfo.fee,
-                transaction_no: formData.transaction_no,
-                requirements: serviceInfo.requirements,
-                message: 'Note: Kindly wait for our confirmation message to claim your certificate. Please claim it on time during our office hours. Disclaimer: Your requested document may not be available. Since it is possible that the sacrament was not received in our parish.'
+        const validate = ValidateForm(formData)
+        setErrors(validate)
+        if(Object.keys(validate).length === 0 && validate.constructor === Object){
+            try{
+                axios.post(`${config.API}/request/create-certificate`, formData)
+                const paymentInfo = {
+                    fee: serviceInfo.fee,
+                    transaction_no: formData.transaction_no,
+                    requirements: serviceInfo.requirements,
+                    message: 'Note: Kindly wait for our confirmation message to claim your certificate. Please claim it on time during our office hours. Disclaimer: Your requested document may not be available. Since it is possible that the sacrament was not received in our parish.'
+                }
+                setModalData(paymentInfo)
+                setOpen(true)
+            } catch (err) {
+                console.error('error submitting data to server', err)
             }
-            setModalData(paymentInfo)
-            setOpen(true)
-        } catch (err) {
-            console.error('error submitting data to server', err)
         }
     }
 
@@ -190,15 +200,17 @@ const CertificateWedding = () => {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label><span className="text-red-600 font-bold">*</span>Date of Marriage:</label>
-                            <TextField 
-                                fullWidth 
-                                variant="outlined" 
-                                size="small" 
-                                sx={inputstlying}
-                                name="preferred_date" 
-                                onChange={handleChange} 
-                                type="date" 
-                                required />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    fullWidth 
+                                    variant="outlined" 
+                                    size="small" 
+                                    disableFuture
+                                    sx={inputstlying}
+                                    name="preferred_date" 
+                                    onChange={handleChange} 
+                                />
+                            </LocalizationProvider>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label><span className="text-red-600 font-bold">*</span>Contact Number:</label>
@@ -207,9 +219,13 @@ const CertificateWedding = () => {
                                 variant="outlined" 
                                 size="small" 
                                 sx={inputstlying}
+                                inputProps={{maxLength: 11}}
                                 name="contact_no" 
                                 onChange={handleChange} 
                                 required />
+                                {errors.contact_no != null &&(
+                                    <FormHelperText sx={{color: 'red'}}>{errors.contact_no}</FormHelperText>
+                                )}
                         </Grid>
                     </Grid>
                     
@@ -221,6 +237,7 @@ const CertificateWedding = () => {
                                 name="purpose" 
                                 className="" 
                                 onChange={handleChange}
+                                required
                             >
                                 <FormControlLabel value="passport" control={<Radio size="small" />} label="Passport" sx={{marginRight: '2em'}} />
                                 <FormControlLabel value="school" control={<Radio size="small" />} label="School" sx={{marginRight: '2em'}} />
@@ -230,6 +247,9 @@ const CertificateWedding = () => {
                                 <TextField label="Please Specify" fullWidth sx={inputstlying} />
                             )}
                             </RadioGroup>
+                            {formData.purpose === "" && (
+                                <FormHelperText sx={{color: "red"}}>Pleas choose a purpose</FormHelperText>
+                            )}
                         </Grid>
 
                         <Grid item xs={12} sm={4}>
