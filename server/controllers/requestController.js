@@ -31,6 +31,10 @@ const createRequestCertificate = (req, res) => {
     const archive = JSON.stringify(request.archive_info)
     const spouse = JSON.stringify(request.spouse_name)
 
+    if(request.baptism_date != null && request.preferred_date == null){
+        request.preferred_date = request.baptism_date
+    }
+
     // did not include payment method in query since it is cash by default && all certificates are to be paid in cash
     // baptism, confirmation, and wedding dates are stored in PREFERRED DATE to save some space and lessen query length:>
     db.query('INSERT INTO request (first_name, middle_name, last_name, birth_date, birth_place, contact_no, father_name, mother_name, preferred_date, details, service_id, transaction_no, date_requested, purpose, spouse_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',

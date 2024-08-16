@@ -48,7 +48,7 @@ const CertificateBaptism = () => {
         father_name: '',
         mother_name: '',
         spouse_name: null,
-        preferred_date: null,
+        baptism_date: null,
         archive_info: {
             book_no: '',
             page_no: '',
@@ -57,7 +57,8 @@ const CertificateBaptism = () => {
         service_id: id,
         transaction_no: hash,
         date_requested: dateToday,
-        purpose: ''
+        purpose: '',
+        preferred_date: null
     })
 
     useEffect(()=> {
@@ -80,6 +81,10 @@ const CertificateBaptism = () => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
 
+    const handleDateChange = (name, date) => {
+        setFormData({...formData, [name]: date.format("YYYY-MM-DD")})
+    }
+
     const handleArchive = (e) => {
         setFormData(prevState => ({...prevState, archive_info: {...formData.archive_info, [e.target.name]: e.target.value}}))
     }
@@ -88,8 +93,7 @@ const CertificateBaptism = () => {
         e.preventDefault()
         const validate = ValidateForm(formData)
         setErrors(validate)
-        setErrors({...errors, preferred_date: null})
-        console.log(errors)
+
         if (Object.keys(validate).length === 0 && validate.constructor === Object){
             try {
                 axios.post(`${config.API}/request/create-certificate`, formData)
@@ -159,17 +163,19 @@ const CertificateBaptism = () => {
                                 required />
                         </Grid>
                         <Grid item xs={12} sm={4}>
-                            <label><span className="text-red-600 font-bold">*</span>Date of Birth:</label>
-                            <TextField
-                                fullWidth 
-                                variant="outlined" 
-                                disableFuture
-                                size="small" 
-                                sx={inputstlying}
-                                name="birth_date" 
-                                onChange={handleChange} 
-                                type="date"
-                                required />
+                            <label><span className="text-red-600 font-bold">*</span>Date of Birth:   </label>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    fullWidth 
+                                    variant="outlined" 
+                                    disableFuture
+                                    size="small" 
+                                    sx={inputstlying}
+                                    name="birth_date" 
+                                    onChange={(date) => handleDateChange('birth_date', date)}
+                                    renderInput={(params) => <TextField {...params} required />}
+                                    required />
+                            </LocalizationProvider>
                             {errors.birth_date != null && (
                                 <FormHelperText sx={{color: 'red'}}>{errors.birth_date}</FormHelperText>
                             )}
@@ -224,16 +230,18 @@ const CertificateBaptism = () => {
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <label>Date of Baptism:</label>
-                            <TextField
-                                fullWidth 
-                                variant="outlined" 
-                                disableFuture
-                                size="small" 
-                                sx={inputstlying}
-                                name="preferred_date" 
-                                onChange={handleChange}
-                                type="date"
-                            />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    fullWidth 
+                                    variant="outlined" 
+                                    disableFuture
+                                    size="small" 
+                                    sx={inputstlying}
+                                    name="baptism_date" 
+                                    onChange={(date) => handleDateChange('baptism_date', date)}
+                                    renderInput={(params) => <TextField {...params} required />}
+                                />
+                            </LocalizationProvider>
                         </Grid>
                     </Grid>
                     

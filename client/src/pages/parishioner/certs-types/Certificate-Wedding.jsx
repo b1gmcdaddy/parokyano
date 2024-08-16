@@ -85,6 +85,10 @@ const CertificateWedding = () => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
 
+    const handleDateChange = (name, date) => {
+        setFormData({...formData, [name]: date.format("YYYY-MM-DD")})
+    }
+
     const handleSpouse = (e) => {
         setFormData(prevState => ({...prevState, spouse_name: {...formData.spouse_name, [e.target.name]: e.target.value}}))
     }
@@ -208,7 +212,8 @@ const CertificateWedding = () => {
                                     disableFuture
                                     sx={inputstlying}
                                     name="preferred_date" 
-                                    onChange={handleChange} 
+                                    onChange={(date) => handleDateChange('preferred_date', date)}
+                                    renderInput={(params) => <TextField {...params} required />}
                                 />
                             </LocalizationProvider>
                         </Grid>

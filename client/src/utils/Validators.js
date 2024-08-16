@@ -35,7 +35,7 @@ export default function ValidateForm (data) {
         const minimum = new Date()
         minimum.setDate(new Date().getDate()+1)
        
-        if(data.mass_date.format("YYYY-MM-DD") < minimum.toJSON().slice(0,10)){
+        if(data.mass_date < minimum.toJSON().slice(0,10)){
             errors.mass_date = "Date must be atleast a day from today to allow for processing time"
         }
     }
@@ -43,12 +43,6 @@ export default function ValidateForm (data) {
     if(data.donation_amount !== null){
         if(isNaN(Number(data.donation_amount))){
             errors.amount = "Not a valid amount"
-        }
-    }
-
-    if(data.birth_date !== null || data.baptism_date !== null){
-        if(data.birth_date > dateToday){
-            errors.birth_date = "Invalid date"
         }
     }
 

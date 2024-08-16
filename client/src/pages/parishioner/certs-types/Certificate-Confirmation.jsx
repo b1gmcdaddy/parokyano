@@ -83,6 +83,10 @@ const CertificateConfirmation = () => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
 
+    const handleDateChange = (name, date) => {
+        setFormData({...formData, [name]: date.format("YYYY-MM-DD")})
+    }
+
     // this handles book line and page no.
     const handleArchive = (e) => {
         setFormData(prevState => ({...prevState, archive_info: {...formData.archive_info, [e.target.name]: e.target.value}}))
@@ -94,7 +98,7 @@ const CertificateConfirmation = () => {
         setErrors(validate)
         if(Object.keys(validate).length === 0 && validate.constructor === Object){
             try {
-                // axios.post(`${config.API}/request/create-certificate`, formData)
+                axios.post(`${config.API}/request/create-certificate`, formData)
                 const paymentInfo = {
                     fee: serviceInfo.fee,
                     transaction_no: formData.transaction_no,
@@ -204,7 +208,8 @@ const CertificateConfirmation = () => {
                                     disableFuture
                                     sx={inputstlying}
                                     name="preferred_date" 
-                                    onChange={handleChange} 
+                                    onChange={(date) => handleDateChange('preferred_date', date)}
+                                    renderInput={(params) => <TextField {...params} required />}
                                 />
                             </LocalizationProvider> 
                         </Grid>
