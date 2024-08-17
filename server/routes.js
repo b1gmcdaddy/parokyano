@@ -26,15 +26,14 @@ const requestRoute = require('./routes/requestRoute');
 const serviceRoute = require('./routes/serviceRoute');
 const announcementRoute = require('./routes/announcementRoute');
 const priestRoute = require('./routes/priestRoute')
+const userRoute = require('./routes/userRoute');
 
 
 app.use('/request', requestRoute);
 app.use('/service', serviceRoute);
 app.use('/announcement', announcementRoute)
 app.use('/priest', priestRoute)
-
-
-
+app.use('/user', userRoute);
 
 
 //debugging purposes
