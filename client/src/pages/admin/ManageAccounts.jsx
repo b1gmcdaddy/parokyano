@@ -4,8 +4,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import { Button, Typography, Container } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faChurch, faStamp, faHandsPraying } from '@fortawesome/free-solid-svg-icons';
-
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,14 +13,17 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import config from "../../config";
+import axios from "axios";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
+    backgroundColor: '#355173',
     color: theme.palette.common.white,
+    fontSize: 18
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 16,
   },
 }));
 
@@ -29,25 +31,32 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   '&:last-child td, &:last-child th': {
-    border: 0,
+     border: 0,
   },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function capitalize(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+
 
 const ManageAccounts = () => {
+
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+        const getUsers = async () => {
+            try {
+                const res = await axios.get(`${config.API}/user/retrieveUsers`);
+                setUser(res.data);
+            } catch (err) {
+                console.error('error retrieving user', err);
+            }
+        }
+        getUsers();
+    }, []);
 
    return (
     <Box sx={{ display: 'flex', mx: { md: '30px' } }}>
@@ -73,15 +82,15 @@ const ManageAccounts = () => {
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {rows.map((row) => (
-                    <StyledTableRow key={row.name}>
+                {user.map((user) => (
+                    <StyledTableRow key={user.userID}>
                     <StyledTableCell component="th" scope="row">
-                        {row.name}
+                        {user.username}
                     </StyledTableCell>
-                    <StyledTableCell>{row.calories}</StyledTableCell>
-                    <StyledTableCell>{row.fat}</StyledTableCell>
-                    <StyledTableCell>{row.carbs}</StyledTableCell>
-                    <StyledTableCell>{row.protein}</StyledTableCell>
+                    <StyledTableCell>{capitalize(user.status)}</StyledTableCell>
+                    <StyledTableCell>{new Date(user.date_started).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</StyledTableCell>
+                    <StyledTableCell>{}</StyledTableCell>
+                    <StyledTableCell><FontAwesomeIcon icon={faPenToSquare}/>&nbsp;Edit</StyledTableCell>
                     </StyledTableRow>
                 ))}
                 </TableBody>

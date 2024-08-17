@@ -1,6 +1,7 @@
 
+require('dotenv').config();
 
-
+const db = require('./db')
 
 const retrieveAllUsers = (req, res) => {
     db.query('Select * FROM user', (err, result) => {
