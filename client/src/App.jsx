@@ -26,8 +26,8 @@ import Login from "./pages/staff/Login";
 import StaffDashboard from "./pages/staff/StaffDashboard";
 import ServiceRequests from "./pages/staff/ServiceRequests";
 import ManageEvents from "./pages/staff/ManageEvents";
-// import ManageAccounts from "./pages/admin/ManageAccounts";
 import ManageIntentions from "./pages/staff/ManageIntentions";
+import ManageAccounts from "./pages/admin/ManageAccounts";
 
 function App() {
   return (
@@ -67,7 +67,7 @@ function App() {
 
 
         {/*  -----------ADMIN-----------  */}
-        {/* <Route path="/manage-accounts" element={<ManageAccounts />} /> */}
+        {<Route path="/manage-accounts" element={<ManageAccounts />} /> }
       </Routes>
     </main>
   );
