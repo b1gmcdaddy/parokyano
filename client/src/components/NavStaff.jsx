@@ -35,7 +35,7 @@ const sideBarItems = [
   { icon: <CampaignIcon />, label: "Announcements", path: "/staff-events" },
   { icon: <AssignmentIcon />, label: "Service Requests", path: "/service-requests" },
   { icon: <BadgeIcon />, label: "Certificate Requests", path: "" },
-  { icon: <FormatListBulletedIcon />, label: "Mass Intentions", path: "" },
+  { icon: <FormatListBulletedIcon />, label: "Mass Intentions", path: "/manage-intentions" },
   { icon: <ReceiptLongIcon />, label: "Transactions", path: "" },
   { icon: <CalendarMonthIcon />, label: "Schedules", path: "" },
 ];

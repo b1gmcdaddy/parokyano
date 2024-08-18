@@ -27,6 +27,7 @@ import StaffDashboard from "./pages/staff/StaffDashboard";
 import ServiceRequests from "./pages/staff/ServiceRequests";
 import ManageEvents from "./pages/staff/ManageEvents";
 // import ManageAccounts from "./pages/admin/ManageAccounts";
+import ManageIntentions from "./pages/staff/ManageIntentions";
 
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
         <Route path="/dashboard" element={<StaffDashboard />} />
         <Route path="/staff-events" element={<ManageEvents />}/>
         <Route path="/service-requests" element={<ServiceRequests />} />
+        <Route path="/manage-intentions" element={<ManageIntentions />} />
 
 
         {/*  -----------ADMIN-----------  */}
