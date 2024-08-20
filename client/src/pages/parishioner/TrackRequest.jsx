@@ -5,6 +5,7 @@ import Footer from '../../components/Footer';
 import { Typography, Grid, Container, Box, Paper } from "@mui/material";
 import {DefaultCopyField} from '@eisberg-labs/mui-copy-field';
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 
 const inputstyling = {
@@ -48,6 +49,10 @@ const contactNumberSplit = (contact) => {
 };
 
 const TrackRequest = () => {
+  const locate = useLocation()
+  const request = locate.state.requestData
+  console.log(request)
+
   const Info = sampleInfo[0];
   const statusStyling = Info.status === 'Approved' ? { color: 'green' } : { color: 'orange' };
 
@@ -88,12 +93,12 @@ const TrackRequest = () => {
 
                     <div className="flex justify-between md:mb-3">
                       <Typography variant="body1">Requested By:</Typography>
-                      <Typography variant="body1">{info.requestedBy}</Typography>
+                      <Typography variant="body1">{request.result[0].requested_by}</Typography>
                     </div>
 
                     <div className="flex justify-between">
                       <Typography variant="body1">Contact Number:</Typography>
-                      <Typography variant="body1">{contactNumberSplit(info.contact)}</Typography>
+                      <Typography variant="body1">{contactNumberSplit(request.result[0].contact_no)}</Typography>
                     </div>
 
                     </div>
