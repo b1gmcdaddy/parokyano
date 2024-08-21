@@ -72,7 +72,7 @@ const ManageIntentions = () => {
                                 }}/>
                             </Grid>
 
-                            <Grid item>
+                            <Grid item sm={12}>
                                 <Box sx={{ p: 3 }}>
                                     {activeTab === 0 && <IntentionsApproved/>}
                                     {activeTab === 1 && <Box>Approved Requests Content</Box>}

@@ -29,7 +29,7 @@ const IntentionsApproved = () => {
     return(
         <div style={{margin: '0 auto'}}>
             <TableContainer  sx={{ display: 'flex', borderRadius: '16px', overflow: 'hidden', border: 'none', }}>
-                <Table stickyHeader aria-label="custom table" sx={{borderCollapse: 'separate', borderSpacing: 0, minWidth: 1000,}}>
+                <Table stickyHeader aria-label="custom table" sx={{borderCollapse: 'separate', borderSpacing: 0, md: {minWidth: 1000},}}>
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{textAlign: 'center'}}>type</TableCell>
