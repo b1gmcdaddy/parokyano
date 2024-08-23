@@ -137,7 +137,6 @@ const NavStaff = (props) => {
         sx={{ width: { sm: sideBarWidth }, flexShrink: { sm: 0 } }}
         aria-label="mailbox folders"
       >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Drawer
           container={container}
           variant="temporary"
@@ -145,7 +144,7 @@ const NavStaff = (props) => {
           onTransitionEnd={handleDrawerTransitionEnd}
           onClose={handleDrawerClose}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true, 
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
@@ -170,13 +169,6 @@ const NavStaff = (props) => {
   );
 }
 
-NavStaff.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
-  window: PropTypes.func,
-};
 
 
 export default NavStaff;

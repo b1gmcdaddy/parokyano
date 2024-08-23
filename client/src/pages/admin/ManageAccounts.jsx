@@ -46,6 +46,7 @@ const ManageAccounts = () => {
 
   const [user, setUser] = useState([]);
   const [openForm, setOpenForm] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
         const getUsers = async () => {
@@ -59,16 +60,20 @@ const ManageAccounts = () => {
         getUsers();
     }, []);
 
-    const handleFormOpen = () => {
+    const handleFormOpen = (user) => {
+        setCurrentUser(user);
         setOpenForm(true);
     };
 
     const handleFormClose = () => {
         setOpenForm(false);
+        setCurrentUser(null);
     };
 
       const handleFormSave = async () => {
         handleFormClose();
+        const res = await axios.get(`${config.API}/user/retrieveUsers`);
+        setUser(res.data);
     };
 
    return (
@@ -103,7 +108,8 @@ const ManageAccounts = () => {
                     <StyledTableCell>{capitalize(user.status)}</StyledTableCell>
                     <StyledTableCell>{new Date(user.date_started).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</StyledTableCell>
                     <StyledTableCell>{}</StyledTableCell>
-                    <StyledTableCell><FontAwesomeIcon icon={faPenToSquare}/>&nbsp;Edit</StyledTableCell>
+                   <StyledTableCell onClick={() => handleFormOpen(user)}>
+                      <FontAwesomeIcon icon={faPenToSquare} className='cursor-pointer'/>&nbsp;<span className='cursor-pointer'>Edit</span></StyledTableCell>
                     </StyledTableRow>
                 ))}
                 </TableBody>
@@ -112,9 +118,9 @@ const ManageAccounts = () => {
 
 
           <Dialog open={openForm} onClose={handleFormClose} fullWidth maxWidth="sm">
-                    <DialogTitle>Create New Staff Account</DialogTitle>
+                    <DialogTitle>{currentUser ? 'Edit Staff Account' : 'Create New Staff Account'}</DialogTitle>
                     <DialogContent>
-                        <ManageUserForm onSave={handleFormSave} onCancel={handleFormClose} />
+                        <ManageUserForm userData={currentUser} onSave={handleFormSave} onCancel={handleFormClose} />
                     </DialogContent>
                 </Dialog>
         </Box>

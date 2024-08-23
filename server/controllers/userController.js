@@ -34,8 +34,24 @@ const createUser = (req, res) => {
     )
 }
 
+const editUser = (req, res) => {
+    const data = req.body
+    const userID = req.params.id
+
+    db.query('UPDATE user SET first_name=?, last_name=?, email=?, contact_no=?, username=?, status=? WHERE userID=?',
+        [data.first_name, data.last_name, data.email, data.contact_no, data.username, data.status, userID], (err, result) => {
+            if (err) {
+                console.error('error updating user', err);
+                return res.status(500)
+            }
+            return res.status(200).json({ message: 'User updated successfully' });
+        }
+    ) 
+}
+
 
 module.exports = {
     retrieveAllUsers,
     createUser,
+    editUser,
 }
