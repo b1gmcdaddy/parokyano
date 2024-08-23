@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NavStaff from '../../components/NavStaff';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import { Button, Typography, Container } from '@mui/material';
+import { Button, Typography, Container, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { styled } from '@mui/material/styles';
@@ -15,6 +15,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import config from "../../config";
 import axios from "axios";
+import ManageUserForm from '../../components/ManageUserForm';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -41,10 +42,10 @@ function capitalize(string) {
 }
 
 
-
 const ManageAccounts = () => {
 
   const [user, setUser] = useState([]);
+  const [openForm, setOpenForm] = useState(false);
 
   useEffect(() => {
         const getUsers = async () => {
@@ -58,6 +59,18 @@ const ManageAccounts = () => {
         getUsers();
     }, []);
 
+    const handleFormOpen = () => {
+        setOpenForm(true);
+    };
+
+    const handleFormClose = () => {
+        setOpenForm(false);
+    };
+
+      const handleFormSave = async () => {
+        handleFormClose();
+    };
+
    return (
     <Box sx={{ display: 'flex', mx: { md: '30px' } }}>
       <NavStaff />
@@ -66,7 +79,7 @@ const ManageAccounts = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', 
             marginTop: '8px', alignItems: 'center' }}>
             <Typography sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>Manage Accounts</Typography> 
-            <Button variant="contained" type="button" sx={{backgroundColor:"#355173"}}>Create New Staff</Button>
+            <Button variant="contained" type="button" sx={{backgroundColor:"#355173"}} onClick={() => handleFormOpen()}>Create New Staff</Button>
         </Box>
         
         <Box sx={{ marginTop: '3em' }}>
@@ -96,6 +109,14 @@ const ManageAccounts = () => {
                 </TableBody>
             </Table>
          </TableContainer>
+
+
+          <Dialog open={openForm} onClose={handleFormClose} fullWidth maxWidth="sm">
+                    <DialogTitle>Create New Staff Account</DialogTitle>
+                    <DialogContent>
+                        <ManageUserForm onSave={handleFormSave} onCancel={handleFormClose} />
+                    </DialogContent>
+                </Dialog>
         </Box>
       </Box>
       
