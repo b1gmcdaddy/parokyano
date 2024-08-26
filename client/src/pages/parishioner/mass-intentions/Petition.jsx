@@ -69,6 +69,8 @@ const Petition = () => {
           }
         );
         setSchedule(response.data);
+        console.log(formData.mass_date)
+        console.log(schedule)
       } catch (error) {
         console.error("error fetching schedule", error);
       }
@@ -82,7 +84,7 @@ const Petition = () => {
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date});
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
   };
 
   // just change message depending on which service

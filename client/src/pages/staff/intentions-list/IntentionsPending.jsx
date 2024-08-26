@@ -1,5 +1,6 @@
 import { Paper, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
+import React from "react";
 import all from '../../../components/IntentionInfoModal'
 
 const dummyData = [
@@ -10,7 +11,7 @@ const dummyData = [
         payment_method: 'cash',
         schedule: 'mwf 1 2',
         transaction_no: '12345',
-        status: 'paid'
+        status: 'unpaid'
     },
     {
         intention_details: ['lucas', 'matthew', 'john'],
@@ -19,7 +20,7 @@ const dummyData = [
         payment_method: 'cash',
         schedule: 'friday',
         transaction_no: '19103541',
-        status: 'paid'
+        status: 'unpaid'
     },
     {
         intention_details: ['lucas', 'matthew', 'john'],
@@ -28,12 +29,11 @@ const dummyData = [
         payment_method: 'cash',
         schedule: 'tuesdat',
         transaction_no: '19103541',
-        status: 'paid'
+        status: 'unpaid'
     },
 ]
 
 const IntentionsApproved = () => {
-
     const [open, setOpen] = useState(false)
     const [modalData, setModalData] = useState({        // initialized to avoid setting intention_details.map() as undefined
         intention_details: ['']
@@ -47,9 +47,9 @@ const IntentionsApproved = () => {
     const closeInfoModal = () => {
         setOpen(false)
     }
-    
     return(
         <div style={{margin: '0 auto'}}>
+
             <all.SoulsInfoModal open={open} data={modalData} close={closeInfoModal}/>
 
             <TableContainer sx={{ display: 'flex', borderRadius: '16px', overflowX: 'auto', border: 'none', }}>

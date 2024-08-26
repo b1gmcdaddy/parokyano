@@ -4,6 +4,7 @@ import NavStaff from "../../components/NavStaff";
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, Toolbar, Typography, Button, Grid, TextField, InputAdornment } from "@mui/material";
 import IntentionsApproved from "./intentions-list/IntentionsApproved";
+import IntentionsPending from "./intentions-list/IntentionsPending";
 
 
 const ManageIntentions = () => {
@@ -74,8 +75,8 @@ const ManageIntentions = () => {
 
                             <Grid item sm={12}>
                                 <Box sx={{ p: 3 }}>
-                                    {activeTab === 0 && <IntentionsApproved/>}
-                                    {activeTab === 1 && <Box>Approved Requests Content</Box>}
+                                    {activeTab === 0 && <IntentionsPending />}
+                                    {activeTab === 1 && <IntentionsApproved/>}
                                 </Box>
                             </Grid>
                         </Grid>
