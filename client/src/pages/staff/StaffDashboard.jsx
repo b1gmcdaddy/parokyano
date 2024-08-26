@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 import { Button, Typography, Container } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faChurch, faStamp, faHandsPraying } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 
 const sampleStatistics = {
@@ -42,7 +43,9 @@ const StaffDashboard = () => {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', 
             marginTop: '8px', alignItems: 'center' }}>
             <Typography sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>Dashboard</Typography> 
-            <Button variant="contained" type="button" sx={{backgroundColor:"#355173"}}>Generate Reports</Button>
+            <Link to="/generate-reports">
+              <Button variant="contained" type="button" sx={{backgroundColor:"#355173"}}>Generate Reports</Button>
+            </Link>
           </Box>
           <div className='mt-8 border-1 border-neutral-900 inline-block'>
             <select className='outline-none'>
