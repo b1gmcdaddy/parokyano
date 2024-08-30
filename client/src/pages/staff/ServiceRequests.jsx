@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import NavStaff from "../../components/NavStaff";
 import { Box, Toolbar, Typography, Button, Grid, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import PendingRequests from "./requests-list/PendingRequests";
+import ApprovedRequests from "./requests-list/ApprovedRequests";
+
 
 
 const ServiceRequests = () => {
@@ -10,6 +13,7 @@ const ServiceRequests = () => {
   const handleTabChange = (index) => {
     setActiveTab(index);
   };
+
   
   return (
     <Box sx={{ display: "flex", mx: { md: "30px" } }}>
@@ -86,10 +90,10 @@ const ServiceRequests = () => {
                 }}/>
               </Grid>
 
-              <Grid item>
+              <Grid item sm={12}>
                 <Box sx={{ p: 3 }}>
                   {activeTab === 0 && <Box>Approved Requests Content</Box>}
-                  {activeTab === 1 && <Box>Pending Requests Content</Box>}
+                  {activeTab === 1 && <PendingRequests />}
                   {activeTab === 2 && <Box>Cancelled Requests Content</Box>}
                 </Box>
               </Grid>

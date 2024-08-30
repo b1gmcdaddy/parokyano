@@ -128,37 +128,52 @@ const createRequestBlessing = (req, res) => {
 }
 
 const retrieveByParams = (req, res) => {
-    const {col, val} = req.query
-    const parsedDetails = []
-    const parsedSpouseName = []
+    const { col, val } = req.query;
 
-    db.query(`SELECT * from request WHERE ?? = ?`, [col, val], 
-        (err, result) => {
-            if (err) {
-                console.error('error retrieving from db', err);
-                return res.status(500)
-            }
+    const query = `SELECT * FROM request WHERE ${col} = ?`;
 
-            // not working for some reason
-            // const filteredResult = _.omit(result, ['details', 'spouse_name'])
-
-            for(const i in result){
-                if(result[i].details != null) {
-                    parsedDetails.push(JSON.parse(result[i].details))
-                }
-                if(result[i].spouse_name != null){
-                    parsedSpouseName.push(JSON.parse(result[i].spouse_name))
-                }
-            }
-
-            return res.status(200).json({
-                parsedDetails,
-                parsedSpouseName,
-                result
-            })
+    db.query(query, [val], (err, result) => {
+        if (err) {
+            console.error('error retrieving pending requests', err);
+            return res.status(500);
         }
-    )
-}
+        res.status(200).json({ result });
+    });
+};
+
+
+// const retrieveByParams = (req, res) => {
+//     const {col, val} = req.query
+//     const parsedDetails = []
+//     const parsedSpouseName = []
+
+//     db.query(`SELECT * from request WHERE ? = ?`, [col, val], 
+//         (err, result) => {
+//             if (err) {
+//                 console.error('error retrieving from db', err);
+//                 return res.status(500)
+//             }
+
+//             // not working for some reason
+//             // const filteredResult = _.omit(result, ['details', 'spouse_name'])
+
+//             // for(const i in result){
+//             //     if(result[i].details != null) {
+//             //         parsedDetails.push(JSON.parse(result[i].details))
+//             //     }
+//             //     if(result[i].spouse_name != null){
+//             //         parsedSpouseName.push(JSON.parse(result[i].spouse_name))
+//             //     }
+//             // }
+
+//             // return res.status(200).json({
+//             //     parsedDetails,
+//             //     parsedSpouseName,
+//             //     result
+//             // })
+//         }
+//     )
+// }
 
 module.exports = {
     createRequestIntention,
