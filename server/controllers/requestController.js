@@ -175,6 +175,33 @@ const retrieveByParams = (req, res) => {
 //     )
 // }
 
+
+
+//tested wid postman already..
+const getRequestSummary = (req, res) => {
+    const { requestDate, approveDate } = req.query;
+    const reqSummary = {}; 
+
+    if (!requestDate || !approveDate) {
+        return res.status(400).json("lacking dates..");
+    }
+
+    const query = `SELECT type, status, COUNT(*) as count FROM request WHERE date_requested BETWEEN ? AND ? GROUP BY type, status`;
+
+    db.query(query, [requestDate, approveDate], (err, results) => {
+        if (err) {
+            return res.status(500).json("error retriving db ifno..");
+        }
+        results.forEach(row => {
+            if (!reqSummary[row.type]) {   //chck if naa na ang type sa summary{} object
+                reqSummary[row.type] = { pending: 0, approved: 0, cancelled: 0 };
+            }
+            reqSummary[row.type][row.status] = row.count;   //counts each instance of a status per type..
+        });
+        res.json(reqSummary);
+    });
+};
+
 module.exports = {
     createRequestIntention,
     createRequestCertificate,
@@ -183,5 +210,6 @@ module.exports = {
     createRequestMass,
     createRequestAnointing,
     createRequestBlessing,
-    retrieveByParams
+    retrieveByParams,
+    getRequestSummary
 }
