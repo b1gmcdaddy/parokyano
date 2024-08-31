@@ -92,7 +92,7 @@ const ServiceRequests = () => {
 
               <Grid item sm={12}>
                 <Box sx={{ p: 3 }}>
-                  {activeTab === 0 && <Box>Approved Requests Content</Box>}
+                  {activeTab === 0 && <ApprovedRequests />}
                   {activeTab === 1 && <PendingRequests />}
                   {activeTab === 2 && <Box>Cancelled Requests Content</Box>}
                 </Box>

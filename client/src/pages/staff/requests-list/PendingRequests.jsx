@@ -122,6 +122,7 @@ const PendingRequests = () => {
                                             sx={{
                                                 backgroundColor: '#355173', 
                                                 color: 'white', 
+                                                marginRight: '8px',
                                                 borderRadius: '10px',
                                                 '&:hover': {
                                                     backgroundColor: '#0036B1'
@@ -130,6 +131,17 @@ const PendingRequests = () => {
                                         
                                         >
                                             INFO    
+                                        </Button>
+                                        <Button 
+                                            type="button"
+                                            sx={{
+                                                backgroundColor: '#C34444', 
+                                                color: 'white', 
+                                                borderRadius: '10px',
+                                            }}
+                                        
+                                        >
+                                            CANCEL    
                                         </Button>
                                     </TableCell>
                                 </TableRow>
