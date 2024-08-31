@@ -29,7 +29,8 @@ import ManageEvents from "./pages/staff/ManageEvents";
 import ManageIntentions from "./pages/staff/ManageIntentions";
 import ManageAccounts from "./pages/admin/ManageAccounts";
 import GenerateReports from "./pages/staff/GenerateReports";
-
+import ManageSchedules from "./pages/staff/ManageSchedules";
+  
 function App() {
   return (
     <main>
@@ -66,6 +67,7 @@ function App() {
         <Route path="/service-requests" element={<ServiceRequests />} />
         <Route path="/manage-intentions" element={<ManageIntentions />} />
         <Route path="/generate-reports" element={<GenerateReports />} />
+        <Route path="/manage-schedules" element={<ManageSchedules />} />
 
 
         {/*  -----------ADMIN-----------  */}
