@@ -4,7 +4,9 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import { Grid, Typography, TextField, Button, MenuItem, Container } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faFile, faFileExport, faPrint } from '@fortawesome/free-solid-svg-icons';
+import { faFileExport, faPrint } from '@fortawesome/free-solid-svg-icons';
+import StaffReport from '../../components/StaffReport';
+
 
 
 const GenerateReports = () => {
@@ -57,7 +59,7 @@ const GenerateReports = () => {
                 </Grid>
             </Grid>
 
-            <Box className="md:mt-24 xs:mt-14">
+            <Box className="md:mt-14 xs:mt-14">
                 <Box sx={{backgroundColor: "#355173", padding: "12px", display: "flex", alignItems: "center", color: 'white', justifyContent: 'space-between' }} className="gap-2">
                     <Typography sx={{ width: '100%', color: 'whitesmoke' }}>{reportDetails.startDate} &nbsp;-&nbsp; {reportDetails.endDate}</Typography>
                     <Typography>Export</Typography>
@@ -65,12 +67,10 @@ const GenerateReports = () => {
                     <Typography>Print</Typography>
                     <FontAwesomeIcon icon={faPrint} className='text-white md:mr-5' />
                 </Box>
-            <Box sx={{border:'solid 1px', maxHeight: '400px', overflowY: 'auto'}}>
-              <Container maxWidth="lg">
-                <Typography>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel aperiam dolores saepe perferendis 
-                    unde voluptates soluta cumque natus deleniti voluptatibus nesciunt repellat quibusdam dicta dolorum expedita,
-                     architecto rem quae aut?</Typography>
-              </Container>
+            <Box sx={{border:'solid 1px', maxHeight: '700px', overflowY: 'auto', backgroundColor: '#F5F5F5'}}>
+                <Container maxWidth="lg" sx={{backgroundColor: 'white',}}>
+                        <StaffReport />
+                </Container>
             </Box>
           </Box>
         </Box>
