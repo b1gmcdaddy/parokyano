@@ -45,11 +45,11 @@ const Thanksgiving = () => {
   // form data
   const [formData, setFormData] = useState({
     intention_details: {
-      saint: '',
-      wedding: '',
-      success: '',
-      birthday: '',
-      others: ''
+      saint: null,
+      wedding: null,
+      success: null,
+      birthday: null,
+      others: null
     },
     preferred_date: null,
     mass_date: '',

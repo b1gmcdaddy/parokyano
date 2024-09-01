@@ -32,7 +32,7 @@ import NavStaff from "../../components/NavStaff";
 
 
 
-function Calendar() {
+const ManageSchedules = () => {
 
   const [events, setEvents] = useState([
     {
@@ -188,7 +188,7 @@ function Calendar() {
                             font-size: 26px; /* Larger title font */
                           }
                           .fc .fc-button {
-                            font-size: 18px; /* Increase button font size */
+                            font-size: 16px; /* Increase button font size */
                           }
                           .fc .fc-button-primary {
                             background-color: #1976d2; /* Blue button background */
@@ -239,4 +239,4 @@ function Calendar() {
   );
 }
 
-export default Calendar;
+export default ManageSchedules;

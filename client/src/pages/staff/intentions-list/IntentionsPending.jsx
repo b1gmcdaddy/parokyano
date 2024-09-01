@@ -14,8 +14,14 @@ const dummyData = [
         status: 'unpaid'
     },
     {
-        intention_details: ['lucas', 'matthew', 'john'],
-        type: 'souls',
+        intention_details: {
+            saint: 'test saint',
+            wedding: 'wedding',
+            success: 'successtest',
+            birthday: 'birthday test',
+            others: null
+          },
+        type: 'thanksgiving',
         offered_by: 'john doe',
         payment_method: 'cash',
         schedule: 'friday',
@@ -23,8 +29,8 @@ const dummyData = [
         status: 'unpaid'
     },
     {
-        intention_details: ['lucas', 'matthew', 'john'],
-        type: 'souls',
+        intention_details: 'test petition here sdsadsfvsfsdaafdfdadadadasdsadawdsdasdadawdsadwdasdwadadasas sajdabdjhad asjdhadjanlkjdhajd  akdhadkahdouad adjahdadknalihs djahda kahda dlkahdak doajdkaldha ',
+        type: 'petition',
         offered_by: 'jane doe',
         payment_method: 'cash',
         schedule: 'tuesdat',
@@ -34,23 +40,44 @@ const dummyData = [
 ]
 
 const IntentionsApproved = () => {
-    const [open, setOpen] = useState(false)
+
+    // const [openSouls, setOpenSouls] = useState(false)
+    // const [openThanksgiving, setOpenThanksgiving] = useState(false)
+    const [modaltype, setModalType] = useState(null)
     const [modalData, setModalData] = useState({        // initialized to avoid setting intention_details.map() as undefined
         intention_details: ['']
     })
     
     const openInfoModal = (row) => {
-        setOpen(true)
         setModalData(row)
+        setModalType(row.type)
+        // if(modaltype === 'souls'){
+        //     setOpenSouls(true)
+        // }
+        // if(modaltype === 'thanksgiving'){
+        //     setOpenThanksgiving(true)
+        // }
     }
 
     const closeInfoModal = () => {
-        setOpen(false)
+        setModalType(null)
     }
+
+
     return(
         <div style={{margin: '0 auto'}}>
 
-            <all.SoulsInfoModal open={open} data={modalData} close={closeInfoModal}/>
+        {modaltype === 'souls' && (
+            <all.SoulsInfoModal open={true} data={modalData} close={closeInfoModal}/>
+        )}
+
+        {modaltype === 'thanksgiving' && (
+            <all.ThanksgivingInfoModal open={true} data={modalData} close={closeInfoModal}/>
+        )}
+            
+        {modaltype === 'petition' && (
+            <all.PetitionInfoModal open={true} data={modalData} close={closeInfoModal}/>
+        )}    
 
             <TableContainer sx={{ display: 'flex', borderRadius: '16px', overflowX: 'auto', border: 'none', }}>
                 <Table stickyHeader aria-label="custom table" sx={{borderCollapse: 'separate', borderSpacing: 0, sm: {minWidth: 650},}}>

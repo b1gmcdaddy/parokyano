@@ -36,8 +36,8 @@ const sideBarItems = [
   { icon: <AssignmentIcon />, label: "Service Requests", path: "/service-requests" },
   { icon: <BadgeIcon />, label: "Certificate Requests", path: "" },
   { icon: <FormatListBulletedIcon />, label: "Mass Intentions", path: "/manage-intentions" },
-  { icon: <ReceiptLongIcon />, label: "Transactions", path: "" },
-  { icon: <CalendarMonthIcon />, label: "Schedules", path: "" },
+  { icon: <ReceiptLongIcon />, label: "Transactions", path: "/manage-transactions" },
+  { icon: <CalendarMonthIcon />, label: "Schedules", path: "/manage-schedules" },
 ];
 
 const NavStaff = (props) => {
