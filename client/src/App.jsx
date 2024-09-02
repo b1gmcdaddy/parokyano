@@ -31,6 +31,9 @@ import ManageAccounts from "./pages/admin/ManageAccounts";
 import GenerateReports from "./pages/staff/GenerateReports";
 import ManageSchedules from "./pages/staff/ManageSchedules";
 import ManageTransactions from "./pages/staff/ManageTransactions";
+import FuneralMassModalApproved from "./components/service-request-modals/pending/approved/funeralMassApproved";
+import FuneralMassModalCancelled from "./components/service-request-modals/pending/cancelled/funeralMassCancelled";
+import FuneralMassModalPending from "./components/service-request-modals/pending/funeralMassPending";
   
 function App() {
   return (
@@ -71,6 +74,10 @@ function App() {
         <Route path="/manage-schedules" element={<ManageSchedules />} />
         <Route path="/manage-transactions" element={<ManageTransactions />} />
 
+         {/* Temporary modals wala pa na integrate */}
+        <Route path="/funeralpending" element={<FuneralMassModalPending/>}/>
+        <Route path="/funeralapproved" element={<FuneralMassModalApproved/>}/>
+        <Route path="/funeralcancelled" element={<FuneralMassModalCancelled/>}/>
 
         {/*  -----------ADMIN-----------  */}
         {<Route path="/manage-accounts" element={<ManageAccounts />} /> }
