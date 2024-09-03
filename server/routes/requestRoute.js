@@ -4,6 +4,7 @@ const { createRequestIntention,
         createRequestCertificate, 
         retrieveByParams, 
         getRequestSummary,
+        getSummaryWithTypeParam,
         createRequestBaptism, 
         createRequestWedding, 
         createRequestMass, 
@@ -20,6 +21,7 @@ router.post('/create-blessing', createRequestBlessing)
 // router.get('/retrieve-all', retrieveAll);
 router.get('/retrieve', retrieveByParams);
 router.get('/summary', getRequestSummary);
+router.get('/type-summary', getSummaryWithTypeParam);
 // router.put('/update', updateRequest);
 // router.delete('/delete', deleteRequest);
 

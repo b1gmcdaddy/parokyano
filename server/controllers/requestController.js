@@ -176,6 +176,26 @@ const retrieveByParams = (req, res) => {
 // }
 
 
+const getSummaryWithTypeParam = (req, res) => {
+    const { requestDate, approveDate, type } = req.query;
+    const reqSummary = {};
+
+    if (!requestDate || !approveDate || !type) {
+        return res.status(400).json("lacking dates or type parameter..");
+    }
+    const query = `SELECT status, COUNT(*) as count FROM request WHERE type = ? AND date_requested BETWEEN ? AND ? GROUP BY status`;
+    db.query(query, [type, requestDate, approveDate], (err, results) => {
+        if (err) {
+            return res.status(500).json("error retrieving db info..");
+        }
+        reqSummary[type] = { pending: 0, approved: 0, cancelled: 0 };  
+        results.forEach(row => {
+            reqSummary[type][row.status] = row.count;  
+        });
+        res.json(reqSummary);
+    });
+};
+
 
 //tested wid postman already..
 const getRequestSummary = (req, res) => {
@@ -211,5 +231,6 @@ module.exports = {
     createRequestAnointing,
     createRequestBlessing,
     retrieveByParams,
-    getRequestSummary
+    getRequestSummary,
+    getSummaryWithTypeParam
 }
