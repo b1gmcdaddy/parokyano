@@ -34,6 +34,9 @@ import ManageTransactions from "./pages/staff/ManageTransactions";
 import FuneralMassModalApproved from "./components/service-request-modals/pending/approved/funeralMassApproved";
 import FuneralMassModalCancelled from "./components/service-request-modals/pending/cancelled/funeralMassCancelled";
 import FuneralMassModalPending from "./components/service-request-modals/pending/funeralMassPending";
+import AnointingPending from "./components/service-request-modals/pending/anointingPending";
+import AnointingApproved from "./components/service-request-modals/pending/approved/anointingApproved";
+import AnointingCancelled from "./components/service-request-modals/pending/cancelled/anointingCancelled";
   
 function App() {
   return (
@@ -78,6 +81,9 @@ function App() {
         <Route path="/funeralpending" element={<FuneralMassModalPending/>}/>
         <Route path="/funeralapproved" element={<FuneralMassModalApproved/>}/>
         <Route path="/funeralcancelled" element={<FuneralMassModalCancelled/>}/>
+        <Route path="/anointingpending" element={<AnointingPending/>}/>
+        <Route path="/anointingapproved" element={<AnointingApproved/>}/>
+        <Route path="/anointingcancelled" element={<AnointingCancelled/>}/>
 
         {/*  -----------ADMIN-----------  */}
         {<Route path="/manage-accounts" element={<ManageAccounts />} /> }

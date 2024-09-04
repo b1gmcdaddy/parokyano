@@ -27,7 +27,7 @@ const TextFieldStyleDis ={
   bgcolor:'#D9D9D9'
 };
 
-const FuneralMassModalPending = () =>{
+const AnointingPending = () =>{
 
 const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -48,33 +48,52 @@ const [open, setOpen] = useState(false);
           </Grid>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Funeral Mass Request Information</Typography>
+              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Anointing of the Sick Request Information</Typography>
             </Grid>
-            <Grid item sm={4}>
-              <label>Name of the deceased:</label>
+
+            <Grid item sm={1}>
+              <label>Name:</label>
             </Grid>
             <Grid item sm={8}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
+            <Grid item sm={.8}>
+              <label>Age:</label>
+            </Grid>
+            <Grid item sm={2.2}>
+              <TextField fullWidth  sx={TextFieldStyle}/>
+            </Grid>
 
-            <Grid item sm={4}>
+            <Grid item sm={1.3}>
+              <label>Address:</label>
+            </Grid>
+            <Grid item sm={10.7}>
+              <TextField fullWidth  sx={TextFieldStyle}/>
+            </Grid>
+
+            <Grid item sm={2.1}>
               <label>Requested by:</label>
             </Grid>
-            <Grid item sm={8}>
+            <Grid item sm={4}>
+              <TextField fullWidth  sx={TextFieldStyle}/>
+            </Grid>
+            <Grid item sm={2}>
+              <label>Relationship:</label>
+            </Grid>
+            <Grid item sm={3.9}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={4}>
-              <label>Relationship to the deceased:</label>
+            <Grid item sm={2.1}>
+              <label>Contact no:</label>
             </Grid>
-            <Grid item sm={8}>
+            <Grid item sm={4}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
-
-            <Grid item sm={4}>
-              <label>Contact Number:</label>
+            <Grid item sm={2}>
+              <label>Sickness/Status:</label>
             </Grid>
-            <Grid item sm={8}>
+            <Grid item sm={3.9}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
@@ -88,7 +107,7 @@ const [open, setOpen] = useState(false);
               </div>
             </Grid>
 
-            <Grid item sm={2.5}>
+            <Grid item sm={3}>
               <label>Priest:</label>
               <TextField fullWidth select sx={TextFieldStyle}/>
             </Grid>
@@ -98,15 +117,11 @@ const [open, setOpen] = useState(false);
                   <DatePicker fullWidth sx={TextFieldStyle}/>
               </LocalizationProvider>
             </Grid>
-            <Grid item sm={2.7}>
+            <Grid item sm={3}>
               <label>Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker fullWidth sx={TextFieldStyle}/>
               </LocalizationProvider>
-            </Grid>
-            <Grid item sm={1.8}>
-              <label>Venue:</label>
-              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={2}>
               <Button fullWidth sx={{backgroundColor:'#355173',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#4C74A5"}}}>Assign</Button>
@@ -122,7 +137,7 @@ const [open, setOpen] = useState(false);
               </div>
             </Grid>
 
-            <Grid item sm={2.5}>
+            <Grid item sm={3}>
               <label>Priest:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
@@ -130,12 +145,8 @@ const [open, setOpen] = useState(false);
               <label>Date:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
-            <Grid item sm={2.7}>
+            <Grid item sm={3}>
               <label>Time:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
-            </Grid>
-            <Grid item sm={1.8}>
-              <label>Venue:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
             <Grid item sm={2}>
@@ -158,4 +169,4 @@ const [open, setOpen] = useState(false);
     )
 }
 
-export default FuneralMassModalPending
+export default AnointingPending
