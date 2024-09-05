@@ -34,7 +34,7 @@ const sideBarItems = [
   { icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard" },
   { icon: <CampaignIcon />, label: "Announcements", path: "/staff-events" },
   { icon: <AssignmentIcon />, label: "Service Requests", path: "/service-requests" },
-  { icon: <BadgeIcon />, label: "Certificate Requests", path: "" },
+  { icon: <BadgeIcon />, label: "Certificate Requests", path: "/cert-requests" },
   { icon: <FormatListBulletedIcon />, label: "Mass Intentions", path: "/manage-intentions" },
   { icon: <ReceiptLongIcon />, label: "Transactions", path: "/manage-transactions" },
   { icon: <CalendarMonthIcon />, label: "Schedules", path: "/manage-schedules" },

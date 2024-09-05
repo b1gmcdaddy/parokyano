@@ -37,6 +37,7 @@ import FuneralMassModalPending from "./components/service-request-modals/pending
 import AnointingPending from "./components/service-request-modals/pending/anointingPending";
 import AnointingApproved from "./components/service-request-modals/pending/approved/anointingApproved";
 import AnointingCancelled from "./components/service-request-modals/pending/cancelled/anointingCancelled";
+import CertificateRequests from "./pages/staff/CertificateRequests";
   
 function App() {
   return (
@@ -84,6 +85,7 @@ function App() {
         <Route path="/anointingpending" element={<AnointingPending/>}/>
         <Route path="/anointingapproved" element={<AnointingApproved/>}/>
         <Route path="/anointingcancelled" element={<AnointingCancelled/>}/>
+        <Route path="/cert-requests" element={<CertificateRequests />} />
 
         {/*  -----------ADMIN-----------  */}
         {<Route path="/manage-accounts" element={<ManageAccounts />} /> }
