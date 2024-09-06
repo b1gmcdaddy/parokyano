@@ -38,6 +38,9 @@ import AnointingPending from "./components/service-request-modals/pending/anoint
 import AnointingApproved from "./components/service-request-modals/pending/approved/anointingApproved";
 import AnointingCancelled from "./components/service-request-modals/pending/cancelled/anointingCancelled";
 import CertificateRequests from "./pages/staff/CertificateRequests";
+import BlessingPending from "./components/service-request-modals/pending/blsessingPending";
+import BlessingApproved from "./components/service-request-modals/pending/approved/blessingApproved";
+import BlessingCancelled from "./components/service-request-modals/pending/cancelled/blessingCancelled";
   
 function App() {
   return (
@@ -85,6 +88,9 @@ function App() {
         <Route path="/anointingpending" element={<AnointingPending/>}/>
         <Route path="/anointingapproved" element={<AnointingApproved/>}/>
         <Route path="/anointingcancelled" element={<AnointingCancelled/>}/>
+        <Route path="/blessingpending" element={<BlessingPending/>}/>
+        <Route path="/blessingapproved" element={<BlessingApproved/>}/>
+        <Route path="/blessingcancelled" element={<BlessingCancelled/>}/>
         <Route path="/cert-requests" element={<CertificateRequests />} />
 
         {/*  -----------ADMIN-----------  */}
