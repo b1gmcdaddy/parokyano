@@ -2,7 +2,8 @@
 require('dotenv').config();
 const express = require('express')
 const db = require('./db');
-const _ = require('lodash')
+const _ = require('lodash');
+const { parse } = require('dotenv');
 
 const dateToday = new Date().toJSON().slice(0,10)
 
@@ -134,7 +135,22 @@ const retrieveByParams = (req, res) => {
 
     db.query(query, [val], (err, result) => {
         if (err) {
-            console.error('error retrieving pending requests', err);
+            console.error('error retrieving requests', err);
+            return res.status(500);
+        }
+        res.status(200).json({ result });
+    });
+};
+
+// for all tables
+const retrieveMultipleParams = (req, res) => {
+    const { col1, val1, col2, val2, page, limit } = req.query;
+    const offset = Number((parseInt(page) - 1) * parseInt(limit))
+    const query = `SELECT * FROM request WHERE ${col1} = ? AND ${col2} = ? LIMIT ? OFFSET ?`;
+
+    db.query(query, [val1, val2, parseInt(limit), offset], (err, result) => {
+        if (err) {
+            console.error('error retrieving requests', err);
             return res.status(500);
         }
         res.status(200).json({ result });
@@ -222,6 +238,24 @@ const getRequestSummary = (req, res) => {
     });
 };
 
+
+const updateRequest = (req, res) => {
+    const {col, val, col2, val2, col3, val3} = req.query
+    const query = `UPDATE request SET ${col} = ?, ${col2} = ? WHERE ${col3} = ?`
+
+    db.query(query, [val, val2, Number(val3)], (err, results) => {
+        if (err){
+            console.error(err)
+        } else {
+            res.status(200).json({message: 'success!'})
+        }
+    })
+}
+
+
+
+
+
 module.exports = {
     createRequestIntention,
     createRequestCertificate,
@@ -232,5 +266,7 @@ module.exports = {
     createRequestBlessing,
     retrieveByParams,
     getRequestSummary,
-    getSummaryWithTypeParam
+    getSummaryWithTypeParam,
+    retrieveMultipleParams,
+    updateRequest
 }

@@ -94,7 +94,7 @@ const ManageTransactions = () => {
                                                     <React.Fragment key={index}>
                                                         {/* this is to add space in between rows sa table */}
                                                         <TableRow>
-                                                            <TableCell colSpan={5} sx={{padding: '10px',backgroundColor: '#ffffff', padding: 0, border: 'none' }}>
+                                                            <TableCell colSpan={5} sx={{padding: '10px',backgroundColor: '#ffffff', border: 'none' }}>
                                                                 <Box sx={{ height: '5px', backgroundColor: 'white',}} />
                                                             </TableCell>
                                                         </TableRow>

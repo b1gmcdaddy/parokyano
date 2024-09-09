@@ -9,7 +9,10 @@ const { createRequestIntention,
         createRequestWedding, 
         createRequestMass, 
         createRequestAnointing,
-        createRequestBlessing } = require('../controllers/requestController');
+        createRequestBlessing,
+        retrieveMultipleParams,
+        updateRequest
+} = require('../controllers/requestController');
 
 router.post('/create-intention', createRequestIntention);
 router.post('/create-certificate', createRequestCertificate);
@@ -20,9 +23,10 @@ router.post('/create-anointing', createRequestAnointing)
 router.post('/create-blessing', createRequestBlessing)
 // router.get('/retrieve-all', retrieveAll);
 router.get('/retrieve', retrieveByParams);
+router.get('/retrieve-multiple', retrieveMultipleParams)
 router.get('/summary', getRequestSummary);
 router.get('/type-summary', getSummaryWithTypeParam);
-// router.put('/update', updateRequest);
+router.put('/updateRequest', updateRequest);
 // router.delete('/delete', deleteRequest);
 
 module.exports = router
