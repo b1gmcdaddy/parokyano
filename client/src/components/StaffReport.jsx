@@ -29,7 +29,7 @@ const StaffReport = () => {
     return (
         <>
             <Box sx={{ display: "flex", alignItems: 'center' }}>
-                <img src={logo} style={{ height: 'auto', width: '10%' }} alt="Logo" />
+                <img src={logo} style={{ height: 'auto', width: '10%', marginTop: '1em' }} alt="Logo" />
                 <Typography>Catholic Church of Christ of the Agony <br/>Gethsemane Parish</Typography>
             </Box>
             <Box sx={{ textAlign: 'center', margin: 'auto' }}>
