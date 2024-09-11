@@ -1,6 +1,6 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Modal, Box, Button, Grid, Typography, IconButton, TextField, Checkbox, FormControlLabel, MenuItem} from "@mui/material"
+import { Modal, Box, Button, Grid, Typography, IconButton, TextField, Checkbox, FormControlLabel, MenuItem, Radio, RadioGroup} from "@mui/material"
 import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useState } from "react"
@@ -33,11 +33,22 @@ const TextFieldStyleDis ={
   bgcolor:'#D9D9D9'
 };
 
-const BaptismPending = () =>{
+const godparents = [
+    { name: "Clyde Joseph Noob", isCatholic: "yes" },
+    { name: "Carl Dave Barrera", isCatholic: "yes" },
+    { name: "Jolony Tangpuz", isCatholic: "yes" },
+    { name: "Carl Joseph Noob", isCatholic: "yes" },
+    { name: "Clyde Joseph Noob", isCatholic: "yes" },
+    { name: "Carl Dave Barrera", isCatholic: "yes" },
+    { name: "Jolony Tangpuz", isCatholic: "yes" },
+    { name: "Carl Joseph Noob", isCatholic: "yes" }
+];
 
+const BaptismPending = () =>{
 const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+const handleOpen = () => setOpen(true);
+const handleClose = () => setOpen(false);
+  
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -103,34 +114,34 @@ const [open, setOpen] = useState(false);
             </Grid>
 
             <Grid item sm={12}>
-                <Grid container justifyContent={"center"} spacing={2}>
+                <Grid container spacing={2}>
                     <Grid item sm={8}>
-                        <Box fullWidth sx={{maxWidth:'md',overflowY: 'auto', height:'175px'}}>
+                        <Grid container>
+                            <Grid item sm={8}>
+                                <Typography variant="subtitle1">Godparents:</Typography>
+                            </Grid>
+                            <Grid item sm={4}>
+                                <Typography variant="subtitle1">Catholic?</Typography>
+                            </Grid>
+                        </Grid>
+                        <Box fullWidth sx={{height: '175px', overflowY: 'auto'}}> {/* Ninong */}
                             <Grid container>
-                            <Grid item sm={12}>
-                                    <FormControlLabel control={<Checkbox/>}  label={<Typography sx={{ fontSize: '13px' }}>Photocopy of Parent - Marriage Certificate</Typography>}/>
-                                </Grid>
-                                <Grid item sm={12}>
-                                    <FormControlLabel control={<Checkbox/>}  label={<Typography sx={{ fontSize: '13px' }}>Photocopy of Parent - Marriage Certificate</Typography>}/>
-                                </Grid>
-                                <Grid item sm={12}>
-                                    <FormControlLabel control={<Checkbox/>}  label={<Typography sx={{ fontSize: '13px' }}>Photocopy of Parent - Marriage Certificate</Typography>}/>
-                                </Grid>
-                                <Grid item sm={12}>
-                                    <FormControlLabel control={<Checkbox/>}  label={<Typography sx={{ fontSize: '13px' }}>Photocopy of Parent - Marriage Certificate</Typography>}/>
-                                </Grid>
-                                <Grid item sm={12}>
-                                    <FormControlLabel control={<Checkbox/>}  label={<Typography sx={{ fontSize: '13px' }}>Photocopy of Parent - Marriage Certificate</Typography>}/>
-                                </Grid>
-                                <Grid item sm={12}>
-                                    <FormControlLabel control={<Checkbox/>}  label={<Typography sx={{ fontSize: '13px' }}>Photocopy of Parent - Marriage Certificate</Typography>}/>
-                                </Grid>
-                                <Grid item sm={12}>
-                                    <FormControlLabel control={<Checkbox/>}  label={<Typography sx={{ fontSize: '13px' }}>Photocopy of Parent - Marriage Certificate</Typography>}/>
-                                </Grid>
-                                <Grid item sm={12}>
-                                    <FormControlLabel control={<Checkbox/>}  label={<Typography sx={{ fontSize: '13px' }}>Photocopy of Parent - Marriage Certificate</Typography>}/>
-                                </Grid>
+                                {godparents.map((godparent, index) => (
+                                    <Grid container spacing={2} key={index}>
+                                        <Grid item sm={.7}>
+                                            <p>{index + 1}.</p>
+                                        </Grid>
+                                        <Grid item sm={6.3}>
+                                        <TextField fullWidth value={godparent.name} sx={TextFieldStyle} />
+                                        </Grid>
+                                        <Grid item sm={5}>
+                                        <RadioGroup row defaultValue={godparent.isCatholic} sx={{marginTop:'-7px'}}>
+                                            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                                            <FormControlLabel value="no" control={<Radio />} label="No" />
+                                        </RadioGroup>
+                                        </Grid>
+                                    </Grid>
+                                ))}
                             </Grid>
                         </Box>
                     </Grid>
