@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileExport, faPrint } from '@fortawesome/free-solid-svg-icons';
 import StaffReport from '../../components/StaffReport';
 import ReactToPrint from 'react-to-print';
+import StaffReportSpecific from '../../components/StaffReportSpecific';
 
 const GenerateReports = () => {
 
@@ -73,6 +74,24 @@ const GenerateReports = () => {
                 <Box sx={{border:'solid 1px', maxHeight: '700px', overflowY: 'auto', backgroundColor: '#F5F5F5'}} ref={componentRef}>
                     <Container maxWidth="lg" sx={{backgroundColor: 'white',}}>
                         <StaffReport />
+                    </Container>
+                </Box>
+              </Box>
+
+            {/*-----------------for testing specific service category...--------------------*/}
+              <Box className="md:mt-14 xs:mt-14">
+                    <Box sx={{backgroundColor: "#355173", padding: "12px", display: "flex", alignItems: "center", color: 'white', justifyContent: 'space-between' }} className="gap-2">
+                        <Typography sx={{ width: '100%', color: 'whitesmoke' }}>{reportDetails.startDate} &nbsp;-&nbsp; {reportDetails.endDate}</Typography>
+                        <Typography>Export</Typography>
+                        <FontAwesomeIcon icon={faFileExport} className='text-white md:mr-5' />
+                        <ReactToPrint trigger={() => (
+                                <Button sx={{color: 'white'}}>Print<FontAwesomeIcon icon={faPrint} className='text-white md:mr-5 md:ml-2' /></Button>   
+                            )} content={() => componentRef.current}
+                        />
+                    </Box>
+                <Box sx={{border:'solid 1px', maxHeight: '700px', overflowY: 'auto', backgroundColor: '#F5F5F5'}} ref={componentRef}>
+                    <Container maxWidth="lg" sx={{backgroundColor: 'white',}}>
+                        <StaffReportSpecific category={reportDetails.category} />
                     </Container>
                 </Box>
               </Box>
