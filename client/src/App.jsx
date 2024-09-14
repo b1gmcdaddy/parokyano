@@ -42,6 +42,8 @@ import BlessingPending from "./components/service-request-modals/pending/blsessi
 import BlessingApproved from "./components/service-request-modals/pending/approved/blessingApproved";
 import BlessingCancelled from "./components/service-request-modals/pending/cancelled/blessingCancelled";
 import BaptismPending from "./components/service-request-modals/pending/baptismPending";
+import BaptismApproved from "./components/service-request-modals/pending/approved/baptismApproved";
+import BaptismCancelled from "./components/service-request-modals/pending/cancelled/baptismCancelled";
   
 function App() {
   return (
@@ -93,6 +95,8 @@ function App() {
         <Route path="/blessingapproved" element={<BlessingApproved/>}/>
         <Route path="/blessingcancelled" element={<BlessingCancelled/>}/>
         <Route path="/baptismpending" element={<BaptismPending/>}/>
+        <Route path="/baptismapproved" element={<BaptismApproved/>}/>
+        <Route path="/baptismcancelled" element={<BaptismCancelled/>}/>
         <Route path="/cert-requests" element={<CertificateRequests />} />
 
         {/*  -----------ADMIN-----------  */}
