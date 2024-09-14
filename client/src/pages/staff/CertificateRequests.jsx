@@ -4,6 +4,8 @@ import NavStaff from "../../components/NavStaff";
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, Toolbar, Typography, Button, Grid, TextField, InputAdornment } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import CertificatesPending from "./certificates-list/CertificatesPending";
+import CertificatesForClaiming from "./certificates-list/CertificatesForClaiming";
 
 
 const CertificateRequests = () => {
@@ -22,8 +24,8 @@ const CertificateRequests = () => {
                     <Toolbar />
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', alignItems: 'center' }}>
-                        <Typography sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>Mass Intentions</Typography> 
-                        <Button variant="contained" type="button" sx={{backgroundColor:"#355173"}}>ADD INTENTIONS</Button>
+                        <Typography sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>Certificate Requests</Typography> 
+                        <Button variant="contained" type="button" sx={{backgroundColor:"#355173"}}>ADD REQUEST</Button>
                     </Box>
 
                     <Box sx={{ width: '100%', marginTop: '20px'}}>
@@ -75,8 +77,8 @@ const CertificateRequests = () => {
 
                             <Grid item sm={12}>
                                 <Box sx={{ p: 3 }}>
-                                    {activeTab === 0 && "hello"}
-                                    {activeTab === 1 && "hi"}
+                                    {activeTab === 0 && <CertificatesPending />}
+                                    {activeTab === 1 && <CertificatesForClaiming />}
                                 </Box>
                             </Grid>
                         </Grid>
