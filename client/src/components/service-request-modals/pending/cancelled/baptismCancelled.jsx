@@ -1,8 +1,6 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Modal, Box, Button, Grid, Typography, IconButton, TextField, Checkbox, FormControlLabel, MenuItem, Radio, RadioGroup} from "@mui/material"
-import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { Modal, Box, Button, Grid, Typography, IconButton, TextField} from "@mui/material"
 import { useState } from "react"
 
 const style = {
