@@ -70,6 +70,7 @@ const CertificateConfirmation = () => {
                     }
                 })
                 setServiceInfo(response.data)
+                console.log(response.data);
             } catch (err) {
                 console.error('error retrieving service info from server', err)
             }
