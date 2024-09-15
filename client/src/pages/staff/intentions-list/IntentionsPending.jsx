@@ -53,6 +53,7 @@ const IntentionsApproved = () => {
             val1: 1,
             col2: "status",
             val2: "pending",
+            order: "date_requested",
             page: page + 1,
             limit: rowsPerPage,
           },
@@ -68,7 +69,6 @@ const IntentionsApproved = () => {
   };
 
   const fetchTotalItems = async () => {
-    setLoading(true);
     try {
       const response = await axios.get(`${config.API}/request/count`, {
         params: {
@@ -83,8 +83,6 @@ const IntentionsApproved = () => {
       console.log(totalPages);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false); // Set loading to false when fetching is done
     }
   };
 
@@ -102,7 +100,6 @@ const IntentionsApproved = () => {
 
   const closeInfoModal = () => {
     setModalType(null);
-    fetchIntentions();
   };
 
   const handlePageChange = (newPage) => {
@@ -114,7 +111,7 @@ const IntentionsApproved = () => {
   useEffect(() => {
     fetchIntentions();
     fetchTotalItems();
-  }, [page]);
+  }, [page, totalItems]);
 
   return (
     <div style={{ margin: "0 auto" }}>
@@ -168,7 +165,7 @@ const IntentionsApproved = () => {
                     sx={{
                       textAlign: "center",
                       border: "none",
-                      fontSize: "0.75rem",
+                      fontSize: "0.85rem",
                       fontWeight: "bold",
                     }}
                   >
@@ -178,7 +175,7 @@ const IntentionsApproved = () => {
                     sx={{
                       textAlign: "center",
                       border: "none",
-                      fontSize: "0.75rem",
+                      fontSize: "0.85rem",
                       fontWeight: "bold",
                     }}
                   >
@@ -188,7 +185,7 @@ const IntentionsApproved = () => {
                     sx={{
                       textAlign: "center",
                       border: "none",
-                      fontSize: "0.75rem",
+                      fontSize: "0.85rem",
                       fontWeight: "bold",
                     }}
                   >
@@ -198,7 +195,7 @@ const IntentionsApproved = () => {
                     sx={{
                       textAlign: "center",
                       border: "none",
-                      fontSize: "0.75rem",
+                      fontSize: "0.85rem",
                       fontWeight: "bold",
                     }}
                   >
@@ -208,7 +205,7 @@ const IntentionsApproved = () => {
                     sx={{
                       textAlign: "center",
                       border: "none",
-                      fontSize: "0.75rem",
+                      fontSize: "0.85rem",
                       fontWeight: "bold",
                     }}
                   >

@@ -261,9 +261,10 @@ const retrieveByParams = (req, res) => {
 
 // for all tables
 const retrieveMultipleParams = (req, res) => {
-  const { col1, val1, col2, val2, page, limit } = req.query;
+  const { col1, val1, col2, val2, order, page, limit } = req.query;
   const offset = Number(page - 1) * parseInt(limit);
-  const query = `SELECT * FROM request WHERE ${col1} = ? AND ${col2} = ? LIMIT ? OFFSET ?`;
+
+  const query = `SELECT * FROM request WHERE ${col1} = ? AND ${col2} = ? ORDER BY ${order} DESC LIMIT ? OFFSET ?`;
 
   db.query(query, [val1, val2, parseInt(limit), offset], (err, result) => {
     if (err) {
@@ -271,6 +272,32 @@ const retrieveMultipleParams = (req, res) => {
       return res.status(500);
     }
     res.status(200).json({ result });
+  });
+};
+
+// temporary for services table only
+const retrieveRequests = (req, res) => {
+  const { page, limit } = req.query;
+  const offset = Number(page - 1) * parseInt(limit);
+  const query = `SELECT * FROM request WHERE service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = 'pending' ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+
+  db.query(query, [parseInt(limit), offset], (err, result) => {
+    if (err) {
+      console.error("error retrieving requests", err);
+      return res.status(500);
+    }
+    res.status(200).json({ result });
+  });
+};
+const getCountRequests = (req, res) => {
+  const query = `SELECT COUNT(*) as count FROM request WHERE service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = 'pending'`;
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("error retrieving requests", err);
+      return res.status(500);
+    }
+    console.log(result[0].count);
+    res.status(200).json({ count: result[0].count });
   });
 };
 
@@ -282,6 +309,7 @@ const getCount = (req, res) => {
       console.error("error retrieving requests", err);
       return res.status(500);
     }
+    console.log(result[0].count);
     res.status(200).json({ count: result[0].count });
   });
 };
@@ -365,11 +393,11 @@ const getRequestSummary = (req, res) => {
   });
 };
 
-const updateRequest = (req, res) => {
+const approveRequest = (req, res) => {
   const { col, val, col2, val2, col3, val3 } = req.query;
-  const query = `UPDATE request SET ${col} = ?, ${col2} = ? WHERE ${col3} = ?`;
+  const query = `UPDATE request SET ${col} = ?, ${col2} = ?, transaction_date = ? WHERE ${col3} = ?`;
 
-  db.query(query, [val, val2, Number(val3)], (err, results) => {
+  db.query(query, [val, val2, dateToday, Number(val3)], (err, results) => {
     if (err) {
       console.error(err);
     } else {
@@ -390,6 +418,8 @@ module.exports = {
   getRequestSummary,
   getSummaryWithTypeParam,
   retrieveMultipleParams,
-  updateRequest,
+  approveRequest,
   getCount,
+  retrieveRequests,
+  getCountRequests,
 };

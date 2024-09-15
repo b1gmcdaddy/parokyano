@@ -57,6 +57,7 @@ const IntentionsApproved = () => {
             val1: 1,
             col2: "status",
             val2: "approved",
+            order: "date_requested",
             page: page + 1,
             limit: rowsPerPage,
           },
@@ -72,7 +73,6 @@ const IntentionsApproved = () => {
   };
 
   const fetchTotalItems = async () => {
-    setLoading(true);
     try {
       const response = await axios.get(`${config.API}/request/count`, {
         params: {
@@ -87,8 +87,6 @@ const IntentionsApproved = () => {
       console.log(totalPages);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false); // Set loading to false when fetching is done
     }
   };
 
@@ -96,6 +94,7 @@ const IntentionsApproved = () => {
     fetchIntentions();
     fetchTotalItems();
   }, [page]);
+
   const openInfoModal = (row) => {
     setModalData(row);
     setModalType(row.type);

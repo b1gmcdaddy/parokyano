@@ -12,8 +12,10 @@ const {
   createRequestAnointing,
   createRequestBlessing,
   retrieveMultipleParams,
-  updateRequest,
+  approveRequest,
   getCount,
+  retrieveRequests,
+  getCountRequests,
 } = require("../controllers/requestController");
 
 router.post("/create-intention", createRequestIntention);
@@ -29,7 +31,9 @@ router.get("/retrieve-multiple", retrieveMultipleParams);
 router.get("/count", getCount);
 router.get("/summary", getRequestSummary);
 router.get("/type-summary", getSummaryWithTypeParam);
-router.put("/updateRequest", updateRequest);
+router.put("/approve", approveRequest);
 // router.delete('/delete', deleteRequest);
+router.get("/retrieve-request", retrieveRequests);
+router.get("/count-request", getCountRequests);
 
 module.exports = router;
