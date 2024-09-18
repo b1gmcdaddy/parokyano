@@ -277,11 +277,11 @@ const retrieveMultipleParams = (req, res) => {
 
 // temporary for services table only
 const retrieveRequests = (req, res) => {
-  const { page, limit } = req.query;
+  const { status, page, limit } = req.query;
   const offset = Number(page - 1) * parseInt(limit);
-  const query = `SELECT * FROM request WHERE service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = 'pending' ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const query = `SELECT * FROM request WHERE service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
 
-  db.query(query, [parseInt(limit), offset], (err, result) => {
+  db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {
       console.error("error retrieving requests", err);
       return res.status(500);
@@ -289,9 +289,38 @@ const retrieveRequests = (req, res) => {
     res.status(200).json({ result });
   });
 };
+// temporary for certs table
+const retrieveCerts = (req, res) => {
+  const { status, page, limit } = req.query;
+  const offset = Number(page - 1) * parseInt(limit);
+  const query = `SELECT * FROM request WHERE service_id = 2 AND service_id = 3 AND service_id = 4 AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+
+  db.query(query, [status, parseInt(limit), offset], (err, result) => {
+    if (err) {
+      console.error("error retrieving requests", err);
+      return res.status(500);
+    }
+    res.status(200).json({ result });
+  });
+};
+
 const getCountRequests = (req, res) => {
-  const query = `SELECT COUNT(*) as count FROM request WHERE service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = 'pending'`;
-  db.query(query, (err, result) => {
+  const status = req.query.status;
+  const query = `SELECT COUNT(*) as count FROM request WHERE service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = ?`;
+  db.query(query, [status], (err, result) => {
+    if (err) {
+      console.error("error retrieving requests", err);
+      return res.status(500);
+    }
+    console.log(result[0].count);
+    res.status(200).json({ count: result[0].count });
+  });
+};
+
+const getCountCerts = (req, res) => {
+  const status = req.query.status;
+  const query = `SELECT COUNT(*) as count FROM request WHERE service_id = 2 AND service_id = 3 AND service_id = 4 AND status = ?`;
+  db.query(query, [status], (err, result) => {
     if (err) {
       console.error("error retrieving requests", err);
       return res.status(500);
@@ -421,5 +450,7 @@ module.exports = {
   approveRequest,
   getCount,
   retrieveRequests,
+  retrieveCerts,
   getCountRequests,
+  getCountCerts,
 };

@@ -30,6 +30,7 @@ const PendingRequests = () => {
     try {
       const res = await axios.get(`${config.API}/request/retrieve-request`, {
         params: {
+          status: "pending",
           page: page + 1,
           limit: rowsPerPage,
         },
@@ -43,7 +44,11 @@ const PendingRequests = () => {
 
   const fetchTotalItems = async () => {
     try {
-      const response = await axios.get(`${config.API}/request/count-request`);
+      const response = await axios.get(`${config.API}/request/count-request`, {
+        params: {
+          status: "pending",
+        },
+      });
       setTotalItems(response.data.count);
       console.log(totalItems);
       console.log(totalPages);

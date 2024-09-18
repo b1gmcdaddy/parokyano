@@ -15,7 +15,9 @@ const {
   approveRequest,
   getCount,
   retrieveRequests,
+  retrieveCerts,
   getCountRequests,
+  getCountCerts,
 } = require("../controllers/requestController");
 
 router.post("/create-intention", createRequestIntention);
@@ -34,6 +36,8 @@ router.get("/type-summary", getSummaryWithTypeParam);
 router.put("/approve", approveRequest);
 // router.delete('/delete', deleteRequest);
 router.get("/retrieve-request", retrieveRequests);
+router.get("/retrieve-certs", retrieveCerts);
+router.get("/count-certs", getCountCerts);
 router.get("/count-request", getCountRequests);
 
 module.exports = router;
