@@ -202,7 +202,7 @@ const ManageTransactions = () => {
                             sx={{
                               textAlign: "center",
                               border: "none",
-                              fontSize: "0.75rem",
+                              fontSize: "0.85rem",
                               fontWeight: "bold",
                             }}
                           >
@@ -212,7 +212,7 @@ const ManageTransactions = () => {
                             sx={{
                               textAlign: "center",
                               border: "none",
-                              fontSize: "0.75rem",
+                              fontSize: "0.85rem",
                               fontWeight: "bold",
                             }}
                           >
@@ -222,7 +222,7 @@ const ManageTransactions = () => {
                             sx={{
                               textAlign: "center",
                               border: "none",
-                              fontSize: "0.75rem",
+                              fontSize: "0.85rem",
                               fontWeight: "bold",
                             }}
                           >
@@ -232,7 +232,7 @@ const ManageTransactions = () => {
                             sx={{
                               textAlign: "center",
                               border: "none",
-                              fontSize: "0.75rem",
+                              fontSize: "0.85rem",
                               fontWeight: "bold",
                             }}
                           >
@@ -242,7 +242,7 @@ const ManageTransactions = () => {
                             sx={{
                               textAlign: "center",
                               border: "none",
-                              fontSize: "0.75rem",
+                              fontSize: "0.85rem",
                               fontWeight: "bold",
                             }}
                           >
@@ -252,7 +252,7 @@ const ManageTransactions = () => {
                             sx={{
                               textAlign: "center",
                               border: "none",
-                              fontSize: "0.75rem",
+                              fontSize: "0.85rem",
                               fontWeight: "bold",
                             }}
                           >

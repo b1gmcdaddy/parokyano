@@ -17,6 +17,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import axios from "axios";
 import config from "../../../config";
+import util from "../../../utils/DateTimeFormatter";
 
 const ApprovedRequests = () => {
   const [tableData, setTableData] = useState([]);
@@ -89,23 +90,65 @@ const ApprovedRequests = () => {
         >
           <TableHead>
             <TableRow>
-              <TableCell sx={{ textAlign: "center", border: "none" }}>
-                Type
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  border: "none",
+                  fontSize: "0.85rem",
+                  fontWeight: "bold",
+                }}
+              >
+                SERVICE
               </TableCell>
-              <TableCell sx={{ textAlign: "center", border: "none" }}>
-                Approved Date
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  border: "none",
+                  fontSize: "0.85rem",
+                  fontWeight: "bold",
+                }}
+              >
+                SCHEDULED DATE
               </TableCell>
-              <TableCell sx={{ textAlign: "center", border: "none" }}>
-                Priest Assigned
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  border: "none",
+                  fontSize: "0.85rem",
+                  fontWeight: "bold",
+                }}
+              >
+                PRIEST ASSIGNED
               </TableCell>
-              <TableCell sx={{ textAlign: "center", border: "none" }}>
-                Requested By
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  border: "none",
+                  fontSize: "0.85rem",
+                  fontWeight: "bold",
+                }}
+              >
+                REQUESTED BY
               </TableCell>
-              <TableCell sx={{ textAlign: "center", border: "none" }}>
-                Contact No.
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  border: "none",
+                  fontSize: "0.85rem",
+                  fontWeight: "bold",
+                }}
+              >
+                CONTACT NO.
               </TableCell>
-              <TableCell sx={{ textAlign: "center", border: "none" }}>
-                Actions
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  border: "none",
+                  fontSize: "0.85rem",
+                  fontWeight: "bold",
+                }}
+              >
+                ACTIONS
               </TableCell>
             </TableRow>
           </TableHead>
@@ -145,7 +188,9 @@ const ApprovedRequests = () => {
                         backgroundColor: "#e0e0e0",
                       }}
                     >
-                      {req.type}
+                      {req.service_name.length > 0
+                        ? req.service_name.substring(0, 20) + "..."
+                        : req.service_name}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -155,7 +200,7 @@ const ApprovedRequests = () => {
                         backgroundColor: "#e0e0e0",
                       }}
                     >
-                      date and time
+                      {util.formatDate(req.preferred_date)}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -225,6 +270,8 @@ const ApprovedRequests = () => {
                 </React.Fragment>
               ))
             ) : (
+              //NEEDS WORK
+              //temporary:
               <div className="float ">
                 <h1 className="">No requests found</h1>
               </div>

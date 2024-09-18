@@ -279,7 +279,7 @@ const retrieveMultipleParams = (req, res) => {
 const retrieveRequests = (req, res) => {
   const { status, page, limit } = req.query;
   const offset = Number(page - 1) * parseInt(limit);
-  const query = `SELECT * FROM request WHERE service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const query = `SELECT r.*, s.name AS 'service_name' FROM request r, service s WHERE r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 AND r.service_id = s.serviceID AND r.service_id != 4 AND r.status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {

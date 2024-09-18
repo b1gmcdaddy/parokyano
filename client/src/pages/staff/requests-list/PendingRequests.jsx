@@ -17,6 +17,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import axios from "axios";
 import config from "../../../config";
+import util from "../../../utils/DateTimeFormatter";
 
 const PendingRequests = () => {
   const [tableData, setTableData] = useState([]);
@@ -107,7 +108,7 @@ const PendingRequests = () => {
                   fontWeight: "bold",
                 }}
               >
-                DATE AND TIME
+                SCHEDULED DATE
               </TableCell>
               <TableCell
                 sx={{
@@ -186,7 +187,9 @@ const PendingRequests = () => {
                       backgroundColor: "#e0e0e0",
                     }}
                   >
-                    {req.type}
+                    {req.service_name.length > 0
+                      ? req.service_name.substring(0, 20) + "..."
+                      : req.service_name}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -196,7 +199,7 @@ const PendingRequests = () => {
                       backgroundColor: "#e0e0e0",
                     }}
                   >
-                    date and time
+                    {util.formatDate(req.preferred_date)}
                   </TableCell>
                   <TableCell
                     sx={{
