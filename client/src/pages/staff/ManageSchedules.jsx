@@ -1,81 +1,105 @@
-import React, { useState, useEffect } from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import React, {useState, useEffect} from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import {
-  Button,
-  Typography,
-  Container,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  TextField,
-  InputAdornment,
-  Divider,
-} from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { styled } from "@mui/material/styles";
+import {Button, Typography, TextField, Divider} from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import config from "../../config";
 import NavStaff from "../../components/NavStaff";
-
-
+import dayjs from "dayjs";
+import axios from "axios";
+import util from "../../utils/DateTimeFormatter";
 
 const ManageSchedules = () => {
+  const [priestList, setPriestList] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs().format("YYYY-MM-DD")
+  );
 
-  const [events, setEvents] = useState([
-    {
-      title: "Meeting",
-      start: "2024-09-02T10:00:00",
-      end: "2024-08-01T11:00:00",
-    },
-    {
-      title: "Lunch Break",
-      start: "2024-09-01T12:00:00",
-      end: "2024-08-29T12:30:00",
-    },
-  ]);
+  const fetchSchedules = async () => {
+    try {
+      const res = await axios.get(`${config.API}/priest/retrieve-schedule`);
+      setActivities(res.data);
+      console.log(res.data);
+    } catch (err) {
+      console.error("error retrieving sched", err);
+    }
+  };
 
-  const priests = ['priest A', 'priest B', 'priest C']
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriestList(response.data);
+        console.log("Priest List:", response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+    fetchSchedules();
+  }, []);
 
-  const renderEventContent = (eventInfo) => {
-    return (
-      <div>
-        <strong>{eventInfo.event.title}</strong>  
-      </div>
+  const timeSlots = [
+    "08:00 AM",
+    "09:00 AM",
+    "10:00 AM",
+    "11:00 AM",
+    "12:00 PM",
+    "01:00 PM",
+    "02:00 PM",
+    "03:00 PM",
+    "04:00 PM",
+    "05:00 PM",
+    "06:00 PM",
+    "07:00 PM",
+  ];
+
+  const handleDateChange = (e) => {
+    setSelectedDate(e.target.value);
+  };
+
+  const getActivityForSlot = (priestID, timeSlot) => {
+    const slotTime = dayjs(
+      `${selectedDate} ${timeSlot}`,
+      "YYYY-MM-DD hh:mm A"
+    ).format("HH:mm:ss");
+
+    return activities.find(
+      (activity) =>
+        activity.priest_id === priestID &&
+        dayjs(activity.date).isSame(selectedDate, "day") &&
+        slotTime >= activity.start_time && // so that time sllot spans more than one row if activiy is more thna 1hr...
+        slotTime < activity.end_time
     );
   };
 
-  const handleDateClick = (info) => {
-    const newEvent = {
-      title: "New Event",
-      start: info.dateStr,
-      end: new Date(info.date).setMinutes(
-        new Date(info.date).getMinutes() + 30
-      ),
-    };
-    setEvents([...events, newEvent]);
+  const isActivityStart = (activity, timeSlot) => {
+    const slotTime = dayjs(
+      `${selectedDate} ${timeSlot}`,
+      "YYYY-MM-DD hh:mm A"
+    ).format("HH:mm:ss");
+    return activity && slotTime === activity.start_time;
   };
 
   return (
     <>
-      <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+      <Box sx={{display: "flex", mx: {md: "30px"}}}>
         <NavStaff />
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
-        >
+          sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
           <Toolbar />
 
           <Box
@@ -84,159 +108,102 @@ const ManageSchedules = () => {
               justifyContent: "space-between",
               margin: "8px",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 fontSize: "1.25rem",
                 lineHeight: "1.75rem",
                 fontWeight: 600,
-              }}
-            >
+              }}>
               Priest Schedule
             </Typography>
             <Button
               variant="contained"
               type="button"
-              sx={{ backgroundColor: "#355173" }}
-            >
+              sx={{backgroundColor: "#355173"}}>
               ADD ACTIVITY
             </Button>
           </Box>
 
           <Divider />
 
-          <Box sx={{ width: "100%" }}>
-            <Grid container spacing={1}>
-              <Grid item sm={12}>
-                <Box sx={{ p: 2 }}>
-                  <div style={{ padding: "10px" }}>
-                    <FullCalendar
-                      plugins={[
-                        dayGridPlugin,
-                        timeGridPlugin,
-                      ]}
+          <Box sx={{p: 2}}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "1.3em",
+                  marginBottom: "1em",
+                }}>
+                {util.formatDate(selectedDate)}
+              </Typography>
+              <TextField
+                label="Pick a date"
+                type="date"
+                size="small"
+                value={selectedDate}
+                onChange={handleDateChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                sx={{my: 3, boxShadow: "1px 3px 1px #D9D9D9"}}
+              />
+            </Box>
 
-                      //  needs rework
-                      customButtons={{
-                        customPriestA: {
-                          text: priests[0],  // Custom text or HTML
-                          click: () => alert('Priest A')  // Function to execute on click
-                        },
-                        customPriestB: {
-                          text: priests[1],  // Custom text or HTML
-                          click: () => alert('Priest B')  // Function to execute on click
-                        },
-                        customPriestC: {
-                          text: priests[2],  // Custom text or HTML
-                          click: () => alert('Priest C')  // Function to execute on click
-                        }
-                      }}
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{fontWeight: "bold"}}>Time</TableCell>
+                    {priestList.map((priest) => (
+                      <TableCell key={priest.priestID} align="center">
+                        <Typography sx={{fontWeight: "bold"}}>
+                          {priest.first_name} {priest.last_name}
+                        </Typography>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {timeSlots.map((time) => (
+                    <TableRow key={time}>
+                      <TableCell>{time}</TableCell>
+                      {priestList.map((priest) => {
+                        const activity = getActivityForSlot(
+                          priest.priestID,
+                          time
+                        );
+                        const isStart = isActivityStart(activity, time);
 
-
-                      initialView="timeGridWeek"
-                      headerToolbar={{
-                        start: "customPriestA customPriestB customPriestC",
-                        center: "title",
-                        end: "prev,next",
-                      }}
-                      events={events}
-                      allDaySlot={false}
-                      slotDuration="00:30:00"
-                      slotLabelInterval="00:30:00"
-                      height="90vh"
-                      dateClick={handleDateClick}
-                      eventTextColor="#ffffff"
-                      eventBackgroundColor="#1976d2"
-                      eventContent={renderEventContent}
-                      slotMinTime="06:00:00"
-                      slotMaxTime="19:30:00"
-                      slotEventOverlap={false}
-                      dayHeaderFormat={{
-                        weekday: "long",
-                        month: "short",
-                        day: "numeric",
-                        omitCommas: true,
-                      }}
-                      views={{
-                        timeGridWeek: {
-                          slotLabelFormat: {
-                            hour: "numeric",
-                            minute: "2-digit",
-                            hour12: true,
-                          },
-                          titleFormat: {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          },
-                        },
-                      }}
-                      slotLabelStyle={{ fontSize: "16px", padding: "10px" }} // Increased padding for slot labels
-                      dayHeaderClassNames={({ date }) => [
-                        "custom-day-header",
-                        date.getDay() === 0 || date.getDay() === 6
-                          ? "weekend-header"
-                          : "",
-                      ]}
-                      dayCellClassNames="custom-day-cell"
-                      dayMaxEventRows={2}
-                    />
-                    <style>
-                      {`
-                          .fc .fc-toolbar-title {
-                            font-size: 26px; /* Larger title font */
-                          }
-                          .fc .fc-button {
-                            font-size: 16px; /* Increase button font size */
-                          }
-                          .fc .fc-button-primary {
-                            background-color: #1976d2; /* Blue button background */
-                            border-color: #1976d2;
-                          }
-                          .fc .fc-button-primary:hover {
-                            background-color: #0d47a1; /* Darker blue on hover */
-                            border-color: #0d47a1;
-                          }
-                          .fc-theme-standard th, .fc-theme-standard td {
-                            border: 1px solid #d1d1d1; /* Subtle border color for better contrast */
-                          }
-                          .fc-daygrid-day-number {
-                            font-size: 16px; /* Larger day number */
-                            padding: 8px;
-                          }
-                          .fc-daygrid-event {
-                            padding: 8px;
-                            border-radius: 6px; /* More rounded corners for events */
-                          }
-                          .fc-timegrid-slot-label {
-                            font-size: 18px; /* Larger time slot label font size */
-                            padding: 10px; /* Increased padding */
-                            height: 200px; /* Increased height of time slots */
-                          }
-                          .fc-timegrid-event {
-                            font-size: 12px; /* Larger event font size */
-                            padding: 2px;
-                            background-color: #1976d2; /* Consistent blue color */
-                            border: none;
-                          }
-                          .fc-timegrid-slot {
-                            height: 200px; /* Increased height of time slots */
-                          }
-                          .weekend-header {
-                            background-color: #f5f5f5; /* Light grey background for weekends */
-                          }
-                        `}
-                    </style>
-                  </div>
-                </Box>
-              </Grid>
-            </Grid>
+                        return (
+                          <TableCell
+                            align="center"
+                            key={priest.priestID}
+                            sx={{
+                              backgroundColor: activity
+                                ? "#355173"
+                                : "transparent",
+                              color: activity ? "#fff" : "inherit",
+                            }}>
+                            {isStart ? activity.activity : ""}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Box>
         </Box>
       </Box>
     </>
   );
-}
+};
 
 export default ManageSchedules;

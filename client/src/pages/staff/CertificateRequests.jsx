@@ -3,7 +3,6 @@ import React from "react";
 import NavStaff from "../../components/NavStaff";
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, Toolbar, Typography, Button, Grid, TextField, InputAdornment } from "@mui/material";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import CertificatesPending from "./certificates-list/CertificatesPending";
 import CertificatesForClaiming from "./certificates-list/CertificatesForClaiming";
 

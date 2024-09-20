@@ -1,26 +1,37 @@
-require('dotenv').config()
-const db = require('./db')
-
+require("dotenv").config();
+const db = require("./db");
 
 const retrieveByParams = (req, res) => {
-    const {col, val} = req.query
+  const {col, val} = req.query;
 
-    db.query(`SELECT * FROM priest where ?? = ?`, [col, val],
-        (err, result) => {
-            if (err) {
-                console.error('error retrieving from db', err)
-                return res.status(500)
-            }
+  db.query(`SELECT * FROM priest where ?? = ?`, [col, val], (err, result) => {
+    if (err) {
+      console.error("error retrieving from db", err);
+      return res.status(500);
+    }
 
-            // para dili na hasol add2 ug 'Fr.' na title sa frontend:
-            for(const i in result){
-                result[i].first_name = 'Fr. ' + result[i].first_name;
-            }
-            return res.status(200).send(result)
-        }
-    )
-}
+    // para dili na hasol add2 ug 'Fr.' na title sa frontend:
+    for (const i in result) {
+      result[i].first_name = "Fr. " + result[i].first_name;
+    }
+    return res.status(200).send(result);
+  });
+};
+
+const retrieveSchedules = (req, res) => {
+  db.query("Select * FROM priestschedule", (err, result) => {
+    if (err) {
+      console.error("error retrieving from scheds db", err);
+      return res.status(500).json({
+        error: "server error",
+        status: "500",
+      });
+    }
+    return res.status(200).send(result);
+  });
+};
 
 module.exports = {
-    retrieveByParams
-}
+  retrieveByParams,
+  retrieveSchedules,
+};

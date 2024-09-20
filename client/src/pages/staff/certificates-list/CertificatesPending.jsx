@@ -22,38 +22,13 @@ import util from "../../../utils/DateTimeFormatter";
 
 const CertificatesPending = () => {
   const [tableData, setTableData] = useState([]);
-  const [modaltype, setModalType] = useState(null);
+  // const [modaltype, setModalType] = useState(null);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
-
   const rowsPerPage = 10;
   const [totalItems, setTotalItems] = useState(0);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
 
-  //temp data
-  const certDummyData = [
-    {
-      id: 1,
-      requestedBy: "Jolo Tangpuz",
-      type: "Baptismal",
-      dateRequested: "2024-05-11",
-      transaction_no: "2024-07-024ea5c508a6566e762407",
-    },
-    {
-      id: 2,
-      requestedBy: "Clyde Noob",
-      type: "Wedding",
-      dateRequested: "2024-04-11",
-      transaction_no: "2024-07-024ea5c508a6566e762406",
-    },
-    {
-      id: 3,
-      requestedBy: "Carl Barrera",
-      type: "Confimration",
-      dateRequested: "2024-03-11",
-      transaction_no: "2024-07-024ea5c508a6566e762405",
-    },
-  ];
 
   const schedule = (_date, _time) => {
     return (
@@ -74,6 +49,8 @@ const CertificatesPending = () => {
       console.log(res.data.result);
     } catch (err) {
       console.error("error retrieving pending reqs", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,22 +69,23 @@ const CertificatesPending = () => {
     }
   };
 
-  // const handlePageChange = (newPage) => {
-  //   if (newPage >= 0 && newPage < totalPages) {
-  //     setPage(newPage);
-  //   }
-  // };
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setPage(newPage);
+    }
+  };
 
-  // useEffect(() => {
-  //   // fetchIntentions();
-  //   fetchTotalItems();
-  // }, [page]);
+  useEffect(() => {
+    fetchCertificates();
+    fetchTotalItems();
+  }, [page, totalItems]);
 
   return (
     <div style={{ margin: "0 auto" }}>
-      {/* {loading ? (
+       {
+       loading ? (
         <p>Loading...</p>
-      ) : ( */}
+      ) : ( 
       <>
         <TableContainer
           sx={{
@@ -181,8 +159,8 @@ const CertificatesPending = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {certDummyData.map((row) => (
-                <React.Fragment key={row.id}>
+              {tableData.map((cert) => (
+                <React.Fragment key={cert.requestID}>
                   {/* this is to add space in between rows sa table */}
                   <TableRow>
                     <TableCell
@@ -215,7 +193,7 @@ const CertificatesPending = () => {
                         backgroundColor: "#e0e0e0",
                       }}
                     >
-                      {row.requestedBy}
+                      {cert.requested_by}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -225,7 +203,7 @@ const CertificatesPending = () => {
                         backgroundColor: "#e0e0e0",
                       }}
                     >
-                      {row.type}
+                      {cert.type}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -235,7 +213,7 @@ const CertificatesPending = () => {
                         backgroundColor: "#e0e0e0",
                       }}
                     >
-                      {row.dateRequested}
+                      {cert.date_requested}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -245,7 +223,7 @@ const CertificatesPending = () => {
                         backgroundColor: "#e0e0e0",
                       }}
                     >
-                      {row.transaction_no}
+                      {cert.transaction_no}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -300,7 +278,7 @@ const CertificatesPending = () => {
             marginTop: 2,
           }}
         >
-          {/* <IconButton
+           <IconButton
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 0} // Disable on the first page
               sx={{
@@ -326,9 +304,10 @@ const CertificatesPending = () => {
               }}
             >
               <KeyboardArrowRight />
-            </IconButton> */}
+            </IconButton>
         </Box>
       </>
+          )}
     </div>
   );
 };
