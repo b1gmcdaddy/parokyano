@@ -27,7 +27,7 @@ const TextFieldStyleDis ={
   bgcolor:'#D9D9D9'
 };
 
-const BlessingApproved = () =>{
+const OutsideApproved = () =>{
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -46,7 +46,7 @@ const BlessingApproved = () =>{
   }
 
   const isOtherSelected = radioValue === "others";
-  
+
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -63,7 +63,7 @@ const BlessingApproved = () =>{
           </Grid>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Blessing Request Information</Typography>
+              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Outside Mass Request Information</Typography>
             </Grid>
 
             <Grid item sm={1}>
@@ -71,17 +71,18 @@ const BlessingApproved = () =>{
             </Grid>
             <Grid item sm={11}>
               <RadioGroup row name="type" sx={{marginTop:'-5px'}} value={radioValue} onChange={handleRadioChange}>
-                <FormControlLabel value="House Blessing" control={<Radio size="small" />} label="House" />
-                <FormControlLabel value="Company Blessing" control={<Radio size="small" />} label="Company"/>
+                <FormControlLabel value="Chapel" control={<Radio size="small" />} label="Chapel" />
+                <FormControlLabel value="Company" control={<Radio size="small" />} label="Company"/>
                 <FormControlLabel value="others" control={<Radio size="small" />} label="Others:" />
                 <TextField disabled={isOtherSelected ? false : true} value={otherValue} onChange={handleOtherChange} sx={{"& .MuiInputBase-root":{height:'30px'}, opacity: isOtherSelected ? 1 : 0.4, marginTop: '5px'}}/>
               </RadioGroup>
             </Grid>
 
-            <Grid item sm={1.3}>
-              <label>Name:</label>
+
+            <Grid item sm={3.2}>
+              <label>Celebration/Celebrator:</label>
             </Grid>
-            <Grid item sm={10.7}>
+            <Grid item sm={8.8}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
             
@@ -92,39 +93,43 @@ const BlessingApproved = () =>{
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={2.2}>
-              <label>Requested by:</label>
+            <Grid item sm={2.4}>
+              <label>Contact Person:</label>
             </Grid>
-            <Grid item sm={3.7}>
+            <Grid item sm={4}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={1.9}>
               <label>Contact no:</label>
             </Grid>
-            <Grid item sm={4.2}>
+            <Grid item sm={3.7}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
             <Grid item sm={12}>
-              <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
-                <div>
-                  <p style={{width: '80px', textAlign: 'center', fontWeight:'bold'}}>Assigned</p>
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                    <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
+                    <div>
+                        <p style={{width: '80px', textAlign: 'center', fontWeight:'bold'}}>Assigned</p>
+                    </div>
+                    <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
                 </div>
-                <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
-              </div>
             </Grid>
 
-            <Grid item sm={4}>
+            <Grid item sm={3}>
               <label>Priest:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
-            <Grid item sm={4}>
+            <Grid item sm={3}>
               <label>Date:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
-            <Grid item sm={4}>
+            <Grid item sm={3}>
               <label>Time:</label>
+              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+            </Grid>
+            <Grid item sm={3}>
+              <label>Venue:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
 
@@ -142,27 +147,25 @@ const BlessingApproved = () =>{
               <label>Priest:</label>
               <TextField fullWidth select sx={TextFieldStyle}/>
             </Grid>
-            <Grid item sm={4}>
+            <Grid item sm={3}>
               <label>Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker fullWidth sx={TextFieldStyle}/>
               </LocalizationProvider>
             </Grid>
-            <Grid item sm={3.5}>
+            <Grid item sm={2.7}>
               <label>Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker fullWidth sx={TextFieldStyle}/>
               </LocalizationProvider>
             </Grid>
+            <Grid item sm={1.8}>
+              <label>Venue:</label>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
+            </Grid>
             <Grid item sm={2}>
               <Button fullWidth sx={{bgcolor:'#247E38',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#34AC4F"}}}>SET</Button>
             </Grid>
-
-            <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <Typography variant="body2" sx={{marginRight: '5px'}}>Transaction Code:</Typography>
-              <Typography variant="body2" sx={{fontWeight:'bold'}}>040124hash</Typography>
-            </Grid>
-
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
               <Button sx={{bgcolor:'#CDAB52',marginTop:'14px', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
               <Button sx={{bgcolor:'#C34444',margin:'14px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
@@ -174,4 +177,4 @@ const BlessingApproved = () =>{
     )
 }
 
-export default BlessingApproved
+export default OutsideApproved

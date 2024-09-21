@@ -14,8 +14,8 @@ const style = {
     bgcolor: 'white',
     borderRadius: '10px',
     boxShadow: 3,
-    px: 1,
-    py: 1,
+    px: 4,
+    py: 3,
 };
 
 const TextFieldStyle ={
@@ -64,10 +64,10 @@ const [open, setOpen] = useState(false);
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={4}>
+            <Grid item sm={4.3}>
               <label>Relationship to the deceased:</label>
             </Grid>
-            <Grid item sm={8}>
+            <Grid item sm={7.7}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 

@@ -48,11 +48,6 @@ const TextFieldStyle ={
   "& .MuiInputBase-root":{height:'30px', bgcolor:'white'}
 };
 
-const TextFieldStyleDis ={
-  "& .MuiInputBase-root":{height:'30px'},
-  bgcolor:'#D9D9D9'
-};
-
 const tabStyle ={
   fontWeight: 'bold',
   color: 'black',

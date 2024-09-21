@@ -14,8 +14,8 @@ const style = {
     bgcolor: 'white',
     borderRadius: '10px',
     boxShadow: 3,
-    px: 1,
-    py: 1,
+    px: 4,
+    py: 3,
 };
 
 const TextFieldStyle ={
@@ -71,29 +71,29 @@ const [open, setOpen] = useState(false);
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={2.1}>
+            <Grid item sm={2.2}>
               <label>Requested by:</label>
             </Grid>
-            <Grid item sm={4}>
+            <Grid item sm={5}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
-            <Grid item sm={2}>
+            <Grid item sm={1.9}>
               <label>Relationship:</label>
             </Grid>
-            <Grid item sm={3.9}>
+            <Grid item sm={2.9}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={2.1}>
+            <Grid item sm={1.9}>
               <label>Contact no:</label>
             </Grid>
-            <Grid item sm={4}>
+            <Grid item sm={4.9}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
-            <Grid item sm={2}>
+            <Grid item sm={2.3}>
               <label>Sickness/Status:</label>
             </Grid>
-            <Grid item sm={3.9}>
+            <Grid item sm={2.9}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 

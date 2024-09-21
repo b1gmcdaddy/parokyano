@@ -1,19 +1,19 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Modal, Box, Button, Grid, Typography, IconButton, TextField} from "@mui/material"
+import { Modal, Box, Button, Grid, Typography, IconButton, TextField, RadioGroup, FormControlLabel, Radio} from "@mui/material"
 import { useState } from "react"
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  maxWidth: 'md',  
-  bgcolor: 'white',
-  borderRadius: '10px',
-  boxShadow: 3,
-  px: 4,
-  py: 3,
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    maxWidth: 'md',  
+    bgcolor: 'white',
+    borderRadius: '10px',
+    boxShadow: 3,
+    px: 4,
+    py: 3,
 };
 
 const TextFieldStyle ={
@@ -21,15 +21,30 @@ const TextFieldStyle ={
 };
 
 const TextFieldStyleDis ={
-    "& .MuiInputBase-root":{height:'30px'},
-    bgcolor:'#D9D9D9'
+  "& .MuiInputBase-root":{height:'30px'},
+  bgcolor:'#D9D9D9'
 };
 
-const FuneralMassModalCancelled = () =>{
-
-const [open, setOpen] = useState(false);
+const OutsideCancelled = () =>{
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [radioValue, setRadioValue] = useState("");
+  const [otherValue, setOtherValue] = useState("");
+  
+  const handleRadioChange = (e) => {
+    setRadioValue(e.target.value);
+    if (e.target.value !== "others") {
+        setOtherValue("");
+    }
+  }
+
+  const handleOtherChange = (e) => {
+    setOtherValue(e.target.value);
+  }
+
+  const isOtherSelected = radioValue === "others";
+
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -46,33 +61,46 @@ const [open, setOpen] = useState(false);
           </Grid>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Funeral Mass Request Information</Typography>
+              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Outside Mass Request Information</Typography>
             </Grid>
-            <Grid item sm={4}>
-              <label>Name of the deceased:</label>
+
+            <Grid item sm={1}>
+              <label>Type:</label>
             </Grid>
-            <Grid item sm={8}>
+            <Grid item sm={11}>
+              <RadioGroup row name="type" sx={{marginTop:'-5px'}} value={radioValue} onChange={handleRadioChange}>
+                <FormControlLabel disabled value="Chapel" control={<Radio size="small" />} label="Chapel" />
+                <FormControlLabel disabled value="Company" control={<Radio size="small" />} label="Company"/>
+                <FormControlLabel disabled value="others" control={<Radio size="small" />} label="Others:" />
+                <TextField disabled value={otherValue} onChange={handleOtherChange} sx={{"& .MuiInputBase-root":{height:'30px'}, opacity: isOtherSelected ? 1 : 0.4, marginTop: '5px'}}/>
+              </RadioGroup>
+            </Grid>
+
+
+            <Grid item sm={3.2}>
+              <label>Celebration/Celebrator:</label>
+            </Grid>
+            <Grid item sm={8.8}>
+              <TextField disabled fullWidth  sx={TextFieldStyle}/>
+            </Grid>
+            
+            <Grid item sm={1.3}>
+              <label>Address:</label>
+            </Grid>
+            <Grid item sm={10.7}>
               <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={4}>
-              <label>Requested by:</label>
+            <Grid item sm={2.4}>
+              <label>Contact Person:</label>
             </Grid>
-            <Grid item sm={8}>
+            <Grid item sm={4}>
               <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
-
-            <Grid item sm={4.3}>
-              <label>Relationship to the deceased:</label>
+            <Grid item sm={1.9}>
+              <label>Contact no:</label>
             </Grid>
-            <Grid item sm={7.7}>
-              <TextField disabled fullWidth  sx={TextFieldStyle}/>
-            </Grid>
-
-            <Grid item sm={4}>
-              <label>Contact Number:</label>
-            </Grid>
-            <Grid item sm={8}>
+            <Grid item sm={3.7}>
               <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
@@ -98,7 +126,6 @@ const [open, setOpen] = useState(false);
               <label>Time:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
-
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
               <Typography variant="body2" sx={{marginRight: '5px'}}>Transaction Code:</Typography>
               <Typography variant="body2" sx={{fontWeight:'bold'}}>040124hash</Typography>
@@ -110,4 +137,4 @@ const [open, setOpen] = useState(false);
     )
 }
 
-export default FuneralMassModalCancelled
+export default OutsideCancelled

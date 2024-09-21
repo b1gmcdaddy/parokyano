@@ -67,46 +67,46 @@ const handleClose = () => setOpen(false);
             </Grid>
             <Grid item sm={4}>
               <label>First name of child:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={4}>
               <label>Middle name of child:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={4}>
               <label>Last name of child:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
 
             <Grid item sm={4}>
               <label>Date of birth:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={4}>
               <label>Place of brith:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={4}>
               <label>Gender:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
 
             <Grid item sm={9}>
               <label>Father's complete name:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={3}>
               <label>Age:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
 
             <Grid item sm={9}>
               <label>Mother's complete name:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={3}>
               <label>Age:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
 
             <Grid item sm={12}>
@@ -125,7 +125,7 @@ const handleClose = () => setOpen(false);
                                             <p>{index + 1}.</p>
                                         </Grid>
                                         <Grid item sm={10}>
-                                            <TextField disabled fullWidth value={godparent.name} sx={TextFieldStyleDis} />
+                                            <TextField disabled fullWidth value={godparent.name} sx={TextFieldStyle} />
                                         </Grid>
                                     </Grid>
                                 ))}
