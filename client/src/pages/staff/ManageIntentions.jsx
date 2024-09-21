@@ -2,6 +2,8 @@ import { useState } from "react";
 import React from "react";
 import NavStaff from "../../components/NavStaff";
 import SearchIcon from "@mui/icons-material/Search";
+import axios from "axios";
+import config from "../../config";
 import {
   Box,
   Toolbar,
@@ -16,9 +18,42 @@ import IntentionsPending from "./intentions-list/IntentionsPending";
 
 const ManageIntentions = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const [inputValue, setValue] = useState("");
+  const [filter, setFilter] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const rowsPerPage = 10;
 
   const handleTabChange = (index) => {
     setActiveTab(index);
+  };
+
+  const handlePageChange = (newPage, totalPages, filter) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setPage(newPage);
+    }
+    if (filter && filter.length > 0) {
+      handleSearch(inputValue, newPage);
+    }
+  };
+
+  const handleSearch = async (inputValue, page) => {
+    console.log(page);
+    const response = await axios.get(`${config.API}/request/search`, {
+      params: {
+        col: "requested_by",
+        val: inputValue,
+        status: "pending",
+        page: page + 1, // Use current page
+        limit: rowsPerPage, // Rows per page
+      },
+    });
+    setFilter(response.data.result);
+    setTotalItems(response.data.count[0].count);
+  };
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
   };
 
   return (
@@ -94,10 +129,13 @@ const ManageIntentions = () => {
                 </Button>
               </Grid>
 
-              <Grid item sm={12}>
+              <Grid item sm={12} sx={{ display: "flex", flexDirection: "row" }}>
                 <TextField
+                  name="search"
                   fullWidth
                   size="small"
+                  value={inputValue}
+                  onChange={handleChange}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -106,11 +144,32 @@ const ManageIntentions = () => {
                     ),
                   }}
                 />
+                <Button
+                  fullWidth
+                  variant="contained"
+                  type="button"
+                  onClick={() => handleSearch(inputValue, page)}
+                  sx={{
+                    backgroundColor: "#355173",
+                    width: "100px",
+                    borderRadius: "10px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Search
+                </Button>
               </Grid>
 
               <Grid item sm={12}>
                 <Box sx={{ p: 3 }}>
-                  {activeTab === 0 && <IntentionsPending />}
+                  {activeTab === 0 && (
+                    <IntentionsPending
+                      filter={filter}
+                      page={page}
+                      count={totalItems}
+                      handlePageChange={handlePageChange}
+                    />
+                  )}
                   {activeTab === 1 && <IntentionsApproved />}
                 </Box>
               </Grid>

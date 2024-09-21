@@ -422,6 +422,28 @@ const getRequestSummary = (req, res) => {
   });
 };
 
+const searchIntentions = (req, res) => {
+  const { col, val, status, page, limit } = req.query;
+  const offset = Number(page - 1) * parseInt(limit);
+  const query = `SELECT * FROM request WHERE service_id = 1 AND ${col} = ? AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const countQuery = `SELECT COUNT(*) as count FROM request WHERE service_id = 1 AND ${col} = ? AND status = ?`;
+
+  db.query(query, [val, status, parseInt(limit), offset], (err, result) => {
+    if (err) {
+      console.error("error searching item", err);
+      return res.status(500);
+    }
+    db.query(countQuery, [val, status], (err, count) => {
+      if (err) {
+        console.error("error counting items", err);
+        return res.status(500);
+      }
+      console.log(count[0].count);
+      res.status(200).json({ result, count });
+    });
+  });
+};
+
 const approveRequest = (req, res) => {
   const { col, val, col2, val2, col3, val3 } = req.query;
   const query = `UPDATE request SET ${col} = ?, ${col2} = ?, transaction_date = ? WHERE ${col3} = ?`;
@@ -453,4 +475,5 @@ module.exports = {
   retrieveCerts,
   getCountRequests,
   getCountCerts,
+  searchIntentions,
 };

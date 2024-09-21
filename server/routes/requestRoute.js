@@ -18,6 +18,7 @@ const {
   retrieveCerts,
   getCountRequests,
   getCountCerts,
+  searchIntentions,
 } = require("../controllers/requestController");
 
 router.post("/create-intention", createRequestIntention);
@@ -39,5 +40,6 @@ router.get("/retrieve-request", retrieveRequests);
 router.get("/retrieve-certs", retrieveCerts);
 router.get("/count-certs", getCountCerts);
 router.get("/count-request", getCountRequests);
+router.get("/search", searchIntentions);
 
 module.exports = router;

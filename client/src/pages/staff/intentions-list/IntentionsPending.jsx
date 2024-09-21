@@ -21,11 +21,10 @@ import axios from "axios";
 import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
 
-const IntentionsApproved = () => {
+const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
   const [tableData, setTableData] = useState([]);
-  // const [count, setCount] = useState(0);
   const [modaltype, setModalType] = useState(null);
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [modalData, setModalData] = useState({
     // initialized to avoid setting intention_details.map() as undefined
     intention_details: [""],
@@ -33,7 +32,7 @@ const IntentionsApproved = () => {
   const [loading, setLoading] = useState(true);
 
   const rowsPerPage = 10;
-  const [totalItems, setTotalItems] = useState(0);
+  const [totalItems, setTotalItems] = useState(count);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
 
   const schedule = (_date, _time) => {
@@ -59,8 +58,8 @@ const IntentionsApproved = () => {
           },
         }
       );
+
       setTableData(response.data.result);
-      console.log(response.data.result);
     } catch (err) {
       console.error(err);
     } finally {
@@ -79,6 +78,7 @@ const IntentionsApproved = () => {
         },
       });
       setTotalItems(response.data.count);
+
       console.log(totalItems);
       console.log(totalPages);
     } catch (err) {
@@ -90,28 +90,22 @@ const IntentionsApproved = () => {
     setModalData(row);
     setModalType(row.type);
     console.log(row);
-    // if(modaltype === 'souls'){
-    //     setOpenSouls(true)
-    // }
-    // if(modaltype === 'thanksgiving'){
-    //     setOpenThanksgiving(true)
-    // }
   };
 
   const closeInfoModal = () => {
     setModalType(null);
   };
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
-      setPage(newPage);
-    }
-  };
-
   useEffect(() => {
-    fetchIntentions();
-    fetchTotalItems();
-  }, [page, totalItems]);
+    if (filter && filter.length > 0) {
+      setTableData(filter);
+      setTotalItems(count);
+    } else {
+      fetchIntentions();
+      fetchTotalItems();
+    }
+    // console.log(totalItems);
+  }, [page, totalItems, filter]);
 
   return (
     <div style={{ margin: "0 auto" }}>
@@ -339,7 +333,7 @@ const IntentionsApproved = () => {
             }}
           >
             <IconButton
-              onClick={() => handlePageChange(page - 1)}
+              onClick={() => handlePageChange(page - 1, totalPages, filter)}
               disabled={page === 0} // Disable on the first page
               sx={{
                 backgroundColor: page === 0 ? "grey.300" : "black",
@@ -355,7 +349,7 @@ const IntentionsApproved = () => {
             </Typography>
 
             <IconButton
-              onClick={() => handlePageChange(page + 1)}
+              onClick={() => handlePageChange(page + 1, totalPages, filter)}
               disabled={page === totalPages - 1} // Disable on the last page
               sx={{
                 backgroundColor: page === totalPages - 1 ? "grey.300" : "black",
