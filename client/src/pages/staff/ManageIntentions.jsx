@@ -152,7 +152,9 @@ const ManageIntentions = () => {
                   fullWidth
                   variant="contained"
                   type="button"
-                  onClick={() => handleSearch(inputValue, page)}
+                  onClick={() => {
+                    handleSearch(inputValue, 0);
+                  }}
                   sx={{
                     backgroundColor: "#355173",
                     width: "100px",
