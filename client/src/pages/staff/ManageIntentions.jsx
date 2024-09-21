@@ -153,6 +153,7 @@ const ManageIntentions = () => {
                   variant="contained"
                   type="button"
                   onClick={() => {
+                    setPage(0);
                     handleSearch(inputValue, 0);
                   }}
                   sx={{
