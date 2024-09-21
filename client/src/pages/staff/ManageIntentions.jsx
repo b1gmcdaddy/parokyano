@@ -26,6 +26,10 @@ const ManageIntentions = () => {
 
   const handleTabChange = (index) => {
     setActiveTab(index);
+    setFilter([]);
+    setPage(0);
+    setTableData([]);
+    setValue("");
   };
 
   const handlePageChange = (newPage, totalPages, filter) => {
