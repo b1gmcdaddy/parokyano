@@ -111,43 +111,45 @@ function SponsorsModal() {
 
             <Grid item sm={12}>
               <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
+                <Table sx={{ tableLayout: 'fixed' }}>
+                  <TableHead>
+                    <TableRow>
                       <TableCell align="center">Full Name</TableCell>
                       <TableCell align="center">Age</TableCell>
                       <TableCell align="center">Marital Status</TableCell>
                       <TableCell align="center">Catholic?</TableCell>
-                      <TableCell align="center"> </TableCell>
-                      </TableRow>
-                    </TableHead>
-                  </Table>
+                      <TableCell align="center" sx={{ width: '50px' }}></TableCell>
+                    </TableRow>
+                  </TableHead>
+                </Table>
               </TableContainer>
-                    
               <div
                 style={{
                   maxHeight: '35vh',
                   overflowY: 'auto',
+                  width: '100%',
                   scrollbarWidth: 'none',   
                   "&::-webkit-scrollbar": {  
                       display: "none"
                   }
                 }}
               >
-                <Table>
+                <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
                   <TableBody>
-                    {sponsors.map((sponsor)=> (
+                    {sponsors.map((sponsor) => (
                       <TableRow key={sponsor.name}>
-                      <TableCell align="center" component="th">{sponsor.name}</TableCell>
-                      <TableCell align="center">{sponsor.age}</TableCell>
-                      <TableCell align="center">{sponsor.marital}</TableCell>
-                      <TableCell align="center">{sponsor.catholic}</TableCell>
-                      <TableCell align="center">
-                        <IconButton size="small">
-                          <FontAwesomeIcon icon={faXmark} />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
+                        <TableCell align="center" component="th">
+                          {sponsor.name}
+                        </TableCell>
+                        <TableCell align="center">{sponsor.age}</TableCell>
+                        <TableCell align="center">{sponsor.marital}</TableCell>
+                        <TableCell align="center">{sponsor.catholic}</TableCell>
+                        <TableCell align="center" sx={{ width: '50px' }}>
+                          <IconButton size="small">
+                            <FontAwesomeIcon icon={faXmark} />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
                     ))}
                   </TableBody>
                 </Table>
