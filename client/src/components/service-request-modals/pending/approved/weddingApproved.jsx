@@ -57,7 +57,15 @@ const sponsors = [
   {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
   {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
   {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"}
+  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
+  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
+  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
+  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
+  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
+  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
+  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
+  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
+  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
 ];
 
 function SponsorsModal() {
@@ -113,23 +121,37 @@ function SponsorsModal() {
                       <TableCell align="center"> </TableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody>
-                      {sponsors.map((sponsor)=> (
-                        <TableRow key={sponsor.name}>
-                        <TableCell align="center" component="th">{sponsor.name}</TableCell>
-                        <TableCell align="center">{sponsor.age}</TableCell>
-                        <TableCell align="center">{sponsor.marital}</TableCell>
-                        <TableCell align="center">{sponsor.catholic}</TableCell>
-                        <TableCell align="center">
-                          <IconButton size="small">
-                            <FontAwesomeIcon icon={faXmark} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                      ))}
-                    </TableBody>
                   </Table>
-                </TableContainer>
+              </TableContainer>
+                    
+              <div
+                style={{
+                  maxHeight: '35vh',
+                  overflowY: 'auto',
+                  scrollbarWidth: 'none',   
+                  "&::-webkit-scrollbar": {  
+                      display: "none"
+                  }
+                }}
+              >
+                <Table>
+                  <TableBody>
+                    {sponsors.map((sponsor)=> (
+                      <TableRow key={sponsor.name}>
+                      <TableCell align="center" component="th">{sponsor.name}</TableCell>
+                      <TableCell align="center">{sponsor.age}</TableCell>
+                      <TableCell align="center">{sponsor.marital}</TableCell>
+                      <TableCell align="center">{sponsor.catholic}</TableCell>
+                      <TableCell align="center">
+                        <IconButton size="small">
+                          <FontAwesomeIcon icon={faXmark} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center'}}>
