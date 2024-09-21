@@ -10,7 +10,7 @@ import {
   Button,
   InputAdornment,
   IconButton,
-  FormHelperText
+  FormHelperText,
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong, faMinus } from "@fortawesome/free-solid-svg-icons";
@@ -45,13 +45,13 @@ const Souls = () => {
   const [modalData, setModalData] = useState({});
   const [openCash, setOpenCash] = useState(false);
   const [openGCash, setOpenGCash] = useState(false);
-  const hash = dateToday + generateHash().slice(0,20);
-  const [errors, setErrors] = useState({})
+  const hash = dateToday + generateHash().slice(0, 20);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
-    intention_details: [''],
+    intention_details: [""],
     offered_by: "",
-    preferred_date: null,   // DO NOT alter or delete!
+    preferred_date: null, // DO NOT alter or delete!
     mass_date: "",
     mass_time: "",
     payment_method: "",
@@ -84,11 +84,11 @@ const Souls = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let validate = ValidateForm(formData)
-    setErrors(validate)
-    if(Object.keys(validate).length === 0 && validate.constructor === Object){
+    let validate = ValidateForm(formData);
+    setErrors(validate);
+    if (Object.keys(validate).length === 0 && validate.constructor === Object) {
       try {
-        console.log('success')
+        console.log("success");
         await axios.post(`${config.API}/request/create-intention`, formData);
         const paymentInfo = {
           transaction_no: formData.transaction_no,
@@ -116,7 +116,7 @@ const Souls = () => {
       }
       return name;
     });
-    setFormData(prevState => ({ ...prevState, intention_details: temp }));
+    setFormData((prevState) => ({ ...prevState, intention_details: temp }));
   };
 
   const handleChange = (e) => {
@@ -124,17 +124,18 @@ const Souls = () => {
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    console.log(formData.mass_date);
   };
 
   const addMoreSouls = () => {
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      intention_details: [...prevState.intention_details, ''],
+      intention_details: [...prevState.intention_details, ""],
     }));
   };
 
-   const removeSoul = (index) => {
+  const removeSoul = (index) => {
     const temp = formData.intention_details.filter((_, i) => i !== index);
     setFormData({ ...formData, intention_details: temp });
   };
@@ -186,7 +187,10 @@ const Souls = () => {
                           color="secondary"
                           onClick={() => removeSoul(index)}
                         >
-                          <FontAwesomeIcon icon={faMinus} className="text-sm text-red-700"/>
+                          <FontAwesomeIcon
+                            icon={faMinus}
+                            className="text-sm text-red-700"
+                          />
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -194,7 +198,15 @@ const Souls = () => {
                   style={{ marginBottom: "1rem" }}
                 />
               ))}
-              <Button type="button" onClick={addMoreSouls} variant="outlined" sx={{float: "right",}}> Add Soul</Button>
+              <Button
+                type="button"
+                onClick={addMoreSouls}
+                variant="outlined"
+                sx={{ float: "right" }}
+              >
+                {" "}
+                Add Soul
+              </Button>
             </Grid>
 
             <Grid item xs={12} sm={4}>
@@ -212,20 +224,22 @@ const Souls = () => {
             <Grid item xs={12} sm={4}>
               <label>Mass Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    fullWidth
-                    variant="outlined"
-                    disablePast
-                    size="small"
-                    sx={inputstlying}
-                    name="mass_date"
-                    onChange={(date) => handleDateChange('mass_date', date)}
-                    renderInput={(params) => <TextField {...params} required />}
-                    required
-                  />
+                <DatePicker
+                  fullWidth
+                  variant="outlined"
+                  disablePast
+                  size="small"
+                  sx={inputstlying}
+                  name="mass_date"
+                  onChange={(date) => handleDateChange("mass_date", date)}
+                  renderInput={(params) => <TextField {...params} required />}
+                  required
+                />
               </LocalizationProvider>
               {errors.mass_date != null && (
-                  <FormHelperText sx={{color: 'red'}}>{errors.mass_date}</FormHelperText>
+                <FormHelperText sx={{ color: "red" }}>
+                  {errors.mass_date}
+                </FormHelperText>
               )}
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -257,11 +271,13 @@ const Souls = () => {
                 sx={inputstlying}
                 name="contact_no"
                 onChange={handleChange}
-                inputProps={{maxLength: 11}}
+                inputProps={{ maxLength: 11 }}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{color: 'red'}}>{errors.contact_no}</FormHelperText>
+                <FormHelperText sx={{ color: "red" }}>
+                  {errors.contact_no}
+                </FormHelperText>
               )}
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -293,7 +309,9 @@ const Souls = () => {
                 required
               />
               {errors.amount != null && (
-                <FormHelperText sx={{color: 'red'}}>{errors.amount}</FormHelperText>
+                <FormHelperText sx={{ color: "red" }}>
+                  {errors.amount}
+                </FormHelperText>
               )}
             </Grid>
           </Grid>
