@@ -14,8 +14,10 @@ import NavStaff from "../../components/NavStaff";
 import dayjs from "dayjs";
 import axios from "axios";
 import util from "../../utils/DateTimeFormatter";
+import all from "../../components/SchedulesModal";
 
 const ManageSchedules = () => {
+  const [openModal, setOpenModal] = useState(false);
   const [priestList, setPriestList] = useState([]);
   const [activities, setActivities] = useState([]);
   const [selectedDate, setSelectedDate] = useState(
@@ -50,6 +52,10 @@ const ManageSchedules = () => {
     fetchPriest();
     fetchSchedules();
   }, []);
+
+  const openScheduleModal = () => {
+    setOpenModal(!openModal);
+  };
 
   const timeSlots = [
     "08:00 AM",
@@ -120,10 +126,14 @@ const ManageSchedules = () => {
             <Button
               variant="contained"
               type="button"
+              onClick={() => openScheduleModal()}
               sx={{backgroundColor: "#355173"}}>
               ADD ACTIVITY
             </Button>
           </Box>
+
+          {/*add schedule modal */}
+          <all.AddSchedulesModal open={openModal} close={openScheduleModal} />
 
           <Divider />
 
