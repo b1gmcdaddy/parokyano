@@ -4,6 +4,7 @@ import { Modal, Box, Button, Grid, Typography, IconButton, TextField} from "@mui
 import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useState } from "react"
+import ConfirmationDialog from "../../ConfirmationModal";
 
 const style = {
     position: 'absolute',
@@ -32,6 +33,36 @@ const FuneralMassModalPending = () =>{
 const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState('');
+  const [service] = useState('funeral mass');
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  {/** for sameple if success, ari butang backend**/}
+  const handleConfirm = (action) => {
+    switch (action) {
+      case 'approve':
+        alert('Approval action confirmed.');
+        break;
+      case 'update':
+        alert('Update action confirmed.');
+        break;
+      case 'cancel':
+        alert('Cancel action confirmed.');
+        break;
+      default:
+        break;
+    }
+  };
+
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -109,7 +140,7 @@ const [open, setOpen] = useState(false);
               <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={2}>
-              <Button fullWidth sx={{backgroundColor:'#355173',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#4C74A5"}}}>Assign</Button>
+              <Button onClick={() => handleOpenDialog('approve')} fullWidth sx={{backgroundColor:'#355173',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#4C74A5"}}}>Assign</Button>
             </Grid>
 
             <Grid item sm={12}>
@@ -148,10 +179,11 @@ const [open, setOpen] = useState(false);
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <Button sx={{bgcolor:'#CDAB52',marginTop:'14px', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
-              <Button sx={{bgcolor:'#C34444',margin:'14px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
+              <Button onClick={() => handleOpenDialog('update')} sx={{bgcolor:'#CDAB52',marginTop:'14px', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+              <Button onClick={() => handleOpenDialog('cancel')} sx={{bgcolor:'#C34444',margin:'14px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
             </Grid>
           </Grid>
+          <ConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
         </Box>
         </Modal>
         </>

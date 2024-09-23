@@ -53,6 +53,7 @@ import WakeCancelled from "./components/service-request-modals/pending/cancelled
 import OutsidePending from "./components/service-request-modals/pending/outsideMassPending";
 import OutsideApproved from "./components/service-request-modals/pending/approved/outsideMassApproved";
 import OutsideCancelled from "./components/service-request-modals/pending/cancelled/outsideMassCancelled";
+import ConfirmationDialog from "./components/ConfirmationModal";
   
 function App() {
   return (

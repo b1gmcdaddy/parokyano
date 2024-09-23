@@ -5,6 +5,7 @@ import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-picker
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useState} from "react"
 import React from "react";
+import ConfirmationDialog from "../../ConfirmationModal";
 
 const style = {
   position: 'absolute',
@@ -74,10 +75,32 @@ function RequirementsModal() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [tabValue, setTabValue] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState('');
+  const [service] = useState('wedding');
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+    {/** for sameple if success, ari butang backend**/}
+    const handleConfirm = (action) => {
+      switch (action) {
+        case 'Update wedding requirement':
+          alert('Update action confirmed.');
+          break;
+        default:
+          break;
+      }
+    };
 
   return(
     <React.Fragment>
@@ -156,9 +179,10 @@ function RequirementsModal() {
               </Grid>
             </Box>
             <Grid item sm={12} sx={{textAlign:'center'}}>
-                <Button sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+                <Button onClick={() => handleOpenDialog('Update wedding requirement')} sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
             </Grid>
           </Grid>
+          <ConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
         </Box>
       </Modal>
     </React.Fragment>
@@ -169,6 +193,29 @@ function SponsorsModal() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState('');
+  const [service] = useState('wedding');
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  {/** for sameple if success, ari butang backend**/}
+  const handleConfirm = (action) => {
+    switch (action) {
+      case 'Update sponsors':
+        alert('Update action confirmed.');
+        break;
+      default:
+        break;
+    }
+  };
   
   return(
     <React.Fragment>
@@ -254,9 +301,10 @@ function SponsorsModal() {
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center'}}>
-                <Button sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+                <Button onClick={() => handleOpenDialog('Update sponsors')} sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
             </Grid>
           </Grid>
+          <ConfirmationDialog  open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
         </Box>
       </Modal>
     </React.Fragment>
@@ -268,6 +316,36 @@ const WeddingPending = () =>{
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState('');
+  const [service] = useState('wedding');
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  {/** for sameple if success, ari butang backend**/}
+  const handleConfirm = (action) => {
+    switch (action) {
+      case 'approve':
+        alert('Approval action confirmed.');
+        break;
+      case 'update':
+        alert('Update action confirmed.');
+        break;
+      case 'cancel':
+        alert('Cancel action confirmed.');
+        break;
+      default:
+        break;
+    }
+  };
+
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -495,10 +573,11 @@ const WeddingPending = () =>{
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <Button sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
-              <Button sx={{bgcolor:'#C34444',margin:'0px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
+              <Button onClick={() => handleOpenDialog('update')} sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+              <Button onClick={() => handleOpenDialog('cancel')} sx={{bgcolor:'#C34444',margin:'0px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
             </Grid>
           </Grid>
+          <ConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
         </Box>
         </Modal>
         </>
