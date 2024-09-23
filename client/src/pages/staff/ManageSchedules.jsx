@@ -15,9 +15,13 @@ import dayjs from "dayjs";
 import axios from "axios";
 import util from "../../utils/DateTimeFormatter";
 import all from "../../components/SchedulesModal";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 
 const ManageSchedules = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState(null);
   const [priestList, setPriestList] = useState([]);
   const [activities, setActivities] = useState([]);
   const [selectedDate, setSelectedDate] = useState(
@@ -55,6 +59,11 @@ const ManageSchedules = () => {
 
   const openScheduleModal = () => {
     setOpenModal(!openModal);
+  };
+
+  const openEditScheduleModal = (activity) => {
+    setSelectedActivity(activity);
+    setOpenEditModal(true);
   };
 
   const timeSlots = [
@@ -134,6 +143,12 @@ const ManageSchedules = () => {
 
           {/*add schedule modal */}
           <all.AddSchedulesModal open={openModal} close={openScheduleModal} />
+          <all.EditSchedulesModal
+            open={openEditModal}
+            close={() => setOpenEditModal(false)}
+            activity={selectedActivity}
+            priestList={priestList}
+          />
 
           <Divider />
 
@@ -200,7 +215,20 @@ const ManageSchedules = () => {
                                 : "transparent",
                               color: activity ? "#fff" : "inherit",
                             }}>
-                            {isStart ? activity.activity : ""}
+                            {isStart ? (
+                              <>
+                                {activity.activity}
+                                <FontAwesomeIcon
+                                  onClick={() =>
+                                    openEditScheduleModal(activity)
+                                  }
+                                  icon={faPenToSquare}
+                                  className="ml-2 cursor-pointer"
+                                />{" "}
+                              </>
+                            ) : (
+                              ""
+                            )}
                           </TableCell>
                         );
                       })}

@@ -13,11 +13,12 @@ import {
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import {useEffect, useState} from "react";
-import all from "../../../components/CertificateInfoModal";
 import React from "react";
 import axios from "axios";
 import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
+import all from "../../../components/certificate-request-modals/CertificateInfoModal";
+import SearchCertRecords from "../../../components/certificate-request-modals/SearchCertRecords";
 
 const CertificatesPending = () => {
   const [tableData, setTableData] = useState([]);
@@ -25,6 +26,7 @@ const CertificatesPending = () => {
   const [loading, setLoading] = useState(true);
   const [modalType, setModalType] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [searchModal, setSearchModal] = useState(false);
   const [modalData, setModalData] = useState({
     certificate_details: [""],
   });
@@ -79,6 +81,11 @@ const CertificatesPending = () => {
 
   const closeInfoModal = () => {
     setOpenModal(false);
+    setSearchModal(false);
+  };
+
+  const openSearchModal = () => {
+    setSearchModal(true);
   };
 
   const handlePageChange = (newPage) => {
@@ -115,6 +122,11 @@ const CertificatesPending = () => {
           close={closeInfoModal}
         />
       )}
+      <SearchCertRecords
+        open={searchModal}
+        data={modalData}
+        close={closeInfoModal}
+      />
 
       {loading ? (
         <p>Loading...</p>
@@ -277,6 +289,7 @@ const CertificatesPending = () => {
                         </Button>
                         <Button
                           type="button"
+                          onClick={() => openSearchModal(cert)}
                           sx={{
                             backgroundColor: "#44C360",
                             color: "white",
