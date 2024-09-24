@@ -18,6 +18,7 @@ import React from "react";
 import axios from "axios";
 import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
+import PrintCertificate from "../../../components/certificate-request-modals/PrintCertificate";
 
 const CertificateForClaiming = () => {
   const [tableData, setTableData] = useState([]);
@@ -25,6 +26,7 @@ const CertificateForClaiming = () => {
   const [loading, setLoading] = useState(true);
   const [modalType, setModalType] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [openPrint, setOpenPrint] = useState(false);
   const [modalData, setModalData] = useState({
     certificate_details: [""],
   });
@@ -81,6 +83,10 @@ const CertificateForClaiming = () => {
     setOpenModal(false);
   };
 
+  const openPrintModal = () => {
+    setOpenPrint(true);
+  };
+
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
       setPage(newPage);
@@ -115,6 +121,7 @@ const CertificateForClaiming = () => {
           close={closeInfoModal}
         />
       )}
+      <PrintCertificate open={openPrint} close={() => setOpenPrint(false)} />
 
       {loading ? (
         <p>Loading...</p>
@@ -277,6 +284,7 @@ const CertificateForClaiming = () => {
                         </Button>
                         <Button
                           type="button"
+                          onClick={openPrintModal}
                           sx={{
                             backgroundColor: "#44C360",
                             color: "white",

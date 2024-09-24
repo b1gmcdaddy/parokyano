@@ -143,6 +143,7 @@ const ManageSchedules = () => {
 
           {/* Add schedule modal */}
           <all.AddSchedulesModal open={openModal} close={openScheduleModal} />
+          {/*Edit Sched Modal */}
           <all.EditSchedulesModal
             open={openEditModal}
             close={() => setOpenEditModal(false)}

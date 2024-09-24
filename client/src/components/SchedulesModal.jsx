@@ -234,7 +234,7 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
                 <TextField
                   fullWidth
                   size="small"
-                  value={formatDate(editedActivity.date)}
+                  value={editedActivity.date}
                   id="outlined-basic"
                   variant="outlined"
                   onChange={handleChange}
