@@ -27,6 +27,7 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -113,6 +114,14 @@ const Baptism = () => {
     setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
+
+  const handleTimeChange = (name, time) => {
+    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
+  };
+
+  useEffect(() => {
+    console.log(formData.preferred_time);
+  }, [formData.preferred_time]);
 
   const handleDetails = (e) => {
     setFormData((prevState) => ({
@@ -519,13 +528,15 @@ const Baptism = () => {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
                   fullWidth
-                  type="time"
                   variant="outlined"
                   sx={inputstlying}
                   size="small"
                   name="preferred_time"
-                  timeSteps={{ hours: 30, minutes: 30 }}
-                  onChange={handleChange}
+                  onChange={(time) => handleTimeChange("preferred_time", time)}
+                  renderInput={(params) => <TextField {...params} required />}
+                  timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
+                  minTime={dayjs().set("hour", 7)}
+                  maxTime={dayjs().set("hour", 16)}
                   required
                 />
               </LocalizationProvider>
