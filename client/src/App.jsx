@@ -45,6 +45,15 @@ import BaptismPending from "./components/service-request-modals/pending/baptismP
 import BaptismApproved from "./components/service-request-modals/pending/approved/baptismApproved";
 import BaptismCancelled from "./components/service-request-modals/pending/cancelled/baptismCancelled";
 import WeddingPending from "./components/service-request-modals/pending/weddingPending";
+import WeddingApproved from "./components/service-request-modals/pending/approved/weddingApproved";
+import WeddingCancelled from "./components/service-request-modals/pending/cancelled/weddingCancelled";
+import WakePending from "./components/service-request-modals/pending/wakePending";
+import WakeApproved from "./components/service-request-modals/pending/approved/wakeApproved";
+import WakeCancelled from "./components/service-request-modals/pending/cancelled/wakeCancelled";
+import OutsidePending from "./components/service-request-modals/pending/outsideMassPending";
+import OutsideApproved from "./components/service-request-modals/pending/approved/outsideMassApproved";
+import OutsideCancelled from "./components/service-request-modals/pending/cancelled/outsideMassCancelled";
+import ConfirmationDialog from "./components/ConfirmationModal";
   
 function App() {
   return (
@@ -99,6 +108,14 @@ function App() {
         <Route path="/baptismapproved" element={<BaptismApproved/>}/>
         <Route path="/baptismcancelled" element={<BaptismCancelled/>}/>
         <Route path="/weddingpending" element={<WeddingPending/>}/>
+        <Route path="/weddingapproved" element={<WeddingApproved/>}/>
+        <Route path="/weddingcancelled" element={<WeddingCancelled/>}/>
+        <Route path="/wakemasspending" element={<WakePending/>}/>
+        <Route path="/wakemassapproved" element ={<WakeApproved/>}/>
+        <Route path="/wakemasscancelled" element={<WakeCancelled/>}/>
+        <Route path="/outsidemasspending" element={<OutsidePending/>}/>
+        <Route path="/outsidemassapproved" element={<OutsideApproved/>}/>
+        <Route path="/outsidemasscancelled" element={<OutsideCancelled/>}/>
         <Route path="/cert-requests" element={<CertificateRequests />} />
 
         {/*  -----------ADMIN-----------  */}

@@ -14,8 +14,14 @@ import NavStaff from "../../components/NavStaff";
 import dayjs from "dayjs";
 import axios from "axios";
 import util from "../../utils/DateTimeFormatter";
+import all from "../../components/SchedulesModal";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 
 const ManageSchedules = () => {
+  const [openModal, setOpenModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState(null);
   const [priestList, setPriestList] = useState([]);
   const [activities, setActivities] = useState([]);
   const [selectedDate, setSelectedDate] = useState(
@@ -28,7 +34,7 @@ const ManageSchedules = () => {
       setActivities(res.data);
       console.log(res.data);
     } catch (err) {
-      console.error("error retrieving sched", err);
+      console.error("error retrieving schedule", err);
     }
   };
 
@@ -50,6 +56,15 @@ const ManageSchedules = () => {
     fetchPriest();
     fetchSchedules();
   }, []);
+
+  const openScheduleModal = () => {
+    setOpenModal(!openModal);
+  };
+
+  const openEditScheduleModal = (activity) => {
+    setSelectedActivity(activity);
+    setOpenEditModal(true);
+  };
 
   const timeSlots = [
     "08:00 AM",
@@ -80,7 +95,7 @@ const ManageSchedules = () => {
       (activity) =>
         activity.priest_id === priestID &&
         dayjs(activity.date).isSame(selectedDate, "day") &&
-        slotTime >= activity.start_time && // so that time sllot spans more than one row if activiy is more thna 1hr...
+        slotTime >= activity.start_time &&
         slotTime < activity.end_time
     );
   };
@@ -120,10 +135,21 @@ const ManageSchedules = () => {
             <Button
               variant="contained"
               type="button"
+              onClick={openScheduleModal}
               sx={{backgroundColor: "#355173"}}>
               ADD ACTIVITY
             </Button>
           </Box>
+
+          {/* Add schedule modal */}
+          <all.AddSchedulesModal open={openModal} close={openScheduleModal} />
+          {/*Edit Sched Modal */}
+          <all.EditSchedulesModal
+            open={openEditModal}
+            close={() => setOpenEditModal(false)}
+            activity={selectedActivity}
+            priestList={priestList}
+          />
 
           <Divider />
 
@@ -190,7 +216,20 @@ const ManageSchedules = () => {
                                 : "transparent",
                               color: activity ? "#fff" : "inherit",
                             }}>
-                            {isStart ? activity.activity : ""}
+                            {isStart ? (
+                              <>
+                                {activity.activity}
+                                <FontAwesomeIcon
+                                  onClick={() =>
+                                    openEditScheduleModal(activity)
+                                  }
+                                  icon={faPenToSquare}
+                                  className="ml-2 cursor-pointer"
+                                />{" "}
+                              </>
+                            ) : (
+                              ""
+                            )}
                           </TableCell>
                         );
                       })}

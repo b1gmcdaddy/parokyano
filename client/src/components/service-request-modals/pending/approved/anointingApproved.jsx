@@ -4,6 +4,7 @@ import { Modal, Box, Button, Grid, Typography, IconButton, TextField} from "@mui
 import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useState } from "react"
+import ConfirmationDialog from "../../../ConfirmationModal";
 
 const style = {
     position: 'absolute',
@@ -14,8 +15,8 @@ const style = {
     bgcolor: 'white',
     borderRadius: '10px',
     boxShadow: 3,
-    px: 1,
-    py: 1,
+    px: 4,
+    py: 3,
 };
 
 const TextFieldStyle ={
@@ -32,6 +33,40 @@ const AnointingApproved = () =>{
 const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState('');
+  const [service] = useState('anointing');
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+
+  {/** for sameple if success, ari butang backend**/}
+  const handleConfirm = (action) => {
+    switch (action) {
+      case 'approve':
+        alert('Approval action confirmed.');
+        break;
+      case 'update':
+        alert('Update action confirmed.');
+        break;
+      case 'cancel':
+        alert('Cancel action confirmed.');
+        break;
+      case 'reschedule':
+        alert('Reschedule action confirmed.');
+        break;
+      default:
+        break;
+    }
+  };
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -71,29 +106,29 @@ const [open, setOpen] = useState(false);
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={2.1}>
+            <Grid item sm={2.2}>
               <label>Requested by:</label>
             </Grid>
-            <Grid item sm={4}>
+            <Grid item sm={5}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
-            <Grid item sm={2}>
+            <Grid item sm={1.9}>
               <label>Relationship:</label>
             </Grid>
-            <Grid item sm={3.9}>
+            <Grid item sm={2.9}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={2.1}>
+            <Grid item sm={1.9}>
               <label>Contact no:</label>
             </Grid>
-            <Grid item sm={4}>
+            <Grid item sm={4.9}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
-            <Grid item sm={2}>
+            <Grid item sm={2.3}>
               <label>Sickness/Status:</label>
             </Grid>
-            <Grid item sm={3.9}>
+            <Grid item sm={2.9}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
@@ -147,7 +182,7 @@ const [open, setOpen] = useState(false);
               </LocalizationProvider>
             </Grid>
             <Grid item sm={2}>
-              <Button fullWidth sx={{bgcolor:'#247E38',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#34AC4F"}}}>SET</Button>
+              <Button onClick={() => handleOpenDialog('reschedule')} fullWidth sx={{bgcolor:'#247E38',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#34AC4F"}}}>SET</Button>
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
@@ -156,10 +191,11 @@ const [open, setOpen] = useState(false);
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <Button sx={{bgcolor:'#CDAB52',marginTop:'14px', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
-              <Button sx={{bgcolor:'#C34444',margin:'14px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
+              <Button onClick={() => handleOpenDialog('update')} sx={{bgcolor:'#CDAB52',marginTop:'14px', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+              <Button onClick={() => handleOpenDialog('cancel')} sx={{bgcolor:'#C34444',margin:'14px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
             </Grid>
           </Grid>
+          <ConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
         </Box>
         </Modal>
         </>

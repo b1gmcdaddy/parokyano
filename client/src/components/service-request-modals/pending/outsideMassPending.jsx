@@ -28,7 +28,7 @@ const TextFieldStyleDis ={
   bgcolor:'#D9D9D9'
 };
 
-const BlessingPending = () =>{
+const OutsidePending = () =>{
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -36,7 +36,7 @@ const BlessingPending = () =>{
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState('');
-  const [service] = useState('blessing');
+  const [service] = useState('outside mass');
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -59,7 +59,6 @@ const BlessingPending = () =>{
   }
 
   const isOtherSelected = radioValue === "others";
-
     {/** for sameple if success, ari butang backend**/}
     const handleConfirm = (action) => {
       switch (action) {
@@ -77,6 +76,7 @@ const BlessingPending = () =>{
       }
     };
 
+
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -93,7 +93,7 @@ const BlessingPending = () =>{
           </Grid>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Blessing Request Information</Typography>
+              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Outside Mass Request Information</Typography>
             </Grid>
 
             <Grid item sm={1}>
@@ -101,17 +101,18 @@ const BlessingPending = () =>{
             </Grid>
             <Grid item sm={11}>
               <RadioGroup row name="type" sx={{marginTop:'-5px'}} value={radioValue} onChange={handleRadioChange}>
-                <FormControlLabel value="House Blessing" control={<Radio size="small" />} label="House" />
-                <FormControlLabel value="Company Blessing" control={<Radio size="small" />} label="Company"/>
+                <FormControlLabel value="Chapel" control={<Radio size="small" />} label="Chapel" />
+                <FormControlLabel value="Company" control={<Radio size="small" />} label="Company"/>
                 <FormControlLabel value="others" control={<Radio size="small" />} label="Others:" />
                 <TextField disabled={isOtherSelected ? false : true} value={otherValue} onChange={handleOtherChange} sx={{"& .MuiInputBase-root":{height:'30px'}, opacity: isOtherSelected ? 1 : 0.4, marginTop: '5px'}}/>
               </RadioGroup>
             </Grid>
 
-            <Grid item sm={1.3}>
-              <label>Name:</label>
+
+            <Grid item sm={3.2}>
+              <label>Celebration/Celebrator:</label>
             </Grid>
-            <Grid item sm={10.7}>
+            <Grid item sm={8.8}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
             
@@ -122,16 +123,16 @@ const BlessingPending = () =>{
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={2.2}>
-              <label>Requested by:</label>
+            <Grid item sm={2.4}>
+              <label>Contact Person:</label>
             </Grid>
-            <Grid item sm={3.7}>
+            <Grid item sm={4}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={1.9}>
               <label>Contact no:</label>
             </Grid>
-            <Grid item sm={4.2}>
+            <Grid item sm={3.7}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
@@ -162,7 +163,7 @@ const BlessingPending = () =>{
               </LocalizationProvider>
             </Grid>
             <Grid item sm={2}>
-              <Button fullWidth onClick={() => handleOpenDialog('approve')} sx={{backgroundColor:'#355173',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#4C74A5"}}}>Assign</Button>
+              <Button onClick={() => handleOpenDialog('approve')} fullWidth sx={{backgroundColor:'#355173',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#4C74A5"}}}>Assign</Button>
             </Grid>
 
             <Grid item sm={12}>
@@ -208,4 +209,4 @@ const BlessingPending = () =>{
     )
 }
 
-export default BlessingPending
+export default OutsidePending

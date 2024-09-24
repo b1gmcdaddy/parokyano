@@ -4,24 +4,28 @@ import { Modal, Box, Button, Grid, Typography, IconButton, TextField} from "@mui
 import { useState } from "react"
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    maxWidth: 'md',  
-    bgcolor: 'white',
-    borderRadius: '10px',
-    boxShadow: 3,
-    px: 4,
-    py: 3,
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  maxWidth: 'md',  
+  bgcolor: 'white',
+  borderRadius: '10px',
+  boxShadow: 3,
+  px: 4,
+  py: 3,
+};
+
+const TextFieldStyle ={
+  "& .MuiInputBase-root":{height:'30px'}
 };
 
 const TextFieldStyleDis ={
-  "& .MuiInputBase-root":{height:'30px'},
-  bgcolor:'#D9D9D9'
+    "& .MuiInputBase-root":{height:'30px'},
+    bgcolor:'#D9D9D9'
 };
 
-const AnointingCancelled = () =>{
+const WakeCancelled = () =>{
 
 const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -42,63 +46,44 @@ const [open, setOpen] = useState(false);
           </Grid>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Anointing of the Sick Request Information</Typography>
+              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Wake Mass Request Information</Typography>
             </Grid>
-
-            <Grid item sm={1}>
-              <label>Name:</label>
+            <Grid item sm={4}>
+              <label>Name of the deceased:</label>
             </Grid>
             <Grid item sm={8}>
-              <TextField disabled fullWidth  sx={TextFieldStyleDis}/>
-            </Grid>
-            <Grid item sm={.8}>
-              <label>Age:</label>
-            </Grid>
-            <Grid item sm={2.2}>
-              <TextField disabled fullWidth  sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={1.3}>
-              <label>Address:</label>
-            </Grid>
-            <Grid item sm={10.7}>
-              <TextField disabled fullWidth  sx={TextFieldStyleDis}/>
-            </Grid>
-
-            <Grid item sm={2.2}>
+            <Grid item sm={4}>
               <label>Requested by:</label>
             </Grid>
-            <Grid item sm={5}>
-              <TextField fullWidth  sx={TextFieldStyleDis}/>
-            </Grid>
-            <Grid item sm={1.9}>
-              <label>Relationship:</label>
-            </Grid>
-            <Grid item sm={2.9}>
-              <TextField fullWidth  sx={TextFieldStyleDis}/>
+            <Grid item sm={8}>
+              <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={1.9}>
-              <label>Contact no:</label>
+            <Grid item sm={4.3}>
+              <label>Relationship to the deceased:</label>
             </Grid>
-            <Grid item sm={4.9}>
-              <TextField fullWidth  sx={TextFieldStyleDis}/>
+            <Grid item sm={7.7}>
+              <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
-            <Grid item sm={2.3}>
-              <label>Sickness/Status:</label>
+
+            <Grid item sm={4}>
+              <label>Contact Number:</label>
             </Grid>
-            <Grid item sm={2.9}>
-              <TextField fullWidth  sx={TextFieldStyleDis}/>
+            <Grid item sm={8}>
+              <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
             <Grid item sm={12}>
-              <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
-                <div>
-                  <p style={{width: '80px', textAlign: 'center', fontWeight:'bold'}}>Preferred</p>
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                    <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
+                    <div>
+                        <p style={{width: '80px', textAlign: 'center', fontWeight:'bold'}}>Preferred</p>
+                    </div>
+                    <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
                 </div>
-                <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
-              </div>
             </Grid>
 
             <Grid item sm={4}>
@@ -125,4 +110,4 @@ const [open, setOpen] = useState(false);
     )
 }
 
-export default AnointingCancelled
+export default WakeCancelled

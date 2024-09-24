@@ -1,6 +1,6 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Modal, Box, Button, Grid, Typography, IconButton, TextField, RadioGroup, FormControlLabel, Radio} from "@mui/material"
+import { Modal, Box, Button, Grid, Typography, IconButton, TextField} from "@mui/material"
 import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useState } from "react"
@@ -28,15 +28,14 @@ const TextFieldStyleDis ={
   bgcolor:'#D9D9D9'
 };
 
-const BlessingPending = () =>{
-  const [open, setOpen] = useState(false);
+const WakePending = () =>{
+
+const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [radioValue, setRadioValue] = useState("");
-  const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState('');
-  const [service] = useState('blessing');
+  const [service] = useState('wake mass');
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -46,37 +45,23 @@ const BlessingPending = () =>{
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
-  
-  const handleRadioChange = (e) => {
-    setRadioValue(e.target.value);
-    if (e.target.value !== "others") {
-        setOtherValue("");
+
+  {/** for sameple if success, ari butang backend**/}
+  const handleConfirm = (action) => {
+    switch (action) {
+      case 'approve':
+        alert('Approval action confirmed.');
+        break;
+      case 'update':
+        alert('Update action confirmed.');
+        break;
+      case 'cancel':
+        alert('Cancel action confirmed.');
+        break;
+      default:
+        break;
     }
-  }
-
-  const handleOtherChange = (e) => {
-    setOtherValue(e.target.value);
-  }
-
-  const isOtherSelected = radioValue === "others";
-
-    {/** for sameple if success, ari butang backend**/}
-    const handleConfirm = (action) => {
-      switch (action) {
-        case 'approve':
-          alert('Approval action confirmed.');
-          break;
-        case 'update':
-          alert('Update action confirmed.');
-          break;
-        case 'cancel':
-          alert('Cancel action confirmed.');
-          break;
-        default:
-          break;
-      }
-    };
-
+  };
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -93,45 +78,33 @@ const BlessingPending = () =>{
           </Grid>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Blessing Request Information</Typography>
+              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Wake Mass Request Information</Typography>
             </Grid>
-
-            <Grid item sm={1}>
-              <label>Type:</label>
+            <Grid item sm={4}>
+              <label>Name of the deceased:</label>
             </Grid>
-            <Grid item sm={11}>
-              <RadioGroup row name="type" sx={{marginTop:'-5px'}} value={radioValue} onChange={handleRadioChange}>
-                <FormControlLabel value="House Blessing" control={<Radio size="small" />} label="House" />
-                <FormControlLabel value="Company Blessing" control={<Radio size="small" />} label="Company"/>
-                <FormControlLabel value="others" control={<Radio size="small" />} label="Others:" />
-                <TextField disabled={isOtherSelected ? false : true} value={otherValue} onChange={handleOtherChange} sx={{"& .MuiInputBase-root":{height:'30px'}, opacity: isOtherSelected ? 1 : 0.4, marginTop: '5px'}}/>
-              </RadioGroup>
-            </Grid>
-
-            <Grid item sm={1.3}>
-              <label>Name:</label>
-            </Grid>
-            <Grid item sm={10.7}>
-              <TextField fullWidth  sx={TextFieldStyle}/>
-            </Grid>
-            
-            <Grid item sm={1.3}>
-              <label>Address:</label>
-            </Grid>
-            <Grid item sm={10.7}>
+            <Grid item sm={8}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={2.2}>
+            <Grid item sm={4}>
               <label>Requested by:</label>
             </Grid>
-            <Grid item sm={3.7}>
+            <Grid item sm={8}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
-            <Grid item sm={1.9}>
-              <label>Contact no:</label>
+
+            <Grid item sm={4.3}>
+              <label>Relationship to the deceased:</label>
             </Grid>
-            <Grid item sm={4.2}>
+            <Grid item sm={7.7}>
+              <TextField fullWidth  sx={TextFieldStyle}/>
+            </Grid>
+
+            <Grid item sm={4}>
+              <label>Contact Number:</label>
+            </Grid>
+            <Grid item sm={8}>
               <TextField fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
@@ -145,7 +118,7 @@ const BlessingPending = () =>{
               </div>
             </Grid>
 
-            <Grid item sm={3}>
+            <Grid item sm={2.5}>
               <label>Priest:</label>
               <TextField fullWidth select sx={TextFieldStyle}/>
             </Grid>
@@ -155,14 +128,18 @@ const BlessingPending = () =>{
                   <DatePicker fullWidth sx={TextFieldStyle}/>
               </LocalizationProvider>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.7}>
               <label>Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker fullWidth sx={TextFieldStyle}/>
               </LocalizationProvider>
             </Grid>
+            <Grid item sm={1.8}>
+              <label>Venue:</label>
+              <TextField disabled fullWidth sx={TextFieldStyle}/>
+            </Grid>
             <Grid item sm={2}>
-              <Button fullWidth onClick={() => handleOpenDialog('approve')} sx={{backgroundColor:'#355173',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#4C74A5"}}}>Assign</Button>
+              <Button onClick={() => handleOpenDialog('approve')} fullWidth sx={{backgroundColor:'#355173',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#4C74A5"}}}>Assign</Button>
             </Grid>
 
             <Grid item sm={12}>
@@ -175,7 +152,7 @@ const BlessingPending = () =>{
               </div>
             </Grid>
 
-            <Grid item sm={3}>
+            <Grid item sm={2.5}>
               <label>Priest:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
@@ -183,8 +160,12 @@ const BlessingPending = () =>{
               <label>Date:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.7}>
               <label>Time:</label>
+              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+            </Grid>
+            <Grid item sm={1.8}>
+              <label>Venue:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis}/>
             </Grid>
             <Grid item sm={2}>
@@ -208,4 +189,4 @@ const BlessingPending = () =>{
     )
 }
 
-export default BlessingPending
+export default WakePending

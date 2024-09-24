@@ -12,8 +12,8 @@ const style = {
     bgcolor: 'white',
     borderRadius: '10px',
     boxShadow: 3,
-    px: 1,
-    py: 1,
+    px: 4,
+    py: 3,
 };
 
 const TextFieldStyle ={
@@ -67,15 +67,13 @@ const BlessingCancelled = () =>{
             <Grid item sm={1}>
               <label>Type:</label>
             </Grid>
-            <Grid item sm={5.6}>
+            <Grid item sm={11}>
               <RadioGroup row name="type" sx={{marginTop:'-5px'}} value={radioValue} onChange={handleRadioChange}>
                 <FormControlLabel disabled  value="House Blessing" control={<Radio size="small" />} label="House" />
                 <FormControlLabel disabled  value="Company Blessing" control={<Radio size="small" />} label="Company"/>
                 <FormControlLabel disabled  value="others" control={<Radio size="small" />} label="Others:" />
+                <TextField disabled value={otherValue} onChange={handleOtherChange} sx={{"& .MuiInputBase-root":{height:'30px'}, opacity: isOtherSelected ? 1 : 0.4, marginTop: '5px'}}/>
               </RadioGroup>
-            </Grid>
-            <Grid item sm={5.4}>
-              <TextField fullWidth disabled value={otherValue} onChange={handleOtherChange} sx={{"& .MuiInputBase-root":{height:'30px'}, opacity: isOtherSelected ? 1 : 0.4}}/>
             </Grid>
 
             <Grid item sm={1.3}>
@@ -92,16 +90,16 @@ const BlessingCancelled = () =>{
               <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
 
-            <Grid item sm={2.1}>
+            <Grid item sm={2.2}>
               <label>Requested by:</label>
             </Grid>
-            <Grid item sm={3.8}>
+            <Grid item sm={3.7}>
               <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
-            <Grid item sm={1.8}>
+            <Grid item sm={1.9}>
               <label>Contact no:</label>
             </Grid>
-            <Grid item sm={4.3}>
+            <Grid item sm={4.2}>
               <TextField disabled fullWidth  sx={TextFieldStyle}/>
             </Grid>
 

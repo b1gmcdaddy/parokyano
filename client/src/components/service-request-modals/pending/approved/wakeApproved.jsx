@@ -4,38 +4,38 @@ import { Modal, Box, Button, Grid, Typography, IconButton, TextField} from "@mui
 import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useState } from "react"
-import ConfirmationDialog from "../../ConfirmationModal";
+import ConfirmationDialog from "../../../ConfirmationModal";
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    maxWidth: 'md',  
-    bgcolor: 'white',
-    borderRadius: '10px',
-    boxShadow: 3,
-    px: 4,
-    py: 3,
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  maxWidth: 'md',  
+  bgcolor: 'white',
+  borderRadius: '10px',
+  boxShadow: 3,
+  px: 4,
+  py: 3,
 };
 
 const TextFieldStyle ={
-  "& .MuiInputBase-root":{height:'30px'}
+    "& .MuiInputBase-root":{height:'30px'}
 };
 
 const TextFieldStyleDis ={
-  "& .MuiInputBase-root":{height:'30px'},
-  bgcolor:'#D9D9D9'
+    "& .MuiInputBase-root":{height:'30px'},
+    bgcolor:'#D9D9D9'
 };
 
-const FuneralMassModalPending = () =>{
+const WakeApproved = () =>{
 
 const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState('');
-  const [service] = useState('funeral mass');
+  const [service] = useState('wake mass');
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -58,11 +58,13 @@ const [open, setOpen] = useState(false);
       case 'cancel':
         alert('Cancel action confirmed.');
         break;
+      case 'reschedule':
+        alert('Reschedule action confirmed.');
+        break;
       default:
         break;
     }
   };
-
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -79,7 +81,7 @@ const [open, setOpen] = useState(false);
           </Grid>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Funeral Mass Request Information</Typography>
+              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Wake Mass Request Information</Typography>
             </Grid>
             <Grid item sm={4}>
               <label>Name of the deceased:</label>
@@ -110,13 +112,40 @@ const [open, setOpen] = useState(false);
             </Grid>
 
             <Grid item sm={12}>
-              <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
-                <div>
-                  <p style={{width: '80px', textAlign: 'center', fontWeight:'bold'}}>Preferred</p>
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                    <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
+                    <div>
+                        <p style={{width: '80px', textAlign: 'center', fontWeight:'bold'}}>Assigned</p>
+                    </div>
+                    <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
                 </div>
-                <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
-              </div>
+            </Grid>
+
+            <Grid item sm={3}>
+              <label>Priest:</label>
+              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+            </Grid>
+            <Grid item sm={3}>
+              <label>Date:</label>
+              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+            </Grid>
+            <Grid item sm={3}>
+              <label>Time:</label>
+              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+            </Grid>
+            <Grid item sm={3}>
+              <label>Venue:</label>
+              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+            </Grid>
+
+            <Grid item sm={12}>
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                    <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
+                    <div>
+                        <p style={{width: '95px', textAlign: 'center', fontWeight:'bold'}}>Reschedule</p>
+                    </div>
+                    <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
+                </div>
             </Grid>
 
             <Grid item sm={2.5}>
@@ -140,37 +169,7 @@ const [open, setOpen] = useState(false);
               <TextField disabled fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={2}>
-              <Button onClick={() => handleOpenDialog('approve')} fullWidth sx={{backgroundColor:'#355173',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#4C74A5"}}}>Assign</Button>
-            </Grid>
-
-            <Grid item sm={12}>
-              <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
-                <div>
-                  <p style={{width: '80px', textAlign: 'center', fontWeight:'bold'}}>Assigned</p>
-                </div>
-                <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
-              </div>
-            </Grid>
-
-            <Grid item sm={2.5}>
-              <label>Priest:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
-            </Grid>
-            <Grid item sm={3}>
-              <label>Date:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
-            </Grid>
-            <Grid item sm={2.7}>
-              <label>Time:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
-            </Grid>
-            <Grid item sm={1.8}>
-              <label>Venue:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
-            </Grid>
-            <Grid item sm={2}>
-              <Button fullWidth sx={{bgcolor:'#BBB6B6',marginTop:'24px', height: '30px', fontWeight:'bold', color:'#355173', "&:hover":{bgcolor:"#D3CECE"}}}>CLEAR</Button>
+              <Button onClick={() => handleOpenDialog('reschedule')} fullWidth sx={{bgcolor:'#247E38',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#34AC4F"}}}>SET</Button>
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
@@ -179,8 +178,8 @@ const [open, setOpen] = useState(false);
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <Button onClick={() => handleOpenDialog('update')} sx={{bgcolor:'#CDAB52',marginTop:'14px', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
-              <Button onClick={() => handleOpenDialog('cancel')} sx={{bgcolor:'#C34444',margin:'14px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
+                <Button onClick={() => handleOpenDialog('update')} sx={{bgcolor:'#CDAB52',marginTop:'14px', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+                <Button onClick={() => handleOpenDialog('cancel')} sx={{bgcolor:'#C34444',margin:'14px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
             </Grid>
           </Grid>
           <ConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
@@ -190,4 +189,4 @@ const [open, setOpen] = useState(false);
     )
 }
 
-export default FuneralMassModalPending
+export default WakeApproved

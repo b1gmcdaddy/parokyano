@@ -14,14 +14,14 @@ import {
 } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import React from "react";
 import all from "../../../components/IntentionInfoModal";
 import axios from "axios";
 import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
 
-const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
+const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
   const [tableData, setTableData] = useState([]);
   const [modaltype, setModalType] = useState(null);
   // const [page, setPage] = useState(0);
@@ -108,7 +108,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
   }, [page, totalItems, filter]);
 
   return (
-    <div style={{ margin: "0 auto" }}>
+    <div style={{margin: "0 auto"}}>
       {/* VERY IMPORTANT: caps ang first letter sa type */}
       {modaltype === "Souls" && (
         <all.SoulsInfoModal
@@ -142,17 +142,15 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
               borderRadius: "16px",
               overflowX: "auto",
               border: "none",
-            }}
-          >
+            }}>
             <Table
               stickyHeader
               aria-label="custom table"
               sx={{
                 borderCollapse: "separate",
                 borderSpacing: 0,
-                sm: { minWidth: 650 },
-              }}
-            >
+                sm: {minWidth: 650},
+              }}>
               <TableHead>
                 <TableRow>
                   <TableCell
@@ -161,8 +159,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                       border: "none",
                       fontSize: "0.85rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     TYPE
                   </TableCell>
                   <TableCell
@@ -171,8 +168,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                       border: "none",
                       fontSize: "0.85rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     OFFERED BY
                   </TableCell>
                   <TableCell
@@ -181,8 +177,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                       border: "none",
                       fontSize: "0.85rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     DONATION METHOD
                   </TableCell>
                   <TableCell
@@ -191,8 +186,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                       border: "none",
                       fontSize: "0.85rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     SCHEDULED MASS
                   </TableCell>
                   <TableCell
@@ -201,8 +195,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                       border: "none",
                       fontSize: "0.85rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     TRANSACTION NO.
                   </TableCell>
                   <TableCell
@@ -211,8 +204,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                       border: "none",
                       fontSize: "0.75rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     ACTIONS
                   </TableCell>
                 </TableRow>
@@ -228,9 +220,8 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                           backgroundColor: "#ffffff",
                           padding: 0,
                           border: "none",
-                        }}
-                      >
-                        <Box sx={{ height: "5px", backgroundColor: "white" }} />
+                        }}>
+                        <Box sx={{height: "5px", backgroundColor: "white"}} />
                       </TableCell>
                     </TableRow>
 
@@ -241,8 +232,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                         "& > *": {
                           borderBottom: "none",
                         },
-                      }}
-                    >
+                      }}>
                       <TableCell
                         sx={{
                           border: "none",
@@ -250,8 +240,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                           textAlign: "center",
                           borderRadius: "15px 0 0 15px",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {row.type}
                       </TableCell>
                       <TableCell
@@ -260,8 +249,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {row.requested_by}
                       </TableCell>
                       <TableCell
@@ -270,8 +258,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {row.payment_method}
                       </TableCell>
                       <TableCell
@@ -280,8 +267,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {schedule(row.preferred_date, row.preferred_time)}
                       </TableCell>
                       <TableCell
@@ -290,8 +276,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {row.transaction_no}
                       </TableCell>
                       <TableCell
@@ -301,8 +286,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                           textAlign: "center",
                           borderRadius: "0 15px 15px 0",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         <Button
                           type="button"
                           sx={{
@@ -313,8 +297,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                               backgroundColor: "#0036B1",
                             },
                           }}
-                          onClick={() => openInfoModal(row)}
-                        >
+                          onClick={() => openInfoModal(row)}>
                           INFO
                         </Button>
                       </TableCell>
@@ -330,8 +313,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
               justifyContent: "center",
               alignItems: "center",
               marginTop: 2,
-            }}
-          >
+            }}>
             <IconButton
               onClick={() => handlePageChange(page - 1, totalPages, filter)}
               disabled={page === 0} // Disable on the first page
@@ -339,12 +321,11 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                 backgroundColor: page === 0 ? "grey.300" : "black",
                 color: page === 0 ? "grey.600" : "white",
                 marginRight: "10px",
-              }}
-            >
+              }}>
               <KeyboardArrowLeft />
             </IconButton>
 
-            <Typography sx={{ margin: "0 10px", fontWeight: "bold" }}>
+            <Typography sx={{margin: "0 10px", fontWeight: "bold"}}>
               Page {page + 1} of {totalPages}
             </Typography>
 
@@ -355,8 +336,7 @@ const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
                 backgroundColor: page === totalPages - 1 ? "grey.300" : "black",
                 color: page === totalPages - 1 ? "grey.600" : "white",
                 marginLeft: "10px",
-              }}
-            >
+              }}>
               <KeyboardArrowRight />
             </IconButton>
           </Box>

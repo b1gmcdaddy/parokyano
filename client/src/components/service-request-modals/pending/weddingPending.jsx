@@ -5,6 +5,7 @@ import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-picker
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useState} from "react"
 import React from "react";
+import ConfirmationDialog from "../../ConfirmationModal";
 
 const style = {
   position: 'absolute',
@@ -48,11 +49,6 @@ const TextFieldStyle ={
   "& .MuiInputBase-root":{height:'30px', bgcolor:'white'}
 };
 
-const TextFieldStyleDis ={
-  "& .MuiInputBase-root":{height:'30px'},
-  bgcolor:'#D9D9D9'
-};
-
 const tabStyle ={
   fontWeight: 'bold',
   color: 'black',
@@ -63,7 +59,15 @@ const sponsors = [
   {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
   {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
   {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"}
+  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
+  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
+  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
+  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
+  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
+  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
+  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
+  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
+  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
 ];
 
 function RequirementsModal() {
@@ -71,10 +75,32 @@ function RequirementsModal() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [tabValue, setTabValue] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState('');
+  const [service] = useState('wedding');
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+    {/** for sameple if success, ari butang backend**/}
+    const handleConfirm = (action) => {
+      switch (action) {
+        case 'Update wedding requirement':
+          alert('Update action confirmed.');
+          break;
+        default:
+          break;
+      }
+    };
 
   return(
     <React.Fragment>
@@ -153,9 +179,10 @@ function RequirementsModal() {
               </Grid>
             </Box>
             <Grid item sm={12} sx={{textAlign:'center'}}>
-                <Button sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+                <Button onClick={() => handleOpenDialog('Update wedding requirement')} sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
             </Grid>
           </Grid>
+          <ConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
         </Box>
       </Modal>
     </React.Fragment>
@@ -166,6 +193,29 @@ function SponsorsModal() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState('');
+  const [service] = useState('wedding');
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  {/** for sameple if success, ari butang backend**/}
+  const handleConfirm = (action) => {
+    switch (action) {
+      case 'Update sponsors':
+        alert('Update action confirmed.');
+        break;
+      default:
+        break;
+    }
+  };
   
   return(
     <React.Fragment>
@@ -205,39 +255,56 @@ function SponsorsModal() {
 
             <Grid item sm={12}>
               <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
+                <Table sx={{ tableLayout: 'fixed' }}>
+                  <TableHead>
+                    <TableRow>
                       <TableCell align="center">Full Name</TableCell>
                       <TableCell align="center">Age</TableCell>
                       <TableCell align="center">Marital Status</TableCell>
                       <TableCell align="center">Catholic?</TableCell>
-                      <TableCell align="center"> </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {sponsors.map((sponsor)=> (
-                        <TableRow key={sponsor.name}>
-                        <TableCell align="center" component="th">{sponsor.name}</TableCell>
+                      <TableCell align="center" sx={{ width: '50px' }}></TableCell>
+                    </TableRow>
+                  </TableHead>
+                </Table>
+              </TableContainer>
+              <div
+                style={{
+                  maxHeight: '35vh',
+                  overflowY: 'auto',
+                  width: '100%',
+                  scrollbarWidth: 'none',   
+                  "&::-webkit-scrollbar": {  
+                      display: "none"
+                  }
+                }}
+              >
+                <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
+                  <TableBody>
+                    {sponsors.map((sponsor) => (
+                      <TableRow key={sponsor.name}>
+                        <TableCell align="center" component="th">
+                          {sponsor.name}
+                        </TableCell>
                         <TableCell align="center">{sponsor.age}</TableCell>
                         <TableCell align="center">{sponsor.marital}</TableCell>
                         <TableCell align="center">{sponsor.catholic}</TableCell>
-                        <TableCell align="center">
+                        <TableCell align="center" sx={{ width: '50px' }}>
                           <IconButton size="small">
                             <FontAwesomeIcon icon={faXmark} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center'}}>
-                <Button sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+                <Button onClick={() => handleOpenDialog('Update sponsors')} sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
             </Grid>
           </Grid>
+          <ConfirmationDialog  open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
         </Box>
       </Modal>
     </React.Fragment>
@@ -249,6 +316,36 @@ const WeddingPending = () =>{
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState('');
+  const [service] = useState('wedding');
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  {/** for sameple if success, ari butang backend**/}
+  const handleConfirm = (action) => {
+    switch (action) {
+      case 'approve':
+        alert('Approval action confirmed.');
+        break;
+      case 'update':
+        alert('Update action confirmed.');
+        break;
+      case 'cancel':
+        alert('Cancel action confirmed.');
+        break;
+      default:
+        break;
+    }
+  };
+
     return(
         <>
         <Button onClick={handleOpen}>Open modal</Button>
@@ -476,10 +573,11 @@ const WeddingPending = () =>{
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <Button sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
-              <Button sx={{bgcolor:'#C34444',margin:'0px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
+              <Button onClick={() => handleOpenDialog('update')} sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+              <Button onClick={() => handleOpenDialog('cancel')} sx={{bgcolor:'#C34444',margin:'0px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
             </Grid>
           </Grid>
+          <ConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
         </Box>
         </Modal>
         </>
