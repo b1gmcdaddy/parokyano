@@ -13,8 +13,28 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import config from "../config";
+import formatDate from "../utils/DateTimeFormatter";
 
 const AddSchedulesModal = ({open, close}) => {
+  const [priests, setPriests] = useState([]);
+
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+  }, []);
+
   return (
     <Dialog
       fullWidth
@@ -52,51 +72,50 @@ const AddSchedulesModal = ({open, close}) => {
                   fullWidth
                   size="small"
                   id="demo-simple-select">
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  {priests.map((priest) => (
+                    <MenuItem key={priest.priestID} value={priest.priestID}>
+                      {priest.first_name} {priest.last_name}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Grid>
 
               <Grid item xs={12} sm={12}>
                 <label>Activity: </label>
                 <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  size="small"
+                  id="outlined-basic"
+                  variant="outlined"
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <label>Date: </label>
                 <TextField
-                  variant="outlined"
-                  type="date"
-                  multiline
-                  size="small"
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  size="small"
+                  id="outlined-basic"
+                  variant="outlined"
                 />
               </Grid>
+
               <Grid item xs={12} sm={4}>
-                <label>From: </label>
+                <label>Start Time: </label>
                 <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  size="small"
+                  id="outlined-basic"
+                  variant="outlined"
                 />
               </Grid>
+
               <Grid item xs={12} sm={4}>
-                <label>To: </label>
+                <label>End Time: </label>
                 <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  size="small"
+                  id="outlined-basic"
+                  variant="outlined"
                 />
               </Grid>
             </Grid>
@@ -133,7 +152,24 @@ const AddSchedulesModal = ({open, close}) => {
   );
 };
 
-const EditSchedulesModal = ({open, close, activity}) => {
+const EditSchedulesModal = ({open, close, activity, priestList}) => {
+  if (!activity) {
+    return null;
+  }
+  const [editedActivity, setEditedActivity] = useState(activity);
+
+  useEffect(() => {
+    setEditedActivity(activity);
+  }, [activity]);
+
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    setEditedActivity((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <Dialog
       fullWidth
@@ -157,7 +193,7 @@ const EditSchedulesModal = ({open, close, activity}) => {
                 fontWeight: "bold",
                 marginBottom: "10px",
               }}>
-              Edit Schedule
+              Edit Activity
             </Typography>
 
             <Grid
@@ -170,52 +206,62 @@ const EditSchedulesModal = ({open, close, activity}) => {
                   labelId="demo-simple-select-label"
                   fullWidth
                   size="small"
-                  id="demo-simple-select">
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  id="demo-simple-select"
+                  value={editedActivity.priest_id}
+                  onChange={handleChange}>
+                  {priestList.map((priest) => (
+                    <MenuItem key={priest.priestID} value={priest.priestID}>
+                      {priest.first_name} {priest.last_name}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Grid>
+
               <Grid item xs={12} sm={12}>
                 <label>Activity: </label>
                 <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  size="small"
+                  id="outlined-basic"
+                  variant="outlined"
+                  value={editedActivity.activity}
+                  name="activity"
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <label>Date: </label>
                 <TextField
-                  variant="outlined"
-                  type="date"
-                  multiline
-                  size="small"
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  size="small"
+                  value={formatDate(editedActivity.date)}
+                  id="outlined-basic"
+                  variant="outlined"
+                  onChange={handleChange}
                 />
               </Grid>
 
               <Grid item xs={12} sm={4}>
-                <label>From: </label>
+                <label>Start Time: </label>
                 <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  size="small"
+                  value={editedActivity.start_time}
+                  id="outlined-basic"
+                  variant="outlined"
+                  onChange={handleChange}
                 />
               </Grid>
+
               <Grid item xs={12} sm={4}>
-                <label>To: </label>
+                <label>End Time: </label>
                 <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  size="small"
+                  value={editedActivity.end_time}
+                  onChange={handleChange}
+                  id="outlined-basic"
+                  variant="outlined"
                 />
               </Grid>
             </Grid>
@@ -235,7 +281,7 @@ const EditSchedulesModal = ({open, close, activity}) => {
                   sm={12}
                   sx={{display: "flex", justifyContent: "center", gap: "20px"}}>
                   <Button variant="contained" sx={{backgroundColor: "#355173"}}>
-                    EDIT
+                    Edit
                   </Button>
                   <Button
                     sx={{backgroundColor: "#D9D9D9", color: "black"}}
@@ -252,7 +298,4 @@ const EditSchedulesModal = ({open, close, activity}) => {
   );
 };
 
-export default {
-  AddSchedulesModal,
-  EditSchedulesModal,
-};
+export default {AddSchedulesModal, EditSchedulesModal};

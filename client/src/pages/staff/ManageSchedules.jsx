@@ -34,7 +34,7 @@ const ManageSchedules = () => {
       setActivities(res.data);
       console.log(res.data);
     } catch (err) {
-      console.error("error retrieving sched", err);
+      console.error("error retrieving schedule", err);
     }
   };
 
@@ -95,7 +95,7 @@ const ManageSchedules = () => {
       (activity) =>
         activity.priest_id === priestID &&
         dayjs(activity.date).isSame(selectedDate, "day") &&
-        slotTime >= activity.start_time && // so that time sllot spans more than one row if activiy is more thna 1hr...
+        slotTime >= activity.start_time &&
         slotTime < activity.end_time
     );
   };
@@ -135,13 +135,13 @@ const ManageSchedules = () => {
             <Button
               variant="contained"
               type="button"
-              onClick={() => openScheduleModal()}
+              onClick={openScheduleModal}
               sx={{backgroundColor: "#355173"}}>
               ADD ACTIVITY
             </Button>
           </Box>
 
-          {/*add schedule modal */}
+          {/* Add schedule modal */}
           <all.AddSchedulesModal open={openModal} close={openScheduleModal} />
           <all.EditSchedulesModal
             open={openEditModal}
