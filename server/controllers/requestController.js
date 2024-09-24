@@ -293,7 +293,7 @@ const retrieveRequests = (req, res) => {
 const retrieveCerts = (req, res) => {
   const { status, page, limit } = req.query;
   const offset = Number(page - 1) * parseInt(limit);
-  const query = `SELECT * FROM request WHERE service_id = 2 AND service_id = 3 AND service_id = 4 AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const query = `SELECT * FROM request WHERE service_id = 2 OR service_id = 3 OR service_id = 4 OR status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {
@@ -398,27 +398,35 @@ const getSummaryWithTypeParam = (req, res) => {
 
 //tested wid postman already..
 const getRequestSummary = (req, res) => {
-  const { requestDate, approveDate } = req.query;
-  const reqSummary = {};
+  const { startDate, endDate } = req.query;
+  console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
 
-  if (!requestDate || !approveDate) {
+  if (!startDate || !endDate) {
     return res.status(400).json("lacking dates..");
   }
 
-  const query = `SELECT type, status, COUNT(*) as count FROM request WHERE date_requested BETWEEN ? AND ? GROUP BY type, status`;
+  const query = `
+    SELECT 
+      s.name, 
+      COUNT(CASE WHEN r.status = 'pending' THEN 1 END) AS pending,
+      COUNT(CASE WHEN r.status = 'approved' THEN 1 END) AS approved,
+      COUNT(CASE WHEN r.status = 'cancelled' THEN 1 END) AS cancelled
+    FROM 
+      request r
+    JOIN 
+      service s ON r.service_id = s.serviceID
+    WHERE 
+      r.date_requested BETWEEN '${startDate}' AND '${endDate}'
+    GROUP BY 
+      s.serviceID;`;
 
-  db.query(query, [requestDate, approveDate], (err, results) => {
+  db.query(query, (err, results) => {
     if (err) {
-      return res.status(500).json("error retriving db ifno..");
+      console.error(err);
+      return res.status(500).json("error retriving db info..");
     }
-    results.forEach((row) => {
-      if (!reqSummary[row.type]) {
-        //chck if naa na ang type sa summary{} object
-        reqSummary[row.type] = { pending: 0, approved: 0, cancelled: 0 };
-      }
-      reqSummary[row.type][row.status] = row.count; //counts each instance of a status per type..
-    });
-    res.json(reqSummary);
+    console.log(results);
+    res.status(200).json(results);
   });
 };
 
