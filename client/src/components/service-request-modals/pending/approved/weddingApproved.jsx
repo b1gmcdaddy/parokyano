@@ -191,11 +191,7 @@ function SponsorsModal() {
   );
 }
 
-
-const WeddingApproved = () =>{
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+const WeddingApproved = ({open, handleClose}) =>{
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState('');
   const [service] = useState('wedding');
@@ -231,9 +227,9 @@ const WeddingApproved = () =>{
 
     return(
         <>
-        <Button onClick={handleOpen}>Open modal</Button>
         <Modal
-        open={open}
+          open={open} 
+          onClose={handleClose}
         >
         <Box sx={style}>
           <Grid container justifyContent={"flex-end"}>

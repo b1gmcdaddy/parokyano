@@ -19,13 +19,23 @@ import axios from "axios";
 import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
 
+//Modals
+import AnointingApproved from "../../../components/service-request-modals/pending/approved/anointingApproved";
+import BaptismApproved from "../../../components/service-request-modals/pending/approved/baptismApproved";
+import BlessingApproved from "../../../components/service-request-modals/pending/approved/blessingApproved";
+import FuneralMassModalApproved from "../../../components/service-request-modals/pending/approved/funeralMassApproved";
+import OutsideApproved from "../../../components/service-request-modals/pending/approved/outsideMassApproved";
+import WakeApproved from "../../../components/service-request-modals/pending/approved/wakeApproved";
+import WeddingApproved from "../../../components/service-request-modals/pending/approved/weddingApproved";
+
 const ApprovedRequests = () => {
   const [tableData, setTableData] = useState([]);
-  const [modaltype, setModalType] = useState(null);
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
   const [totalItems, setTotalItems] = useState(0);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
+  const [modalType, setModalType] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchRequests = async () => {
     try {
@@ -68,6 +78,48 @@ const ApprovedRequests = () => {
     fetchRequests();
     fetchTotalItems();
   }, [page]);
+
+  const renderModal = () =>{
+    switch (modalType) {
+      case "Anointing of the sick":
+        return (
+          <AnointingApproved open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Baptism - General" || "Baptism - Appointment":
+        return (
+          <BaptismApproved open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Blessing":
+        return (
+          <BlessingApproved open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Funeral Mass":
+        return (
+          <FuneralMassModalApproved open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Outside Mass":
+        return (
+          <OutsideApproved open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Wake Mass":
+        return (
+          <WakeApproved open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Wedding - Civilly Married":
+        return (
+          <WeddingApproved open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      default:
+        return null;
+    }
+  }
 
   return (
     <div style={{ margin: "0 auto" }}>
@@ -252,6 +304,10 @@ const ApprovedRequests = () => {
                             backgroundColor: "#0036B1",
                           },
                         }}
+                        onClick={() => {
+                          setModalType(req.service_name);
+                          setModalOpen(true);
+                        }}
                       >
                         INFO
                       </Button>
@@ -316,6 +372,7 @@ const ApprovedRequests = () => {
           <KeyboardArrowRight />
         </IconButton>
       </Box>
+      {renderModal()}
     </div>
   );
 };

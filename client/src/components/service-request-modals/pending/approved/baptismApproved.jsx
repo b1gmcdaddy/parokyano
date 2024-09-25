@@ -45,10 +45,7 @@ const godparents = [
     { name: "Carl Joseph Noob", isCatholic: "yes" }
 ];
 
-const BaptismApproved = () =>{
-const [open, setOpen] = useState(false);
-const handleOpen = () => setOpen(true);
-const handleClose = () => setOpen(false);
+const BaptismApproved = ({open, handleClose}) =>{
 const [dialogOpen, setDialogOpen] = useState(false);
 const [currentAction, setCurrentAction] = useState('');
 const [service] = useState('baptism');
@@ -84,9 +81,9 @@ const handleConfirm = (action) => {
   
     return(
         <>
-        <Button onClick={handleOpen}>Open modal</Button>
-        <Modal sx={{}}
-        open={open}
+        <Modal
+          open={open} 
+          onClose={handleClose}
         >
         <Box sx={style}>
         <Grid container justifyContent={"flex-end"}>

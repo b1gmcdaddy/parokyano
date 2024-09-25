@@ -28,12 +28,7 @@ const TextFieldStyleDis ={
   bgcolor:'#D9D9D9'
 };
 
-const AnointingApproved = () =>{
-
-const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
+const AnointingApproved = ({open, handleClose}) =>{
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState('');
   const [service] = useState('anointing');
@@ -69,9 +64,9 @@ const [open, setOpen] = useState(false);
   };
     return(
         <>
-        <Button onClick={handleOpen}>Open modal</Button>
-        <Modal sx={{}}
-        open={open}
+        <Modal
+          open={open} 
+          onClose={handleClose}        
         >
         <Box sx={style}>
         <Grid container justifyContent={"flex-end"}>
