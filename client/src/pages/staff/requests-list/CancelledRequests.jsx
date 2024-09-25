@@ -19,13 +19,23 @@ import axios from "axios";
 import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
 
+//Modals
+import AnointingCancelled from "../../../components/service-request-modals/pending/cancelled/anointingCancelled";
+import BaptismCancelled from "../../../components/service-request-modals/pending/cancelled/baptismCancelled";
+import BlessingCancelled from "../../../components/service-request-modals/pending/cancelled/blessingCancelled";
+import FuneralMassModalCancelled from "../../../components/service-request-modals/pending/cancelled/funeralMassCancelled";
+import OutsideCancelled from "../../../components/service-request-modals/pending/cancelled/outsideMassCancelled";
+import WakeCancelled from "../../../components/service-request-modals/pending/cancelled/wakeCancelled";
+import WeddingCancelled from "../../../components/service-request-modals/pending/cancelled/weddingCancelled";
+
 const CancelledRequests = () => {
   const [tableData, setTableData] = useState([]);
-  const [modaltype, setModalType] = useState(null);
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
   const [totalItems, setTotalItems] = useState(0);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
+  const [modalType, setModalType] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchRequests = async () => {
     try {
@@ -68,6 +78,48 @@ const CancelledRequests = () => {
     fetchRequests();
     fetchTotalItems();
   }, [page]);
+
+  const renderModal = () =>{
+    switch (modalType) {
+      case "Anointing of the sick":
+        return (
+          <AnointingCancelled open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Baptism - General" || "Baptism - Appointment":
+        return (
+          <BaptismCancelled open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Blessing":
+        return (
+          <BlessingCancelled open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Funeral Mass":
+        return (
+          <FuneralMassModalCancelled open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Outside Mass":
+        return (
+          <OutsideCancelled open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Wake Mass":
+        return (
+          <WakeCancelled open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Wedding - Civilly Married":
+        return (
+          <WeddingCancelled open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      default:
+        return null;
+    }
+  }
 
   return (
     <div style={{ margin: "0 auto" }}>
@@ -251,6 +303,10 @@ const CancelledRequests = () => {
                           backgroundColor: "#0036B1",
                         },
                       }}
+                      onClick={() => {
+                        setModalType(req.service_name);
+                        setModalOpen(true);
+                      }}
                     >
                       INFO
                     </Button>
@@ -298,6 +354,7 @@ const CancelledRequests = () => {
           <KeyboardArrowRight />
         </IconButton>
       </Box>
+      {renderModal()}
     </div>
   );
 };

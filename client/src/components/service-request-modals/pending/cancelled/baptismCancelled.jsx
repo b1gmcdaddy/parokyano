@@ -42,16 +42,12 @@ const godparents = [
     { name: "Carl Joseph Noob", isCatholic: "yes" }
 ];
 
-const BaptismCancelled = () =>{
-const [open, setOpen] = useState(false);
-const handleOpen = () => setOpen(true);
-const handleClose = () => setOpen(false);
-  
+const BaptismCancelled = ({open, handleClose}) =>{
     return(
         <>
-        <Button onClick={handleOpen}>Open modal</Button>
-        <Modal sx={{}}
-        open={open}
+        <Modal
+          open={open} 
+          onClose={handleClose}
         >
         <Box sx={style}>
         <Grid container justifyContent={"flex-end"}>
