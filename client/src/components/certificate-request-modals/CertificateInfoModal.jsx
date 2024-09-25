@@ -408,13 +408,13 @@ const ConfirmationCertInfoModal = ({open, data, close}) => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <label>Date of Baptism: </label>
+                <label>Date of Confirmation: </label>
                 <TextField
                   variant="outlined"
                   multiline
                   size="small"
                   fullWidth
-                  // value={details}
+                  value={data.preferred_date}
                   inputProps={{readOnly: true}}
                 />
               </Grid>
@@ -515,6 +515,7 @@ const ConfirmationCertInfoModal = ({open, data, close}) => {
 
 const MarriageCertInfoModal = ({open, data, close}) => {
   // const details = JSON.parse(data.details);
+  const spouseDetails = JSON.parse(data.spouse_name);
   // const schedule =
   //   formatTime(data.preferred_time) +
   //   " ,  " +
@@ -568,7 +569,7 @@ const MarriageCertInfoModal = ({open, data, close}) => {
                   multiline
                   fullWidth
                   size="small"
-                  // value={details}
+                  value={data.first_name}
                   inputProps={{readOnly: true}}
                 />
               </Grid>
@@ -579,7 +580,7 @@ const MarriageCertInfoModal = ({open, data, close}) => {
                   multiline
                   fullWidth
                   size="small"
-                  // value={details}
+                  value={data.middle_name}
                   inputProps={{readOnly: true}}
                 />
               </Grid>
@@ -590,18 +591,40 @@ const MarriageCertInfoModal = ({open, data, close}) => {
                   multiline
                   size="small"
                   fullWidth
-                  // value={details}
+                  value={data.last_name}
                   inputProps={{readOnly: true}}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Place of Birth: </label>
+              <Grid item xs={12} sm={4}>
+                <label>First Name of Spouse: </label>
                 <TextField
                   variant="outlined"
                   multiline
                   size="small"
                   fullWidth
-                  // value={details}
+                  value={spouseDetails.firstName}
+                  inputProps={{readOnly: true}}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <label>Middle Name of Spouse: </label>
+                <TextField
+                  variant="outlined"
+                  multiline
+                  size="small"
+                  fullWidth
+                  value={spouseDetails.middleName}
+                  inputProps={{readOnly: true}}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <label>Last Name of Spouse: </label>
+                <TextField
+                  variant="outlined"
+                  multiline
+                  size="small"
+                  fullWidth
+                  value={spouseDetails.lastName}
                   inputProps={{readOnly: true}}
                 />
               </Grid>
@@ -612,62 +635,18 @@ const MarriageCertInfoModal = ({open, data, close}) => {
                   multiline
                   size="small"
                   fullWidth
-                  // value={details}
+                  value={data.contact_no}
                   inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <label>Place of Birth: </label>
+                <label>Date of Marriage: </label>
                 <TextField
                   variant="outlined"
                   multiline
                   size="small"
                   fullWidth
-                  // value={details}
-                  inputProps={{readOnly: true}}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Contact No: </label>
-                <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
-                  fullWidth
-                  // value={details}
-                  inputProps={{readOnly: true}}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Father's Name: </label>
-                <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
-                  fullWidth
-                  // value={details}
-                  inputProps={{readOnly: true}}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Mother's Maiden Name: </label>
-                <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
-                  fullWidth
-                  // value={details}
-                  inputProps={{readOnly: true}}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Date of Baptism: </label>
-                <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
-                  fullWidth
-                  // value={details}
+                  value={data.preferred_date}
                   inputProps={{readOnly: true}}
                 />
               </Grid>
@@ -678,7 +657,7 @@ const MarriageCertInfoModal = ({open, data, close}) => {
                   multiline
                   size="small"
                   fullWidth
-                  // value={details}
+                  value={data.date_requested}
                   inputProps={{readOnly: true}}
                 />
               </Grid>
@@ -695,19 +674,6 @@ const MarriageCertInfoModal = ({open, data, close}) => {
                   <MenuItem value={20}>Twenty</MenuItem>
                   <MenuItem value={30}>Thirty</MenuItem>
                 </Select>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>&nbsp;</label>
-                <TextField
-                  variant="outlined"
-                  multiline
-                  size="small"
-                  placeholder="DISABLED"
-                  fullWidth
-                  disabled
-                  // value={details}
-                  inputProps={{readOnly: true}}
-                />
               </Grid>
             </Grid>
 
