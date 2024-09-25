@@ -28,10 +28,7 @@ const TextFieldStyleDis ={
   bgcolor:'#D9D9D9'
 };
 
-const BlessingPending = () =>{
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+const BlessingPending = ({open, handleClose}) =>{
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -79,9 +76,9 @@ const BlessingPending = () =>{
 
     return(
         <>
-        <Button onClick={handleOpen}>Open modal</Button>
-        <Modal sx={{}}
-        open={open}
+        <Modal
+          open={open} 
+          onClose={handleClose}
         >
         <Box sx={style}>
         <Grid container justifyContent={"flex-end"}>
