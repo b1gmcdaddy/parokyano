@@ -1,10 +1,11 @@
-const mysql = require('mysql');
+const mysql = require("mysql");
+require("dotenv").config();
 
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'parokyano'
-})
+  host: process.env.MYSQL_ADDON_HOST,
+  user: process.env.MYSQL_ADDON_USER,
+  password: process.env.MYSQL_ADDON_PASSWORD,
+  database: process.env.MYSQL_ADDON_DB,
+});
 
-module.exports = pool
+module.exports = pool;
