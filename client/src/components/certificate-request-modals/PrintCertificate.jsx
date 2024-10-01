@@ -3,6 +3,7 @@ import {
   Button,
   TextField,
   Box,
+  Container,
   Dialog,
   DialogContent,
   Grid,
@@ -53,7 +54,23 @@ const PrintCertificate = ({open, close}) => {
               })}>
               <CloseIcon />
             </IconButton>
-            dsfdsf
+
+            <Box
+              sx={{
+                border: "solid 1px",
+                maxHeight: "700px",
+                overflowY: "auto",
+                borderRadius: "4px",
+                boxShadow: "2px 3px #949494",
+              }}>
+              <Container maxWidth="lg" sx={{backgroundColor: "#EEEEEE"}}>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed
+                voluptate expedita cum. Aliquid natus non quasi nesciunt, est
+                iure repellendus eveniet ducimus impedit facilis obcaecati
+                assumenda odit asperiores hic corporis!
+              </Container>
+            </Box>
+
             <DialogActions>
               <Grid
                 container
