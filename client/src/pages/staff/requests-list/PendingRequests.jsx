@@ -332,6 +332,7 @@ const PendingRequests = () => {
                         setModalData(req);
                         setModalType(req.service_name);
                         setModalOpen(true);
+                        setSelectedRequest(req);
                       }}
                     >
                       INFO
