@@ -148,7 +148,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 row
                 name="type"
                 sx={{ marginTop: "-5px" }}
-                value={formData.type}
+                value={data?.type}
                 onChange={handleRadioChange}
               >
                 <FormControlLabel
@@ -186,7 +186,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.first_name + " " + formData.last_name}
+                value={data?.first_name + " " + data?.last_name}
               ></TextField>
             </Grid>
 
@@ -197,7 +197,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.address}
+                value={data.address}
                 readonly
               />
             </Grid>
@@ -209,7 +209,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.requested_by}
+                value={data.requested_by}
                 readonly
               />
             </Grid>
@@ -220,7 +220,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.contact_no}
+                value={data.contact_no}
                 readonly
               />
             </Grid>

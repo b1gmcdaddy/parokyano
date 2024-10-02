@@ -1,5 +1,5 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -17,8 +17,8 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 
 const style = {
@@ -35,15 +35,15 @@ const style = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
 };
 
 const TextFieldStyleDis = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
   bgcolor: "#D9D9D9",
 };
 
-const OutsidePending = ({open, handleClose, request}) => {
+const OutsidePending = ({ open, request, handleClose }) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -105,7 +105,8 @@ const OutsidePending = ({open, handleClose, request}) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
+                sx={{ textAlign: "center", fontWeight: "bold" }}
+              >
                 Outside Mass Request Information
               </Typography>
             </Grid>
@@ -117,9 +118,10 @@ const OutsidePending = ({open, handleClose, request}) => {
               <RadioGroup
                 row
                 name="type"
-                sx={{marginTop: "-5px"}}
+                sx={{ marginTop: "-5px" }}
                 value={request?.type || ""}
-                onChange={handleRadioChange}>
+                onChange={handleRadioChange}
+              >
                 <FormControlLabel
                   value="Chapel"
                   control={<Radio size="small" />}
@@ -140,7 +142,7 @@ const OutsidePending = ({open, handleClose, request}) => {
                   value={otherValue}
                   onChange={handleOtherChange}
                   sx={{
-                    "& .MuiInputBase-root": {height: "30px"},
+                    "& .MuiInputBase-root": { height: "30px" },
                     opacity: isOtherSelected ? 1 : 0.4,
                     marginTop: "5px",
                   }}
@@ -154,7 +156,7 @@ const OutsidePending = ({open, handleClose, request}) => {
             <Grid item sm={8.8}>
               <TextField
                 fullWidth
-                value={request.first_name}
+                value={request?.first_name}
                 sx={TextFieldStyle}
               />
             </Grid>
@@ -165,7 +167,7 @@ const OutsidePending = ({open, handleClose, request}) => {
             <Grid item sm={10.7}>
               <TextField
                 fullWidth
-                value={request.address}
+                value={request?.address}
                 sx={TextFieldStyle}
               />
             </Grid>
@@ -176,7 +178,7 @@ const OutsidePending = ({open, handleClose, request}) => {
             <Grid item sm={4}>
               <TextField
                 fullWidth
-                value={request.requested_by}
+                value={request?.requested_by}
                 sx={TextFieldStyle}
               />
             </Grid>
@@ -186,7 +188,7 @@ const OutsidePending = ({open, handleClose, request}) => {
             <Grid item sm={3.7}>
               <TextField
                 fullWidth
-                value={request.contact_no}
+                value={request?.contact_no}
                 sx={TextFieldStyle}
               />
             </Grid>
@@ -197,9 +199,10 @@ const OutsidePending = ({open, handleClose, request}) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
                 />
                 <div>
                   <p
@@ -207,12 +210,13 @@ const OutsidePending = ({open, handleClose, request}) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     Preferred
                   </p>
                 </div>
                 <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
             </Grid>
@@ -243,8 +247,9 @@ const OutsidePending = ({open, handleClose, request}) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#4C74A5"},
-                }}>
+                  "&:hover": { bgcolor: "#4C74A5" },
+                }}
+              >
                 Assign
               </Button>
             </Grid>
@@ -255,9 +260,10 @@ const OutsidePending = ({open, handleClose, request}) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
                 />
                 <div>
                   <p
@@ -265,12 +271,13 @@ const OutsidePending = ({open, handleClose, request}) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     Assigned
                   </p>
                 </div>
                 <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
             </Grid>
@@ -296,8 +303,9 @@ const OutsidePending = ({open, handleClose, request}) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "#355173",
-                  "&:hover": {bgcolor: "#D3CECE"},
-                }}>
+                  "&:hover": { bgcolor: "#D3CECE" },
+                }}
+              >
                 CLEAR
               </Button>
             </Grid>
@@ -310,11 +318,12 @@ const OutsidePending = ({open, handleClose, request}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
-              <Typography variant="body2" sx={{marginRight: "5px"}}>
+              }}
+            >
+              <Typography variant="body2" sx={{ marginRight: "5px" }}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{fontWeight: "bold"}}>
+              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 040124hash
               </Typography>
             </Grid>
@@ -327,7 +336,8 @@ const OutsidePending = ({open, handleClose, request}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -337,8 +347,9 @@ const OutsidePending = ({open, handleClose, request}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F0CA67"},
-                }}>
+                  "&:hover": { bgcolor: "#F0CA67" },
+                }}
+              >
                 UPDATE
               </Button>
               <Button
@@ -350,8 +361,9 @@ const OutsidePending = ({open, handleClose, request}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F05A5A"},
-                }}>
+                  "&:hover": { bgcolor: "#F05A5A" },
+                }}
+              >
                 CANCEL
               </Button>
             </Grid>

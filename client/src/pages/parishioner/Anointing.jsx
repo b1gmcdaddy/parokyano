@@ -333,17 +333,17 @@ const Anointing = () => {
             </Grid>
           </Grid>
           <div className="mt-[3rem] flex justify-center">
-            <ReCAPTCHA
+            {/* <ReCAPTCHA
               sitekey="6LeCEPMpAAAAANAqLQ48wTuNOGmTPaHcMxJh4xaJ"
               onChange={handleCaptchaChange}
-            />
+            /> */}
           </div>
           <div className="mt-[1rem] flex justify-center">
             <button
               className={`text-white py-3 px-3 font-medium shadow-sm rounded-md ${
                 isCaptchaChecked ? "bg-[#355173]" : "bg-[#868686]"
               }`}
-              disabled={!isCaptchaChecked}
+              // disabled={!isCaptchaChecked}
               onClick={handlesubmit}
               type="button"
             >

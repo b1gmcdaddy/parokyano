@@ -295,7 +295,7 @@ const retrieveCerts = (req, res) => {
   console.log(page, limit);
   const offset = Number(page - 1) * parseInt(limit);
   console.log(offset);
-  const query = `SELECT * FROM request WHERE www AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const query = `SELECT * FROM request WHERE service_id=2 OR service_id=3 OR service_id=4 AND status=? ORDER BY date_requested DESC LIMIT ${limit} OFFSET ${offset}`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {

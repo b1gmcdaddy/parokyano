@@ -39,11 +39,11 @@ export default function ValidateForm(data) {
     }
   }
 
-  if (data.donation_amount !== null) {
-    if (isNaN(Number(data.donation_amount))) {
-      errors.amount = "Not a valid amount";
-    }
-  }
+  // if (data.donation !== null) {
+  //   if (isNaN(Number(data.donation_amount))) {
+  //     errors.amount = "Not a valid amount";
+  //   }
+  // }
 
   return errors;
 }

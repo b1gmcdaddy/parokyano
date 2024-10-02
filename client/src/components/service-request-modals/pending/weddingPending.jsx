@@ -1,5 +1,5 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -26,8 +26,8 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState } from "react";
 import React from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 
@@ -70,7 +70,7 @@ const boxModal = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px", bgcolor: "white"},
+  "& .MuiInputBase-root": { height: "30px", bgcolor: "white" },
 };
 
 const tabStyle = {
@@ -80,18 +80,33 @@ const tabStyle = {
 };
 
 const sponsors = [
-  {name: "John Dominic Cocjic", age: "22", marital: "Married", catholic: "Yes"},
-  {name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes"},
-  {name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes"},
-  {name: "John Dominic Cocjic", age: "22", marital: "Married", catholic: "Yes"},
-  {name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes"},
-  {name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes"},
-  {name: "John Dominic Cocjic", age: "22", marital: "Married", catholic: "Yes"},
-  {name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes"},
-  {name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes"},
+  {
+    name: "John Dominic Cocjic",
+    age: "22",
+    marital: "Married",
+    catholic: "Yes",
+  },
+  { name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes" },
+  { name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes" },
+  { name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes" },
+  {
+    name: "John Dominic Cocjic",
+    age: "22",
+    marital: "Married",
+    catholic: "Yes",
+  },
+  { name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes" },
+  { name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes" },
+  { name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes" },
+  {
+    name: "John Dominic Cocjic",
+    age: "22",
+    marital: "Married",
+    catholic: "Yes",
+  },
+  { name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes" },
+  { name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes" },
+  { name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes" },
 ];
 
 function RequirementsModal() {
@@ -138,8 +153,9 @@ function RequirementsModal() {
           fontSize: "11px",
           marginLeft: "5px",
           color: "white",
-          "&:hover": {bgcolor: "#4C74A5"},
-        }}>
+          "&:hover": { bgcolor: "#4C74A5" },
+        }}
+      >
         Requirements
       </Button>
       <Modal open={open}>
@@ -155,7 +171,8 @@ function RequirementsModal() {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
+                sx={{ textAlign: "center", fontWeight: "bold" }}
+              >
                 Wedding Requirements Information
               </Typography>
             </Grid>
@@ -165,7 +182,8 @@ function RequirementsModal() {
                 variant="fullWidth"
                 value={tabValue}
                 onChange={handleTabChange}
-                sx={{borderRadius: "10px 10px 0px 0px"}}>
+                sx={{ borderRadius: "10px 10px 0px 0px" }}
+              >
                 <Tab label="Groom" sx={tabStyle} />
                 <Tab label="Bride" sx={tabStyle} />
               </Tabs>
@@ -175,7 +193,8 @@ function RequirementsModal() {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "0px 0px 5px 5px",
-                }}>
+                }}
+              >
                 <Grid container justifyContent={"center"}>
                   <Box>
                     {tabValue === 0 && (
@@ -184,7 +203,7 @@ function RequirementsModal() {
                           <FormControlLabel
                             control={<Checkbox />}
                             label={
-                              <Typography sx={{fontSize: "15px"}}>
+                              <Typography sx={{ fontSize: "15px" }}>
                                 Marriage License
                               </Typography>
                             }
@@ -194,7 +213,7 @@ function RequirementsModal() {
                           <FormControlLabel
                             control={<Checkbox />}
                             label={
-                              <Typography sx={{fontSize: "15px"}}>
+                              <Typography sx={{ fontSize: "15px" }}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -204,7 +223,7 @@ function RequirementsModal() {
                           <FormControlLabel
                             control={<Checkbox />}
                             label={
-                              <Typography sx={{fontSize: "15px"}}>
+                              <Typography sx={{ fontSize: "15px" }}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -214,7 +233,7 @@ function RequirementsModal() {
                           <FormControlLabel
                             control={<Checkbox />}
                             label={
-                              <Typography sx={{fontSize: "15px"}}>
+                              <Typography sx={{ fontSize: "15px" }}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -228,7 +247,7 @@ function RequirementsModal() {
                           <FormControlLabel
                             control={<Checkbox />}
                             label={
-                              <Typography sx={{fontSize: "15px"}}>
+                              <Typography sx={{ fontSize: "15px" }}>
                                 Marriage License
                               </Typography>
                             }
@@ -238,7 +257,7 @@ function RequirementsModal() {
                           <FormControlLabel
                             control={<Checkbox />}
                             label={
-                              <Typography sx={{fontSize: "15px"}}>
+                              <Typography sx={{ fontSize: "15px" }}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -248,7 +267,7 @@ function RequirementsModal() {
                           <FormControlLabel
                             control={<Checkbox />}
                             label={
-                              <Typography sx={{fontSize: "15px"}}>
+                              <Typography sx={{ fontSize: "15px" }}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -258,7 +277,7 @@ function RequirementsModal() {
                           <FormControlLabel
                             control={<Checkbox />}
                             label={
-                              <Typography sx={{fontSize: "15px"}}>
+                              <Typography sx={{ fontSize: "15px" }}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -271,9 +290,9 @@ function RequirementsModal() {
               </Box>
             </Grid>
 
-            <Grid item sm={12} sx={{marginTop: "5px"}}>
+            <Grid item sm={12} sx={{ marginTop: "5px" }}>
               <div
-                style={{flex: 0.1, height: "1.8px", backgroundColor: "black"}}
+                style={{ flex: 0.1, height: "1.8px", backgroundColor: "black" }}
               />
             </Grid>
 
@@ -282,7 +301,7 @@ function RequirementsModal() {
                 <FormControlLabel
                   control={<Checkbox />}
                   label={
-                    <Typography sx={{fontSize: "15px"}}>
+                    <Typography sx={{ fontSize: "15px" }}>
                       Parish Permit
                     </Typography>
                   }
@@ -292,7 +311,7 @@ function RequirementsModal() {
                 <FormControlLabel
                   control={<Checkbox />}
                   label={
-                    <Typography sx={{fontSize: "15px"}}>
+                    <Typography sx={{ fontSize: "15px" }}>
                       Prenuptial Questionnaire
                     </Typography>
                   }
@@ -302,14 +321,14 @@ function RequirementsModal() {
                 <FormControlLabel
                   control={<Checkbox />}
                   label={
-                    <Typography sx={{fontSize: "15px"}}>
+                    <Typography sx={{ fontSize: "15px" }}>
                       Pre-Cana Seminar
                     </Typography>
                   }
                 />
               </Grid>
             </Box>
-            <Grid item sm={12} sx={{textAlign: "center"}}>
+            <Grid item sm={12} sx={{ textAlign: "center" }}>
               <Button
                 onClick={() => handleOpenDialog("Update wedding requirement")}
                 sx={{
@@ -318,8 +337,9 @@ function RequirementsModal() {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F0CA67"},
-                }}>
+                  "&:hover": { bgcolor: "#F0CA67" },
+                }}
+              >
                 UPDATE
               </Button>
             </Grid>
@@ -377,8 +397,9 @@ function SponsorsModal() {
           fontSize: "11px",
           marginLeft: "5px",
           color: "white",
-          "&:hover": {bgcolor: "#4C74A5"},
-        }}>
+          "&:hover": { bgcolor: "#4C74A5" },
+        }}
+      >
         Sponsors
       </Button>
       <Modal open={open}>
@@ -394,7 +415,8 @@ function SponsorsModal() {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
+                sx={{ textAlign: "center", fontWeight: "bold" }}
+              >
                 Wedding Sponsors Information
               </Typography>
             </Grid>
@@ -414,7 +436,7 @@ function SponsorsModal() {
               <label>Catholic?:</label>
               <TextField select fullWidth sx={TextFieldStyle} />
             </Grid>
-            <Grid item sm={12} sx={{textAlign: "center"}}>
+            <Grid item sm={12} sx={{ textAlign: "center" }}>
               <Button
                 sx={{
                   bgcolor: "#355173",
@@ -422,15 +444,16 @@ function SponsorsModal() {
                   width: "150px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#4C74A5"},
-                }}>
+                  "&:hover": { bgcolor: "#4C74A5" },
+                }}
+              >
                 Add Sponsor
               </Button>
             </Grid>
 
             <Grid item sm={12}>
               <TableContainer component={Paper}>
-                <Table sx={{tableLayout: "fixed"}}>
+                <Table sx={{ tableLayout: "fixed" }}>
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">Full Name</TableCell>
@@ -439,7 +462,8 @@ function SponsorsModal() {
                       <TableCell align="center">Catholic?</TableCell>
                       <TableCell
                         align="center"
-                        sx={{width: "50px"}}></TableCell>
+                        sx={{ width: "50px" }}
+                      ></TableCell>
                     </TableRow>
                   </TableHead>
                 </Table>
@@ -453,8 +477,9 @@ function SponsorsModal() {
                   "&::-webkit-scrollbar": {
                     display: "none",
                   },
-                }}>
-                <Table sx={{tableLayout: "fixed", width: "100%"}}>
+                }}
+              >
+                <Table sx={{ tableLayout: "fixed", width: "100%" }}>
                   <TableBody>
                     {sponsors.map((sponsor) => (
                       <TableRow key={sponsor.name}>
@@ -464,7 +489,7 @@ function SponsorsModal() {
                         <TableCell align="center">{sponsor.age}</TableCell>
                         <TableCell align="center">{sponsor.marital}</TableCell>
                         <TableCell align="center">{sponsor.catholic}</TableCell>
-                        <TableCell align="center" sx={{width: "50px"}}>
+                        <TableCell align="center" sx={{ width: "50px" }}>
                           <IconButton size="small">
                             <FontAwesomeIcon icon={faXmark} />
                           </IconButton>
@@ -476,7 +501,7 @@ function SponsorsModal() {
               </div>
             </Grid>
 
-            <Grid item sm={12} sx={{textAlign: "center"}}>
+            <Grid item sm={12} sx={{ textAlign: "center" }}>
               <Button
                 onClick={() => handleOpenDialog("Update sponsors")}
                 sx={{
@@ -485,8 +510,9 @@ function SponsorsModal() {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F0CA67"},
-                }}>
+                  "&:hover": { bgcolor: "#F0CA67" },
+                }}
+              >
                 UPDATE
               </Button>
             </Grid>
@@ -504,10 +530,24 @@ function SponsorsModal() {
   );
 }
 
-const WeddingPending = ({open, handleClose, request}) => {
+const WeddingPending = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("wedding");
+  const [formData, setFormData] = useState({
+    type: data.type,
+    first_name: data.first_name,
+    last_name: data.last_name,
+    address: data.address,
+    requested_by: data.requested_by,
+    contact_no: data.contact_no,
+    preferred_date: data.preferred_date,
+    preferred_time: data.preferred_time,
+    preferred_priest: data.preferred_priest,
+    isParishioner: data.isParishioner,
+    transaction_no: data.transaction_no,
+    service_id: 13,
+  });
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -539,7 +579,7 @@ const WeddingPending = ({open, handleClose, request}) => {
 
   return (
     <>
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={open} onClose={() => handleClose}>
         <Box sx={style}>
           <Grid container justifyContent={"flex-end"}>
             <Grid item>
@@ -552,7 +592,8 @@ const WeddingPending = ({open, handleClose, request}) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
+                sx={{ textAlign: "center", fontWeight: "bold" }}
+              >
                 Wedding Request Information
               </Typography>
             </Grid>
@@ -560,12 +601,18 @@ const WeddingPending = ({open, handleClose, request}) => {
             <Grid item sm={12}>
               <Box
                 fullWidth
-                sx={{bgcolor: "#D9D9D9", padding: "10px", borderRadius: "5px"}}>
+                sx={{
+                  bgcolor: "#D9D9D9",
+                  padding: "10px",
+                  borderRadius: "5px",
+                }}
+              >
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{fontWeight: "bold", fontSize: "14px"}}>
+                      sx={{ fontWeight: "bold", fontSize: "14px" }}
+                    >
                       Groom:
                     </Typography>
                   </Grid>
@@ -573,7 +620,7 @@ const WeddingPending = ({open, handleClose, request}) => {
                     <label>First Name:</label>
                     <TextField
                       fullWidth
-                      value={request.first_name}
+                      value={formData?.first_name || ""}
                       sx={TextFieldStyle}
                     />
                   </Grid>
@@ -581,7 +628,7 @@ const WeddingPending = ({open, handleClose, request}) => {
                     <label>Middle Name:</label>
                     <TextField
                       fullWidth
-                      value={request.middle_name}
+                      value={formData?.middle_name || ""}
                       sx={TextFieldStyle}
                     />
                   </Grid>
@@ -589,7 +636,7 @@ const WeddingPending = ({open, handleClose, request}) => {
                     <label>Last Name:</label>
                     <TextField
                       fullWidth
-                      value={request.last_name}
+                      value={formData?.last_name || ""}
                       sx={TextFieldStyle}
                     />
                   </Grid>
@@ -600,38 +647,32 @@ const WeddingPending = ({open, handleClose, request}) => {
             <Grid item sm={12}>
               <Box
                 fullWidth
-                sx={{bgcolor: "#D9D9D9", padding: "10px", borderRadius: "5px"}}>
+                sx={{
+                  bgcolor: "#D9D9D9",
+                  padding: "10px",
+                  borderRadius: "5px",
+                }}
+              >
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{fontWeight: "bold", fontSize: "14px"}}>
+                      sx={{ fontWeight: "bold", fontSize: "14px" }}
+                    >
                       Bride:
                     </Typography>
                   </Grid>
                   <Grid item sm={4}>
                     <label>First Name:</label>
-                    <TextField
-                      fullWidth
-                      value={request.spouse_name.firstName}
-                      sx={TextFieldStyle}
-                    />
+                    <TextField fullWidth value={""} sx={TextFieldStyle} />
                   </Grid>
                   <Grid item sm={4}>
                     <label>Middle Name:</label>
-                    <TextField
-                      fullWidth
-                      value={request.spouse_name.middleName}
-                      sx={TextFieldStyle}
-                    />
+                    <TextField fullWidth value={""} sx={TextFieldStyle} />
                   </Grid>
                   <Grid item sm={4}>
                     <label>Last Name:</label>
-                    <TextField
-                      fullWidth
-                      value={request.spouse_name.lastName}
-                      sx={TextFieldStyle}
-                    />
+                    <TextField fullWidth value={""} sx={TextFieldStyle} />
                   </Grid>
                 </Grid>
               </Box>
@@ -641,17 +682,18 @@ const WeddingPending = ({open, handleClose, request}) => {
               <label>Contact No:</label>
               <TextField
                 fullWidth
-                value={request.contact_no}
+                value={formData?.contact_no}
                 sx={TextFieldStyle}
               />
             </Grid>
             <Grid item sm={4}>
               <label>Status:</label>
               <TextField
-                value={request.relationship}
+                value={formData?.relationship}
                 fullWidth
                 select
-                sx={TextFieldStyle}>
+                sx={TextFieldStyle}
+              >
                 <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                 <MenuItem value="">Live In for Under 4 Years</MenuItem>
                 <MenuItem value="">Live In for Over 4 Years</MenuItem>
@@ -661,10 +703,11 @@ const WeddingPending = ({open, handleClose, request}) => {
             <Grid item sm={4}>
               <label>Payment:</label>
               <TextField
-                value={request.status}
+                value={formData?.status}
                 select
                 fullWidth
-                sx={TextFieldStyle}>
+                sx={TextFieldStyle}
+              >
                 <MenuItem value="pending">pending</MenuItem>
                 <MenuItem value="">paid</MenuItem>
                 <MenuItem value="">cancelled</MenuItem>
@@ -674,7 +717,8 @@ const WeddingPending = ({open, handleClose, request}) => {
             <Grid item sm={12} textAlign={"center"}>
               <Typography
                 variant="subtitle1"
-                sx={{display: "inline-block", fontSize: "14px"}}>
+                sx={{ display: "inline-block", fontSize: "14px" }}
+              >
                 Requirements:
               </Typography>
               <Typography
@@ -683,7 +727,8 @@ const WeddingPending = ({open, handleClose, request}) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
-                }}>
+                }}
+              >
                 Incomplete
               </Typography>
               <RequirementsModal />
@@ -693,7 +738,8 @@ const WeddingPending = ({open, handleClose, request}) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
-                }}>
+                }}
+              >
                 Sponsors:
               </Typography>
               <Typography
@@ -702,7 +748,8 @@ const WeddingPending = ({open, handleClose, request}) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
-                }}>
+                }}
+              >
                 Incomplete
               </Typography>
               <SponsorsModal />
@@ -711,12 +758,18 @@ const WeddingPending = ({open, handleClose, request}) => {
             <Grid item sm={12}>
               <Box
                 fullWidth
-                sx={{bgcolor: "#D9D9D9", padding: "10px", borderRadius: "5px"}}>
+                sx={{
+                  bgcolor: "#D9D9D9",
+                  padding: "10px",
+                  borderRadius: "5px",
+                }}
+              >
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{fontWeight: "bold", fontSize: "14px"}}>
+                      sx={{ fontWeight: "bold", fontSize: "14px" }}
+                    >
                       INTERVIEW
                     </Typography>
                   </Grid>
@@ -726,7 +779,8 @@ const WeddingPending = ({open, handleClose, request}) => {
                         <Grid item sm={12}>
                           <Typography
                             variant="subtitle1"
-                            sx={{fontWeight: "bold", fontSize: "13px"}}>
+                            sx={{ fontWeight: "bold", fontSize: "13px" }}
+                          >
                             Preferred
                           </Typography>
                         </Grid>
@@ -755,8 +809,9 @@ const WeddingPending = ({open, handleClose, request}) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "white",
-                              "&:hover": {bgcolor: "#4C74A5"},
-                            }}>
+                              "&:hover": { bgcolor: "#4C74A5" },
+                            }}
+                          >
                             Assign
                           </Button>
                         </Grid>
@@ -769,7 +824,8 @@ const WeddingPending = ({open, handleClose, request}) => {
                         <Grid item sm={12}>
                           <Typography
                             variant="subtitle1"
-                            sx={{fontWeight: "bold", fontSize: "13px"}}>
+                            sx={{ fontWeight: "bold", fontSize: "13px" }}
+                          >
                             Assigned
                           </Typography>
                         </Grid>
@@ -798,8 +854,9 @@ const WeddingPending = ({open, handleClose, request}) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "#355173",
-                              "&:hover": {bgcolor: "#D3CECE"},
-                            }}>
+                              "&:hover": { bgcolor: "#D3CECE" },
+                            }}
+                          >
                             CLEAR
                           </Button>
                         </Grid>
@@ -813,12 +870,18 @@ const WeddingPending = ({open, handleClose, request}) => {
             <Grid item sm={12}>
               <Box
                 fullWidth
-                sx={{bgcolor: "#D9D9D9", padding: "10px", borderRadius: "5px"}}>
+                sx={{
+                  bgcolor: "#D9D9D9",
+                  padding: "10px",
+                  borderRadius: "5px",
+                }}
+              >
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{fontWeight: "bold", fontSize: "14px"}}>
+                      sx={{ fontWeight: "bold", fontSize: "14px" }}
+                    >
                       WEDDING
                     </Typography>
                   </Grid>
@@ -828,7 +891,8 @@ const WeddingPending = ({open, handleClose, request}) => {
                         <Grid item sm={12}>
                           <Typography
                             variant="subtitle1"
-                            sx={{fontWeight: "bold", fontSize: "13px"}}>
+                            sx={{ fontWeight: "bold", fontSize: "13px" }}
+                          >
                             Preferred
                           </Typography>
                         </Grid>
@@ -861,8 +925,9 @@ const WeddingPending = ({open, handleClose, request}) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "white",
-                              "&:hover": {bgcolor: "#4C74A5"},
-                            }}>
+                              "&:hover": { bgcolor: "#4C74A5" },
+                            }}
+                          >
                             Assign
                           </Button>
                         </Grid>
@@ -875,7 +940,8 @@ const WeddingPending = ({open, handleClose, request}) => {
                         <Grid item sm={12}>
                           <Typography
                             variant="subtitle1"
-                            sx={{fontWeight: "bold", fontSize: "13px"}}>
+                            sx={{ fontWeight: "bold", fontSize: "13px" }}
+                          >
                             Assigned
                           </Typography>
                         </Grid>
@@ -904,8 +970,9 @@ const WeddingPending = ({open, handleClose, request}) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "#355173",
-                              "&:hover": {bgcolor: "#D3CECE"},
-                            }}>
+                              "&:hover": { bgcolor: "#D3CECE" },
+                            }}
+                          >
                             CLEAR
                           </Button>
                         </Grid>
@@ -924,11 +991,12 @@ const WeddingPending = ({open, handleClose, request}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
-              <Typography variant="body2" sx={{marginRight: "5px"}}>
+              }}
+            >
+              <Typography variant="body2" sx={{ marginRight: "5px" }}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{fontWeight: "bold"}}>
+              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 040124hash
               </Typography>
             </Grid>
@@ -941,7 +1009,8 @@ const WeddingPending = ({open, handleClose, request}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -950,8 +1019,9 @@ const WeddingPending = ({open, handleClose, request}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F0CA67"},
-                }}>
+                  "&:hover": { bgcolor: "#F0CA67" },
+                }}
+              >
                 UPDATE
               </Button>
               <Button
@@ -963,8 +1033,9 @@ const WeddingPending = ({open, handleClose, request}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F05A5A"},
-                }}>
+                  "&:hover": { bgcolor: "#F05A5A" },
+                }}
+              >
                 CANCEL
               </Button>
             </Grid>

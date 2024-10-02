@@ -37,6 +37,7 @@ const PendingRequests = () => {
   const [modalType, setModalType] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState([]);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   const fetchRequests = async () => {
     try {
@@ -138,6 +139,7 @@ const PendingRequests = () => {
         return (
           <WeddingPending
             open={modalOpen}
+            data={modalData}
             handleClose={() => setModalOpen(false)}
           />
         );
@@ -329,10 +331,10 @@ const PendingRequests = () => {
                         },
                       }}
                       onClick={() => {
+                        console.log("data: req", req);
                         setModalData(req);
                         setModalType(req.service_name);
                         setModalOpen(true);
-                        setSelectedRequest(req);
                       }}
                     >
                       INFO

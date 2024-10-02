@@ -132,7 +132,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.name + " " + formData.last_name}
+                value={data?.name + " " + data?.last_name}
                 readonly
               />
             </Grid>
@@ -143,7 +143,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.age}
+                value={data?.age}
                 readonly
               />
             </Grid>
@@ -155,7 +155,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.address}
+                value={data?.address}
                 readonly
               />
             </Grid>
@@ -167,7 +167,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.requested_by}
+                value={data?.requested_by}
                 readonly
               />
             </Grid>
@@ -178,7 +178,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.relationship}
+                value={data?.relationship}
                 readonly
               />
             </Grid>
@@ -190,7 +190,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.contact_no}
+                value={data?.contact_no}
                 readonly
               />
             </Grid>
@@ -201,7 +201,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.patient_status}
+                value={data?.patient_status}
                 readonly
               />
             </Grid>

@@ -1,5 +1,5 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -14,9 +14,10 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
+import util from "../../../utils/DateTimeFormatter";
 
 const style = {
   position: "absolute",
@@ -32,18 +33,32 @@ const style = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
 };
 
 const TextFieldStyleDis = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
   bgcolor: "#D9D9D9",
 };
 
-const FuneralMassModalPending = ({open, handleClose, request}) => {
+const FuneralMassModalPending = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("funeral mass");
+  const [formData, setFormData] = useState({
+    first_name: data.first_name, // in the case of outside mass, this is the field for the celebration/celebrator
+    address: null,
+    contact_no: data.contact_no,
+    requested_by: data.requested_by, // this is the field for the contact person's name
+    relationship: data.relationship,
+    preferred_date: data.preferred_date,
+    preferred_time: data.preferred_time,
+    preferred_priest: data.preferred_priest, // value is the  priest id
+    isParishioner: data.isParishioner,
+    transaction_no: data.transaction_no,
+    service_id: data.service_id,
+    type: null,
+  });
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -88,7 +103,8 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
+                sx={{ textAlign: "center", fontWeight: "bold" }}
+              >
                 Funeral Mass Request Information
               </Typography>
             </Grid>
@@ -98,8 +114,8 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
             <Grid item sm={8}>
               <TextField
                 fullWidth
-                value={request.first_name}
                 sx={TextFieldStyle}
+                value={formData.first_name}
               />
             </Grid>
 
@@ -109,8 +125,8 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
             <Grid item sm={8}>
               <TextField
                 fullWidth
-                value={request.requested_by}
                 sx={TextFieldStyle}
+                value={formData.requested_by}
               />
             </Grid>
 
@@ -120,8 +136,8 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
             <Grid item sm={7.7}>
               <TextField
                 fullWidth
-                value={request.relationship}
                 sx={TextFieldStyle}
+                value={formData.relationship}
               />
             </Grid>
 
@@ -131,8 +147,8 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
             <Grid item sm={8}>
               <TextField
                 fullWidth
-                value={request.contact_no}
                 sx={TextFieldStyle}
+                value={formData.contact_no}
               />
             </Grid>
 
@@ -142,9 +158,10 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
                 />
                 <div>
                   <p
@@ -152,35 +169,45 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     Preferred
                   </p>
                 </div>
                 <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
             </Grid>
 
             <Grid item sm={2.5}>
               <label>Priest:</label>
-              <TextField fullWidth select sx={TextFieldStyle} />
+              <TextField
+                fullWidth
+                select
+                sx={TextFieldStyle}
+                value={formData.preferred_priest}
+              />
             </Grid>
             <Grid item sm={3}>
               <label>Date:</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker fullWidth sx={TextFieldStyle} />
-              </LocalizationProvider>
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
+              <TextField
+                fullWidth
+                sx={TextFieldStyle}
+                value={util.formatDate(formData.preferred_date)}
+              />
+              {/* </LocalizationProvider> */}
             </Grid>
             <Grid item sm={2.7}>
               <label>Time:</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker fullWidth sx={TextFieldStyle} />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item sm={1.8}>
-              <label>Venue:</label>
-              <TextField disabled fullWidth sx={TextFieldStyle} />
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
+              <TextField
+                fullWidth
+                sx={TextFieldStyle}
+                value={formData.preferred_time}
+              />
+              {/* </LocalizationProvider> */}
             </Grid>
             <Grid item sm={2}>
               <Button
@@ -192,8 +219,9 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#4C74A5"},
-                }}>
+                  "&:hover": { bgcolor: "#4C74A5" },
+                }}
+              >
                 Assign
               </Button>
             </Grid>
@@ -204,9 +232,10 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
                 />
                 <div>
                   <p
@@ -214,12 +243,13 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     Assigned
                   </p>
                 </div>
                 <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
             </Grid>
@@ -249,8 +279,9 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "#355173",
-                  "&:hover": {bgcolor: "#D3CECE"},
-                }}>
+                  "&:hover": { bgcolor: "#D3CECE" },
+                }}
+              >
                 CLEAR
               </Button>
             </Grid>
@@ -263,11 +294,12 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
-              <Typography variant="body2" sx={{marginRight: "5px"}}>
+              }}
+            >
+              <Typography variant="body2" sx={{ marginRight: "5px" }}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{fontWeight: "bold"}}>
+              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 040124hash
               </Typography>
             </Grid>
@@ -280,7 +312,8 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -290,8 +323,9 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F0CA67"},
-                }}>
+                  "&:hover": { bgcolor: "#F0CA67" },
+                }}
+              >
                 UPDATE
               </Button>
               <Button
@@ -303,8 +337,9 @@ const FuneralMassModalPending = ({open, handleClose, request}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F05A5A"},
-                }}>
+                  "&:hover": { bgcolor: "#F05A5A" },
+                }}
+              >
                 CANCEL
               </Button>
             </Grid>

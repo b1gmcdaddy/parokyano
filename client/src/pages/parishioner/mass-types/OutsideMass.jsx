@@ -82,6 +82,7 @@ const OutsideMass = () => {
     transaction_no: hash,
     service_id: id,
     type: null,
+    donation_amount: null,
     mass_date: null,
   });
 
@@ -116,7 +117,8 @@ const OutsideMass = () => {
     e.preventDefault();
     const validate = ValidateForm(formData);
     setErrors(validate);
-    if (Object.keys(validate) === 0 && validate.constructor === Object) {
+    console.log(validate);
+    if (Object.keys(validate) == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-mass`, formData);
         setOpen(true);
@@ -381,17 +383,17 @@ const OutsideMass = () => {
             </Grid>
           </Grid>
           <div className="mt-[3rem] flex justify-center">
-            <ReCAPTCHA
+            {/* <ReCAPTCHA
               sitekey="6LeCEPMpAAAAANAqLQ48wTuNOGmTPaHcMxJh4xaJ"
               onChange={handleCaptchaChange}
-            />
+            /> */}
           </div>
           <div className="mt-[1rem] flex justify-center">
             <button
               className={`text-white py-3 px-3 font-medium shadow-sm rounded-md ${
                 isCaptchaChecked ? "bg-[#355173]" : "bg-[#868686]"
               }`}
-              disabled={!isCaptchaChecked}
+              // disabled={!isCaptchaChecked}
               onClick={handlesubmit}
               type="button"
             >
