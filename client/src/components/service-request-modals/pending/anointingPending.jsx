@@ -1,5 +1,5 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -14,8 +14,8 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useState} from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
 
@@ -33,15 +33,15 @@ const style = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px" },
+  "& .MuiInputBase-root": {height: "30px"},
 };
 
 const TextFieldStyleDis = {
-  "& .MuiInputBase-root": { height: "30px" },
+  "& .MuiInputBase-root": {height: "30px"},
   bgcolor: "#D9D9D9",
 };
 
-const AnointingPending = ({ open, data, handleClose }) => {
+const AnointingPending = ({open, data, handleClose}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("anointing");
@@ -57,7 +57,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
     contact_no: data.contact_no,
     preferred_date: data.preferred_date,
     preferred_time: data.preferred_time,
-    preferred_priest: data.preferred_priest,
+    preferred_priest: data.priest_id,
     isParishioner: data.isParishioner,
     transaction_no: data.transaction_no,
     service_id: 13,
@@ -73,16 +73,16 @@ const AnointingPending = ({ open, data, handleClose }) => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
+    setFormData({...formData, [name]: time.format("HH-mm-ss")});
   };
 
   {
@@ -119,8 +119,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Anointing of the Sick Request Information
               </Typography>
             </Grid>
@@ -132,7 +131,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={data?.name + " " + data?.last_name}
+                value={formData.name + " " + formData.last_name}
                 readonly
               />
             </Grid>
@@ -143,7 +142,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={data?.age}
+                value={formData.age}
                 readonly
               />
             </Grid>
@@ -155,7 +154,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={data?.address}
+                value={formData.address}
                 readonly
               />
             </Grid>
@@ -167,7 +166,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={data?.requested_by}
+                value={formData.requested_by}
                 readonly
               />
             </Grid>
@@ -178,7 +177,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={data?.relationship}
+                value={formData.relationship}
                 readonly
               />
             </Grid>
@@ -190,7 +189,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={data?.contact_no}
+                value={formData.contact_no}
                 readonly
               />
             </Grid>
@@ -201,7 +200,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <TextField
                 fullWidth
                 sx={TextFieldStyle}
-                value={data?.patient_status}
+                value={formData.patient_status}
                 readonly
               />
             </Grid>
@@ -212,10 +211,9 @@ const AnointingPending = ({ open, data, handleClose }) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <div
-                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
+                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
                 />
                 <div>
                   <p
@@ -223,13 +221,12 @@ const AnointingPending = ({ open, data, handleClose }) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     Preferred
                   </p>
                 </div>
                 <div
-                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
                 />
               </div>
             </Grid>
@@ -238,10 +235,8 @@ const AnointingPending = ({ open, data, handleClose }) => {
               <label>Priest:</label>
               <TextField
                 fullWidth
-                select
                 sx={TextFieldStyle}
-                value={formData.preferred_priest}
-              ></TextField>
+                value={formData.preferred_priest}></TextField>
             </Grid>
             <Grid item sm={3}>
               <label>Date:</label>
@@ -277,9 +272,8 @@ const AnointingPending = ({ open, data, handleClose }) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#4C74A5" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#4C74A5"},
+                }}>
                 Assign
               </Button>
             </Grid>
@@ -290,10 +284,9 @@ const AnointingPending = ({ open, data, handleClose }) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <div
-                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
+                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
                 />
                 <div>
                   <p
@@ -301,13 +294,12 @@ const AnointingPending = ({ open, data, handleClose }) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     Assigned
                   </p>
                 </div>
                 <div
-                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
                 />
               </div>
             </Grid>
@@ -333,9 +325,8 @@ const AnointingPending = ({ open, data, handleClose }) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "#355173",
-                  "&:hover": { bgcolor: "#D3CECE" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#D3CECE"},
+                }}>
                 CLEAR
               </Button>
             </Grid>
@@ -348,13 +339,12 @@ const AnointingPending = ({ open, data, handleClose }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ marginRight: "5px" }}>
+              }}>
+              <Typography variant="body2" sx={{marginRight: "5px"}}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                040124hash
+              <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                {formData.transaction_no}
               </Typography>
             </Grid>
 
@@ -366,8 +356,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -377,9 +366,8 @@ const AnointingPending = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F0CA67" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F0CA67"},
+                }}>
                 UPDATE
               </Button>
               <Button
@@ -391,9 +379,8 @@ const AnointingPending = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F05A5A" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F05A5A"},
+                }}>
                 CANCEL
               </Button>
             </Grid>

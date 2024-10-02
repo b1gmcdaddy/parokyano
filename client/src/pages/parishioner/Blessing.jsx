@@ -59,6 +59,7 @@ const Blessing = () => {
           },
         });
         setPriestList(response.data);
+        console.log(response.data);
       } catch (err) {
         console.error(err);
       }

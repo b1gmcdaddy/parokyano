@@ -318,6 +318,7 @@ const OutsideMass = () => {
                 size="small"
                 sx={inputstlying}
                 name="preferred_priest"
+                onChange={handleChange}
                 required>
                 {priestList.map((priest, index) => (
                   <MenuItem key={index} value={priest.priestID}>
