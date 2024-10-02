@@ -1,11 +1,13 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 require("dotenv").config();
 
-const pool = mysql.createPool({
-  host: process.env.MYSQL_ADDON_HOST,
-  user: process.env.MYSQL_ADDON_USER,
-  password: process.env.MYSQL_ADDON_PASSWORD,
-  database: process.env.MYSQL_ADDON_DB,
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "parokyano",
+  connectTimeout: 30000, // Increase connection timeout to 30 seconds
+  // ssl: { rejectUnauthorized: false }, // Uncomment if SSL is required
 });
 
-module.exports = pool;
+module.exports = connection;
