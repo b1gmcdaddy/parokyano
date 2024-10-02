@@ -20,11 +20,18 @@ export default function ValidateForm(data) {
   // expected data format = "YYYY-MM-DD" and "HH-mm-ss"
   if (data.preferred_date !== null) {
     const minimum = new Date();
-    minimum.setDate(new Date().getDate() + 2);
-
-    if (data.preferred_date < minimum.toJSON().slice(0, 10)) {
-      errors.preferred_date =
-        "Date must be atleast 2 days from today to allow for processing time";
+    if (
+      data.service_id == "2" ||
+      data.service_id == "3" ||
+      data.service_id == "4"
+    ) {
+      minimum.setDate(new Date().getDate() - 2);
+    } else {
+      minimum.setDate(new Date().getDate() + 2);
+      if (data.preferred_date < minimum.toJSON().slice(0, 10)) {
+        errors.preferred_date =
+          "Date must be atleast 2 days from today to allow for processing time";
+      }
     }
   }
 
@@ -39,11 +46,11 @@ export default function ValidateForm(data) {
     }
   }
 
-  // if (data.donation !== null) {
-  //   if (isNaN(Number(data.donation_amount))) {
-  //     errors.amount = "Not a valid amount";
-  //   }
-  // }
+  if (data.donation != null) {
+    if (isNaN(Number(data.donation))) {
+      errors.amount = "Not a valid amount";
+    }
+  }
 
   return errors;
 }

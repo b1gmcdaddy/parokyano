@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Header from "../../components/Header";
@@ -10,20 +10,22 @@ import {
   FormControlLabel,
   Radio,
   MenuItem,
+  FormHelperText,
 } from "@mui/material";
 import Footer from "../../components/Footer";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import NoPaymentModal from "../../components/NoPaymentModal";
 import generateHash from "../../utils/GenerateHash";
 import axios from "axios";
 import config from "../../config";
-import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers";
+import {LocalizationProvider, TimePicker} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DatePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import ValidateForm from "../../utils/Validators";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -45,11 +47,12 @@ const Blessing = () => {
   const dateToday = new Date().toJSON().slice(0, 10);
   const hash = dateToday + generateHash().slice(0, 20);
   const [priestList, setPriestList] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchPriest = async () => {
       try {
-        const response = await axios(`${config.API}/priest/retrieve`, {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
           params: {
             col: "status",
             val: "active",
@@ -85,16 +88,16 @@ const Blessing = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
+    setFormData({...formData, [name]: time.format("HH-mm-ss")});
   };
 
   useEffect(() => {
@@ -103,12 +106,17 @@ const Blessing = () => {
 
   const handlesubmit = (e) => {
     e.preventDefault();
-    try {
-      axios.post(`${config.API}/request/create-blessing`, formData);
-      setOpen(true);
-      console.log("success");
-    } catch (err) {
-      console.error("error submitting server", err);
+    const validate = ValidateForm(formData);
+    setErrors(validate);
+    console.log(validate);
+    if (Object.keys(validate) == 0 && validate.constructor == Object) {
+      try {
+        axios.post(`${config.API}/request/create-blessing`, formData);
+        setOpen(true);
+        console.log("success");
+      } catch (err) {
+        console.error("error submitting server", err);
+      }
     }
   };
 
@@ -119,12 +127,12 @@ const Blessing = () => {
   const handleRadioChange = (e) => {
     setRadioValue(e.target.value);
     if (e.target.value !== "others") {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
+      setFormData({...formData, [e.target.name]: e.target.value});
     }
   };
 
   const handleOtherChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const isCaptchaChecked = captchaValue !== null;
@@ -136,8 +144,7 @@ const Blessing = () => {
       <Header backgroundImage={imageHeader} title="REQUEST FOR BLESSING" />
       <Link
         to="/"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center"
-      >
+        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <p className="xs:hidden md:flex">Return to Home</p>
       </Link>
@@ -147,17 +154,16 @@ const Blessing = () => {
 
       <NoPaymentModal open={open} data={modalData} />
 
-      <Container maxWidth="lg" sx={{ marginBottom: "50px" }}>
+      <Container maxWidth="lg" sx={{marginBottom: "50px"}}>
         <form>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={7}>
               <RadioGroup
                 row
-                sx={{ justifyContent: "space-between" }}
+                sx={{justifyContent: "space-between"}}
                 value={radioValue}
                 name="type"
-                onChange={handleRadioChange}
-              >
+                onChange={handleRadioChange}>
                 <FormControlLabel
                   value="House Blessing"
                   control={<Radio size="small" />}
@@ -182,7 +188,7 @@ const Blessing = () => {
                 size="small"
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    "& fieldset": { boxShadow: "0 3px 2px rgba(0,0,0,0.1)" },
+                    "& fieldset": {boxShadow: "0 3px 2px rgba(0,0,0,0.1)"},
                     "&.Mui-focused fieldset": {
                       borderColor: "#355173",
                       borderWidth: "0.5px",
@@ -242,9 +248,15 @@ const Blessing = () => {
                 size="small"
                 sx={inputstlying}
                 name="contact_no"
+                inputProps={{maxLength: 11}}
                 onChange={handleChange}
                 required
               />
+              {errors.contact_no != null && (
+                <FormHelperText sx={{color: "red"}}>
+                  {errors.contact_no}
+                </FormHelperText>
+              )}
             </Grid>
 
             <Grid item xs={12} sm={3}>
@@ -274,7 +286,7 @@ const Blessing = () => {
                   name="preferred_time"
                   onChange={(time) => handleTimeChange("preferred_time", time)}
                   renderInput={(params) => <TextField {...params} required />}
-                  timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
+                  timeSteps={{hours: 30, minutes: 30}} // if mabuang, delete hours
                   minTime={dayjs().set("hour", 7)}
                   maxTime={dayjs().set("hour", 16)}
                   required
@@ -291,8 +303,7 @@ const Blessing = () => {
                 sx={inputstlying}
                 name="preferred_priest"
                 onChange={handleChange}
-                required
-              >
+                required>
                 {priestList.map((priest, index) => (
                   <MenuItem key={index} value={priest.priestID}>
                     {priest.first_name + " " + priest.last_name}
@@ -307,9 +318,8 @@ const Blessing = () => {
               sm={2}
               sx={{
                 display: "flex",
-                justifyContent: { xs: "center", sm: "flex-start" },
-              }}
-            >
+                justifyContent: {xs: "center", sm: "flex-start"},
+              }}>
               <label>Are you a Parishioner?</label>
             </Grid>
             <Grid item xs={6} sm={3}>
@@ -318,11 +328,10 @@ const Blessing = () => {
                 sx={{
                   marginTop: "-6px",
                   display: "flex",
-                  justifyContent: { xs: "center", sm: "flex-start" },
+                  justifyContent: {xs: "center", sm: "flex-start"},
                 }}
                 name="isParishioner"
-                onChange={handleChange}
-              >
+                onChange={handleChange}>
                 <FormControlLabel
                   value="1"
                   control={<Radio size="small" />}
@@ -341,11 +350,10 @@ const Blessing = () => {
               sm={7}
               sx={{
                 display: "flex",
-                justifyContent: { xs: "center", sm: "flex-end" },
-              }}
-            >
+                justifyContent: {xs: "center", sm: "flex-end"},
+              }}>
               <p>
-                <p style={{ fontWeight: "bold", display: "inline" }}>Note: </p>
+                <p style={{fontWeight: "bold", display: "inline"}}>Note: </p>
                 Please pick up the priest
               </p>
             </Grid>
@@ -363,8 +371,7 @@ const Blessing = () => {
               }`}
               disabled={!isCaptchaChecked}
               onClick={handlesubmit}
-              type="button"
-            >
+              type="button">
               SUBMIT REQUEST
             </button>
           </div>

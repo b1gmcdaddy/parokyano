@@ -2,9 +2,9 @@ import NavParishioner from "../../components/NavParishioner";
 import Header from "../../components/Header";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Footer from "../../components/Footer";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
 import {
   MenuItem,
   Grid,
@@ -15,12 +15,14 @@ import {
   FormControlLabel,
   Radio,
   Container,
+  FormHelperText,
 } from "@mui/material";
-import { React, useEffect, useState } from "react";
+import {React, useEffect, useState} from "react";
 import generateHash from "../../utils/GenerateHash";
 import config from "../../config";
 import axios from "axios";
 import NoPaymentModal from "../../components/NoPaymentModal";
+import ValidateForm from "../../utils/Validators";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -37,6 +39,7 @@ const inputstlying = {
 const Wedding = () => {
   const [open, setOpen] = useState(false);
   const dateToday = new Date().toJSON().slice(0, 10);
+  const [errors, setErrors] = useState({});
   const hash = dateToday + generateHash().slice(0, 20);
   const id = 7; // sa database, sunday wedding ang gi list ra, since there is no way of securing a
   // date ahead of time without consulting the priest, default lang sah siya na sunday wedding(1000PHP).
@@ -81,20 +84,25 @@ const Wedding = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      axios.post(`${config.API}/request/create-wedding`, formData);
-      setOpen(true);
-      console.log(open);
-    } catch (err) {
-      console.log(err);
+    const validate = ValidateForm(formData);
+    setErrors(validate);
+    console.log(validate);
+    if (Object.keys(validate) == 0 && validate.constructor == Object) {
+      try {
+        axios.post(`${config.API}/request/create-wedding`, formData);
+        setOpen(true);
+        console.log(open);
+      } catch (err) {
+        console.log(err);
+      }
+      console.log(formData);
     }
-    console.log(formData);
   };
 
   const handleSponsor = (e, index, field) => {
     const temp = [...formData.sponsor_details];
     temp[index][field] = e.target.value;
-    setFormData((prevState) => ({ ...prevState, sponsor_details: temp }));
+    setFormData((prevState) => ({...prevState, sponsor_details: temp}));
   };
 
   const addSponsor = (e) => {
@@ -102,7 +110,7 @@ const Wedding = () => {
       ...prevState,
       sponsor_details: [
         ...formData.sponsor_details,
-        { sponsor_name: "", sponsor_age: "", isMarrried: "", catholic: "" },
+        {sponsor_name: "", sponsor_age: "", isMarrried: "", catholic: ""},
       ],
     }));
   };
@@ -110,12 +118,12 @@ const Wedding = () => {
   const handleSpouse = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      spouse_name: { ...formData.spouse_name, [e.target.name]: e.target.value },
+      spouse_name: {...formData.spouse_name, [e.target.name]: e.target.value},
     }));
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   useEffect(() => {
@@ -144,7 +152,7 @@ const Wedding = () => {
 
       <NoPaymentModal open={open} data={modalData} />
 
-      <Container maxWidth="md" sx={{ marginBottom: "4em" }}>
+      <Container maxWidth="md" sx={{marginBottom: "4em"}}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4} className="mb-10">
             <Grid item xs={12} sm={4}>
@@ -240,9 +248,15 @@ const Wedding = () => {
                 size="small"
                 sx={inputstlying}
                 name="contact_no"
+                inputProps={{maxLength: 11}}
                 onChange={handleChange}
                 required
               />
+              {errors.contact_no != null && (
+                <FormHelperText sx={{color: "red"}}>
+                  {errors.contact_no}
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12} sm={6}>
               <label>
@@ -257,8 +271,7 @@ const Wedding = () => {
                 name="relationship"
                 onChange={handleChange}
                 value={formData.relationship}
-                required
-              >
+                required>
                 <MenuItem value="None">None</MenuItem>
                 <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                 <MenuItem value="Live-in for under 4 years">
@@ -309,8 +322,7 @@ const Wedding = () => {
 
           <Container
             maxWidth="md"
-            className="bg-neutral-100 md:p-8 rounded-lg mb-5"
-          >
+            className="bg-neutral-100 md:p-8 rounded-lg mb-5">
             <Grid container spacing={3}>
               {formData.sponsor_details.map((s, index) => (
                 <>
@@ -351,8 +363,7 @@ const Wedding = () => {
                       className="bg-white"
                       name="isMarrried"
                       value={formData.sponsor_details.isMarrried}
-                      onChange={(e) => handleSponsor(e, index, "isMarrried")}
-                    >
+                      onChange={(e) => handleSponsor(e, index, "isMarrried")}>
                       <MenuItem value="1">Married</MenuItem>
                       <MenuItem value="0">Not Married</MenuItem>
                     </TextField>
@@ -365,8 +376,7 @@ const Wedding = () => {
                         className="ml-2"
                         name="catholic"
                         value={formData.sponsor_details.catholic}
-                        onChange={(e) => handleSponsor(e, index, "catholic")}
-                      >
+                        onChange={(e) => handleSponsor(e, index, "catholic")}>
                         <FormControlLabel
                           value="1"
                           control={<Radio size="small" />}
@@ -486,20 +496,17 @@ const Wedding = () => {
                 backgroundColor: "white",
                 color: "#355173",
               },
-            }}
-          >
+            }}>
             Add Sponsor
           </Button>
 
           <Grid
             item
-            sx={{ display: "flex", justifyContent: "center", marginTop: "5em" }}
-          >
+            sx={{display: "flex", justifyContent: "center", marginTop: "5em"}}>
             <Button
               variant="contained"
               type="submit"
-              sx={{ backgroundColor: "#355173" }}
-            >
+              sx={{backgroundColor: "#355173"}}>
               Submit Request
             </Button>
           </Grid>
