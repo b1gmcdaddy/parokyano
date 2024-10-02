@@ -34,12 +34,6 @@ const CertificatesPending = () => {
   const [totalItems, setTotalItems] = useState(0);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
 
-  // const schedule = (_date, _time) => {
-  //   return (
-  //     util.formatTime(_time) + " ,  " + util.formatDate(_date.slice(0, 10))
-  //   );
-  // };
-
   const fetchCertificates = async () => {
     setLoading(true);
     try {
@@ -72,6 +66,25 @@ const CertificatesPending = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const searchCertificates = async () => {
+    // try {
+    //   const res = await axios.get(`${config.API}/request/search-certs`, {
+    //     params: {
+    //       col: searchCol,
+    //       val: searchVal,
+    //       page: page + 1,
+    //       limit: rowsPerPage,
+    //     },
+    //   });
+    //   setTableData(res.data.result);
+    //   console.log(res.data.result);
+    // } catch (err) {
+    //   console.error("error retrieving pending reqs", err);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const openInfoModal = (cert) => {

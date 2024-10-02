@@ -36,6 +36,7 @@ const PendingRequests = () => {
   const totalPages = Math.ceil(totalItems / rowsPerPage);
   const [modalType, setModalType] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalData, setModalData] = useState([]);
 
   const fetchRequests = async () => {
     try {
@@ -79,47 +80,71 @@ const PendingRequests = () => {
     fetchTotalItems();
   }, [page]);
 
-  const renderModal = () =>{
+  useEffect(() => {
+    console.log(modalData);
+  }, [modalData]);
+
+  const renderModal = () => {
     switch (modalType) {
       case "Anointing of the sick":
         return (
-          <AnointingPending open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <AnointingPending
+            open={modalOpen}
+            data={modalData}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Baptism - General" || "Baptism - Appointment":
         return (
-          <BaptismPending open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <BaptismPending
+            open={modalOpen}
+            data={modalData}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Blessing":
         return (
-          <BlessingPending open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <BlessingPending
+            open={modalOpen}
+            data={modalData}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Funeral Mass":
         return (
-          <FuneralMassModalPending open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <FuneralMassModalPending
+            open={modalOpen}
+            data={modalData}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Outside Mass":
         return (
-          <OutsidePending open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <OutsidePending
+            open={modalOpen}
+            data={modalData}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Wake Mass":
         return (
-          <WakePending open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <WakePending
+            open={modalOpen}
+            data={modalData}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Wedding - Civilly Married":
         return (
-          <WeddingPending open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <WeddingPending
+            open={modalOpen}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       default:
         return null;
     }
-  }
+  };
 
   return (
     <div style={{ margin: "0 auto" }}>
@@ -304,6 +329,7 @@ const PendingRequests = () => {
                         },
                       }}
                       onClick={() => {
+                        setModalData(req);
                         setModalType(req.service_name);
                         setModalOpen(true);
                       }}

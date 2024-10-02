@@ -295,7 +295,7 @@ const retrieveCerts = (req, res) => {
   console.log(page, limit);
   const offset = Number(page - 1) * parseInt(limit);
   console.log(offset);
-  const query = `SELECT * FROM request WHERE service_id = 2 OR service_id = 3 OR service_id = 4 AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const query = `SELECT * FROM request WHERE www AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {
@@ -470,6 +470,47 @@ const approveRequest = (req, res) => {
       res.status(200).json({ message: "success!" });
     }
   });
+};
+
+const searchCertsRecords = (req, res) => {
+  const {
+    firstName,
+    lastName,
+    spouseFirstName,
+    spouseLastName,
+    fatherName,
+    motherName,
+    birthDate,
+    baptismDate,
+    confirmationDate,
+    marriageDate,
+    status,
+  } = req.query;
+
+  // query = `SELECT * FROM request WHERE service_id IN (2, 3, 4) AND status = '${status}'`;
+  // baptismQuery = ` AND first_name LIKE '${firstName}%' OR last_name LIKE '${lastName}% OR father_name LIKE '%${fatherName}%' OR mother_name LIKE '%${motherName}%' OR birth_date LIKE '%${birthDate}% OR preferred_date LIKE '%${baptismDate}%'`;
+  // marriageQuery = ` AND preferred_date LIKE '%${marriageDate}%' OR details`;
+  // confirmationQuery = ` AND preferred_date BETWEEN '${confirmationDate}' AND '${marriageDate}'`;
+
+  // if (baptismDate != null && baptismDate != '' && baptismDate != undefined) {
+  //   query += baptismQuery;
+  // }
+
+  // if (confirmationDate != null && confirmationDate != '' && confirmationDate != undefined) {
+  //   query += confirmationQuery;
+  // }
+
+  // if (marriageDate != null && marriageDate != '' && marriageDate != undefined) {
+  //   query += marriageQuery;
+  // }
+
+  // db.query(query, (err, result) => {
+  //   if (err) {
+  //     console.error("error retrieving requests", err);
+  //     return res.status(500);
+  //   }
+  //   res.status(200).json({ result });
+  // });
 };
 
 module.exports = {
