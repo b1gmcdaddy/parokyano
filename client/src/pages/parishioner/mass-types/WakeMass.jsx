@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from "../../../assets/imageHeader.jpg";
 import Header from "../../../components/Header";
@@ -17,11 +17,11 @@ import {
   TimePicker,
   DatePicker,
 } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import Footer from "../../../components/Footer";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import generateHash from "../../../utils/GenerateHash";
 import NoPaymentModal from "../../../components/NoPaymentModal";
@@ -54,7 +54,7 @@ const WakeMass = () => {
   useEffect(() => {
     const fetchPriest = async () => {
       try {
-        const response = await axios(`${config.API}/priest/retrieve`, {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
           params: {
             col: "status",
             val: "active",
@@ -70,7 +70,6 @@ const WakeMass = () => {
 
   const [formData, setFormData] = useState({
     first_name: "", // full name ni sa deceased
-    address: null,
     contact_no: "",
     requested_by: "",
     relationship: "",
@@ -96,7 +95,7 @@ const WakeMass = () => {
     console.log(formData);
     const validate = ValidateForm(formData);
     setErrors(validate);
-    if (Object.keys(validate).length === 0 && validate.constructor === Object) {
+    if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-mass`, formData);
         setOpen(true);
@@ -108,15 +107,15 @@ const WakeMass = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
+    setFormData({...formData, [name]: time.format("HH-mm-ss")});
   };
 
   useEffect(() => {
@@ -135,8 +134,7 @@ const WakeMass = () => {
       <Header backgroundImage={imageHeader} title="WAKE MASS" />
       <Link
         to="/mass-selection"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center"
-      >
+        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <p className="xs:hidden md:flex">Return to mass selection</p>
       </Link>
@@ -147,7 +145,7 @@ const WakeMass = () => {
 
       <NoPaymentModal open={open} data={modalData} />
 
-      <Container maxWidth="lg" sx={{ marginBottom: "50px" }}>
+      <Container maxWidth="lg" sx={{marginBottom: "50px"}}>
         <form>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6}>
@@ -169,13 +167,13 @@ const WakeMass = () => {
                 variant="outlined"
                 size="small"
                 sx={inputstlying}
-                inputProps={{ maxLength: 11 }}
+                inputProps={{maxLength: 11}}
                 name="contact_no"
                 onChange={handleChange}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
@@ -223,7 +221,7 @@ const WakeMass = () => {
               </LocalizationProvider>
 
               {errors.preferred_date != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.preferred_date}
                 </FormHelperText>
               )}
@@ -236,7 +234,7 @@ const WakeMass = () => {
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
-                  timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
+                  timeSteps={{hours: 30, minutes: 30}} // if mabuang, delete hours
                   minTime={dayjs().set("hour", 7)}
                   maxTime={dayjs().set("hour", 16)}
                   name="preferred_time"
@@ -256,8 +254,7 @@ const WakeMass = () => {
                 sx={inputstlying}
                 name="preferred_priest"
                 onChange={handleChange}
-                required
-              >
+                required>
                 {priestList.map((priest, index) => (
                   <MenuItem key={index} value={priest.priestID}>
                     {priest.first_name + " " + priest.last_name}
@@ -272,9 +269,8 @@ const WakeMass = () => {
               sm={2}
               sx={{
                 display: "flex",
-                justifyContent: { xs: "center", sm: "flex-start" },
-              }}
-            >
+                justifyContent: {xs: "center", sm: "flex-start"},
+              }}>
               <label>Are you a Parishioner?</label>
             </Grid>
             <Grid item xs={6} sm={3}>
@@ -283,12 +279,11 @@ const WakeMass = () => {
                 sx={{
                   marginTop: "-6px",
                   display: "flex",
-                  justifyContent: { xs: "center", sm: "flex-start" },
+                  justifyContent: {xs: "center", sm: "flex-start"},
                 }}
                 name="isParishioner"
                 onChange={handleChange}
-                required
-              >
+                required>
                 <FormControlLabel
                   value="1"
                   control={<Radio size="small" />}
@@ -307,11 +302,10 @@ const WakeMass = () => {
               sm={7}
               sx={{
                 display: "flex",
-                justifyContent: { xs: "center", sm: "flex-end" },
-              }}
-            >
+                justifyContent: {xs: "center", sm: "flex-end"},
+              }}>
               <p>
-                <p style={{ fontWeight: "bold", display: "inline" }}>Note: </p>
+                <p style={{fontWeight: "bold", display: "inline"}}>Note: </p>
                 Please pick up the priest
               </p>
             </Grid>
@@ -329,8 +323,7 @@ const WakeMass = () => {
               }`}
               disabled={!isCaptchaChecked}
               onClick={handlesubmit}
-              type="button"
-            >
+              type="button">
               SUBMIT REQUEST
             </button>
           </div>

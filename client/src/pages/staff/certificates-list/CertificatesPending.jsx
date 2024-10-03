@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import React from "react";
 import axios from "axios";
 import config from "../../../config";
@@ -114,7 +114,7 @@ const CertificatesPending = () => {
   }, [page]);
 
   return (
-    <div style={{ margin: "0 auto" }}>
+    <div style={{margin: "0 auto"}}>
       {modalType === 2 && (
         <all.ConfirmationCertInfoModal
           open={openModal}
@@ -152,17 +152,15 @@ const CertificatesPending = () => {
               borderRadius: "16px",
               overflowX: "auto",
               border: "none",
-            }}
-          >
+            }}>
             <Table
               stickyHeader
               aria-label="custom table"
               sx={{
                 borderCollapse: "separate",
                 borderSpacing: 0,
-                sm: { minWidth: 650 },
-              }}
-            >
+                sm: {minWidth: 650},
+              }}>
               <TableHead>
                 <TableRow>
                   <TableCell
@@ -171,8 +169,7 @@ const CertificatesPending = () => {
                       border: "none",
                       fontSize: "0.75rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     REQUESTED BY
                   </TableCell>
                   <TableCell
@@ -181,8 +178,7 @@ const CertificatesPending = () => {
                       border: "none",
                       fontSize: "0.75rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     TYPE OF CERTIFICATE
                   </TableCell>
                   <TableCell
@@ -191,8 +187,7 @@ const CertificatesPending = () => {
                       border: "none",
                       fontSize: "0.75rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     DATE REQUESTED
                   </TableCell>
                   <TableCell
@@ -201,8 +196,7 @@ const CertificatesPending = () => {
                       border: "none",
                       fontSize: "0.75rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     TRANSACTION NO.
                   </TableCell>
                   <TableCell
@@ -211,8 +205,7 @@ const CertificatesPending = () => {
                       border: "none",
                       fontSize: "0.75rem",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     ACTIONS
                   </TableCell>
                 </TableRow>
@@ -228,9 +221,8 @@ const CertificatesPending = () => {
                           backgroundColor: "#ffffff",
                           padding: 0,
                           border: "none",
-                        }}
-                      >
-                        <Box sx={{ height: "5px", backgroundColor: "white" }} />
+                        }}>
+                        <Box sx={{height: "5px", backgroundColor: "white"}} />
                       </TableCell>
                     </TableRow>
 
@@ -241,8 +233,7 @@ const CertificatesPending = () => {
                         "& > *": {
                           borderBottom: "none",
                         },
-                      }}
-                    >
+                      }}>
                       <TableCell
                         sx={{
                           border: "none",
@@ -250,9 +241,10 @@ const CertificatesPending = () => {
                           textAlign: "center",
                           borderRadius: "15px 0 0 15px",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
-                        {cert.father_name}
+                        }}>
+                        {cert.service_id == 4
+                          ? cert.first_name + " " + cert.last_name
+                          : cert.father_name}
                       </TableCell>
                       <TableCell
                         sx={{
@@ -260,8 +252,7 @@ const CertificatesPending = () => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {cert.service_id == 2
                           ? "Confirmation"
                           : cert.service_id == 3
@@ -276,8 +267,7 @@ const CertificatesPending = () => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {cert.date_requested}
                       </TableCell>
                       <TableCell
@@ -286,8 +276,7 @@ const CertificatesPending = () => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {cert.transaction_no}
                       </TableCell>
                       <TableCell
@@ -300,8 +289,7 @@ const CertificatesPending = () => {
                           display: "flex",
                           justifyContent: "center",
                           gap: 2,
-                        }}
-                      >
+                        }}>
                         <Button
                           type="button"
                           sx={{
@@ -312,8 +300,7 @@ const CertificatesPending = () => {
                               backgroundColor: "#0036B1",
                             },
                           }}
-                          onClick={() => openInfoModal(cert)}
-                        >
+                          onClick={() => openInfoModal(cert)}>
                           INFO
                         </Button>
                         <Button
@@ -326,8 +313,7 @@ const CertificatesPending = () => {
                             "&:hover": {
                               backgroundColor: "green",
                             },
-                          }}
-                        >
+                          }}>
                           SEARCH RECORDS
                         </Button>
                       </TableCell>
@@ -343,8 +329,7 @@ const CertificatesPending = () => {
               justifyContent: "center",
               alignItems: "center",
               marginTop: 2,
-            }}
-          >
+            }}>
             <IconButton
               onClick={() => handlePageChange(page - 1, totalPages)}
               disabled={page === 0} // Disable on the first page
@@ -352,12 +337,11 @@ const CertificatesPending = () => {
                 backgroundColor: page === 0 ? "grey.300" : "black",
                 color: page === 0 ? "grey.600" : "white",
                 marginRight: "10px",
-              }}
-            >
+              }}>
               <KeyboardArrowLeft />
             </IconButton>
 
-            <Typography sx={{ margin: "0 10px", fontWeight: "bold" }}>
+            <Typography sx={{margin: "0 10px", fontWeight: "bold"}}>
               Page {page + 1} of {totalPages}
             </Typography>
 
@@ -368,8 +352,7 @@ const CertificatesPending = () => {
                 backgroundColor: page === totalPages - 1 ? "grey.300" : "black",
                 color: page === totalPages - 1 ? "grey.600" : "white",
                 marginLeft: "10px",
-              }}
-            >
+              }}>
               <KeyboardArrowRight />
             </IconButton>
           </Box>

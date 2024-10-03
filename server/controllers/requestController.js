@@ -84,6 +84,8 @@ const createRequestBaptism = (req, res) => {
   const request = req.body;
   const details = JSON.stringify(request.details);
 
+  const dateToday = new Date();
+
   db.query(
     "INSERT INTO request (first_name, middle_name, last_name, birth_date, birth_place, gender, father_name, mother_name, details, address, contact_no, isChurchMarried, isCivilMarried, isLiveIn, preferred_date, preferred_time, priest_id, payment_method, transaction_no, date_requested, service_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [
@@ -111,10 +113,15 @@ const createRequestBaptism = (req, res) => {
     ],
     (err, result) => {
       if (err) {
-        console.error("error submitting to db", err);
-        return res.status(500);
+        console.error("Error submitting to database", err);
+        return res.status(500).json({
+          message: "Failed to create baptism request",
+          error: err.message,
+        });
       }
-      return res.status(200);
+      return res.status(200).json({
+        message: "Baptism request submitted successfully",
+      });
     }
   );
 };
@@ -278,24 +285,32 @@ const retrieveMultipleParams = (req, res) => {
 // temporary for services table only
 const retrieveRequests = (req, res) => {
   const { status, page, limit } = req.query;
-  const offset = Number(page - 1) * parseInt(limit);
-  const query = `SELECT r.*, s.name AS 'service_name' FROM request r, service s WHERE r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 AND r.service_id = s.serviceID AND r.service_id != 4 AND r.status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const offset = (Number(page) - 1) * parseInt(limit);
+
+  const query = `SELECT r.*, s.name AS 'service_name' 
+                 FROM request r, service s 
+                 WHERE r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 
+                 AND r.service_id = s.serviceID 
+                 AND r.status = ? 
+                 ORDER BY date_requested DESC 
+                 LIMIT ? OFFSET ?`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {
       console.error("error retrieving requests", err);
-      return res.status(500);
+      return res.status(500).json({ error: "Error retrieving requests" });
     }
     res.status(200).json({ result });
   });
 };
+
 // temporary for certs table
 const retrieveCerts = (req, res) => {
   const { status, page, limit } = req.query;
   console.log(page, limit);
   const offset = Number(page - 1) * parseInt(limit);
   console.log(offset);
-  const query = `SELECT * FROM request WHERE service_id=2 OR service_id=3 OR service_id=4 AND status=? ORDER BY date_requested DESC LIMIT ${limit} OFFSET ${offset}`;
+  const query = `SELECT * FROM request WHERE (service_id=2 OR service_id=3 OR service_id=4) AND status=? ORDER BY date_requested DESC LIMIT ${limit} OFFSET ${offset}`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from "../../../assets/imageHeader.jpg";
 import Header from "../../../components/Header";
@@ -12,9 +12,9 @@ import {
   IconButton,
   FormHelperText,
 } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong, faMinus } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeftLong, faMinus} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
 import config from "../../../config";
@@ -22,8 +22,8 @@ import axios from "axios";
 import generateHash from "../../../utils/GenerateHash";
 import all from "../../../components/PaymentModal";
 import ValidateForm from "../../../utils/Validators";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -39,7 +39,7 @@ const inputstlying = {
 
 const Souls = () => {
   const id = 1;
-  const [schedule, setSchedule] = useState({ slots: ["00:00:00"] });
+  const [schedule, setSchedule] = useState({slots: ["00:00:00"]});
   const dateToday = new Date().toJSON().slice(0, 10);
   const [captchaValue, setCaptchaValue] = useState(null);
   const [modalData, setModalData] = useState({});
@@ -86,7 +86,7 @@ const Souls = () => {
     e.preventDefault();
     let validate = ValidateForm(formData);
     setErrors(validate);
-    if (Object.keys(validate).length === 0 && validate.constructor === Object) {
+    if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
         console.log("success");
         await axios.post(`${config.API}/request/create-intention`, formData);
@@ -116,15 +116,15 @@ const Souls = () => {
       }
       return name;
     });
-    setFormData((prevState) => ({ ...prevState, intention_details: temp }));
+    setFormData((prevState) => ({...prevState, intention_details: temp}));
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData.mass_date);
   };
 
@@ -137,7 +137,7 @@ const Souls = () => {
 
   const removeSoul = (index) => {
     const temp = formData.intention_details.filter((_, i) => i !== index);
-    setFormData({ ...formData, intention_details: temp });
+    setFormData({...formData, intention_details: temp});
   };
 
   const handleCaptchaChange = (value) => {
@@ -152,8 +152,7 @@ const Souls = () => {
       <Header backgroundImage={imageHeader} title="MASS INTENTION - SOULS" />
       <Link
         to="/mass-intention-select"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center"
-      >
+        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <span className="xs:hidden md:flex">Return to Selection</span>
       </Link>
@@ -164,7 +163,7 @@ const Souls = () => {
       <all.CashPaymentModal open={openCash} data={modalData} />
       <all.GCashPaymentModal open={openGCash} data={modalData} />
 
-      <Container maxWidth="md" sx={{ marginBottom: "50px" }}>
+      <Container maxWidth="md" sx={{marginBottom: "50px"}}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             <Grid item xs={12}>
@@ -185,8 +184,7 @@ const Souls = () => {
                       <InputAdornment position="end">
                         <IconButton
                           color="secondary"
-                          onClick={() => removeSoul(index)}
-                        >
+                          onClick={() => removeSoul(index)}>
                           <FontAwesomeIcon
                             icon={faMinus}
                             className="text-sm text-red-700"
@@ -195,15 +193,14 @@ const Souls = () => {
                       </InputAdornment>
                     ),
                   }}
-                  style={{ marginBottom: "1rem" }}
+                  style={{marginBottom: "1rem"}}
                 />
               ))}
               <Button
                 type="button"
                 onClick={addMoreSouls}
                 variant="outlined"
-                sx={{ float: "right" }}
-              >
+                sx={{float: "right"}}>
                 {" "}
                 Add Soul
               </Button>
@@ -237,7 +234,7 @@ const Souls = () => {
                 />
               </LocalizationProvider>
               {errors.mass_date != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.mass_date}
                 </FormHelperText>
               )}
@@ -253,8 +250,7 @@ const Souls = () => {
                 name="mass_time"
                 onChange={handleChange}
                 value={formData.mass_time}
-                required
-              >
+                required>
                 {schedule.slots.map((time, index) => (
                   <MenuItem value={time} key={index}>
                     {time}
@@ -271,11 +267,11 @@ const Souls = () => {
                 sx={inputstlying}
                 name="contact_no"
                 onChange={handleChange}
-                inputProps={{ maxLength: 11 }}
+                inputProps={{maxLength: 11}}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
@@ -291,8 +287,7 @@ const Souls = () => {
                 name="payment_method"
                 onChange={handleChange}
                 value={formData.payment_method}
-                required
-              >
+                required>
                 <MenuItem value="cash">Cash</MenuItem>
                 <MenuItem value="gcash">GCash</MenuItem>
               </TextField>
@@ -309,7 +304,7 @@ const Souls = () => {
                 required
               />
               {errors.amount != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.amount}
                 </FormHelperText>
               )}
@@ -327,8 +322,7 @@ const Souls = () => {
                 isCaptchaChecked ? "bg-[#355173]" : "bg-[#868686]"
               }`}
               disabled={!isCaptchaChecked}
-              type="submit"
-            >
+              type="submit">
               SUBMIT REQUEST
             </button>
           </div>

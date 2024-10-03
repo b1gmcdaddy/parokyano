@@ -11,6 +11,7 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  MenuItem,
 } from "@mui/material";
 import {
   DatePicker,
@@ -18,7 +19,7 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
 import dayjs from "dayjs";
@@ -53,7 +54,9 @@ const BlessingPending = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("blessing");
+  const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
+<<<<<<< HEAD
     requestID: data.requestID,
     type: data.type,
     first_name: data.first_name,
@@ -67,7 +70,55 @@ const BlessingPending = ({ open, data, handleClose }) => {
     isParishioner: data.isParishioner,
     transaction_no: data.transaction_no,
     service_id: 13,
+=======
+    type: "",
+    first_name: "",
+    address: "",
+    requested_by: "",
+    contact_no: "",
+    preferred_date: "",
+    preferred_time: "",
+    preferred_priest: "",
+    isParishioner: "",
+    transaction_no: "",
+    service_id: "",
+>>>>>>> c91c3a033919ef47edfabd06ca6abd2083dec6a0
   });
+
+  useEffect(() => {
+    if (open && data) {
+      setFormData({
+        type: data.type,
+        first_name: data.first_name,
+        address: data.address,
+        requested_by: data.requested_by,
+        contact_no: data.contact_no,
+        preferred_date: data.preferred_date,
+        preferred_time: data.preferred_time,
+        preferred_priest: data.priest_id,
+        isParishioner: data.isParishioner,
+        transaction_no: data.transaction_no,
+        service_id: 13,
+      });
+    }
+  }, [open, data]);
+
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+  }, []);
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -92,7 +143,9 @@ const BlessingPending = ({ open, data, handleClose }) => {
   };
 
   const handleRadioChange = (e) => {
-    setRadioValue(e.target.value);
+    const { value } = e.target;
+    setFormData((prevData) => ({ ...prevData, type: value }));
+    setRadioValue(value);
     if (e.target.value !== "others") {
       setOtherValue("");
     }
@@ -172,7 +225,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 row
                 name="type"
                 sx={{ marginTop: "-5px" }}
-                value={data?.type}
+                value={formData.type}
                 onChange={handleRadioChange}
               >
                 <FormControlLabel
@@ -209,8 +262,10 @@ const BlessingPending = ({ open, data, handleClose }) => {
             <Grid item sm={10.7}>
               <TextField
                 fullWidth
+                name="first_name"
+                onChange={handleChange}
                 sx={TextFieldStyle}
-                value={data?.first_name + " " + data?.last_name}
+                value={formData.first_name}
               ></TextField>
             </Grid>
 
@@ -220,8 +275,10 @@ const BlessingPending = ({ open, data, handleClose }) => {
             <Grid item sm={10.7}>
               <TextField
                 fullWidth
+                name="address"
+                onChange={handleChange}
                 sx={TextFieldStyle}
-                value={data.address}
+                value={formData.address}
                 readonly
               />
             </Grid>
@@ -232,8 +289,10 @@ const BlessingPending = ({ open, data, handleClose }) => {
             <Grid item sm={3.7}>
               <TextField
                 fullWidth
+                name="requested_by"
+                onChange={handleChange}
                 sx={TextFieldStyle}
-                value={data.requested_by}
+                value={formData.requested_by}
                 readonly
               />
             </Grid>
@@ -243,8 +302,10 @@ const BlessingPending = ({ open, data, handleClose }) => {
             <Grid item sm={4.2}>
               <TextField
                 fullWidth
+                name="contact_no"
+                onChange={handleChange}
                 sx={TextFieldStyle}
-                value={data.contact_no}
+                value={formData.contact_no}
                 readonly
               />
             </Grid>
@@ -280,13 +341,19 @@ const BlessingPending = ({ open, data, handleClose }) => {
             <Grid item sm={3}>
               <label>Priest:</label>
               <TextField
-                fullWidth
-                select
-                sx={TextFieldStyle}
-                // placeholder={formData.preferred_priest}
                 value={formData.preferred_priest}
-                readonly
-              />
+                name="preferred_priest"
+                onChange={handleChange}
+                select
+                fullWidth
+                sx={TextFieldStyle}
+              >
+                {priests.map((priest) => (
+                  <MenuItem key={priest.priestID} value={priest.priestID}>
+                    {priest.first_name + " " + priest.last_name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
             <Grid item sm={3}>
               <label>Date:</label>
@@ -409,7 +476,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 Transaction Code:
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                040124hash
+                {formData.transaction_no}
               </Typography>
             </Grid>
 

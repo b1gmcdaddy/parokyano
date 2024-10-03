@@ -10,7 +10,6 @@ const retrieveByParams = (req, res) => {
       console.error("error retrieving from db", err);
       return res.status(500);
     }
-    // para dili na hasol add2 ug 'Fr.' na title sa frontend:
     for (const i in result) {
       result[i].first_name = "Fr. " + result[i].first_name;
     }

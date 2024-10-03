@@ -16,10 +16,10 @@ import {
   Radio,
   RadioGroup,
   Button,
+  FormHelperText,
 } from "@mui/material";
 import axios from "axios";
 import config from "../../config";
-import all from "../../components/PaymentModal";
 import generateHash from "../../utils/GenerateHash";
 import {
   DatePicker,
@@ -28,6 +28,8 @@ import {
 } from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import ValidateForm from "../../utils/Validators";
+import all from "../../components/PaymentModal";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -45,11 +47,12 @@ const Baptism = () => {
   const id = 5;
   const dateToday = new Date().toJSON().slice(0, 10);
   const hash = dateToday + generateHash().slice(0, 20);
-  const [captchaValue, setCaptchaValue] = useState(null);
+  // const [captchaValue, setCaptchaValue] = useState(null);
   const [modalData, setModalData] = useState({});
   const [openCash, setOpenCash] = useState(false);
   const [openGCash, setOpenGCash] = useState(false);
   const [priests, setPriests] = useState([]);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -101,10 +104,10 @@ const Baptism = () => {
     getPriests();
   }, []);
 
-  const handleCaptchaChange = (value) => {
-    setCaptchaValue(value);
-  };
-  const isCaptchaChecked = captchaValue !== null;
+  // const handleCaptchaChange = (value) => {
+  //   setCaptchaValue(value);
+  // };
+  // const isCaptchaChecked = captchaValue !== null;
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value});
@@ -157,16 +160,16 @@ const Baptism = () => {
 
   const cashModalInfo = {
     transaction_no: formData.transaction_no,
-    fee: "800 PHP", // temp fee
-    requirements: ["Photocopy of Birth Certificate"],
+    fee: "800 PHP",
+    requirements: null,
     message:
       "Note: Kindly go to the parish office during office hours to pay. Please submit the requirement and pay within 2 days to avoid cancellation.",
   };
 
   const gcashModalInfo = {
     transaction_no: formData.transaction_no,
-    fee: "800 PHP", // temp
-    requirements: ["Photocopy of Birth Certificate"],
+    fee: "800 PHP",
+    requirements: null,
     message:
       "Note: We will use your mobile number to communicate with you. Please submit the requirements to the office as soon as possible so that we can start processing your request.",
   };
@@ -174,18 +177,22 @@ const Baptism = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    try {
-      await axios.post(`${config.API}/request/create-baptism`, formData);
-
-      if (formData.payment_method == "cash") {
-        setModalData(cashModalInfo);
-        setOpenCash(true);
-      } else {
-        setModalData(gcashModalInfo);
-        setOpenGCash(true);
+    let validate = ValidateForm(formData);
+    setErrors(validate);
+    console.log(validate);
+    if (Object.keys(validate).length == 0 && validate.constructor == Object) {
+      try {
+        await axios.post(`${config.API}/request/create-baptism`, formData);
+        if (formData.payment_method === "cash") {
+          setModalData(cashModalInfo);
+          setOpenCash(true);
+        } else if (formData.payment_method === "gcash") {
+          setModalData(gcashModalInfo);
+          setOpenGCash(true);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -257,6 +264,7 @@ const Baptism = () => {
                   onChange={(date) => handleDateChange("birth_date", date)}
                   renderInput={(params) => <TextField {...params} required />}
                   sx={inputstlying}
+                  disableFuture
                   InputLabelProps={{shrink: true}}
                   required
                 />
@@ -361,9 +369,15 @@ const Baptism = () => {
                 sx={inputstlying}
                 name="contact_no"
                 onChange={handleChange}
+                inputProps={{maxLength: 11}}
                 size="small"
                 required
               />
+              {errors.contact_no != null && (
+                <FormHelperText sx={{color: "red"}}>
+                  {errors.contact_no}
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12} sm={3}>
               <label>Payment Method:</label>
@@ -392,19 +406,19 @@ const Baptism = () => {
                   value={formData.isChurchMarried}
                   onChange={handleChange}>
                   <FormControlLabel
-                    value="yes"
+                    value="1"
                     control={<Radio size="small" />}
                     label="Yes"
                   />
                   <FormControlLabel
-                    value="no"
+                    value="0"
                     control={<Radio size="small" />}
                     label="No"
                   />
                 </RadioGroup>
               </FormControl>
             </Grid>
-            {formData.isChurchMarried === "yes" && (
+            {formData.isChurchMarried === "1" && (
               <>
                 <Grid item xs={12} sm={3} sx={{marginRight: {md: "15px"}}}>
                   <label>When?</label>
@@ -433,7 +447,7 @@ const Baptism = () => {
                 </Grid>
               </>
             )}
-            {formData.isChurchMarried === "no" && (
+            {formData.isChurchMarried === "0" && (
               <>
                 <Grid item xs={5} sm={3}>
                   <FormControl component="fieldset">
@@ -444,19 +458,19 @@ const Baptism = () => {
                       value={formData.isCivilMarried}
                       onChange={handleChange}>
                       <FormControlLabel
-                        value="yes"
+                        value="1"
                         control={<Radio size="small" />}
                         label="Yes"
                       />
                       <FormControlLabel
-                        value="no"
+                        value="0"
                         control={<Radio size="small" />}
                         label="No"
                       />
                     </RadioGroup>
                   </FormControl>
                 </Grid>
-                {formData.isCivilMarried === "no" && (
+                {formData.isCivilMarried === "0" && (
                   <Grid item xs={5} sm={3}>
                     <FormControl component="fieldset">
                       <label>Live-in?</label>
@@ -466,12 +480,12 @@ const Baptism = () => {
                         value={formData.isLiveIn}
                         onChange={handleChange}>
                         <FormControlLabel
-                          value="yes"
+                          value="1"
                           control={<Radio size="small" />}
                           label="Yes"
                         />
                         <FormControlLabel
-                          value="no"
+                          value="0"
                           control={<Radio size="small" />}
                           label="No"
                         />
@@ -479,7 +493,7 @@ const Baptism = () => {
                     </FormControl>
                   </Grid>
                 )}
-                {formData.isLiveIn === "yes" && (
+                {formData.isLiveIn === "1" && (
                   <Grid item xs={12} sm={3}>
                     <label>How many years?</label>
                     <TextField

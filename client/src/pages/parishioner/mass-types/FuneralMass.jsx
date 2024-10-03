@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from "../../../assets/imageHeader.jpg";
 import Header from "../../../components/Header";
@@ -13,14 +13,14 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import {TimePicker} from "@mui/x-date-pickers/TimePicker";
 import dayjs from "dayjs";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import Footer from "../../../components/Footer";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import generateHash from "../../../utils/GenerateHash";
 import config from "../../../config";
@@ -52,7 +52,7 @@ const FuneralMass = () => {
   useEffect(() => {
     const fetchPriest = async () => {
       try {
-        const response = await axios(`${config.API}/priest/retrieve`, {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
           params: {
             col: "status",
             val: "active",
@@ -79,7 +79,6 @@ const FuneralMass = () => {
     transaction_no: hash,
     service_id: id,
     type: null,
-    mass_date: null,
   });
 
   const modalData = {
@@ -94,7 +93,7 @@ const FuneralMass = () => {
     console.log(formData);
     const validate = ValidateForm(formData);
     setErrors(validate);
-    if (Object.keys(validate) === 0 && validate.constructor === Object) {
+    if (Object.keys(validate) == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-mass`, formData);
         console.log("success!");
@@ -106,15 +105,15 @@ const FuneralMass = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
+    setFormData({...formData, [name]: time.format("HH-mm-ss")});
   };
 
   const handleCaptchaChange = (value) => {
@@ -133,8 +132,7 @@ const FuneralMass = () => {
       <Header backgroundImage={imageHeader} title="FUNERAL MASS" />
       <Link
         to="/mass-selection"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center"
-      >
+        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <p className="xs:hidden md:flex">Return to mass selection</p>
       </Link>
@@ -144,7 +142,7 @@ const FuneralMass = () => {
 
       <NoPaymentModal open={open} data={modalData} />
 
-      <Container maxWidth="lg" sx={{ marginBottom: "50px" }}>
+      <Container maxWidth="lg" sx={{marginBottom: "50px"}}>
         <form>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6}>
@@ -166,13 +164,13 @@ const FuneralMass = () => {
                 variant="outlined"
                 size="small"
                 sx={inputstlying}
-                inputProps={{ maxLength: 11 }}
+                inputProps={{maxLength: 11}}
                 name="contact_no"
                 onChange={handleChange}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
@@ -219,7 +217,7 @@ const FuneralMass = () => {
                 />
               </LocalizationProvider>
               {errors.preferred_date != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.preferred_date}
                 </FormHelperText>
               )}
@@ -235,7 +233,7 @@ const FuneralMass = () => {
                   name="preferred_time"
                   onChange={(time) => handleTimeChange("preferred_time", time)}
                   renderInput={(params) => <TextField {...params} required />}
-                  timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
+                  timeSteps={{hours: 30, minutes: 30}} // if mabuang, delete hours
                   minTime={dayjs().set("hour", 7)}
                   maxTime={dayjs().set("hour", 16)}
                   required
@@ -252,8 +250,7 @@ const FuneralMass = () => {
                 sx={inputstlying}
                 name="preferred_priest"
                 onChange={handleChange}
-                required
-              >
+                required>
                 {priestList.map((priest, index) => (
                   <MenuItem key={index} value={priest.priestID}>
                     {priest.first_name + " " + priest.last_name}
@@ -268,9 +265,8 @@ const FuneralMass = () => {
               sm={2}
               sx={{
                 display: "flex",
-                justifyContent: { xs: "center", sm: "flex-start" },
-              }}
-            >
+                justifyContent: {xs: "center", sm: "flex-start"},
+              }}>
               <label>Are you a Parishioner?</label>
             </Grid>
             <Grid item xs={6} sm={3}>
@@ -279,11 +275,10 @@ const FuneralMass = () => {
                 sx={{
                   marginTop: "-6px",
                   display: "flex",
-                  justifyContent: { xs: "center", sm: "flex-start" },
+                  justifyContent: {xs: "center", sm: "flex-start"},
                 }}
                 name="isParishioner"
-                onChange={handleChange}
-              >
+                onChange={handleChange}>
                 <FormControlLabel
                   value="1"
                   control={<Radio size="small" />}
@@ -310,8 +305,7 @@ const FuneralMass = () => {
               }`}
               disabled={!isCaptchaChecked}
               onClick={handlesubmit}
-              type="button"
-            >
+              type="button">
               SUBMIT REQUEST
             </button>
           </div>
