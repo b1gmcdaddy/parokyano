@@ -56,7 +56,6 @@ const BlessingPending = ({ open, data, handleClose }) => {
   const [service] = useState("blessing");
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
-<<<<<<< HEAD
     requestID: data.requestID,
     type: data.type,
     first_name: data.first_name,
@@ -70,19 +69,6 @@ const BlessingPending = ({ open, data, handleClose }) => {
     isParishioner: data.isParishioner,
     transaction_no: data.transaction_no,
     service_id: 13,
-=======
-    type: "",
-    first_name: "",
-    address: "",
-    requested_by: "",
-    contact_no: "",
-    preferred_date: "",
-    preferred_time: "",
-    preferred_priest: "",
-    isParishioner: "",
-    transaction_no: "",
-    service_id: "",
->>>>>>> c91c3a033919ef47edfabd06ca6abd2083dec6a0
   });
 
   useEffect(() => {
