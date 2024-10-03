@@ -1,5 +1,5 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -8,16 +8,19 @@ import {
   Typography,
   IconButton,
   TextField,
+  MenuItem,
 } from "@mui/material";
 import {
   DatePicker,
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
+import axios from "axios";
+import config from "../../../config";
 
 const style = {
   position: "absolute",
@@ -33,56 +36,102 @@ const style = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
 };
 
 const TextFieldStyleDis = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
   bgcolor: "#D9D9D9",
 };
 
-const AnointingPending = ({open, data, handleClose}) => {
+const AnointingPending = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("anointing");
+  const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
-    type: data.type,
-    name: data.first_name,
-    last_name: data.last_name,
-    address: data.address,
-    requested_by: data.requested_by,
-    relationship: data.relationship,
-    age: data.age,
-    patient_status: data.patient_status,
-    contact_no: data.contact_no,
-    preferred_date: data.preferred_date,
-    preferred_time: data.preferred_time,
-    preferred_priest: data.priest_id,
-    isParishioner: data.isParishioner,
-    transaction_no: data.transaction_no,
-    service_id: 13,
+    type: "",
+    name: "",
+    address: "",
+    requested_by: "",
+    relationship: "",
+    age: "",
+    patient_status: "",
+    contact_no: "",
+    preferred_date: "",
+    preferred_time: "",
+    preferred_priest: "",
+    isParishioner: "",
+    transaction_no: "",
+    service_id: "",
   });
+
+  useEffect(() => {
+    if (open && data) {
+      setFormData({
+        type: data.type,
+        name: data.first_name,
+        address: data.address,
+        requested_by: data.requested_by,
+        relationship: data.relationship,
+        age: data.age,
+        patient_status: data.patient_status,
+        contact_no: data.contact_no,
+        preferred_date: data.preferred_date,
+        preferred_time: data.preferred_time,
+        preferred_priest: data.priest_id,
+        isParishioner: data.isParishioner,
+        transaction_no: data.transaction_no,
+        service_id: 13,
+      });
+    }
+  }, [open, data]);
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
     setDialogOpen(true);
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+        console.log(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+  }, []);
+
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
   };
 
   {
@@ -119,7 +168,8 @@ const AnointingPending = ({open, data, handleClose}) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
+                sx={{ textAlign: "center", fontWeight: "bold" }}
+              >
                 Anointing of the Sick Request Information
               </Typography>
             </Grid>
@@ -130,8 +180,10 @@ const AnointingPending = ({open, data, handleClose}) => {
             <Grid item sm={8}>
               <TextField
                 fullWidth
+                name="name"
+                onChange={handleChange}
                 sx={TextFieldStyle}
-                value={formData.name + " " + formData.last_name}
+                value={formData.name}
                 readonly
               />
             </Grid>
@@ -141,6 +193,8 @@ const AnointingPending = ({open, data, handleClose}) => {
             <Grid item sm={2.2}>
               <TextField
                 fullWidth
+                name="age"
+                onChange={handleChange}
                 sx={TextFieldStyle}
                 value={formData.age}
                 readonly
@@ -153,6 +207,8 @@ const AnointingPending = ({open, data, handleClose}) => {
             <Grid item sm={10.7}>
               <TextField
                 fullWidth
+                name="address"
+                onChange={handleChange}
                 sx={TextFieldStyle}
                 value={formData.address}
                 readonly
@@ -165,6 +221,8 @@ const AnointingPending = ({open, data, handleClose}) => {
             <Grid item sm={5}>
               <TextField
                 fullWidth
+                name="requested_by"
+                onChange={handleChange}
                 sx={TextFieldStyle}
                 value={formData.requested_by}
                 readonly
@@ -176,6 +234,8 @@ const AnointingPending = ({open, data, handleClose}) => {
             <Grid item sm={2.9}>
               <TextField
                 fullWidth
+                name="relationship"
+                onChange={handleChange}
                 sx={TextFieldStyle}
                 value={formData.relationship}
                 readonly
@@ -188,6 +248,8 @@ const AnointingPending = ({open, data, handleClose}) => {
             <Grid item sm={4.9}>
               <TextField
                 fullWidth
+                name="contact_no"
+                onChange={handleChange}
                 sx={TextFieldStyle}
                 value={formData.contact_no}
                 readonly
@@ -199,6 +261,8 @@ const AnointingPending = ({open, data, handleClose}) => {
             <Grid item sm={2.9}>
               <TextField
                 fullWidth
+                name="patient_status"
+                onChange={handleChange}
                 sx={TextFieldStyle}
                 value={formData.patient_status}
                 readonly
@@ -211,9 +275,10 @@ const AnointingPending = ({open, data, handleClose}) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
                 />
                 <div>
                   <p
@@ -221,12 +286,13 @@ const AnointingPending = ({open, data, handleClose}) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     Preferred
                   </p>
                 </div>
                 <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
             </Grid>
@@ -234,9 +300,19 @@ const AnointingPending = ({open, data, handleClose}) => {
             <Grid item sm={3}>
               <label>Priest:</label>
               <TextField
+                value={formData.preferred_priest}
+                name="preferred_priest"
+                onChange={handleChange}
+                select
                 fullWidth
                 sx={TextFieldStyle}
-                value={formData.preferred_priest}></TextField>
+              >
+                {priests.map((priest) => (
+                  <MenuItem key={priest.priestID} value={priest.priestID}>
+                    {priest.first_name + " " + priest.last_name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
             <Grid item sm={3}>
               <label>Date:</label>
@@ -272,8 +348,9 @@ const AnointingPending = ({open, data, handleClose}) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#4C74A5"},
-                }}>
+                  "&:hover": { bgcolor: "#4C74A5" },
+                }}
+              >
                 Assign
               </Button>
             </Grid>
@@ -284,9 +361,10 @@ const AnointingPending = ({open, data, handleClose}) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
                 />
                 <div>
                   <p
@@ -294,12 +372,13 @@ const AnointingPending = ({open, data, handleClose}) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     Assigned
                   </p>
                 </div>
                 <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
             </Grid>
@@ -325,8 +404,9 @@ const AnointingPending = ({open, data, handleClose}) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "#355173",
-                  "&:hover": {bgcolor: "#D3CECE"},
-                }}>
+                  "&:hover": { bgcolor: "#D3CECE" },
+                }}
+              >
                 CLEAR
               </Button>
             </Grid>
@@ -339,11 +419,12 @@ const AnointingPending = ({open, data, handleClose}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
-              <Typography variant="body2" sx={{marginRight: "5px"}}>
+              }}
+            >
+              <Typography variant="body2" sx={{ marginRight: "5px" }}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{fontWeight: "bold"}}>
+              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 {formData.transaction_no}
               </Typography>
             </Grid>
@@ -356,7 +437,8 @@ const AnointingPending = ({open, data, handleClose}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -366,8 +448,9 @@ const AnointingPending = ({open, data, handleClose}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F0CA67"},
-                }}>
+                  "&:hover": { bgcolor: "#F0CA67" },
+                }}
+              >
                 UPDATE
               </Button>
               <Button
@@ -379,8 +462,9 @@ const AnointingPending = ({open, data, handleClose}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F05A5A"},
-                }}>
+                  "&:hover": { bgcolor: "#F05A5A" },
+                }}
+              >
                 CANCEL
               </Button>
             </Grid>
