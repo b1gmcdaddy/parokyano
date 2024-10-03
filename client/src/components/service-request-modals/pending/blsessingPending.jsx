@@ -21,6 +21,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
+import dayjs from "dayjs";
+import axios from "axios";
+import config from "../../../config";
 
 const style = {
   position: "absolute",
@@ -51,6 +54,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("blessing");
   const [formData, setFormData] = useState({
+    requestID: data.requestID,
     type: data.type,
     first_name: data.first_name,
     last_name: data.last_name,
@@ -59,7 +63,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
     contact_no: data.contact_no,
     preferred_date: data.preferred_date,
     preferred_time: data.preferred_time,
-    preferred_priest: data.preferred_priest,
+    preferred_priest: null,
     isParishioner: data.isParishioner,
     transaction_no: data.transaction_no,
     service_id: 13,
@@ -107,6 +111,26 @@ const BlessingPending = ({ open, data, handleClose }) => {
     switch (action) {
       case "approve":
         console.log(formData);
+        try {
+          axios.put(`${config.API}/request/approve`, null, {
+            params: {
+              col: "status",
+              val: "approved",
+              col2: "payment_status",
+              val2: "paid",
+              col3: "preferred_date",
+              val3: formData.preferred_date,
+              col4: "priest_id",
+              val4: formData.preferred_priest,
+              col5: "requestID",
+              val5: formData.requestID,
+            },
+          });
+          console.log("success!");
+          handleClose();
+        } catch (err) {
+          console.log("error submitting to server", err);
+        }
         break;
       case "update":
         console.log(formData);
@@ -266,24 +290,37 @@ const BlessingPending = ({ open, data, handleClose }) => {
             </Grid>
             <Grid item sm={3}>
               <label>Date:</label>
-              <TextField
-                fullWidth
-                sx={TextFieldStyle}
-                value={
-                  formData.preferred_date
-                    ? util.formatDate(formData.preferred_date)
-                    : ""
-                }
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  fullWidth
+                  disablePast
+                  sx={TextFieldStyle}
+                  value={
+                    formData.preferred_date
+                      ? dayjs(formData.preferred_date)
+                      : null
+                  }
+                  onChange={(date) => handleDateChange("preferred_date", date)}
+                  renderInput={(params) => <TextField {...params} required />}
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item sm={3}>
               <label>Time:</label>
-              <TextField
-                fullWidth
-                sx={TextFieldStyle}
-                type="time"
-                value={formData.preferred_time}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  fullWidth
+                  sx={TextFieldStyle}
+                  type="time"
+                  value={
+                    formData.preferred_date
+                      ? dayjs(formData.preferred_date)
+                      : null
+                  }
+                  onChange={(time) => handleTimeChange("preferred_time", time)}
+                  renderInput={(params) => <TextField {...params} required />}
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item sm={2}>
               <Button

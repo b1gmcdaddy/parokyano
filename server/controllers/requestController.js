@@ -460,16 +460,33 @@ const searchIntentions = (req, res) => {
 };
 
 const approveRequest = (req, res) => {
-  const { col, val, col2, val2, col3, val3 } = req.query;
-  const query = `UPDATE request SET ${col} = ?, ${col2} = ?, transaction_date = ? WHERE ${col3} = ?`;
-
-  db.query(query, [val, val2, dateToday, Number(val3)], (err, results) => {
-    if (err) {
-      console.error(err);
-    } else {
-      res.status(200).json({ message: "success!" });
-    }
-  });
+  const { col, val, col2, val2, col3, val3, col4, val4, col5, val5 } =
+    req.query;
+  console.log(req.query);
+  if (val4 != null && val5 != null) {
+    const query = `UPDATE request SET ${col} = ?, ${col2} = ?, ${col3} = ?, ${col4} = ?, transaction_date = ? WHERE ${col5} = ?`;
+    db.query(
+      query,
+      [val, val2, val3, val4, dateToday, Number(val5)],
+      (err, results) => {
+        if (err) {
+          console.error(err);
+        } else {
+          res.status(200).json({ message: "success!" });
+        }
+      }
+    );
+    console.log(query);
+  } else {
+    const query = `UPDATE request SET ${col} = ?, ${col2} = ?, transaction_date = ? WHERE ${col3} = ?`;
+    db.query(query, [val, val2, dateToday, Number(val3)], (err, results) => {
+      if (err) {
+        console.error(err);
+      } else {
+        res.status(200).json({ message: "success!" });
+      }
+    });
+  }
 };
 
 const searchCertsRecords = (req, res) => {
