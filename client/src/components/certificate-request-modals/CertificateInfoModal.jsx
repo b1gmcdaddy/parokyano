@@ -1,7 +1,4 @@
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
   Button,
   TextField,
@@ -36,7 +33,7 @@ const formatDate = (rawDate) => {
   return formatted;
 };
 
-const BaptismCertInfoModal = ({ open, data, close }) => {
+const BaptismCertInfoModal = ({open, data, close}) => {
   // const details = JSON.parse(data.details);
   // const schedule =
   //   formatTime(data.preferred_time) +
@@ -50,25 +47,22 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Baptismal Certificate Request Information
             </Typography>
             <IconButton
@@ -79,16 +73,14 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
             <Grid
               container
               spacing={2}
-              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
-            >
+              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
               <Grid item xs={12} sm={4}>
                 <label>First Name: </label>
                 <TextField
@@ -97,7 +89,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   value={data.first_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -108,7 +100,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   value={data.middle_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -119,7 +111,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.last_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
 
@@ -131,7 +123,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.birth_place}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -142,7 +134,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.contact_no}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -153,7 +145,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.father_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -164,7 +156,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.mother_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -175,7 +167,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.preferred_date}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -186,7 +178,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.date_requested}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -197,8 +189,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   id="demo-simple-select"
                   value={data.purpose}
-                  select
-                >
+                  select>
                   <MenuItem value="marriage">Marriage</MenuItem>
                   <MenuItem value="passport">Passport</MenuItem>
                   <MenuItem value="school">School</MenuItem>
@@ -219,19 +210,18 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   disabled
                   // value={details}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
             </Grid>
 
             <Typography
               fontSize={"medium"}
-              sx={{ textAlign: "center", marginTop: "12px" }}
-            >
+              sx={{textAlign: "center", marginTop: "12px"}}>
               Transaction no: <b>{data.transaction_no}</b>
             </Typography>
             {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
                 Approved by: dummyDataStaffName
               </Typography>
             )}
@@ -243,8 +233,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -253,8 +242,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
+                  }}>
                   <Button
                     sx={{
                       backgroundColor: "#307C41",
@@ -263,8 +251,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#1E5730",
                       },
-                    }}
-                  >
+                    }}>
                     Search Records
                   </Button>
 
@@ -275,8 +262,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#B89545",
                       },
-                    }}
-                  >
+                    }}>
                     Update
                   </Button>
                 </Grid>
@@ -289,7 +275,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
   );
 };
 
-const ConfirmationCertInfoModal = ({ open, data, close }) => {
+const ConfirmationCertInfoModal = ({open, data, close}) => {
   return (
     <Dialog
       fullWidth
@@ -297,25 +283,22 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Confirmation Certificate Request Information
             </Typography>
             <IconButton
@@ -326,16 +309,14 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
             <Grid
               container
               spacing={2}
-              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
-            >
+              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
               <Grid item xs={12} sm={4}>
                 <label>First Name: </label>
                 <TextField
@@ -344,7 +325,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   value={data.first_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -355,7 +336,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   value={data.middle_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -366,7 +347,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.last_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
 
@@ -378,7 +359,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.birth_place}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -389,7 +370,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.contact_no}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -400,7 +381,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.father_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -411,7 +392,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.mother_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -422,7 +403,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.preferred_date}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -433,7 +414,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.date_requested}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -444,8 +425,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   id="demo-simple-select"
                   value={data.purpose}
-                  select
-                >
+                  select>
                   <MenuItem value="marriage">Marriage</MenuItem>
                   <MenuItem value="passport">Passport</MenuItem>
                   <MenuItem value="school">School</MenuItem>
@@ -466,19 +446,18 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   disabled
                   // value={details}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
             </Grid>
 
             <Typography
               fontSize={"medium"}
-              sx={{ textAlign: "center", marginTop: "12px" }}
-            >
+              sx={{textAlign: "center", marginTop: "12px"}}>
               Transaction no: <b>{data.transaction_no}</b>
             </Typography>
             {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
                 Approved by: dummyDataStaffName
               </Typography>
             )}
@@ -490,8 +469,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -500,8 +478,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
+                  }}>
                   <Button
                     sx={{
                       backgroundColor: "#307C41",
@@ -510,8 +487,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#1E5730",
                       },
-                    }}
-                  >
+                    }}>
                     Search Records
                   </Button>
 
@@ -522,8 +498,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#B89545",
                       },
-                    }}
-                  >
+                    }}>
                     Update
                   </Button>
                 </Grid>
@@ -536,7 +511,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
   );
 };
 
-const MarriageCertInfoModal = ({ open, data, close }) => {
+const MarriageCertInfoModal = ({open, data, close}) => {
   // const details = JSON.parse(data.details);
   const spouseDetails = JSON.parse(data.spouse_name);
   // const schedule =
@@ -551,25 +526,22 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Marriage Certificate Request Information
             </Typography>
             <IconButton
@@ -580,16 +552,14 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
             <Grid
               container
               spacing={2}
-              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
-            >
+              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
               <Grid item xs={12} sm={4}>
                 <label>First Name: </label>
                 <TextField
@@ -598,7 +568,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   value={data.first_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -609,7 +579,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   value={data.middle_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -620,7 +590,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.last_name}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -631,7 +601,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={spouseDetails.firstName}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -642,7 +612,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={spouseDetails.middleName}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -653,7 +623,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={spouseDetails.lastName}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -664,7 +634,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.contact_no}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -675,7 +645,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.preferred_date}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -686,7 +656,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.date_requested}
-                  inputProps={{ readOnly: true }}
+                  inputProps={{readOnly: true}}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -697,8 +667,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   id="demo-simple-select"
                   value={data.purpose}
-                  select
-                >
+                  select>
                   <MenuItem value="marriage">Marriage</MenuItem>
                   <MenuItem value="passport">Passport</MenuItem>
                   <MenuItem value="school">School</MenuItem>
@@ -713,12 +682,11 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
 
             <Typography
               fontSize={"medium"}
-              sx={{ textAlign: "center", marginTop: "12px" }}
-            >
+              sx={{textAlign: "center", marginTop: "12px"}}>
               Transaction no: <b>{data.transaction_no}</b>
             </Typography>
             {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
                 Approved by: dummyDataStaffName
               </Typography>
             )}
@@ -730,8 +698,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -740,8 +707,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
+                  }}>
                   <Button
                     sx={{
                       backgroundColor: "#307C41",
@@ -750,8 +716,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#1E5730",
                       },
-                    }}
-                  >
+                    }}>
                     Search Records
                   </Button>
 
@@ -762,8 +727,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#B89545",
                       },
-                    }}
-                  >
+                    }}>
                     Update
                   </Button>
                 </Grid>
