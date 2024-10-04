@@ -20,6 +20,7 @@ import all from "../../../components/IntentionInfoModal";
 import axios from "axios";
 import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
+import PrintIntentions from "./PrintIntentions";
 
 const IntentionsApproved = () => {
   const [tableData, setTableData] = useState([]);
@@ -31,7 +32,7 @@ const IntentionsApproved = () => {
     intention_details: [""],
   });
   const [loading, setLoading] = useState(true);
-
+  const [openPrint, setOpenPrint] = useState(false);
   const rowsPerPage = 10;
   const [totalItems, setTotalItems] = useState(0);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
@@ -45,6 +46,10 @@ const IntentionsApproved = () => {
   // const dateRequested = (_date) => {
   //   return util.formatDate(_date.slice(0, 10));
   // };
+
+  const handleOpenPrintModal = () => {
+    setOpenPrint(true);
+  };
 
   const fetchIntentions = async () => {
     setLoading(true);
@@ -140,6 +145,19 @@ const IntentionsApproved = () => {
         <p>Loading...</p>
       ) : (
         <>
+          <Button
+            variant="contained"
+            onClick={handleOpenPrintModal}
+            sx={{
+              float: "right",
+              color: "#355173",
+              backgroundColor: "#FFFFFF",
+              border: "solid 1px #888888",
+              "&:hover": { bgcolor: "#F2F2FF" },
+            }}
+          >
+            Print Mass Intentions
+          </Button>
           <TableContainer
             sx={{
               display: "flex",
@@ -364,6 +382,7 @@ const IntentionsApproved = () => {
               <KeyboardArrowRight />
             </IconButton>
           </Box>
+          <PrintIntentions open={openPrint} close={() => setOpenPrint(false)} />
         </>
       )}
     </div>

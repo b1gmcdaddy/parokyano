@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import IntentionsApproved from "./intentions-list/IntentionsApproved";
 import IntentionsPending from "./intentions-list/IntentionsPending";
+import PrintIntentions from "./intentions-list/PrintIntentions";
 
 const ManageIntentions = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -22,6 +23,7 @@ const ManageIntentions = () => {
   const [filter, setFilter] = useState([]);
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+
   const rowsPerPage = 10;
 
   const handleTabChange = (index) => {
@@ -133,7 +135,11 @@ const ManageIntentions = () => {
                 </Button>
               </Grid>
 
-              <Grid item sm={12} sx={{ display: "flex", flexDirection: "row" }}>
+              <Grid
+                item
+                sm={12}
+                sx={{ display: "flex", flexDirection: "row", gap: 1 }}
+              >
                 <TextField
                   name="search"
                   fullWidth
@@ -159,7 +165,7 @@ const ManageIntentions = () => {
                   sx={{
                     backgroundColor: "#355173",
                     width: "100px",
-                    borderRadius: "10px",
+                    borderRadius: "5px",
                     fontWeight: "bold",
                   }}
                 >
@@ -168,7 +174,7 @@ const ManageIntentions = () => {
               </Grid>
 
               <Grid item sm={12}>
-                <Box sx={{ p: 3 }}>
+                <Box sx={{ p: 2 }}>
                   {activeTab === 0 && (
                     <IntentionsPending
                       filter={filter}
