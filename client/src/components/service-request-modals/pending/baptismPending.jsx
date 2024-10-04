@@ -25,6 +25,7 @@ import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../config";
+import dayjs from "dayjs";
 
 const style = {
   position: "absolute",
@@ -88,6 +89,15 @@ const BaptismPending = ({ open, data, handleClose }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleDateChange = (name, date) => {
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    console.log(formData.preferred_date);
+  };
+
+  const handleTimeChange = (name, time) => {
+    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
   };
 
   const handleOpenDialog = (action) => {
@@ -216,11 +226,18 @@ const BaptismPending = ({ open, data, handleClose }) => {
               <label>Date of Birth:</label>
               <TextField
                 name="birth_date"
-                onChange={handleChange}
-                value={formData.birth_date}
                 fullWidth
                 type="date"
                 sx={TextFieldStyle}
+                value={
+                  formData.preferred_date
+                    ? dayjs(formData.preferred_date)
+                    : null
+                }
+                onChange={(birth_date) =>
+                  handleDateChange("birth_date", birth_date)
+                }
+                renderInput={(params) => <TextField {...params} required />}
               />
             </Grid>
             <Grid item sm={4}>
@@ -475,9 +492,14 @@ const BaptismPending = ({ open, data, handleClose }) => {
               <TextField
                 type="date"
                 fullWidth
-                value={formData.preferred_date}
                 name="preferred_date"
-                onChange={handleChange}
+                value={
+                  formData.preferred_date
+                    ? dayjs(formData.preferred_date)
+                    : null
+                }
+                onChange={(date) => handleDateChange("preferred_date", date)}
+                renderInput={(params) => <TextField {...params} required />}
                 sx={TextFieldStyle}
               />
             </Grid>
@@ -486,9 +508,14 @@ const BaptismPending = ({ open, data, handleClose }) => {
               <TextField
                 type="time"
                 fullWidth
-                value={formData.preferred_time}
                 name="preferred_time"
-                onChange={handleChange}
+                value={
+                  formData.preferred_time
+                    ? dayjs(formData.preferred_time, "HH:mm:ss")
+                    : null
+                }
+                onChange={(time) => handleTimeChange("preferred_time", time)}
+                renderInput={(params) => <TextField {...params} required />}
                 sx={TextFieldStyle}
               />
             </Grid>

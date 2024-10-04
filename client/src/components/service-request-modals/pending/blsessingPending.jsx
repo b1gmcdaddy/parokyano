@@ -364,10 +364,9 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 <TimePicker
                   fullWidth
                   sx={TextFieldStyle}
-                  type="time"
                   value={
-                    formData.preferred_date
-                      ? dayjs(formData.preferred_date)
+                    formData.preferred_time
+                      ? dayjs(formData.preferred_time, "HH:mm:ss")
                       : null
                   }
                   onChange={(time) => handleTimeChange("preferred_time", time)}

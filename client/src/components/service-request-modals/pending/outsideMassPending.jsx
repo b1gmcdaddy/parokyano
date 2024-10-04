@@ -23,6 +23,7 @@ import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../config";
+import dayjs from "dayjs";
 
 const style = {
   position: "absolute",
@@ -121,6 +122,15 @@ const OutsidePending = ({ open, data, handleClose }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleDateChange = (name, date) => {
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    console.log(formData.preferred_date);
+  };
+
+  const handleTimeChange = (name, time) => {
+    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
   };
 
   const handleCloseDialog = () => {
@@ -317,26 +327,53 @@ const OutsidePending = ({ open, data, handleClose }) => {
               </TextField>
             </Grid>
             <Grid item sm={3}>
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  fullWidth
+                  sx={TextFieldStyle}
+                  value={
+                    formData.preferred_date
+                      ? dayjs(formData.preferred_date)
+                      : null
+                  }
+                  onChange={(date) => handleDateChange("preferred_date", date)}
+                  renderInput={(params) => <TextField {...params} required />}
+                />
+              </LocalizationProvider> */}
               <label>Date:</label>
-              <TextField
-                type="date"
-                fullWidth
-                value={formatDate(formData.preferred_date)}
-                name="preferred_date"
-                onChange={handleChange}
-                sx={TextFieldStyle}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  type="date"
+                  fullWidth
+                  name="preferred_date"
+                  value={
+                    formData.preferred_date
+                      ? dayjs(formData.preferred_date)
+                      : null
+                  }
+                  onChange={(date) => handleDateChange("preferred_date", date)}
+                  renderInput={(params) => <TextField {...params} required />}
+                  sx={TextFieldStyle}
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item sm={3}>
               <label>Time:</label>
-              <TextField
-                type="time"
-                fullWidth
-                value={formData.preferred_time}
-                name="preferred_time"
-                onChange={handleChange}
-                sx={TextFieldStyle}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  type="time"
+                  fullWidth
+                  name="preferred_time"
+                  value={
+                    formData.preferred_time
+                      ? dayjs(formData.preferred_time, "HH:mm:ss")
+                      : null
+                  }
+                  onChange={(time) => handleTimeChange("preferred_time", time)}
+                  renderInput={(params) => <TextField {...params} required />}
+                  sx={TextFieldStyle}
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item sm={2}>
               <Button
