@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import {Button, Typography, TextField, Divider} from "@mui/material";
+import { Button, Typography, TextField, Divider } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,8 +15,8 @@ import dayjs from "dayjs";
 import axios from "axios";
 import util from "../../utils/DateTimeFormatter";
 import all from "../../components/SchedulesModal";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 const ManageSchedules = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -110,11 +110,12 @@ const ManageSchedules = () => {
 
   return (
     <>
-      <Box sx={{display: "flex", mx: {md: "30px"}}}>
+      <Box sx={{ display: "flex", mx: { md: "30px" } }}>
         <NavStaff />
         <Box
           component="main"
-          sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
+          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
+        >
           <Toolbar />
 
           <Box
@@ -123,20 +124,23 @@ const ManageSchedules = () => {
               justifyContent: "space-between",
               margin: "8px",
               alignItems: "center",
-            }}>
+            }}
+          >
             <Typography
               sx={{
                 fontSize: "1.25rem",
                 lineHeight: "1.75rem",
                 fontWeight: 600,
-              }}>
+              }}
+            >
               Priest Schedule
             </Typography>
             <Button
               variant="contained"
               type="button"
               onClick={openScheduleModal}
-              sx={{backgroundColor: "#355173"}}>
+              sx={{ backgroundColor: "#355173" }}
+            >
               ADD ACTIVITY
             </Button>
           </Box>
@@ -153,19 +157,21 @@ const ManageSchedules = () => {
 
           <Divider />
 
-          <Box sx={{p: 2}}>
+          <Box sx={{ p: 2 }}>
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-              }}>
+              }}
+            >
               <Typography
                 sx={{
                   fontWeight: "bold",
                   fontSize: "1.3em",
                   marginBottom: "1em",
-                }}>
+                }}
+              >
                 {util.formatDate(selectedDate)}
               </Typography>
               <TextField
@@ -177,7 +183,7 @@ const ManageSchedules = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                sx={{my: 3, boxShadow: "1px 3px 1px #D9D9D9"}}
+                sx={{ my: 3, boxShadow: "1px 3px 1px #D9D9D9" }}
               />
             </Box>
 
@@ -185,10 +191,10 @@ const ManageSchedules = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{fontWeight: "bold"}}>Time</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Time</TableCell>
                     {priestList.map((priest) => (
                       <TableCell key={priest.priestID} align="center">
-                        <Typography sx={{fontWeight: "bold"}}>
+                        <Typography sx={{ fontWeight: "bold" }}>
                           {priest.first_name} {priest.last_name}
                         </Typography>
                       </TableCell>
@@ -215,7 +221,8 @@ const ManageSchedules = () => {
                                 ? "#355173"
                                 : "transparent",
                               color: activity ? "#fff" : "inherit",
-                            }}>
+                            }}
+                          >
                             {isStart ? (
                               <>
                                 {activity.activity}
