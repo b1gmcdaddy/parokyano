@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import {
   TextField,
   MenuItem,
@@ -26,7 +26,7 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ValidateForm from "../../utils/Validators";
 import all from "../../components/PaymentModal";
@@ -70,12 +70,6 @@ const Baptism = () => {
       liveIn_years: "",
       churchMarriedDate: "",
       churchMarriedPlace: "",
-      godparents: [
-        {
-          name: "",
-          isCatholic: "",
-        },
-      ],
     },
     address: "",
     contact_no: "",
@@ -88,13 +82,19 @@ const Baptism = () => {
     payment_method: "",
     transaction_no: hash,
     service_id: id,
+    sponsors: [
+      {
+        name: "",
+        isCatholic: "",
+      },
+    ],
   });
 
   useEffect(() => {
     const getPriests = async () => {
       try {
         const listPriest = await axios.get(`${config.API}/priest/retrieve`, {
-          params: {col: "status", val: "active"},
+          params: { col: "status", val: "active" },
         });
         setPriests(listPriest.data);
       } catch (error) {
@@ -110,16 +110,16 @@ const Baptism = () => {
   // const isCaptchaChecked = captchaValue !== null;
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
   };
 
   useEffect(() => {
@@ -129,31 +129,31 @@ const Baptism = () => {
   const handleDetails = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      details: {...prevState.details, [e.target.name]: e.target.value},
+      details: { ...prevState.details, [e.target.name]: e.target.value },
     }));
   };
 
   const handleGodparentChange = (index, e) => {
-    const updatedGodparents = formData.details.godparents.map((godparent, i) =>
-      i === index ? {...godparent, [e.target.name]: e.target.value} : godparent
+    const updatedGodparents = formData.sponsors.map((godparent, i) =>
+      i === index
+        ? { ...godparent, [e.target.name]: e.target.value }
+        : godparent
     );
     setFormData((prevState) => ({
       ...prevState,
-      details: {...prevState.details, godparents: updatedGodparents},
+      sponsors: updatedGodparents,
     }));
   };
 
+  useEffect(() => {
+    console.log(formData.sponsors);
+  }, [formData.sponsors]);
+
   const handleAddGodparent = () => {
-    if (formData.details.godparents.length < 8) {
+    if (formData.sponsors?.length < 8) {
       setFormData((prevState) => ({
         ...prevState,
-        details: {
-          ...prevState.details,
-          godparents: [
-            ...prevState.details.godparents,
-            {name: "", isCatholic: ""},
-          ],
-        },
+        sponsors: [...prevState.sponsors, { name: "", isCatholic: "" }],
       }));
     }
   };
@@ -174,6 +174,7 @@ const Baptism = () => {
       "Note: We will use your mobile number to communicate with you. Please submit the requirements to the office as soon as possible so that we can start processing your request.",
   };
 
+  //  payment modal not showing
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
@@ -183,10 +184,10 @@ const Baptism = () => {
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
         await axios.post(`${config.API}/request/create-baptism`, formData);
-        if (formData.payment_method === "cash") {
+        if (formData.payment_method == "cash") {
           setModalData(cashModalInfo);
           setOpenCash(true);
-        } else if (formData.payment_method === "gcash") {
+        } else {
           setModalData(gcashModalInfo);
           setOpenGCash(true);
         }
@@ -213,9 +214,9 @@ const Baptism = () => {
       <all.CashPaymentModal open={openCash} data={modalData} />
       <all.GCashPaymentModal open={openGCash} data={modalData} />
 
-      <Container maxWidth="md" sx={{marginBottom: "50px"}}>
+      <Container maxWidth="md" sx={{ marginBottom: "50px" }}>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2} sx={{marginBottom: "10px"}}>
+          <Grid container spacing={2} sx={{ marginBottom: "10px" }}>
             <Grid item xs={12} sm={4}>
               <label>Child's First Name:</label>
               <TextField
@@ -265,7 +266,7 @@ const Baptism = () => {
                   renderInput={(params) => <TextField {...params} required />}
                   sx={inputstlying}
                   disableFuture
-                  InputLabelProps={{shrink: true}}
+                  InputLabelProps={{ shrink: true }}
                   required
                 />
               </LocalizationProvider>
@@ -293,7 +294,8 @@ const Baptism = () => {
                 name="gender"
                 onChange={handleChange}
                 value={formData.gender}
-                required>
+                required
+              >
                 <MenuItem value="male">Male</MenuItem>
                 <MenuItem value="female">Female</MenuItem>
               </TextField>
@@ -369,12 +371,12 @@ const Baptism = () => {
                 sx={inputstlying}
                 name="contact_no"
                 onChange={handleChange}
-                inputProps={{maxLength: 11}}
+                inputProps={{ maxLength: 11 }}
                 size="small"
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
@@ -390,7 +392,8 @@ const Baptism = () => {
                 value={formData.payment_method}
                 onChange={handleChange}
                 sx={inputstlying}
-                required>
+                required
+              >
                 <MenuItem value="cash">Cash</MenuItem>
                 <MenuItem value="gcash">GCash</MenuItem>
               </TextField>
@@ -404,7 +407,8 @@ const Baptism = () => {
                   row
                   name="isChurchMarried"
                   value={formData.isChurchMarried}
-                  onChange={handleChange}>
+                  onChange={handleChange}
+                >
                   <FormControlLabel
                     value="1"
                     control={<Radio size="small" />}
@@ -420,7 +424,7 @@ const Baptism = () => {
             </Grid>
             {formData.isChurchMarried === "1" && (
               <>
-                <Grid item xs={12} sm={3} sx={{marginRight: {md: "15px"}}}>
+                <Grid item xs={12} sm={3} sx={{ marginRight: { md: "15px" } }}>
                   <label>When?</label>
                   <TextField
                     fullWidth
@@ -433,7 +437,7 @@ const Baptism = () => {
                     onChange={handleDetails}
                   />
                 </Grid>
-                <Grid item xs={12} sm={3} sx={{marginBottom: "14px"}}>
+                <Grid item xs={12} sm={3} sx={{ marginBottom: "14px" }}>
                   <label>Where?</label>
                   <TextField
                     fullWidth
@@ -456,7 +460,8 @@ const Baptism = () => {
                       row
                       name="isCivilMarried"
                       value={formData.isCivilMarried}
-                      onChange={handleChange}>
+                      onChange={handleChange}
+                    >
                       <FormControlLabel
                         value="1"
                         control={<Radio size="small" />}
@@ -478,7 +483,8 @@ const Baptism = () => {
                         row
                         name="isLiveIn"
                         value={formData.isLiveIn}
-                        onChange={handleChange}>
+                        onChange={handleChange}
+                      >
                         <FormControlLabel
                           value="1"
                           control={<Radio size="small" />}
@@ -512,7 +518,7 @@ const Baptism = () => {
           </Grid>
 
           {/*------------preferrrd sched and priest----------*/}
-          <Grid container spacing={2} sx={{marginBottom: "1.5em"}}>
+          <Grid container spacing={2} sx={{ marginBottom: "1.5em" }}>
             <Grid item xs={12} sm={4}>
               <label>Preferred Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -541,7 +547,7 @@ const Baptism = () => {
                   name="preferred_time"
                   onChange={(time) => handleTimeChange("preferred_time", time)}
                   renderInput={(params) => <TextField {...params} required />}
-                  timeSteps={{hours: 30, minutes: 30}} // if mabuang, delete hours
+                  timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
                   minTime={dayjs().set("hour", 7)}
                   maxTime={dayjs().set("hour", 16)}
                   required
@@ -559,7 +565,8 @@ const Baptism = () => {
                 name="priest_id"
                 onChange={handleChange}
                 value={formData.priest_id}
-                required>
+                required
+              >
                 {priests.map((priest) => (
                   <MenuItem key={priest.priestID} value={priest.priestID}>
                     {priest.first_name} {priest.last_name}
@@ -570,8 +577,13 @@ const Baptism = () => {
           </Grid>
 
           {/*---------------------godParents sectiom--------------------------------*/}
-          {formData.details.godparents.map((godparent, index) => (
-            <Grid container spacing={2} key={index} sx={{marginBottom: "6px"}}>
+          {formData.sponsors.map((godparent, index) => (
+            <Grid
+              container
+              spacing={2}
+              key={index}
+              sx={{ marginBottom: "6px" }}
+            >
               <Grid item xs={12} sm={9}>
                 <label>{`Godparent ${index + 1}:`}</label>
                 <TextField
@@ -594,18 +606,20 @@ const Baptism = () => {
                   sx={inputstlying}
                   name="isCatholic"
                   value={godparent.isCatholic}
-                  onChange={(e) => handleGodparentChange(index, e)}>
+                  onChange={(e) => handleGodparentChange(index, e)}
+                >
                   <MenuItem value="yes">Yes</MenuItem>
                   <MenuItem value="no">No</MenuItem>
                 </TextField>
               </Grid>
             </Grid>
           ))}
-          {formData.details.godparents.length < 8 && (
+          {formData.sponsors.length < 8 && (
             <Button
               variant="outlined"
               onClick={handleAddGodparent}
-              sx={{marginBottom: "2em", marginTop: "16px"}}>
+              sx={{ marginBottom: "2em", marginTop: "16px" }}
+            >
               {" "}
               Add Godparent
             </Button>
@@ -613,11 +627,13 @@ const Baptism = () => {
 
           <Grid
             item
-            sx={{display: "flex", justifyContent: "center", marginTop: "3em"}}>
+            sx={{ display: "flex", justifyContent: "center", marginTop: "3em" }}
+          >
             <Button
               variant="contained"
               type="submit"
-              sx={{backgroundColor: "#355173"}}>
+              sx={{ backgroundColor: "#355173" }}
+            >
               Submit Request
             </Button>
           </Grid>
