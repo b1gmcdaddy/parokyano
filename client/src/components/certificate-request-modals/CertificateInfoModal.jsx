@@ -1,7 +1,4 @@
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
   Button,
   TextField,
@@ -36,12 +33,51 @@ const formatDate = (rawDate) => {
   return formatted;
 };
 
-const BaptismCertInfoModal = ({ open, data, close }) => {
-  // const details = JSON.parse(data.details);
-  // const schedule =
-  //   formatTime(data.preferred_time) +
-  //   " ,  " +
-  //   formatDate(data.preferred_date.slice(0, 10));
+const BaptismCertInfoModal = ({open, data, close}) => {
+  const [formData, setFormData] = useState({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    birth_place: "",
+    contact_no: "",
+    father_name: "",
+    mother_name: "",
+    baptism_date: "",
+    date_requested: "",
+    purpose: "",
+    transaction_no: "",
+    service_id: "",
+  });
+
+  useEffect(() => {
+    if (open && data) {
+      setFormData({
+        first_name: data.first_name,
+        middle_name: data.middle_name,
+        last_name: data.last_name,
+        birth_place: data.birth_place,
+        contact_no: data.contact_no,
+        father_name: data.father_name,
+        mother_name: data.mother_name,
+        baptism_date: formatDate(data.preferred_date),
+        date_requested: formatDate(data.date_requested),
+        purpose: data.purpose,
+        transaction_no: data.transaction_no,
+        service_id: 3,
+      });
+    }
+  }, [open, data]);
+
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
 
   return (
     <Dialog
@@ -50,25 +86,22 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Baptismal Certificate Request Information
             </Typography>
             <IconButton
@@ -79,16 +112,14 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
             <Grid
               container
               spacing={2}
-              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
-            >
+              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
               <Grid item xs={12} sm={4}>
                 <label>First Name: </label>
                 <TextField
@@ -96,8 +127,9 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   multiline
                   fullWidth
                   size="small"
-                  value={data.first_name}
-                  inputProps={{ readOnly: true }}
+                  name="first_name"
+                  onChange={handleChange}
+                  value={formData.first_name}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -107,8 +139,9 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   multiline
                   fullWidth
                   size="small"
-                  value={data.middle_name}
-                  inputProps={{ readOnly: true }}
+                  name="middle_name"
+                  onChange={handleChange}
+                  value={formData.middle_name}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -118,8 +151,9 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.last_name}
-                  inputProps={{ readOnly: true }}
+                  name="last_name"
+                  onChange={handleChange}
+                  value={formData.last_name}
                 />
               </Grid>
 
@@ -130,8 +164,9 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.birth_place}
-                  inputProps={{ readOnly: true }}
+                  name="birth_place"
+                  onChange={handleChange}
+                  value={formData.birth_place}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -141,8 +176,9 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.contact_no}
-                  inputProps={{ readOnly: true }}
+                  name="contact_no"
+                  onChange={handleChange}
+                  value={formData.contact_no}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -152,8 +188,9 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.father_name}
-                  inputProps={{ readOnly: true }}
+                  name="father_name"
+                  onChange={handleChange}
+                  value={formData.father_name}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -163,8 +200,9 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.mother_name}
-                  inputProps={{ readOnly: true }}
+                  name="mother_name"
+                  onChange={handleChange}
+                  value={formData.mother_name}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -174,8 +212,10 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.preferred_date}
-                  inputProps={{ readOnly: true }}
+                  type="date"
+                  name="baptism_date"
+                  onChange={handleChange}
+                  value={formData.baptism_date}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -185,8 +225,9 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.date_requested}
-                  inputProps={{ readOnly: true }}
+                  name="date_requested"
+                  onChange={handleChange}
+                  value={formData.date_requested}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -196,9 +237,10 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   id="demo-simple-select"
-                  value={data.purpose}
-                  select
-                >
+                  name="purpose"
+                  onChange={handleChange}
+                  value={formData.purpose}
+                  select>
                   <MenuItem value="marriage">Marriage</MenuItem>
                   <MenuItem value="passport">Passport</MenuItem>
                   <MenuItem value="school">School</MenuItem>
@@ -219,19 +261,17 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   disabled
                   // value={details}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
             </Grid>
 
             <Typography
               fontSize={"medium"}
-              sx={{ textAlign: "center", marginTop: "12px" }}
-            >
+              sx={{textAlign: "center", marginTop: "12px"}}>
               Transaction no: <b>{data.transaction_no}</b>
             </Typography>
             {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
                 Approved by: dummyDataStaffName
               </Typography>
             )}
@@ -243,8 +283,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -253,21 +292,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
-                  <Button
-                    sx={{
-                      backgroundColor: "#307C41",
-                      color: "white",
-                      paddingX: "12px",
-                      "&:hover": {
-                        backgroundColor: "#1E5730",
-                      },
-                    }}
-                  >
-                    Search Records
-                  </Button>
-
+                  }}>
                   <Button
                     sx={{
                       backgroundColor: "#CDAB52",
@@ -275,9 +300,17 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#B89545",
                       },
-                    }}
-                  >
+                    }}>
                     Update
+                  </Button>
+                  <Button
+                    onClick={close}
+                    sx={{
+                      backgroundColor: "#d9d9d9",
+                      color: "black",
+                      paddingX: "12px",
+                    }}>
+                    Close
                   </Button>
                 </Grid>
               </Grid>
@@ -289,7 +322,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
   );
 };
 
-const ConfirmationCertInfoModal = ({ open, data, close }) => {
+const ConfirmationCertInfoModal = ({open, data, close}) => {
   return (
     <Dialog
       fullWidth
@@ -297,25 +330,22 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Confirmation Certificate Request Information
             </Typography>
             <IconButton
@@ -326,16 +356,14 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
             <Grid
               container
               spacing={2}
-              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
-            >
+              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
               <Grid item xs={12} sm={4}>
                 <label>First Name: </label>
                 <TextField
@@ -344,7 +372,6 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   value={data.first_name}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -355,7 +382,6 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   value={data.middle_name}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -366,7 +392,6 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.last_name}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
 
@@ -378,7 +403,6 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.birth_place}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -389,7 +413,6 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.contact_no}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -400,7 +423,6 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.father_name}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -411,7 +433,6 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.mother_name}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -422,7 +443,6 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.preferred_date}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -433,7 +453,6 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   fullWidth
                   value={data.date_requested}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -444,8 +463,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   size="small"
                   id="demo-simple-select"
                   value={data.purpose}
-                  select
-                >
+                  select>
                   <MenuItem value="marriage">Marriage</MenuItem>
                   <MenuItem value="passport">Passport</MenuItem>
                   <MenuItem value="school">School</MenuItem>
@@ -466,19 +484,17 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   disabled
                   // value={details}
-                  inputProps={{ readOnly: true }}
                 />
               </Grid>
             </Grid>
 
             <Typography
               fontSize={"medium"}
-              sx={{ textAlign: "center", marginTop: "12px" }}
-            >
+              sx={{textAlign: "center", marginTop: "12px"}}>
               Transaction no: <b>{data.transaction_no}</b>
             </Typography>
             {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
                 Approved by: dummyDataStaffName
               </Typography>
             )}
@@ -490,8 +506,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -500,21 +515,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
-                  <Button
-                    sx={{
-                      backgroundColor: "#307C41",
-                      color: "white",
-                      paddingX: "12px",
-                      "&:hover": {
-                        backgroundColor: "#1E5730",
-                      },
-                    }}
-                  >
-                    Search Records
-                  </Button>
-
+                  }}>
                   <Button
                     sx={{
                       backgroundColor: "#CDAB52",
@@ -522,9 +523,17 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#B89545",
                       },
-                    }}
-                  >
+                    }}>
                     Update
+                  </Button>
+                  <Button
+                    onClick={close}
+                    sx={{
+                      backgroundColor: "#d9d9d9",
+                      color: "black",
+                      paddingX: "12px",
+                    }}>
+                    Close
                   </Button>
                 </Grid>
               </Grid>
@@ -536,13 +545,52 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
   );
 };
 
-const MarriageCertInfoModal = ({ open, data, close }) => {
-  // const details = JSON.parse(data.details);
+const MarriageCertInfoModal = ({open, data, close}) => {
   const spouseDetails = JSON.parse(data.spouse_name);
-  // const schedule =
-  //   formatTime(data.preferred_time) +
-  //   " ,  " +
-  //   formatDate(data.preferred_date.slice(0, 10));
+  const [formData, setFormData] = useState({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    spouse_firstName: "",
+    spouse_middleName: "",
+    spouse_lastName: "",
+    contact_no: "",
+    marriage_date: "",
+    date_requested: "",
+    purpose: "",
+    transaction_no: "",
+    service_id: "",
+  });
+
+  useEffect(() => {
+    if (open && data) {
+      setFormData({
+        first_name: data.first_name,
+        middle_name: data.middle_name,
+        last_name: data.last_name,
+        spouse_firstName: spouseDetails.firstName,
+        spouse_middleName: spouseDetails.middleName,
+        spouse_lastName: spouseDetails.lastName,
+        contact_no: data.contact_no,
+        marriage_date: data.preferred_date,
+        date_requested: data.date_requested,
+        purpose: data.purpose,
+        transaction_no: data.transaction_no,
+        service_id: 4,
+      });
+    }
+  }, [open, data]);
+
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
 
   return (
     <Dialog
@@ -551,25 +599,22 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Marriage Certificate Request Information
             </Typography>
             <IconButton
@@ -580,16 +625,14 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
             <Grid
               container
               spacing={2}
-              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
-            >
+              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
               <Grid item xs={12} sm={4}>
                 <label>First Name: </label>
                 <TextField
@@ -597,8 +640,9 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   multiline
                   fullWidth
                   size="small"
-                  value={data.first_name}
-                  inputProps={{ readOnly: true }}
+                  name="first_name"
+                  onChange={handleChange}
+                  value={formData.first_name}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -608,8 +652,9 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   multiline
                   fullWidth
                   size="small"
-                  value={data.middle_name}
-                  inputProps={{ readOnly: true }}
+                  name="middle_name"
+                  onChange={handleChange}
+                  value={formData.middle_name}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -619,8 +664,9 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.last_name}
-                  inputProps={{ readOnly: true }}
+                  name="last_name"
+                  onChange={handleChange}
+                  value={formData.last_name}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -630,8 +676,9 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={spouseDetails.firstName}
-                  inputProps={{ readOnly: true }}
+                  name="spouse_firstName"
+                  onChange={handleChange}
+                  value={formData.spouse_firstName}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -641,8 +688,9 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={spouseDetails.middleName}
-                  inputProps={{ readOnly: true }}
+                  name="spouse_middleName"
+                  onChange={handleChange}
+                  value={formData.spouse_middleName}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -652,8 +700,9 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={spouseDetails.lastName}
-                  inputProps={{ readOnly: true }}
+                  name="spouse_lastName"
+                  onChange={handleChange}
+                  value={formData.spouse_lastName}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -663,8 +712,9 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.contact_no}
-                  inputProps={{ readOnly: true }}
+                  name="contact_no"
+                  onChange={handleChange}
+                  value={formData.contact_no}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -674,8 +724,10 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.preferred_date}
-                  inputProps={{ readOnly: true }}
+                  type="date"
+                  name="marriage_date"
+                  onChange={handleChange}
+                  value={formData.marriage_date}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -685,8 +737,10 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   multiline
                   size="small"
                   fullWidth
-                  value={data.date_requested}
-                  inputProps={{ readOnly: true }}
+                  type="date"
+                  name="date_requested"
+                  onChange={handleChange}
+                  value={formData.date_requested}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -696,9 +750,10 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   fullWidth
                   size="small"
                   id="demo-simple-select"
-                  value={data.purpose}
-                  select
-                >
+                  name="purpose"
+                  onChange={handleChange}
+                  value={formData.purpose}
+                  select>
                   <MenuItem value="marriage">Marriage</MenuItem>
                   <MenuItem value="passport">Passport</MenuItem>
                   <MenuItem value="school">School</MenuItem>
@@ -713,12 +768,11 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
 
             <Typography
               fontSize={"medium"}
-              sx={{ textAlign: "center", marginTop: "12px" }}
-            >
+              sx={{textAlign: "center", marginTop: "12px"}}>
               Transaction no: <b>{data.transaction_no}</b>
             </Typography>
             {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
                 Approved by: dummyDataStaffName
               </Typography>
             )}
@@ -730,8 +784,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -740,21 +793,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
-                  <Button
-                    sx={{
-                      backgroundColor: "#307C41",
-                      color: "white",
-                      paddingX: "12px",
-                      "&:hover": {
-                        backgroundColor: "#1E5730",
-                      },
-                    }}
-                  >
-                    Search Records
-                  </Button>
-
+                  }}>
                   <Button
                     sx={{
                       backgroundColor: "#CDAB52",
@@ -762,9 +801,17 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#B89545",
                       },
-                    }}
-                  >
+                    }}>
                     Update
+                  </Button>
+                  <Button
+                    onClick={close}
+                    sx={{
+                      backgroundColor: "#d9d9d9",
+                      color: "black",
+                      paddingX: "12px",
+                    }}>
+                    Close
                   </Button>
                 </Grid>
               </Grid>
