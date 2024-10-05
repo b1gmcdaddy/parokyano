@@ -133,7 +133,7 @@ const createRequestBaptism = (req, res) => {
           }
           for (let i = 0; i < request.sponsors.length; i++) {
             db.query(
-              `INSERT INTO sponsor (name, details, request_id) VALUES (?, ?, ?)`,
+              `INSERT INTO sponsor (name, isCatholic, request_id) VALUES (?, ?, ?)`,
               [
                 request.sponsors[i].name,
                 request.sponsors[i].isCatholic,
@@ -161,26 +161,20 @@ const createRequestBaptism = (req, res) => {
 
 const createRequestWedding = (req, res) => {
   const request = req.body;
-  const spouse =
-    request.spouse_name.firstName +
-    " " +
-    request.spouse_name.middleName +
-    " " +
-    request.spouse_name.lastName;
-  const sponsor = JSON.stringify(request.sponsor_details);
+  const details = JSON.stringify(request.details);
+  console.log(request);
 
   db.query(
-    "INSERT INTO request (first_name, middle_name, last_name, spouse_name, contact_no, relationship, isCatholic, isChurchMarried, details, transaction_no, service_id, date_requested) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO request (first_name, middle_name, last_name, contact_no, relationship, isCatholic, isChurchMarried, details, transaction_no, service_id, date_requested) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
       request.first_name,
       request.middle_name,
       request.last_name,
-      spouse,
       request.contact_no,
       request.relationship,
       request.isCatholic,
       request.isChurchMarried,
-      sponsor,
+      details,
       request.transaction_no,
       request.service_id,
       dateToday,
@@ -190,7 +184,61 @@ const createRequestWedding = (req, res) => {
         console.error("error submitting to db", err);
         return res.status(500);
       }
-      return res.status(200);
+      db.query(
+        `SELECT requestID from request WHERE transaction_no = '${request.transaction_no}'`,
+        (err, result) => {
+          if (err) {
+            console.error("Error submitting to database", err);
+            return res.status(500).json({
+              message: "Failed to create wedding request",
+              error: err.message,
+            });
+          }
+          let reqID = result[0].requestID;
+          for (let i = 0; i < request.sponsors.length; i++) {
+            db.query(
+              `INSERT INTO sponsor (name, age, isCatholic, request_id) VALUES ( ?, ?, ?, ?)`,
+              [
+                request.sponsors[i].name,
+                request.sponsors[i].age,
+                request.sponsors[i].isCatholic,
+                reqID,
+              ],
+              (err, result) => {
+                if (err) {
+                  console.error("Error submitting to database", err);
+                  return res.status(500).json({
+                    message: "Failed to create sponsor request",
+                    error: err.message,
+                  });
+                }
+              }
+            );
+          }
+          db.query(
+            `INSERT INTO wedding (spouse_firstName, spouse_middleName, spouse_lastName, isCatholic, request_id) VALUES (?, ?, ?, ?, ?)`,
+            [
+              request.wedding_details.firstName,
+              request.wedding_details.middleName,
+              request.wedding_details.lastName,
+              request.wedding_details.isCatholic,
+              reqID,
+            ],
+            (err, result) => {
+              if (err) {
+                console.error("Error submitting to database", err);
+                return res.status(500).json({
+                  message: "Failed to create wedding request",
+                  error: err.message,
+                });
+              }
+              return res.status(200).json({
+                message: "Wedding request submitted successfully",
+              });
+            }
+          );
+        }
+      );
     }
   );
 };
