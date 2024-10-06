@@ -18,23 +18,36 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
 import config from "../../config";
 
-// for test...
-const dummyData = [
-  {
-    id: 1,
-    name: "clyde noob",
-  },
-  {
-    id: 2,
-    name: "jolo tangpuz",
-  },
-  {
-    id: 3,
-    name: "carl barrera",
-  },
-];
-
 const SearchCertRecords = ({open, data, close}) => {
+  const [certType, setCertType] = useState(null);
+  const [records, setRecords] = useState([]);
+
+  useEffect(() => {
+    const searchRecords = async () => {
+      try {
+        const res = await axios.get(`${config.API}/request/search-records`, {
+          params: {
+            first_name: data.first_name || "",
+            last_name: data.last_name || "",
+            contact_no: data.contact_no || "",
+            birth_date: data.birth_date || "",
+            preferred_date: data.preferred_date || "",
+            preferred_time: data.preferred_time || "",
+            service_id:
+              data.service_id === 3 ? 5 : data.service_id === 4 ? 7 : null,
+            status: "pending", //pending for testing purposes (change to 'finished' later)..
+          },
+        });
+        setRecords(res.data.result);
+        console.log(res.data.result);
+      } catch (err) {
+        console.error("error retrieving matching records", err);
+      }
+    };
+    searchRecords();
+    console.log(data.service_id);
+  }, [open, data]);
+
   return (
     <Dialog
       fullWidth
@@ -83,7 +96,7 @@ const SearchCertRecords = ({open, data, close}) => {
                 item
                 xs={12}
                 sx={{display: "flex", justifyContent: "center"}}>
-                {dummyData.length > 0 ? (
+                {records.length > 0 ? (
                   <CheckCircleIcon sx={{color: "green", fontSize: "5em"}} />
                 ) : (
                   <CancelIcon sx={{color: "#C34444", fontSize: "5em"}} />
@@ -91,15 +104,15 @@ const SearchCertRecords = ({open, data, close}) => {
               </Grid>
               <Grid item xs={12} sx={{textAlign: "center"}}>
                 <Typography sx={{fontWeight: "bold"}}>
-                  {dummyData.length} RECORDS FOUND
+                  {records.length} RECORDS FOUND
                 </Typography>
               </Grid>
 
-              {dummyData.length > 0 ? (
+              {records.length > 0 ? (
                 <Grid item xs={12}>
-                  {dummyData.map((data) => (
+                  {records.map((rec) => (
                     <Paper
-                      key={data.id}
+                      key={rec.requestID}
                       elevation={3}
                       sx={{
                         display: "flex",
@@ -109,7 +122,9 @@ const SearchCertRecords = ({open, data, close}) => {
                         backgroundColor: "#D9D9D9",
                         marginBottom: "8px",
                       }}>
-                      <Typography>{data.name}</Typography>
+                      <Typography>
+                        {rec.first_name} {rec.last_name}
+                      </Typography>
 
                       {/* Container for buttons */}
                       <Box sx={{display: "flex", gap: 1}}>
