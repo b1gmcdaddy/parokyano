@@ -250,7 +250,7 @@ const CertificatesPending = () => {
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
                         }}>
-                        {cert.date_requested}
+                        {util.formatDate(cert.date_requested)}
                       </TableCell>
                       <TableCell
                         sx={{

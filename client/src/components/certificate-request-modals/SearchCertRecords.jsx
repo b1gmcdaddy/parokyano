@@ -17,10 +17,13 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
 import config from "../../config";
+import CompareRecords from "./CompareRecords";
 
 const SearchCertRecords = ({open, data, close}) => {
   const [certType, setCertType] = useState(null);
   const [records, setRecords] = useState([]);
+  const [openCompareModal, setOpenCompareModal] = useState(false);
+  const [recordData, setRecordData] = useState([]);
 
   useEffect(() => {
     const searchRecords = async () => {
@@ -48,6 +51,15 @@ const SearchCertRecords = ({open, data, close}) => {
     console.log(data.service_id);
   }, [open, data]);
 
+  const handleOpenCompareModal = (rec) => {
+    setOpenCompareModal(true);
+    setRecordData(rec);
+  };
+
+  const closeCompareModal = () => {
+    setOpenCompareModal(false);
+  };
+
   return (
     <Dialog
       fullWidth
@@ -57,6 +69,14 @@ const SearchCertRecords = ({open, data, close}) => {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description">
       <DialogContent>
+        {/* START COMPARISON OF CERTIFICATE MODAL */}
+        <CompareRecords
+          open={openCompareModal}
+          close={closeCompareModal}
+          certData={data}
+          recordData={recordData}
+        />
+        {/* END COMPARISON OF CERTIFICATE MODAL */}
         <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
@@ -136,7 +156,8 @@ const SearchCertRecords = ({open, data, close}) => {
                             "&:hover": {
                               backgroundColor: "#0036B1",
                             },
-                          }}>
+                          }}
+                          onClick={() => handleOpenCompareModal(rec)}>
                           INFO
                         </Button>
                         <Button

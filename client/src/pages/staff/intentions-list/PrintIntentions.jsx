@@ -165,19 +165,13 @@ const PrintIntentions = ({open, close}) => {
               </Box>
 
               <Box sx={{marginTop: "3em"}}>
-                <Typography sx={{textAlign: "center", fontSize: "14px"}}>
-                  SOULS
-                </Typography>
+                <Typography sx={{fontSize: "14px"}}>SOULS</Typography>
 
                 <Grid container spacing={2} sx={{padding: "20px"}}>
                   {tableData
                     .filter((t) => t.type === "Souls")
                     .map((row, index) => (
-                      <Grid
-                        item
-                        xs={6}
-                        key={row.requestID}
-                        sx={{textAlign: "center"}}>
+                      <Grid item xs={6} key={row.requestID}>
                         <Typography>
                           <b>Requested by:</b> {row.requested_by}
                         </Typography>
@@ -191,9 +185,7 @@ const PrintIntentions = ({open, close}) => {
               </Box>
 
               <Box sx={{marginTop: "3em"}}>
-                <Typography sx={{textAlign: "center", fontSize: "14px"}}>
-                  THANKSGIVING
-                </Typography>
+                <Typography sx={{fontSize: "14px"}}>THANKSGIVING</Typography>
 
                 <Grid container spacing={2} sx={{padding: "20px"}}>
                   {tableData
@@ -202,11 +194,7 @@ const PrintIntentions = ({open, close}) => {
                       const details = JSON.parse(row.details);
 
                       return (
-                        <Grid
-                          item
-                          xs={6}
-                          key={row.requestID}
-                          sx={{textAlign: "center"}}>
+                        <Grid item xs={6} key={row.requestID}>
                           <Typography>
                             <b>Requested by:</b> {row.requested_by}
                           </Typography>
@@ -244,19 +232,13 @@ const PrintIntentions = ({open, close}) => {
                 </Grid>
               </Box>
               <Box sx={{marginTop: "3em"}}>
-                <Typography sx={{textAlign: "center", fontSize: "14px"}}>
-                  PETITION
-                </Typography>
+                <Typography sx={{fontSize: "14px"}}>PETITION</Typography>
 
                 <Grid container spacing={2} sx={{padding: "20px"}}>
                   {tableData
                     .filter((t) => t.type === "Petition")
                     .map((row, index) => (
-                      <Grid
-                        item
-                        xs={6}
-                        key={row.requestID}
-                        sx={{textAlign: "center"}}>
+                      <Grid item xs={6} key={row.requestID}>
                         <Typography>
                           <b>Requested by:</b> {row.requested_by}
                         </Typography>
