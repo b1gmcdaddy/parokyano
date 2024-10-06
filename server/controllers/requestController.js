@@ -555,35 +555,75 @@ const searchIntentions = (req, res) => {
   );
 };
 
-const approveRequest = (req, res) => {
+// possible to refactor these to a single query
+const approveService = (req, res) => {
   const { col, val, col2, val2, col3, val3, col4, val4, col5, val5 } =
     req.query;
-  console.log(req.query);
-  if (val4 != null && val5 != null) {
-    const query = `UPDATE request SET ${col} = ?, ${col2} = ?, ${col3} = ?, ${col4} = ?, transaction_date = ? WHERE ${col5} = ?`;
-    db.query(
-      query,
-      [val, val2, val3, val4, dateToday, Number(val5)],
-      (err, results) => {
-        if (err) {
-          console.error(err);
-        } else {
-          res.status(200).json({ message: "success!" });
-        }
-      }
-    );
-    console.log(query);
-  } else {
-    const query = `UPDATE request SET ${col} = ?, ${col2} = ?, transaction_date = ? WHERE ${col3} = ?`;
-    db.query(query, [val, val2, dateToday, Number(val3)], (err, results) => {
+
+  const query = `UPDATE request SET ${col} = ?, ${col2} = ?, ${col3} = ?, ${col4} = ?, transaction_date = ? WHERE ${col5} = ?`;
+  db.query(
+    query,
+    [val, val2, val3, val4, dateToday, Number(val5)],
+    (err, results) => {
       if (err) {
         console.error(err);
+        return res.status(500).json({ message: "error!" });
       } else {
         res.status(200).json({ message: "success!" });
       }
-    });
-  }
+    }
+  );
 };
+const approveIntention = (req, res) => {
+  const { col, val, col2, val2, col3, val3 } = req.query;
+  const query = `UPDATE request SET ${col} = ?, ${col2} = ?, transaction_date = ? WHERE ${col3} = ?`;
+  db.query(query, [val, val2, dateToday, val3], (err, results) => {
+    if (err) {
+      console.error(err);
+    } else {
+      res.status(200).json({ message: "success!" });
+    }
+  });
+  console.log(query);
+};
+
+// const updateRequest = (req, res) => {
+//   const { formData } = req.body;
+//   let setClause = [];
+//   let whereClause = [];
+//   let values = [];
+
+//   // Extract data from formData for the SET clause
+//   for (const [key, value] of Object.entries(formData)) {
+//     if (key === "requestID") {
+//       whereClause.push(`${key} = ?`);
+//       values.push(value);  // Add the condition to the values array
+//     } else {
+//       setClause.push(`${key} = ?`);
+//       values.push(value);  // Add the update fields to the values array
+//     }
+//   }
+
+//   // If no valid fields to update, return an error
+//   if (setClause.length === 0 || whereClause.length === 0) {
+//     return res.status(400).json({ message: "Invalid data for update" });
+//   }
+
+//   // Build the final SQL query
+//   const query = `UPDATE request SET ${setClause.join(', ')} WHERE ${whereClause.join(' AND ')}`;
+
+//   console.log("Generated Query:", query);
+//   console.log("Query Values:", values);
+
+//   // Execute the query
+//   db.query(query, values, (err, results) => {
+//     if (err) {
+//       console.error("Error executing query:", err);
+//       return res.status(500).json({ message: "Error during update" });
+//     }
+//     res.status(200).json({ message: "Update successful!" });
+//   });
+// };
 
 const searchCertsRecords = (req, res) => {
   const {
@@ -638,7 +678,8 @@ module.exports = {
   getRequestSummary,
   getSummaryWithTypeParam,
   retrieveMultipleParams,
-  approveRequest,
+  approveService,
+  approveIntention,
   getCount,
   retrieveRequests,
   retrieveCerts,

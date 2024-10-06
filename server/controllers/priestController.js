@@ -1,9 +1,12 @@
 require("dotenv").config();
 const db = require("./db");
+const dayjs = require("dayjs");
+const customParseFormat = require("dayjs/plugin/customParseFormat");
+dayjs.extend(customParseFormat);
 
 // get priests
 const retrieveByParams = (req, res) => {
-  const {col, val} = req.query;
+  const { col, val } = req.query;
 
   db.query(`SELECT * FROM priest where ?? = ?`, [col, val], (err, result) => {
     if (err) {
@@ -31,10 +34,52 @@ const retrieveSchedules = (req, res) => {
   });
 };
 
+const retrieveScheduleByParams = (req, res) => {
+  const { priest, date, start, end } = req.query;
+  console.log(req.query);
+  db.query(
+    `SELECT s.*, p.first_name, p.last_name FROM priestschedule s, priest p WHERE p.priestID = s.priest_id AND s.priest_id = ${priest} AND date = '${date.substring(
+      0,
+      10
+    )}' AND start_time BETWEEN '${start}' AND '${end}'`,
+    (err, result) => {
+      if (err) {
+        console.error("error retrieving from scheds db", err);
+        return res.status(500).json({
+          error: "server error",
+          status: "500",
+        });
+      }
+      if (result.length > 0) {
+        console.log(result[0]);
+        let startTimeFormatted = dayjs(result[0].start_time, "HH:mm:ss").format(
+          "hh:mm A"
+        );
+        let endTimeFormatted = dayjs(result[0].end_time, "HH:mm:ss").format(
+          "hh:mm A"
+        );
+        let priestName = `${result[0].first_name} ${result[0].last_name}`;
+
+        let message = `${priestName} has a scheduled service from ${startTimeFormatted} to ${endTimeFormatted}`;
+        let details = "Service: " + result[0].activity;
+        return res.status(200).send({ message, details });
+      } else {
+        return res.status(200).send();
+      }
+    }
+  );
+};
+
 // create priest
 const createPriest = (req, res) => {
-  const {first_name, last_name, contact_no, year_started, year_ended, status} =
-    req.body;
+  const {
+    first_name,
+    last_name,
+    contact_no,
+    year_started,
+    year_ended,
+    status,
+  } = req.body;
 
   db.query(
     `INSERT INTO priest (first_name, last_name, contact_no, year_started, year_ended, status) VALUES (?, ?, ?, ?, ?, ?)`,
@@ -51,7 +96,7 @@ const createPriest = (req, res) => {
 
 // create priest schedule
 const createSchedule = (req, res) => {
-  const {date, activity, start_time, end_time, priest_id} = req.body;
+  const { date, activity, start_time, end_time, priest_id } = req.body;
 
   db.query(
     `INSERT INTO priestschedule (date, activity, start_time, end_time, priest_id) VALUES (?, ?, ?, ?, ?)`,
@@ -97,14 +142,14 @@ const editPriest = (req, res) => {
           status: "500",
         });
       }
-      return res.status(200).json({message: "priest updates!"});
+      return res.status(200).json({ message: "priest updates!" });
     }
   );
 };
 
 // edit priests' sched
 const editSchedule = (req, res) => {
-  const {schedule_id, date, activity, start_time, end_time, priest_id} =
+  const { schedule_id, date, activity, start_time, end_time, priest_id } =
     req.body;
 
   db.query(
@@ -118,14 +163,14 @@ const editSchedule = (req, res) => {
           status: "500",
         });
       }
-      return res.status(200).json({message: "priests sched updated"});
+      return res.status(200).json({ message: "priests sched updated" });
     }
   );
 };
 
 // delete priests' sched
 const deleteSchedule = (req, res) => {
-  const {schedule_id} = req.params;
+  const { schedule_id } = req.params;
 
   db.query(
     `DELETE FROM priestschedule WHERE schedule_id = ?`,
@@ -139,9 +184,9 @@ const deleteSchedule = (req, res) => {
         });
       }
       if (result.affectedRows === 0) {
-        return res.status(404).json({error: "priest sched not found"});
+        return res.status(404).json({ error: "priest sched not found" });
       }
-      return res.status(200).json({message: "pruest sched deleted"});
+      return res.status(200).json({ message: "pruest sched deleted" });
     }
   );
 };
@@ -149,6 +194,7 @@ const deleteSchedule = (req, res) => {
 module.exports = {
   retrieveByParams,
   retrieveSchedules,
+  retrieveScheduleByParams,
   createPriest,
   createSchedule,
   editPriest,

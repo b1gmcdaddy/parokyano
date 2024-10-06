@@ -12,7 +12,8 @@ const {
   createRequestAnointing,
   createRequestBlessing,
   retrieveMultipleParams,
-  approveRequest,
+  approveService,
+  approveIntention,
   getCount,
   retrieveRequests,
   retrieveCerts,
@@ -34,7 +35,8 @@ router.get("/retrieve-multiple", retrieveMultipleParams);
 router.get("/count", getCount);
 router.get("/summary", getRequestSummary);
 router.get("/type-summary", getSummaryWithTypeParam);
-router.put("/approve", approveRequest);
+router.put("/approve-service", approveService);
+router.put("/approve-intention", approveIntention);
 // router.delete('/delete', deleteRequest);
 router.get("/retrieve-request", retrieveRequests);
 router.get("/retrieve-certs", retrieveCerts);

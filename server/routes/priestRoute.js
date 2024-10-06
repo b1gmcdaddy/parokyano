@@ -9,10 +9,12 @@ const {
   editPriest,
   editSchedule,
   deleteSchedule,
+  retrieveScheduleByParams,
 } = require("../controllers/priestController");
 
 router.get("/retrieve", retrieveByParams);
 router.get("/retrieve-schedule", retrieveSchedules);
+router.get("/retrieve-schedule-by-params", retrieveScheduleByParams);
 router.post("/createPriest", createPriest);
 router.post("/createPriestSched", createSchedule);
 router.put("/editPriest", editPriest);

@@ -18,6 +18,7 @@ const retrieveByParams = (req, res) => {
       }
       return res.status(200).json({
         message: "Retrieved wedding for request_id: " + reqID,
+        result,
       });
     }
   );
