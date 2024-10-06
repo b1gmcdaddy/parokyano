@@ -68,25 +68,6 @@ const CertificatesPending = () => {
     }
   };
 
-  const searchCertificates = async () => {
-    // try {
-    //   const res = await axios.get(`${config.API}/request/search-certs`, {
-    //     params: {
-    //       col: searchCol,
-    //       val: searchVal,
-    //       page: page + 1,
-    //       limit: rowsPerPage,
-    //     },
-    //   });
-    //   setTableData(res.data.result);
-    //   console.log(res.data.result);
-    // } catch (err) {
-    //   console.error("error retrieving pending reqs", err);
-    // } finally {
-    //   setLoading(false);
-    // }
-  };
-
   const openInfoModal = (cert) => {
     setOpenModal(true);
     setModalType(cert.service_id);
@@ -98,8 +79,9 @@ const CertificatesPending = () => {
     setSearchModal(false);
   };
 
-  const openSearchModal = () => {
+  const openSearchModal = (cert) => {
     setSearchModal(true);
+    setModalData(cert);
   };
 
   const handlePageChange = (newPage) => {

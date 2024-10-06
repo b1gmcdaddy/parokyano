@@ -149,7 +149,7 @@ const PrintIntentions = ({open, close}) => {
             overflowY: "auto",
             backgroundColor: "#F5F5F5",
           }}>
-          {/* START TO PRINT */}
+          {/* START ToPrintComponent */}
           {dateSelected !== null && timeSelected !== null ? (
             <Container
               maxWidth="lg"
@@ -199,7 +199,6 @@ const PrintIntentions = ({open, close}) => {
                   {tableData
                     .filter((t) => t.type === "Thanksgiving")
                     .map((row, index) => {
-                      // Parse the details JSON
                       const details = JSON.parse(row.details);
 
                       return (
@@ -271,7 +270,7 @@ const PrintIntentions = ({open, close}) => {
               </Box>
             </Container>
           ) : null}
-          {/* END TO PRINT */}
+          {/* END of ToPrintComponent */}
         </Box>
       </Box>
     </Dialog>

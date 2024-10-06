@@ -603,46 +603,95 @@ const approveRequest = (req, res) => {
   }
 };
 
-const searchCertsRecords = (req, res) => {
+const searchCertRecords = (req, res) => {
   const {
-    firstName,
-    lastName,
-    spouseFirstName,
-    spouseLastName,
-    fatherName,
-    motherName,
-    birthDate,
-    baptismDate,
-    confirmationDate,
-    marriageDate,
+    first_name,
+    last_name,
+    contact_no,
+    birth_date,
+    preferred_date,
+    preferred_time,
+    service_id,
     status,
   } = req.query;
 
-  // query = `SELECT * FROM request WHERE service_id IN (2, 3, 4) AND status = '${status}'`;
-  // baptismQuery = ` AND first_name LIKE '${firstName}%' OR last_name LIKE '${lastName}% OR father_name LIKE '%${fatherName}%' OR mother_name LIKE '%${motherName}%' OR birth_date LIKE '%${birthDate}% OR preferred_date LIKE '%${baptismDate}%'`;
-  // marriageQuery = ` AND preferred_date LIKE '%${marriageDate}%' OR details`;
-  // confirmationQuery = ` AND preferred_date BETWEEN '${confirmationDate}' AND '${marriageDate}'`;
+  const query = `
+    SELECT r.*
+    FROM request r
+    WHERE r.service_id = ? AND r.status = ?
+      AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.birth_date LIKE ? OR r.preferred_date LIKE ? OR r.preferred_time LIKE ?)`;
 
-  // if (baptismDate != null && baptismDate != '' && baptismDate != undefined) {
-  //   query += baptismQuery;
-  // }
+  const firstNameMatch = `%${first_name}%`;
+  const lastNameMatch = `%${last_name}%`;
+  const contactNoMatch = `%${contact_no}%`;
+  const birthDateMatch = `%${birth_date}%`;
+  const preferredDateMatch = `%${preferred_date}%`;
+  const preferredTimeMatch = `%${preferred_time}%`;
 
-  // if (confirmationDate != null && confirmationDate != '' && confirmationDate != undefined) {
-  //   query += confirmationQuery;
-  // }
-
-  // if (marriageDate != null && marriageDate != '' && marriageDate != undefined) {
-  //   query += marriageQuery;
-  // }
-
-  // db.query(query, (err, result) => {
-  //   if (err) {
-  //     console.error("error retrieving requests", err);
-  //     return res.status(500);
-  //   }
-  //   res.status(200).json({ result });
-  // });
+  db.query(
+    query,
+    [
+      service_id,
+      status,
+      firstNameMatch,
+      lastNameMatch,
+      contactNoMatch,
+      birthDateMatch,
+      preferredDateMatch,
+      preferredTimeMatch,
+    ],
+    (err, result) => {
+      if (err) {
+        console.error("error retrieving matching records", err);
+        return res
+          .status(500)
+          .json({error: "error retrieving matching records"});
+      }
+      res.status(200).json({result});
+    }
+  );
 };
+
+// const searchCertsRecords = (req, res) => {
+//   const {
+//     firstName,
+//     lastName,
+//     spouseFirstName,
+//     spouseLastName,
+//     fatherName,
+//     motherName,
+//     birthDate,
+//     baptismDate,
+//     confirmationDate,
+//     marriageDate,
+//     status,
+//   } = req.query;
+
+//   // query = `SELECT * FROM request WHERE service_id IN (2, 3, 4) AND status = '${status}'`;
+//   // baptismQuery = ` AND first_name LIKE '${firstName}%' OR last_name LIKE '${lastName}% OR father_name LIKE '%${fatherName}%' OR mother_name LIKE '%${motherName}%' OR birth_date LIKE '%${birthDate}% OR preferred_date LIKE '%${baptismDate}%'`;
+//   // marriageQuery = ` AND preferred_date LIKE '%${marriageDate}%' OR details`;
+//   // confirmationQuery = ` AND preferred_date BETWEEN '${confirmationDate}' AND '${marriageDate}'`;
+
+//   // if (baptismDate != null && baptismDate != '' && baptismDate != undefined) {
+//   //   query += baptismQuery;
+//   // }
+
+//   // if (confirmationDate != null && confirmationDate != '' && confirmationDate != undefined) {
+//   //   query += confirmationQuery;
+//   // }
+
+//   // if (marriageDate != null && marriageDate != '' && marriageDate != undefined) {
+//   //   query += marriageQuery;
+//   // }
+
+//   // db.query(query, (err, result) => {
+//   //   if (err) {
+//   //     console.error("error retrieving requests", err);
+//   //     return res.status(500);
+//   //   }
+//   //   res.status(200).json({ result });
+//   // });
+// };
 
 module.exports = {
   createRequestIntention,
@@ -664,4 +713,5 @@ module.exports = {
   getCountRequests,
   getCountCerts,
   searchIntentions,
+  searchCertRecords,
 };
