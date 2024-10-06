@@ -38,7 +38,7 @@ const formatDate = (rawDate) => {
 
 const updatePayment = (id, close) => {
   try {
-    axios.put(`${config.API}/request/approve`, null, {
+    axios.put(`${config.API}/request/approve-intention`, null, {
       params: {
         col: "payment_status",
         val: "paid",
@@ -46,6 +46,8 @@ const updatePayment = (id, close) => {
         val2: "approved",
         col3: "requestID",
         val3: id,
+        col4: null,
+        val4: null,
       },
     });
     alert("updated succesfully");

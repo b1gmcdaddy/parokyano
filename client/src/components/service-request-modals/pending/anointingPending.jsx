@@ -15,6 +15,7 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
+import Snackbar from "@mui/material/Snackbar";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
@@ -45,10 +46,26 @@ const TextFieldStyleDis = {
   bgcolor: "#D9D9D9",
 };
 
+const endTime = (timeString, hoursToAdd) => {
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+  let newHours = hours + Math.floor(hoursToAdd);
+  let newMinutes = minutes + (hoursToAdd % 1) * 60;
+
+  newHours += Math.floor(newMinutes / 60);
+  newMinutes = newMinutes % 60;
+
+  return `${String(newHours).padStart(2, "0")}:${String(newMinutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(2, "0")}`;
+};
+
 const AnointingPending = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
-  const [service] = useState("anointing");
+  const [service, setService] = useState({});
+  const [error, setError] = useState(null);
+  const [errorOpen, setErrorOpen] = useState(false);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
     type: "",
@@ -70,6 +87,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
   useEffect(() => {
     if (open && data) {
       setFormData({
+        requestID: data.requestID,
         type: data.type,
         name: data.first_name,
         address: data.address,
@@ -83,7 +101,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
         preferred_priest: data.priest_id,
         isParishioner: data.isParishioner,
         transaction_no: data.transaction_no,
-        service_id: 13,
+        service_id: data.service_id,
       });
     }
     console.log(data);
@@ -98,6 +116,23 @@ const AnointingPending = ({ open, data, handleClose }) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
+  };
+
+  const fetchService = async () => {
+    try {
+      const response = await axios.get(
+        `${config.API}/service/retrieveByParams`,
+        {
+          params: {
+            id: data.service_id,
+          },
+        }
+      );
+      console.log(response.data);
+      setService(response.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -116,6 +151,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
       }
     };
     fetchPriest();
+    fetchService();
   }, []);
 
   const handleCloseDialog = () => {
@@ -139,10 +175,57 @@ const AnointingPending = ({ open, data, handleClose }) => {
   {
     /** for sameple if success, ari butang backend**/
   }
-  const handleConfirm = (action) => {
+  const handleConfirm = async (action) => {
     switch (action) {
       case "approve":
-        alert("Approval action confirmed.");
+        console.log(formData);
+        try {
+          const response = await axios.get(
+            `${config.API}/priest/retrieve-schedule-by-params`,
+            {
+              params: {
+                priest: formData.preferred_priest,
+                date: formData.preferred_date,
+                start: formData.preferred_time,
+                end: endTime(formData.preferred_time, service.duration),
+              },
+            }
+          );
+          console.log(response);
+          if (Object.keys(response.data).length > 0 || response.data != "") {
+            setError({
+              message: response.data.message,
+              details: response.data?.details,
+            });
+          } else {
+            axios.put(`${config.API}/request/approve-service`, null, {
+              params: {
+                col: "status",
+                val: "approved",
+                col2: "payment_status",
+                val2: "paid",
+                col3: "preferred_date",
+                val3: formData.preferred_date,
+                col4: "priest_id",
+                val4: formData.preferred_priest,
+                col5: "requestID",
+                val5: formData.requestID,
+              },
+            });
+            console.log("request success!");
+            axios.post(`${config.API}/priest/createPriestSched`, {
+              date: formData.preferred_date,
+              activity: `${formData.type} at ${formData.address}`,
+              start_time: formData.preferred_time,
+              end_time: endTime(formData.preferred_time, service.duration),
+              priest_id: formData.preferred_priest,
+            });
+            console.log("priest sched success!");
+            handleClose();
+          }
+        } catch (err) {
+          console.log("error submitting to server", err);
+        }
         break;
       case "update":
         console.log("updated ", formData);
@@ -157,6 +240,22 @@ const AnointingPending = ({ open, data, handleClose }) => {
 
   return (
     <>
+      {error && (
+        <Snackbar
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}
+          message={
+            <>
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+                {error.message}
+              </span>
+              <p>{error.details}</p>
+            </>
+          }
+        />
+      )}
+
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Grid container justifyContent={"flex-end"}>
@@ -485,7 +584,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
             onClose={handleCloseDialog}
             action={currentAction}
             onConfirm={handleConfirm}
-            service={service}
+            service={"anointing"}
           />
         </Box>
       </Modal>

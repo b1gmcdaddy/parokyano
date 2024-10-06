@@ -15,6 +15,7 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
+import Snackbar from "@mui/material/Snackbar";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
@@ -45,10 +46,26 @@ const TextFieldStyleDis = {
   bgcolor: "#D9D9D9",
 };
 
+const endTime = (timeString, hoursToAdd) => {
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+  let newHours = hours + Math.floor(hoursToAdd);
+  let newMinutes = minutes + (hoursToAdd % 1) * 60;
+
+  newHours += Math.floor(newMinutes / 60);
+  newMinutes = newMinutes % 60;
+
+  return `${String(newHours).padStart(2, "0")}:${String(newMinutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(2, "0")}`;
+};
+
 const WakePending = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
-  const [service] = useState("wake mass");
+  const [service, setService] = useState({});
+  const [error, setError] = useState(null);
+  const [errorOpen, setErrorOpen] = useState(false);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
     first_name: "", // full name ni sa deceased
@@ -69,6 +86,7 @@ const WakePending = ({ open, data, handleClose }) => {
   useEffect(() => {
     if (open && data) {
       setFormData({
+        requestID: data.requestID,
         first_name: data.first_name, // full name ni sa deceased
         address: null,
         contact_no: data.contact_no,
@@ -92,6 +110,23 @@ const WakePending = ({ open, data, handleClose }) => {
     return date.toISOString().split("T")[0];
   };
 
+  const fetchService = async () => {
+    try {
+      const response = await axios.get(
+        `${config.API}/service/retrieveByParams`,
+        {
+          params: {
+            id: data.service_id,
+          },
+        }
+      );
+      console.log(response.data);
+      setService(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     const fetchPriest = async () => {
       try {
@@ -108,6 +143,7 @@ const WakePending = ({ open, data, handleClose }) => {
       }
     };
     fetchPriest();
+    fetchService();
   }, []);
 
   const handleOpenDialog = (action) => {
@@ -136,10 +172,57 @@ const WakePending = ({ open, data, handleClose }) => {
   {
     /** for sameple if success, ari butang backend**/
   }
-  const handleConfirm = (action) => {
+  const handleConfirm = async (action) => {
     switch (action) {
       case "approve":
-        alert("Approval action confirmed.");
+        console.log(formData);
+        try {
+          const response = await axios.get(
+            `${config.API}/priest/retrieve-schedule-by-params`,
+            {
+              params: {
+                priest: formData.preferred_priest,
+                date: formData.preferred_date,
+                start: formData.preferred_time,
+                end: endTime(formData.preferred_time, service.duration),
+              },
+            }
+          );
+          console.log(response);
+          if (Object.keys(response.data).length > 0 || response.data != "") {
+            setError({
+              message: response.data.message,
+              details: response.data?.details,
+            });
+          } else {
+            axios.put(`${config.API}/request/approve-service`, null, {
+              params: {
+                col: "status",
+                val: "approved",
+                col2: "payment_status",
+                val2: "paid",
+                col3: "preferred_date",
+                val3: formData.preferred_date,
+                col4: "priest_id",
+                val4: formData.preferred_priest,
+                col5: "requestID",
+                val5: formData.requestID,
+              },
+            });
+            console.log("request success!");
+            axios.post(`${config.API}/priest/createPriestSched`, {
+              date: formData.preferred_date,
+              activity: `${formData.type} at ${formData.address}`,
+              start_time: formData.preferred_time,
+              end_time: endTime(formData.preferred_time, service.duration),
+              priest_id: formData.preferred_priest,
+            });
+            console.log("priest sched success!");
+            handleClose();
+          }
+        } catch (err) {
+          console.log("error submitting to server", err);
+        }
         break;
       case "update":
         alert("Update action confirmed.");
@@ -153,6 +236,22 @@ const WakePending = ({ open, data, handleClose }) => {
   };
   return (
     <>
+      {error && (
+        <Snackbar
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}
+          message={
+            <>
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+                {error.message}
+              </span>
+              <p>{error.details}</p>
+            </>
+          }
+        />
+      )}
+
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Grid container justifyContent={"flex-end"}>
@@ -440,7 +539,7 @@ const WakePending = ({ open, data, handleClose }) => {
             onClose={handleCloseDialog}
             action={currentAction}
             onConfirm={handleConfirm}
-            service={service}
+            service={"wake mass"}
           />
         </Box>
       </Modal>

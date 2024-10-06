@@ -1,5 +1,5 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -18,13 +18,14 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState, useEffect} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
 import dayjs from "dayjs";
 import axios from "axios";
 import config from "../../../config";
+import Snackbar from "@mui/material/Snackbar";
 
 const style = {
   position: "absolute",
@@ -40,21 +41,37 @@ const style = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
 };
 
 const TextFieldStyleDis = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
   bgcolor: "#D9D9D9",
 };
 
-const BlessingPending = ({open, data, handleClose}) => {
+const endTime = (timeString, hoursToAdd) => {
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+  let newHours = hours + Math.floor(hoursToAdd);
+  let newMinutes = minutes + (hoursToAdd % 1) * 60;
+
+  newHours += Math.floor(newMinutes / 60);
+  newMinutes = newMinutes % 60;
+
+  return `${String(newHours).padStart(2, "0")}:${String(newMinutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(2, "0")}`;
+};
+
+const BlessingPending = ({ open, data, handleClose }) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
-  const [service] = useState("blessing");
+  const [service, setService] = useState({});
   const [priests, setPriests] = useState([]);
+  const [error, setError] = useState(null);
+  const [errorOpen, setErrorOpen] = useState(false);
   const [formData, setFormData] = useState({
     requestID: "",
     type: "",
@@ -74,6 +91,7 @@ const BlessingPending = ({open, data, handleClose}) => {
   useEffect(() => {
     if (open && data) {
       setFormData({
+        requestID: data.requestID,
         type: data.type,
         first_name: data.first_name,
         address: data.address,
@@ -84,10 +102,27 @@ const BlessingPending = ({open, data, handleClose}) => {
         preferred_priest: data.priest_id,
         isParishioner: data.isParishioner,
         transaction_no: data.transaction_no,
-        service_id: 13,
+        service_id: data.service_id,
       });
     }
   }, [open, data]);
+
+  const fetchService = async () => {
+    try {
+      const response = await axios.get(
+        `${config.API}/service/retrieveByParams`,
+        {
+          params: {
+            id: data.service_id,
+          },
+        }
+      );
+      console.log(response.data);
+      setService(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const fetchPriest = async () => {
@@ -104,6 +139,7 @@ const BlessingPending = ({open, data, handleClose}) => {
       }
     };
     fetchPriest();
+    fetchService();
   }, []);
 
   const handleOpenDialog = (action) => {
@@ -112,16 +148,16 @@ const BlessingPending = ({open, data, handleClose}) => {
   };
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
-    console.log(formData.preferred_date);
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    console.log(formData);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
   };
 
   const handleCloseDialog = () => {
@@ -129,8 +165,8 @@ const BlessingPending = ({open, data, handleClose}) => {
   };
 
   const handleRadioChange = (e) => {
-    const {value} = e.target;
-    setFormData((prevData) => ({...prevData, type: value}));
+    const { value } = e.target;
+    setFormData((prevData) => ({ ...prevData, type: value }));
     setRadioValue(value);
     if (e.target.value !== "others") {
       setOtherValue("");
@@ -146,27 +182,54 @@ const BlessingPending = ({open, data, handleClose}) => {
   {
     /** for sameple if success, ari butang backend**/
   }
-  const handleConfirm = (action) => {
+  const handleConfirm = async (action) => {
     switch (action) {
       case "approve":
-        console.log(formData);
+        console.log("approve");
         try {
-          axios.put(`${config.API}/request/approve`, null, {
-            params: {
-              col: "status",
-              val: "approved",
-              col2: "payment_status",
-              val2: "paid",
-              col3: "preferred_date",
-              val3: formData.preferred_date,
-              col4: "priest_id",
-              val4: formData.preferred_priest,
-              col5: "requestID",
-              val5: formData.requestID,
-            },
-          });
-          console.log("success!");
-          handleClose();
+          const response = await axios.get(
+            `${config.API}/priest/retrieve-schedule-by-params`,
+            {
+              params: {
+                priest: formData.preferred_priest,
+                date: formData.preferred_date,
+                start: formData.preferred_time,
+                end: endTime(formData.preferred_time, service.duration),
+              },
+            }
+          );
+          console.log(response);
+          if (Object.keys(response.data).length > 0) {
+            setError({
+              message: response.data.message,
+              details: response.data?.details,
+            });
+          } else {
+            axios.put(`${config.API}/request/approve-service`, null, {
+              params: {
+                col: "status",
+                val: "approved",
+                col2: "payment_status",
+                val2: "paid",
+                col3: "preferred_date",
+                val3: formData.preferred_date,
+                col4: "priest_id",
+                val4: formData.preferred_priest,
+                col5: "requestID",
+                val5: formData.requestID,
+              },
+            });
+            console.log("request success!");
+            axios.post(`${config.API}/priest/createPriestSched`, {
+              date: formData.preferred_date,
+              activity: `${formData.type} at ${formData.address}`,
+              start_time: formData.preferred_time,
+              end_time: endTime(formData.preferred_time, service.duration),
+              priest_id: formData.preferred_priest,
+            });
+            console.log("priest sched success!");
+            handleClose();
+          }
         } catch (err) {
           console.log("error submitting to server", err);
         }
@@ -184,6 +247,22 @@ const BlessingPending = ({open, data, handleClose}) => {
 
   return (
     <>
+      {error && (
+        <Snackbar
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}
+          message={
+            <>
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+                {error.message}
+              </span>
+              <p>{error.details}</p>
+            </>
+          }
+        />
+      )}
+
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Grid container justifyContent={"flex-end"}>
@@ -197,7 +276,8 @@ const BlessingPending = ({open, data, handleClose}) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
+                sx={{ textAlign: "center", fontWeight: "bold" }}
+              >
                 Blessing Request Information
               </Typography>
             </Grid>
@@ -209,9 +289,10 @@ const BlessingPending = ({open, data, handleClose}) => {
               <RadioGroup
                 row
                 name="type"
-                sx={{marginTop: "-5px"}}
+                sx={{ marginTop: "-5px" }}
                 value={formData.type}
-                onChange={handleRadioChange}>
+                onChange={handleRadioChange}
+              >
                 <FormControlLabel
                   value="House Blessing"
                   control={<Radio size="small" />}
@@ -232,7 +313,7 @@ const BlessingPending = ({open, data, handleClose}) => {
                   value={otherValue}
                   onChange={handleOtherChange}
                   sx={{
-                    "& .MuiInputBase-root": {height: "30px"},
+                    "& .MuiInputBase-root": { height: "30px" },
                     opacity: isOtherSelected ? 1 : 0.4,
                     marginTop: "5px",
                   }}
@@ -249,7 +330,8 @@ const BlessingPending = ({open, data, handleClose}) => {
                 name="first_name"
                 onChange={handleChange}
                 sx={TextFieldStyle}
-                value={formData.first_name}></TextField>
+                value={formData.first_name}
+              ></TextField>
             </Grid>
 
             <Grid item sm={1.3}>
@@ -299,9 +381,10 @@ const BlessingPending = ({open, data, handleClose}) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
                 />
                 <div>
                   <p
@@ -309,12 +392,13 @@ const BlessingPending = ({open, data, handleClose}) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     Preferred
                   </p>
                 </div>
                 <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
             </Grid>
@@ -327,7 +411,8 @@ const BlessingPending = ({open, data, handleClose}) => {
                 onChange={handleChange}
                 select
                 fullWidth
-                sx={TextFieldStyle}>
+                sx={TextFieldStyle}
+              >
                 {priests.map((priest) => (
                   <MenuItem key={priest.priestID} value={priest.priestID}>
                     {priest.first_name + " " + priest.last_name}
@@ -378,8 +463,9 @@ const BlessingPending = ({open, data, handleClose}) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#4C74A5"},
-                }}>
+                  "&:hover": { bgcolor: "#4C74A5" },
+                }}
+              >
                 Assign
               </Button>
             </Grid>
@@ -390,9 +476,10 @@ const BlessingPending = ({open, data, handleClose}) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
                 />
                 <div>
                   <p
@@ -400,12 +487,13 @@ const BlessingPending = ({open, data, handleClose}) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     Assigned
                   </p>
                 </div>
                 <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
             </Grid>
@@ -431,8 +519,9 @@ const BlessingPending = ({open, data, handleClose}) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "#355173",
-                  "&:hover": {bgcolor: "#D3CECE"},
-                }}>
+                  "&:hover": { bgcolor: "#D3CECE" },
+                }}
+              >
                 CLEAR
               </Button>
             </Grid>
@@ -445,11 +534,12 @@ const BlessingPending = ({open, data, handleClose}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
-              <Typography variant="body2" sx={{marginRight: "5px"}}>
+              }}
+            >
+              <Typography variant="body2" sx={{ marginRight: "5px" }}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{fontWeight: "bold"}}>
+              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 {formData.transaction_no}
               </Typography>
             </Grid>
@@ -462,7 +552,8 @@ const BlessingPending = ({open, data, handleClose}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -472,8 +563,9 @@ const BlessingPending = ({open, data, handleClose}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F0CA67"},
-                }}>
+                  "&:hover": { bgcolor: "#F0CA67" },
+                }}
+              >
                 UPDATE
               </Button>
               <Button
@@ -485,8 +577,9 @@ const BlessingPending = ({open, data, handleClose}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F05A5A"},
-                }}>
+                  "&:hover": { bgcolor: "#F05A5A" },
+                }}
+              >
                 CANCEL
               </Button>
             </Grid>
@@ -496,7 +589,7 @@ const BlessingPending = ({open, data, handleClose}) => {
             onClose={handleCloseDialog}
             action={currentAction}
             onConfirm={handleConfirm}
-            service={service}
+            service={"blessing"}
           />
         </Box>
       </Modal>
