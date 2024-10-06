@@ -12,6 +12,7 @@ const {
   createRequestAnointing,
   createRequestBlessing,
   retrieveMultipleParams,
+  retrieveMultipleDateFiltered,
   approveRequest,
   getCount,
   retrieveRequests,
@@ -41,5 +42,6 @@ router.get("/retrieve-certs", retrieveCerts);
 router.get("/count-certs", getCountCerts);
 router.get("/count-request", getCountRequests);
 router.get("/search", searchIntentions);
+router.get("/retrieve-multiple-byDate", retrieveMultipleDateFiltered);
 
 module.exports = router;

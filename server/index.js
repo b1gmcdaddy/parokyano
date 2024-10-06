@@ -23,7 +23,7 @@ connection.connect((err) => {
   console.log("connected to db as " + connection.threadId);
 });
 
-app.use(bp.urlencoded({ extended: true }));
+app.use(bp.urlencoded({extended: true}));
 
 app.get("/", (req, res) => {
   res.json({
