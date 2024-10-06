@@ -48,6 +48,12 @@ const ConfirmationDialog = ({ open, onClose, action, onConfirm, service }) => {
           message: "Save the changes to the requirements of this",
           service: service,
         };
+      case "change password":
+        return {
+          title: "Change Password",
+          message: "Are you sure you want to confirm this",
+          service: service,
+        };
       default:
         return {
           title: "",

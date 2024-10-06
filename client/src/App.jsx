@@ -54,6 +54,7 @@ import OutsidePending from "./components/service-request-modals/pending/outsideM
 import OutsideApproved from "./components/service-request-modals/pending/approved/outsideMassApproved";
 import OutsideCancelled from "./components/service-request-modals/pending/cancelled/outsideMassCancelled";
 import ConfirmationDialog from "./components/ConfirmationModal";
+import Settings from "./pages/staff/Settings";
   
 function App() {
   return (
@@ -93,6 +94,7 @@ function App() {
         <Route path="/generate-reports" element={<GenerateReports />} />
         <Route path="/manage-schedules" element={<ManageSchedules />} />
         <Route path="/manage-transactions" element={<ManageTransactions />} />
+        <Route path="/settings" element={<Settings/>}/>
 
          {/* Temporary modals wala pa na integrate */}
         <Route path="/funeralpending" element={<FuneralMassModalPending/>}/>
