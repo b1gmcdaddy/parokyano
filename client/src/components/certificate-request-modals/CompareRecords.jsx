@@ -6,24 +6,52 @@ import {
   Dialog,
   DialogContent,
   Grid,
-  Paper,
   Typography,
   DialogActions,
   Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
-import Icon from "@mui/material/Icon";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
 import config from "../../config";
 import util from "../../utils/DateTimeFormatter";
+import ConfirmationDialog from "../ConfirmationModal";
 
 const CompareRecords = ({open, close, certData, recordData}) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState("");
+
   useEffect(() => {
     console.log(recordData);
   }, [open, recordData]);
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleConfirm = async () => {
+    try {
+      const response = await axios.put(
+        `${config.API}/request/approve-cert`,
+        null,
+        {
+          params: {
+            col: "status",
+            val: "approved",
+            col3: "requestID",
+            val3: certData.requestID,
+          },
+        }
+      );
+      alert("Updated successfully");
+      window.location.reload();
+      close();
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred while updating.");
+    }
+  };
 
   return (
     <Dialog
@@ -361,6 +389,7 @@ const CompareRecords = ({open, close, certData, recordData}) => {
               gap: "20px",
             }}>
             <Button
+              onClick={() => handleOpenDialog("approve")}
               sx={{
                 backgroundColor: "#44C360",
                 color: "white",
@@ -382,6 +411,15 @@ const CompareRecords = ({open, close, certData, recordData}) => {
           </Grid>
         </Grid>
       </DialogActions>
+      {/* START Confirmation Dialog */}
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        action={currentAction}
+        onConfirm={handleConfirm}
+        service={"certificate"}
+      />
+      {/* END Confirmation Dialog */}
     </Dialog>
   );
 };

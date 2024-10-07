@@ -460,39 +460,6 @@ const getCount = (req, res) => {
   });
 };
 
-// const retrieveByParams = (req, res) => {
-//     const {col, val} = req.query
-//     const parsedDetails = []
-//     const parsedSpouseName = []
-
-//     db.query(`SELECT * from request WHERE ? = ?`, [col, val],
-//         (err, result) => {
-//             if (err) {
-//                 console.error('error retrieving from db', err);
-//                 return res.status(500)
-//             }
-
-//             // not working for some reason
-//             // const filteredResult = _.omit(result, ['details', 'spouse_name'])
-
-//             // for(const i in result){
-//             //     if(result[i].details != null) {
-//             //         parsedDetails.push(JSON.parse(result[i].details))
-//             //     }
-//             //     if(result[i].spouse_name != null){
-//             //         parsedSpouseName.push(JSON.parse(result[i].spouse_name))
-//             //     }
-//             // }
-
-//             // return res.status(200).json({
-//             //     parsedDetails,
-//             //     parsedSpouseName,
-//             //     result
-//             // })
-//         }
-//     )
-// }
-
 const getSummaryWithTypeParam = (req, res) => {
   const {requestDate, approveDate, type} = req.query;
   const reqSummary = {};
@@ -605,6 +572,40 @@ const approveIntention = (req, res) => {
   console.log(query);
 };
 
+// may be used for approval/cancellation/printing??
+const approveCertificate = (req, res) => {
+  const {col, val, col2, val2, col3, val3} = req.query;
+  const setClause = [];
+  const values = [];
+
+  if (col && val) {
+    setClause.push(`${col} = ?`);
+    values.push(val);
+  }
+
+  if (col2 && val2) {
+    setClause.push(`${col2} = ?`);
+    values.push(val2);
+  }
+
+  if (setClause.length == 0 || setClause == null) {
+    return res.status(400).json({message: "no data to update"});
+  }
+
+  if (col3 && val3) {
+    values.push(val3);
+    const query = `UPDATE request SET ${setClause.join(", ")} WHERE ${col3}=?`;
+    db.query(query, values, (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({error: "update failed."});
+      }
+      res.status(200).json({message: "successful update"});
+    });
+    console.log(query);
+  }
+};
+
 // const updateRequest = (req, res) => {
 //   const { formData } = req.body;
 //   let setClause = [];
@@ -689,47 +690,6 @@ const searchCertRecords = (req, res) => {
   );
 };
 
-// const searchCertsRecords = (req, res) => {
-//   const {
-//     firstName,
-//     lastName,
-//     spouseFirstName,
-//     spouseLastName,
-//     fatherName,
-//     motherName,
-//     birthDate,
-//     baptismDate,
-//     confirmationDate,
-//     marriageDate,
-//     status,
-//   } = req.query;
-
-//   // query = `SELECT * FROM request WHERE service_id IN (2, 3, 4) AND status = '${status}'`;
-//   // baptismQuery = ` AND first_name LIKE '${firstName}%' OR last_name LIKE '${lastName}% OR father_name LIKE '%${fatherName}%' OR mother_name LIKE '%${motherName}%' OR birth_date LIKE '%${birthDate}% OR preferred_date LIKE '%${baptismDate}%'`;
-//   // marriageQuery = ` AND preferred_date LIKE '%${marriageDate}%' OR details`;
-//   // confirmationQuery = ` AND preferred_date BETWEEN '${confirmationDate}' AND '${marriageDate}'`;
-
-//   // if (baptismDate != null && baptismDate != '' && baptismDate != undefined) {
-//   //   query += baptismQuery;
-//   // }
-
-//   // if (confirmationDate != null && confirmationDate != '' && confirmationDate != undefined) {
-//   //   query += confirmationQuery;
-//   // }
-
-//   // if (marriageDate != null && marriageDate != '' && marriageDate != undefined) {
-//   //   query += marriageQuery;
-//   // }
-
-//   // db.query(query, (err, result) => {
-//   //   if (err) {
-//   //     console.error("error retrieving requests", err);
-//   //     return res.status(500);
-//   //   }
-//   //   res.status(200).json({ result });
-//   // });
-// };
-
 module.exports = {
   createRequestIntention,
   createRequestCertificate,
@@ -744,6 +704,7 @@ module.exports = {
   retrieveMultipleParams,
   approveService,
   approveIntention,
+  approveCertificate,
   retrieveMultipleDateFiltered,
   getCount,
   retrieveRequests,

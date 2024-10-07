@@ -14,6 +14,7 @@ const {
   retrieveMultipleParams,
   approveService,
   approveIntention,
+  approveCertificate,
   retrieveMultipleDateFiltered,
   getCount,
   retrieveRequests,
@@ -39,6 +40,7 @@ router.get("/summary", getRequestSummary);
 router.get("/type-summary", getSummaryWithTypeParam);
 router.put("/approve-service", approveService);
 router.put("/approve-intention", approveIntention);
+router.put("/approve-cert", approveCertificate);
 // router.delete('/delete', deleteRequest);
 router.get("/retrieve-request", retrieveRequests);
 router.get("/retrieve-certs", retrieveCerts);

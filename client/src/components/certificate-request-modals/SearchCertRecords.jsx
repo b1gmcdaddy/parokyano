@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {
   Button,
-  TextField,
   Box,
   Dialog,
   DialogContent,
@@ -12,18 +11,20 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
-import Icon from "@mui/material/Icon";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
 import config from "../../config";
 import CompareRecords from "./CompareRecords";
+import ConfirmationDialog from "../ConfirmationModal";
 
 const SearchCertRecords = ({open, data, close}) => {
   const [certType, setCertType] = useState(null);
   const [records, setRecords] = useState([]);
   const [openCompareModal, setOpenCompareModal] = useState(false);
   const [recordData, setRecordData] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState("");
 
   useEffect(() => {
     const searchRecords = async () => {
@@ -48,7 +49,7 @@ const SearchCertRecords = ({open, data, close}) => {
       }
     };
     searchRecords();
-    console.log(data.service_id);
+    // console.log(data.service_id);
   }, [open, data]);
 
   const handleOpenCompareModal = (rec) => {
@@ -58,6 +59,34 @@ const SearchCertRecords = ({open, data, close}) => {
 
   const closeCompareModal = () => {
     setOpenCompareModal(false);
+  };
+
+  const handleOpenDialog = (action) => {
+    setCurrentAction(action);
+    setDialogOpen(true);
+  };
+
+  const cancelCertRequest = async () => {
+    try {
+      const response = await axios.put(
+        `${config.API}/request/approve-cert`,
+        null,
+        {
+          params: {
+            col: "status",
+            val: "cancelled",
+            col3: "requestID",
+            val3: data.requestID,
+          },
+        }
+      );
+      alert("Certificate request cancelled successfully..");
+      window.location.reload();
+      close();
+    } catch (err) {
+      console.error(err);
+      alert("error updating..");
+    }
   };
 
   return (
@@ -152,24 +181,13 @@ const SearchCertRecords = ({open, data, close}) => {
                           sx={{
                             backgroundColor: "#355173",
                             color: "white",
-                            borderRadius: "10px",
+                            borderRadius: "4px",
                             "&:hover": {
                               backgroundColor: "#0036B1",
                             },
                           }}
                           onClick={() => handleOpenCompareModal(rec)}>
-                          INFO
-                        </Button>
-                        <Button
-                          sx={{
-                            backgroundColor: "#44C360",
-                            color: "white",
-                            borderRadius: "10px",
-                            "&:hover": {
-                              backgroundColor: "green",
-                            },
-                          }}>
-                          CONFIRM
+                          View
                         </Button>
                       </Box>
                     </Paper>
@@ -194,6 +212,7 @@ const SearchCertRecords = ({open, data, close}) => {
                   sx={{display: "flex", justifyContent: "center"}}>
                   <Button
                     size="small"
+                    onClick={() => handleOpenDialog("cancel")}
                     sx={{
                       backgroundColor: "#C34444",
                       color: "white",
@@ -208,6 +227,15 @@ const SearchCertRecords = ({open, data, close}) => {
               </Grid>
             </DialogActions>
           </Grid>
+          {/* START Confirmation Dialog */}
+          <ConfirmationDialog
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            action={currentAction}
+            onConfirm={cancelCertRequest}
+            service={"certificate"}
+          />
+          {/* END Confirmation Dialog */}
         </Box>
       </DialogContent>
     </Dialog>
