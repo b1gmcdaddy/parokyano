@@ -18,6 +18,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileExport, faPrint } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import config from "../../../config";
+import { Document, Packer, Paragraph, TextRun } from "docx";
+import util from "../../../utils/DateTimeFormatter";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -54,19 +56,133 @@ const PrintIntentions = ({ open, close }) => {
 
   const handleDateChange = (e) => {
     setDateSelected(e.target.value);
-    console.log(dateSelected);
   };
 
   const handleTimeChange = (e) => {
     const selectedTime = e.target.value;
     const formattedTime = `${selectedTime}:00`;
     setTimeSelected(formattedTime);
-    console.log(formattedTime);
   };
 
   useEffect(() => {
     fetchData();
   }, [dateSelected, timeSelected]);
+
+  //START EXPORT WORD METHOD
+  const exportToWord = async () => {
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              text: "Mass Intentions",
+              heading: "Title",
+            }),
+            new Paragraph({
+              text: `${util.formatDate(dateSelected)} - ${timeSelected}`,
+              spacing: { after: 200 },
+            }),
+
+            new Paragraph({
+              text: "Souls",
+              heading: "Heading1",
+              spacing: { after: 100 },
+            }),
+            ...tableData
+              .filter((row) => row.type === "Souls")
+              .map((row) => {
+                const requestedByParagraph = new Paragraph({
+                  text: `Requested by: ${row.requested_by}`,
+                  spacing: { after: 50 },
+                });
+                let soulsParagraph = null;
+
+                try {
+                  const details = JSON.parse(row.details);
+                  soulsParagraph = new Paragraph({
+                    text: `For the Souls of: ${details.join(", ")}`,
+                    spacing: { after: 200 },
+                  });
+                } catch (error) {
+                  console.error("Error parsing details:", error);
+                }
+
+                return [requestedByParagraph, soulsParagraph].filter(Boolean);
+              })
+              .flat(),
+
+            new Paragraph({
+              text: "Thanksgiving",
+              heading: "Heading1",
+              spacing: { after: 100 },
+            }),
+            ...tableData
+              .filter((row) => row.type === "Thanksgiving")
+              .map((row) => {
+                const requestedByParagraph = new Paragraph({
+                  text: `Requested by: ${row.requested_by}`,
+                  spacing: { after: 50 },
+                });
+                let thanksgivingDetails = {};
+
+                try {
+                  thanksgivingDetails = JSON.parse(row.details);
+                } catch (error) {
+                  console.error("Error parsing details:", error);
+                }
+
+                const nonNullDetails = Object.keys(thanksgivingDetails)
+                  .filter((key) => thanksgivingDetails[key])
+                  .map((key) => {
+                    return new Paragraph({
+                      text: `${key.charAt(0).toUpperCase() + key.slice(1)}: ${
+                        thanksgivingDetails[key]
+                      }`,
+                      spacing: { after: 200 },
+                    });
+                  });
+
+                return [requestedByParagraph, ...nonNullDetails];
+              })
+              .flat(),
+
+            new Paragraph({
+              text: "Petition",
+              heading: "Heading1",
+              spacing: { after: 100 },
+            }),
+            ...tableData
+              .filter((row) => row.type === "Petition")
+              .map((row) => {
+                const requestedByParagraph = new Paragraph({
+                  text: `Requested by: ${row.requested_by}`,
+                  spacing: { after: 50 },
+                });
+                const petitionParagraph = new Paragraph({
+                  text: `Petition: ${row.details}`,
+                  spacing: { after: 200 },
+                });
+
+                return [requestedByParagraph, petitionParagraph];
+              })
+              .flat(),
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "mass_intentions.docx";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+  };
+  //END EXPORT WORD METHOD
 
   return (
     <Dialog fullScreen open={open} TransitionComponent={Transition}>
@@ -83,13 +199,25 @@ const PrintIntentions = ({ open, close }) => {
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
             Mass Intentions Print Preview
           </Typography>
-
-          <Button autoFocus color="inherit">
+          {/* 
+          <Button autoFocus color="inherit" onClick={exportToPDF}>
             <FontAwesomeIcon
               icon={faFileExport}
               className="text-white md:mr-5 md:ml-2"
             />
-            Export
+            Export PDF
+          </Button> */}
+          <Button
+            autoFocus
+            color="inherit"
+            sx={{ marginLeft: "1em" }}
+            onClick={exportToWord}
+          >
+            <FontAwesomeIcon
+              icon={faFileExport}
+              className="text-white md:mr-5 md:ml-2"
+            />
+            Export Word
           </Button>
 
           <ReactToPrint
@@ -152,7 +280,6 @@ const PrintIntentions = ({ open, close }) => {
             backgroundColor: "#F5F5F5",
           }}
         >
-          {/* START ToPrintComponent */}
           {dateSelected !== null && timeSelected !== null ? (
             <Container
               maxWidth="lg"
@@ -168,7 +295,6 @@ const PrintIntentions = ({ open, close }) => {
                 </Typography>
               </Box>
 
-              {/* <Box sx={{ marginTop: "3em" }}> */}
               {tableData.some((t) => t.type === "Souls") && (
                 <>
                   <Typography sx={{ fontSize: "14px" }}>SOULS</Typography>
@@ -190,9 +316,7 @@ const PrintIntentions = ({ open, close }) => {
                     </Grid>
                   ))}
               </Grid>
-              {/* </Box> */}
 
-              {/* <Box sx={{ marginTop: "3em" }}> */}
               {tableData.some((t) => t.type === "Thanksgiving") && (
                 <>
                   <Typography sx={{ fontSize: "14px" }}>
@@ -244,8 +368,7 @@ const PrintIntentions = ({ open, close }) => {
                     );
                   })}
               </Grid>
-              {/* // </Box> */}
-              {/* <Box sx={{ marginTop: "3em" }}> */}
+
               {tableData.some((t) => t.type === "Petition") && (
                 <>
                   <Typography sx={{ fontSize: "14px" }}>PETITION</Typography>
@@ -267,10 +390,8 @@ const PrintIntentions = ({ open, close }) => {
                     </Grid>
                   ))}
               </Grid>
-              {/* // </Box> */}
             </Container>
           ) : null}
-          {/* END of ToPrintComponent */}
         </Box>
       </Box>
     </Dialog>
