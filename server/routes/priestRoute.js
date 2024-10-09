@@ -19,6 +19,6 @@ router.post("/createPriest", createPriest);
 router.post("/createPriestSched", createSchedule);
 router.put("/editPriest", editPriest);
 router.put("/editSched", editSchedule);
-router.delete("/deleteSched", deleteSchedule);
+// router.delete("/deleteSched", deleteSchedule);
 
 module.exports = router;

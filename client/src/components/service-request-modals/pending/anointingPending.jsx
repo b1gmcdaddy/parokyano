@@ -198,6 +198,16 @@ const AnointingPending = ({ open, data, handleClose }) => {
               details: response.data?.details,
             });
           } else {
+            axios.post(`${config.API}/priest/createPriestSched`, {
+              date: formData.preferred_date,
+              activity: `${formData.type} at ${formData.address}`,
+              start_time: formData.preferred_time,
+              end_time: endTime(formData.preferred_time, service.duration),
+              priest_id: formData.preferred_priest,
+              request_id: formData.requestID,
+            });
+            console.log("priest sched success!");
+
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
@@ -213,14 +223,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               },
             });
             console.log("request success!");
-            axios.post(`${config.API}/priest/createPriestSched`, {
-              date: formData.preferred_date,
-              activity: `${formData.type} at ${formData.address}`,
-              start_time: formData.preferred_time,
-              end_time: endTime(formData.preferred_time, service.duration),
-              priest_id: formData.preferred_priest,
-            });
-            console.log("priest sched success!");
+
             handleClose();
           }
         } catch (err) {

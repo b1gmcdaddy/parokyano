@@ -651,7 +651,6 @@ const searchCertRecords = (req, res) => {
     contact_no,
     birth_date,
     preferred_date,
-    preferred_time,
     service_id,
     status,
   } = req.query;
@@ -660,14 +659,13 @@ const searchCertRecords = (req, res) => {
     SELECT r.*
     FROM request r
     WHERE r.service_id = ? AND r.status = ?
-      AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.birth_date LIKE ? OR r.preferred_date LIKE ? OR r.preferred_time LIKE ?)`;
+      AND (r.first_name LIKE ? AND r.last_name LIKE ? AND r.contact_no LIKE ? AND r.birth_date LIKE ? AND r.preferred_date LIKE ?)`;
 
-  const firstNameMatch = `%${first_name}%`;
-  const lastNameMatch = `%${last_name}%`;
-  const contactNoMatch = `%${contact_no}%`;
-  const birthDateMatch = `%${birth_date}%`;
-  const preferredDateMatch = `%${preferred_date}%`;
-  const preferredTimeMatch = `%${preferred_time}%`;
+  const firstNameMatch = `${first_name}%`;
+  const lastNameMatch = `${last_name}%`;
+  const contactNoMatch = `${contact_no}%`;
+  const birthDateMatch = `${birth_date}%`;
+  const preferredDateMatch = `${preferred_date}%`;
 
   db.query(
     query,
@@ -679,7 +677,6 @@ const searchCertRecords = (req, res) => {
       contactNoMatch,
       birthDateMatch,
       preferredDateMatch,
-      preferredTimeMatch,
     ],
     (err, result) => {
       if (err) {
@@ -734,6 +731,19 @@ const searchCertRecords = (req, res) => {
 //   // });
 // };
 
+//single column update
+const updateByParams = (req, res) => {
+  const { col, val, id } = req.query;
+  const query = `UPDATE request SET ${col} = ? WHERE requestID = ?`;
+  db.query(query, [val, id], (err, result) => {
+    if (err) {
+      console.error("error updating request", err);
+      return res.status(500).json({ message: "error" });
+    }
+    res.status(200).json({ message: "success" });
+  });
+};
+
 module.exports = {
   createRequestIntention,
   createRequestCertificate,
@@ -756,4 +766,5 @@ module.exports = {
   getCountCerts,
   searchIntentions,
   searchCertRecords,
+  updateByParams,
 };

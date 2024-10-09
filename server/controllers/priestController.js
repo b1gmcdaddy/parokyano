@@ -96,11 +96,12 @@ const createPriest = (req, res) => {
 
 // create priest schedule
 const createSchedule = (req, res) => {
-  const { date, activity, start_time, end_time, priest_id } = req.body;
+  const { date, activity, start_time, end_time, priest_id, request_id } =
+    req.body;
 
   db.query(
-    `INSERT INTO priestschedule (date, activity, start_time, end_time, priest_id) VALUES (?, ?, ?, ?, ?)`,
-    [date, activity, start_time, end_time, priest_id],
+    `INSERT INTO priestschedule (date, activity, start_time, end_time, priest_id, request_id) VALUES (?, ?, ?, ?, ?, ?)`,
+    [date, activity, start_time, end_time, priest_id, request_id],
     (err, result) => {
       if (err) {
         console.error("error creating schedule", err);
@@ -191,6 +192,28 @@ const deleteSchedule = (req, res) => {
   );
 };
 
+const deleteSchedule2 = (req, res) => {
+  const { col, val } = req.params;
+
+  db.query(
+    `DELETE FROM priestschedule WHERE ${col} = ?`,
+    [val],
+    (err, result) => {
+      if (err) {
+        console.error("error deleting schedule", err);
+        return res.status(500).json({
+          error: "server error",
+          status: "500",
+        });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "priest sched not found" });
+      }
+      return res.status(200).json({ message: "pruest sched deleted" });
+    }
+  );
+};
+
 module.exports = {
   retrieveByParams,
   retrieveSchedules,
@@ -199,5 +222,5 @@ module.exports = {
   createSchedule,
   editPriest,
   editSchedule,
-  deleteSchedule,
+  deleteSchedule2,
 };

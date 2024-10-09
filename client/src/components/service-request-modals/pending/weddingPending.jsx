@@ -128,7 +128,21 @@ const sponsors = [
   { name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes" },
 ];
 
-function RequirementsModal() {
+const fetchWeddingDetails = async (id) => {
+  try {
+    const response = await axios.get(`${config.API}/wedding/retrieve`, {
+      params: {
+        reqID: id,
+      },
+    });
+
+    return response.data;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+function RequirementsModal({ id }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -136,6 +150,30 @@ function RequirementsModal() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("wedding");
+  const [requirements, setRequirements] = useState({});
+
+  useEffect(() => {
+    const fetchAndSetRequirements = async () => {
+      const req = await fetchWeddingDetails(id);
+      console.log("req", req.result[0]);
+      if (req) {
+        setRequirements({
+          groom_baptismCert: req.result[0].groom_baptismCert,
+          groom_confirmationCert: req.result[0].groom_confirmationCert,
+          groom_birthCert: req.result[0].groom_birthCert,
+          spouse_baptismCert: req.result[0].spouse_baptismCert,
+          spouse_confirmationCert: req.result[0].spouse_confirmationCert,
+          spouse_birthCert: req.result[0].spouse_birthCert,
+          isPrenuptial: req.result[0].isPrenuptial,
+          isPreCana: req.result[0].isPreCana,
+          isMarriageLicense: req.result[0].isMarriageLicense,
+        });
+      }
+    };
+    if (open) {
+      fetchAndSetRequirements();
+    }
+  }, [open]);
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -221,17 +259,11 @@ function RequirementsModal() {
                       <>
                         <Grid item sm={12}>
                           <FormControlLabel
-                            control={<Checkbox />}
-                            label={
-                              <Typography sx={{ fontSize: "15px" }}>
-                                Marriage License
-                              </Typography>
+                            control={
+                              <Checkbox
+                                checked={requirements.groom_birthCert === 1}
+                              />
                             }
-                          />
-                        </Grid>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={<Checkbox />}
                             label={
                               <Typography sx={{ fontSize: "15px" }}>
                                 Birth Certificate
@@ -241,7 +273,11 @@ function RequirementsModal() {
                         </Grid>
                         <Grid item sm={12}>
                           <FormControlLabel
-                            control={<Checkbox />}
+                            control={
+                              <Checkbox
+                                checked={requirements.groom_baptismCert === 1}
+                              />
+                            }
                             label={
                               <Typography sx={{ fontSize: "15px" }}>
                                 Baptismal Certificate
@@ -251,7 +287,13 @@ function RequirementsModal() {
                         </Grid>
                         <Grid item sm={12}>
                           <FormControlLabel
-                            control={<Checkbox />}
+                            control={
+                              <Checkbox
+                                checked={
+                                  requirements.groom_confirmationCert === 1
+                                }
+                              />
+                            }
                             label={
                               <Typography sx={{ fontSize: "15px" }}>
                                 Confirmation Certificate
@@ -265,17 +307,11 @@ function RequirementsModal() {
                       <>
                         <Grid item sm={12}>
                           <FormControlLabel
-                            control={<Checkbox />}
-                            label={
-                              <Typography sx={{ fontSize: "15px" }}>
-                                Marriage License
-                              </Typography>
+                            control={
+                              <Checkbox
+                                checked={requirements.spouse_birthCert === 1}
+                              />
                             }
-                          />
-                        </Grid>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={<Checkbox />}
                             label={
                               <Typography sx={{ fontSize: "15px" }}>
                                 Birth Certificate
@@ -285,7 +321,11 @@ function RequirementsModal() {
                         </Grid>
                         <Grid item sm={12}>
                           <FormControlLabel
-                            control={<Checkbox />}
+                            control={
+                              <Checkbox
+                                checked={requirements.spouse_baptismCert === 1}
+                              />
+                            }
                             label={
                               <Typography sx={{ fontSize: "15px" }}>
                                 Baptismal Certificate
@@ -295,7 +335,13 @@ function RequirementsModal() {
                         </Grid>
                         <Grid item sm={12}>
                           <FormControlLabel
-                            control={<Checkbox />}
+                            control={
+                              <Checkbox
+                                checked={
+                                  requirements.groom_confirmationCert === 1
+                                }
+                              />
+                            }
                             label={
                               <Typography sx={{ fontSize: "15px" }}>
                                 Confirmation Certificate
@@ -319,7 +365,19 @@ function RequirementsModal() {
             <Box>
               <Grid item sm={12}>
                 <FormControlLabel
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox checked={requirements.isMarriageLicense === 1} />
+                  }
+                  label={
+                    <Typography sx={{ fontSize: "15px" }}>
+                      Marriage License
+                    </Typography>
+                  }
+                />
+              </Grid>
+              <Grid item sm={12}>
+                <FormControlLabel
+                  control={<Checkbox checked={""} />}
                   label={
                     <Typography sx={{ fontSize: "15px" }}>
                       Parish Permit
@@ -329,7 +387,9 @@ function RequirementsModal() {
               </Grid>
               <Grid item sm={12}>
                 <FormControlLabel
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox checked={requirements.isPrenuptial === 1} />
+                  }
                   label={
                     <Typography sx={{ fontSize: "15px" }}>
                       Prenuptial Questionnaire
@@ -339,7 +399,7 @@ function RequirementsModal() {
               </Grid>
               <Grid item sm={12}>
                 <FormControlLabel
-                  control={<Checkbox />}
+                  control={<Checkbox checked={requirements.isPreCana === 1} />}
                   label={
                     <Typography sx={{ fontSize: "15px" }}>
                       Pre-Cana Seminar
@@ -552,67 +612,44 @@ function SponsorsModal() {
 
 const WeddingPending = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [completeRequirements, setCompleteRequirements] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
   const [errorOpen, setErrorOpen] = useState(false);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
-    type: "",
-    first_name: "",
-    last_name: "",
-    relationship: "",
-    spouse_name: "",
-    address: "",
-    requested_by: "",
-    contact_no: "",
-    preferred_date: "",
-    preferred_time: "",
-    preferred_priest: "",
-    isParishioner: "",
-    transaction_no: "",
-    payment_status: "",
-    service_id: "",
+    requestID: data.requestID,
+    type: data.type,
+    first_name: data.first_name,
+    last_name: data.last_name,
+    relationship: data.relationship,
+    spouse_name: data.spouse_name,
+    address: data.address,
+    requested_by: data.requested_by,
+    contact_no: data.contact_no,
+    preferred_date: data.preferred_date,
+    preferred_time: data.preferred_time,
+    preferred_priest: data.preferred_priest,
+    isParishioner: data.isParishioner,
+    transaction_no: data.transaction_no,
+    payment_status: data.payment_status,
+    service_id: data.service_id,
   });
 
   //  retrieve wedding details
-  const fetchWeddingDetails = async () => {
-    try {
-      const response = await axios.get(`${config.API}/wedding/retrieve`, {
-        params: {
-          reqID: data.requestID,
-        },
-      });
-      console.log(response.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   useEffect(() => {
-    if (open && data) {
-      setFormData({
-        requestID: data.requestID,
-        type: data.type,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        relationship: data.relationship,
-        spouse_name: data.spouse_name,
-        address: data.address,
-        requested_by: data.requested_by,
-        contact_no: data.contact_no,
-        preferred_date: data.preferred_date,
-        preferred_time: data.preferred_time,
-        preferred_priest: data.preferred_priest,
-        isParishioner: data.isParishioner,
-        transaction_no: data.transaction_no,
-        payment_status: data.payment_status,
-        service_id: data.service_id,
-      });
-    }
-    fetchWeddingDetails();
-    console.log(data);
-  }, [open, data]);
+    const requirements = async () => {
+      const req = await fetchWeddingDetails(data.requestID);
+      console.log("req", req.result[0]);
+      if (req) {
+        setCompleteRequirements(req.result[0].isComplete);
+      }
+    };
+
+    requirements();
+  }, [open]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -930,11 +967,12 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
+                  color: completeRequirements === 1 ? "green" : "red",
                 }}
               >
-                Incomplete
+                {completeRequirements === 1 ? "Complete" : "Incomplete"}
               </Typography>
-              <RequirementsModal />
+              <RequirementsModal id={data.requestID} />
               <Typography
                 variant="subtitle1"
                 sx={{
@@ -945,7 +983,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
               >
                 Sponsors:
               </Typography>
-              <Typography
+              {/* <Typography
                 variant="subtitle1"
                 sx={{
                   display: "inline-block",
@@ -954,7 +992,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                 }}
               >
                 Incomplete
-              </Typography>
+              </Typography> */}
               <SponsorsModal />
             </Grid>
 
@@ -989,7 +1027,19 @@ const WeddingPending = ({ open, data, handleClose }) => {
                         </Grid>
                         <Grid item sm={12}>
                           <label>Priest:</label>
-                          <TextField select fullWidth sx={TextFieldStyle} />
+                          <TextField
+                            select
+                            fullWidth
+                            sx={TextFieldStyle}
+                            value={formData.preferred_priest}
+                            onChange={handleChange}
+                          >
+                            {priests.map((priest) => (
+                              <MenuItem key={priest.id} value={priest.priestID}>
+                                {`${priest.first_name} ${priest.last_name}`}
+                              </MenuItem>
+                            ))}
+                          </TextField>
                         </Grid>
                         <Grid item sm={6}>
                           <label>Date:</label>
@@ -1062,7 +1112,19 @@ const WeddingPending = ({ open, data, handleClose }) => {
                         </Grid>
                         <Grid item sm={12}>
                           <label>Priest:</label>
-                          <TextField select fullWidth sx={TextFieldStyle} />
+                          <TextField
+                            select
+                            fullWidth
+                            sx={TextFieldStyle}
+                            value={formData.preferred_priest}
+                            onChange={handleChange}
+                          >
+                            {priests.map((priest) => (
+                              <MenuItem key={priest.id} value={priest.priestID}>
+                                {`${priest.first_name} ${priest.last_name}`}
+                              </MenuItem>
+                            ))}
+                          </TextField>
                         </Grid>
                         <Grid item sm={6}>
                           <label>Date:</label>
@@ -1129,12 +1191,24 @@ const WeddingPending = ({ open, data, handleClose }) => {
                         </Grid>
                         <Grid item sm={7}>
                           <label>Priest:</label>
-                          <TextField select fullWidth sx={TextFieldStyle} />
+                          <TextField
+                            select
+                            fullWidth
+                            sx={TextFieldStyle}
+                            value={formData.preferred_priest}
+                            onChange={handleChange}
+                          >
+                            {priests.map((priest) => (
+                              <MenuItem key={priest.id} value={priest.priestID}>
+                                {`${priest.first_name} ${priest.last_name}`}
+                              </MenuItem>
+                            ))}
+                          </TextField>
                         </Grid>
-                        <Grid item sm={5}>
+                        {/* <Grid item sm={5}>
                           <label>Venue:</label>
                           <TextField disabled fullWidth sx={TextFieldStyle} />
-                        </Grid>
+                        </Grid> */}
                         <Grid item sm={6}>
                           <label>Date:</label>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -1178,7 +1252,19 @@ const WeddingPending = ({ open, data, handleClose }) => {
                         </Grid>
                         <Grid item sm={12}>
                           <label>Priest:</label>
-                          <TextField select fullWidth sx={TextFieldStyle} />
+                          <TextField
+                            select
+                            fullWidth
+                            sx={TextFieldStyle}
+                            value={formData.preferred_priest}
+                            onChange={handleChange}
+                          >
+                            {priests.map((priest) => (
+                              <MenuItem key={priest.id} value={priest.priestID}>
+                                {`${priest.first_name} ${priest.last_name}`}
+                              </MenuItem>
+                            ))}
+                          </TextField>
                         </Grid>
                         <Grid item sm={6}>
                           <label>Date:</label>

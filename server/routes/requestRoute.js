@@ -22,6 +22,7 @@ const {
   getCountCerts,
   searchIntentions,
   searchCertRecords,
+  updateByParams,
 } = require("../controllers/requestController");
 
 router.post("/create-intention", createRequestIntention);
@@ -47,5 +48,6 @@ router.get("/count-request", getCountRequests);
 router.get("/search", searchIntentions);
 router.get("/search-records", searchCertRecords);
 router.get("/retrieve-multiple-byDate", retrieveMultipleDateFiltered);
+router.put("/update", updateByParams);
 
 module.exports = router;
