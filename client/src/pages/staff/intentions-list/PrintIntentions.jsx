@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect} from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Button,
   AppBar,
@@ -14,16 +14,18 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import ReactToPrint from "react-to-print";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFileExport, faPrint} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileExport, faPrint } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import config from "../../../config";
+import { Document, Packer, Paragraph, TextRun } from "docx";
+import util from "../../../utils/DateTimeFormatter";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const PrintIntentions = ({open, close}) => {
+const PrintIntentions = ({ open, close }) => {
   const [dateSelected, setDateSelected] = useState(null);
   const [timeSelected, setTimeSelected] = useState(null);
   const [tableData, setTableData] = useState([]);
@@ -54,46 +56,173 @@ const PrintIntentions = ({open, close}) => {
 
   const handleDateChange = (e) => {
     setDateSelected(e.target.value);
-    console.log(dateSelected);
   };
 
   const handleTimeChange = (e) => {
     const selectedTime = e.target.value;
     const formattedTime = `${selectedTime}:00`;
     setTimeSelected(formattedTime);
-    console.log(formattedTime);
   };
 
   useEffect(() => {
     fetchData();
   }, [dateSelected, timeSelected]);
 
+  //START EXPORT WORD METHOD
+  const exportToWord = async () => {
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              text: "Mass Intentions",
+              heading: "Title",
+            }),
+            new Paragraph({
+              text: `${util.formatDate(dateSelected)} - ${timeSelected}`,
+              spacing: { after: 200 },
+            }),
+
+            new Paragraph({
+              text: "Souls",
+              heading: "Heading1",
+              spacing: { after: 100 },
+            }),
+            ...tableData
+              .filter((row) => row.type === "Souls")
+              .map((row) => {
+                const requestedByParagraph = new Paragraph({
+                  text: `Requested by: ${row.requested_by}`,
+                  spacing: { after: 50 },
+                });
+                let soulsParagraph = null;
+
+                try {
+                  const details = JSON.parse(row.details);
+                  soulsParagraph = new Paragraph({
+                    text: `For the Souls of: ${details.join(", ")}`,
+                    spacing: { after: 200 },
+                  });
+                } catch (error) {
+                  console.error("Error parsing details:", error);
+                }
+
+                return [requestedByParagraph, soulsParagraph].filter(Boolean);
+              })
+              .flat(),
+
+            new Paragraph({
+              text: "Thanksgiving",
+              heading: "Heading1",
+              spacing: { after: 100 },
+            }),
+            ...tableData
+              .filter((row) => row.type === "Thanksgiving")
+              .map((row) => {
+                const requestedByParagraph = new Paragraph({
+                  text: `Requested by: ${row.requested_by}`,
+                  spacing: { after: 50 },
+                });
+                let thanksgivingDetails = {};
+
+                try {
+                  thanksgivingDetails = JSON.parse(row.details);
+                } catch (error) {
+                  console.error("Error parsing details:", error);
+                }
+
+                const nonNullDetails = Object.keys(thanksgivingDetails)
+                  .filter((key) => thanksgivingDetails[key])
+                  .map((key) => {
+                    return new Paragraph({
+                      text: `${key.charAt(0).toUpperCase() + key.slice(1)}: ${
+                        thanksgivingDetails[key]
+                      }`,
+                      spacing: { after: 200 },
+                    });
+                  });
+
+                return [requestedByParagraph, ...nonNullDetails];
+              })
+              .flat(),
+
+            new Paragraph({
+              text: "Petition",
+              heading: "Heading1",
+              spacing: { after: 100 },
+            }),
+            ...tableData
+              .filter((row) => row.type === "Petition")
+              .map((row) => {
+                const requestedByParagraph = new Paragraph({
+                  text: `Requested by: ${row.requested_by}`,
+                  spacing: { after: 50 },
+                });
+                const petitionParagraph = new Paragraph({
+                  text: `Petition: ${row.details}`,
+                  spacing: { after: 200 },
+                });
+
+                return [requestedByParagraph, petitionParagraph];
+              })
+              .flat(),
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "mass_intentions.docx";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+  };
+  //END EXPORT WORD METHOD
+
   return (
     <Dialog fullScreen open={open} TransitionComponent={Transition}>
-      <AppBar sx={{position: "relative", backgroundColor: "#355173"}}>
+      <AppBar sx={{ position: "relative", backgroundColor: "#355173" }}>
         <Toolbar>
           <IconButton
             edge="start"
             color="inherit"
             aria-label="close"
-            onClick={close}>
+            onClick={close}
+          >
             <CloseIcon />
           </IconButton>
-          <Typography sx={{ml: 2, flex: 1}} variant="h6" component="div">
+          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
             Mass Intentions Print Preview
           </Typography>
-
-          <Button autoFocus color="inherit">
+          {/* 
+          <Button autoFocus color="inherit" onClick={exportToPDF}>
             <FontAwesomeIcon
               icon={faFileExport}
               className="text-white md:mr-5 md:ml-2"
             />
-            Export
+            Export PDF
+          </Button> */}
+          <Button
+            autoFocus
+            color="inherit"
+            sx={{ marginLeft: "1em" }}
+            onClick={exportToWord}
+          >
+            <FontAwesomeIcon
+              icon={faFileExport}
+              className="text-white md:mr-5 md:ml-2"
+            />
+            Export Word
           </Button>
 
           <ReactToPrint
             trigger={() => (
-              <Button autoFocus color="inherit" sx={{marginLeft: "1em"}}>
+              <Button autoFocus color="inherit" sx={{ marginLeft: "1em" }}>
                 <FontAwesomeIcon
                   icon={faPrint}
                   className="text-white md:mr-5 md:ml-2"
@@ -116,8 +245,9 @@ const PrintIntentions = ({open, close}) => {
             alignItems: "center",
             padding: "16px",
           }}
-          className="gap-2">
-          <Typography component="div" sx={{ml: 2, color: "black"}}>
+          className="gap-2"
+        >
+          <Typography component="div" sx={{ ml: 2, color: "black" }}>
             Select Date:
           </Typography>
           <TextField
@@ -129,7 +259,7 @@ const PrintIntentions = ({open, close}) => {
             }}
             onChange={handleDateChange}
           />
-          <Typography component="div" sx={{ml: 2, color: "black"}}>
+          <Typography component="div" sx={{ ml: 2, color: "black" }}>
             Select Time:
           </Typography>
           <TextField
@@ -148,129 +278,120 @@ const PrintIntentions = ({open, close}) => {
             height: "700px",
             overflowY: "auto",
             backgroundColor: "#F5F5F5",
-          }}>
-          {/* START ToPrintComponent */}
+          }}
+        >
           {dateSelected !== null && timeSelected !== null ? (
             <Container
               maxWidth="lg"
-              sx={{backgroundColor: "white"}}
-              ref={componentRef}>
-              <Box sx={{textAlign: "center", margin: "auto"}}>
-                <Typography sx={{paddingTop: "3em"}}>
+              sx={{ backgroundColor: "white" }}
+              ref={componentRef}
+            >
+              <Box sx={{ textAlign: "center", margin: "auto" }}>
+                <Typography sx={{ paddingTop: "3em" }}>
                   Mass Intentions
                 </Typography>
-                <Typography sx={{fontStyle: "italic", fontSize: "14px"}}>
+                <Typography sx={{ fontStyle: "italic", fontSize: "14px" }}>
                   {dateSelected}&nbsp;- {timeSelected}
                 </Typography>
               </Box>
 
-              <Box sx={{marginTop: "3em"}}>
-                <Typography sx={{textAlign: "center", fontSize: "14px"}}>
-                  SOULS
-                </Typography>
+              {tableData.some((t) => t.type === "Souls") && (
+                <>
+                  <Typography sx={{ fontSize: "14px" }}>SOULS</Typography>
+                </>
+              )}
 
-                <Grid container spacing={2} sx={{padding: "20px"}}>
-                  {tableData
-                    .filter((t) => t.type === "Souls")
-                    .map((row, index) => (
-                      <Grid
-                        item
-                        xs={6}
-                        key={row.requestID}
-                        sx={{textAlign: "center"}}>
+              <Grid container spacing={2} sx={{ padding: "20px" }}>
+                {tableData
+                  .filter((t) => t.type === "Souls")
+                  .map((row, index) => (
+                    <Grid item xs={6} key={row.requestID}>
+                      <Typography>
+                        <b>Requested by:</b> {row.requested_by}
+                      </Typography>
+                      <Typography>
+                        <b>For the Souls of: </b>
+                        {JSON.parse(row.details).join(", ")}
+                      </Typography>
+                    </Grid>
+                  ))}
+              </Grid>
+
+              {tableData.some((t) => t.type === "Thanksgiving") && (
+                <>
+                  <Typography sx={{ fontSize: "14px" }}>
+                    THANKSGIVING
+                  </Typography>
+                </>
+              )}
+
+              <Grid container spacing={2} sx={{ padding: "20px" }}>
+                {tableData
+                  .filter((t) => t.type === "Thanksgiving")
+                  .map((row, index) => {
+                    const details = JSON.parse(row.details);
+
+                    return (
+                      <Grid item xs={6} key={row.requestID}>
                         <Typography>
                           <b>Requested by:</b> {row.requested_by}
                         </Typography>
-                        <Typography>
-                          <b>For the Souls of: </b>
-                          {JSON.parse(row.details).join(", ")}
-                        </Typography>
+
+                        <ul style={{ listStyleType: "none", padding: 0 }}>
+                          {details.birthday && (
+                            <li>
+                              <b>Birthday:</b> {details.birthday}
+                            </li>
+                          )}
+                          {details.wedding && (
+                            <li>
+                              <b>Wedding:</b> {details.wedding}
+                            </li>
+                          )}
+                          {details.success && (
+                            <li>
+                              <b>Success:</b> {details.success}
+                            </li>
+                          )}
+                          {details.saint && (
+                            <li>
+                              <b>Saint:</b> {details.saint}
+                            </li>
+                          )}
+                          {details.others && (
+                            <li>
+                              <b>Others:</b> {details.others}
+                            </li>
+                          )}
+                        </ul>
                       </Grid>
-                    ))}
-                </Grid>
-              </Box>
+                    );
+                  })}
+              </Grid>
 
-              <Box sx={{marginTop: "3em"}}>
-                <Typography sx={{textAlign: "center", fontSize: "14px"}}>
-                  THANKSGIVING
-                </Typography>
+              {tableData.some((t) => t.type === "Petition") && (
+                <>
+                  <Typography sx={{ fontSize: "14px" }}>PETITION</Typography>
+                </>
+              )}
 
-                <Grid container spacing={2} sx={{padding: "20px"}}>
-                  {tableData
-                    .filter((t) => t.type === "Thanksgiving")
-                    .map((row, index) => {
-                      const details = JSON.parse(row.details);
-
-                      return (
-                        <Grid
-                          item
-                          xs={6}
-                          key={row.requestID}
-                          sx={{textAlign: "center"}}>
-                          <Typography>
-                            <b>Requested by:</b> {row.requested_by}
-                          </Typography>
-
-                          <ul style={{listStyleType: "none", padding: 0}}>
-                            {details.birthday && (
-                              <li>
-                                <b>Birthday:</b> {details.birthday}
-                              </li>
-                            )}
-                            {details.wedding && (
-                              <li>
-                                <b>Wedding:</b> {details.wedding}
-                              </li>
-                            )}
-                            {details.success && (
-                              <li>
-                                <b>Success:</b> {details.success}
-                              </li>
-                            )}
-                            {details.saint && (
-                              <li>
-                                <b>Saint:</b> {details.saint}
-                              </li>
-                            )}
-                            {details.others && (
-                              <li>
-                                <b>Others:</b> {details.others}
-                              </li>
-                            )}
-                          </ul>
-                        </Grid>
-                      );
-                    })}
-                </Grid>
-              </Box>
-              <Box sx={{marginTop: "3em"}}>
-                <Typography sx={{textAlign: "center", fontSize: "14px"}}>
-                  PETITION
-                </Typography>
-
-                <Grid container spacing={2} sx={{padding: "20px"}}>
-                  {tableData
-                    .filter((t) => t.type === "Petition")
-                    .map((row, index) => (
-                      <Grid
-                        item
-                        xs={6}
-                        key={row.requestID}
-                        sx={{textAlign: "center"}}>
-                        <Typography>
-                          <b>Requested by:</b> {row.requested_by}
-                        </Typography>
-                        <Typography>
-                          <b>Petition: </b>
-                          {row.details}
-                        </Typography>
-                      </Grid>
-                    ))}
-                </Grid>
-              </Box>
+              <Grid container spacing={2} sx={{ padding: "20px" }}>
+                {tableData
+                  .filter((t) => t.type === "Petition")
+                  .map((row, index) => (
+                    <Grid item xs={6} key={row.requestID}>
+                      <Typography>
+                        <b>Requested by:</b> {row.requested_by}
+                      </Typography>
+                      <Typography>
+                        <b>Petition: </b>
+                        {row.details}
+                      </Typography>
+                    </Grid>
+                  ))}
+              </Grid>
             </Container>
           ) : null}
-          {/* END of ToPrintComponent */}
         </Box>
       </Box>
     </Dialog>

@@ -67,18 +67,31 @@ const ManageSchedules = () => {
   };
 
   const timeSlots = [
-    "08:00 AM",
-    "09:00 AM",
-    "10:00 AM",
-    "11:00 AM",
-    "12:00 PM",
-    "01:00 PM",
-    "02:00 PM",
-    "03:00 PM",
-    "04:00 PM",
-    "05:00 PM",
-    "06:00 PM",
-    "07:00 PM",
+    "07:30 AM - 08:00 AM",
+    "08:00 AM - 08:30 AM",
+    "08:30 AM - 09:00 AM",
+    "09:00 AM - 09:30 AM",
+    "09:30 AM - 10:00 AM",
+    "10:00 AM - 10:30 AM",
+    "10:30 AM - 11:00 AM",
+    "11:00 AM - 11:30 AM",
+    "11:30 AM - 12:00 PM",
+    "12:00 PM - 12:30 PM",
+    "12:30 PM - 01:00 PM",
+    "01:00 PM - 01:30 PM",
+    "01:30 PM - 02:00 PM",
+    "02:00 PM - 02:30 PM",
+    "02:30 PM - 03:00 PM",
+    "03:00 PM - 03:30 PM",
+    "03:30 PM - 04:00 PM",
+    "04:00 PM - 04:30 PM",
+    "04:30 PM - 05:00 PM",
+    "05:00 PM - 05:30 PM",
+    "05:30 PM - 06:00 PM",
+    "06:00 PM - 06:30 PM",
+    "06:30 PM - 07:00 PM",
+    "07:00 PM - 07:30 PM",
+    "07:30 PM - 08:00 PM",
   ];
 
   const handleDateChange = (e) => {
@@ -86,14 +99,15 @@ const ManageSchedules = () => {
   };
 
   const getActivityForSlot = (priestID, timeSlot) => {
+    const [startTime] = timeSlot.split(" - ");
     const slotTime = dayjs(
-      `${selectedDate} ${timeSlot}`,
+      `${selectedDate} ${startTime}`,
       "YYYY-MM-DD hh:mm A"
     ).format("HH:mm:ss");
 
     return activities.find(
       (activity) =>
-        activity.priest_id === priestID &&
+        activity.priest_id == priestID &&
         dayjs(activity.date).isSame(selectedDate, "day") &&
         slotTime >= activity.start_time &&
         slotTime < activity.end_time
@@ -101,11 +115,12 @@ const ManageSchedules = () => {
   };
 
   const isActivityStart = (activity, timeSlot) => {
+    const [startTime] = timeSlot.split(" - ");
     const slotTime = dayjs(
-      `${selectedDate} ${timeSlot}`,
+      `${selectedDate} ${startTime}`,
       "YYYY-MM-DD hh:mm A"
     ).format("HH:mm:ss");
-    return activity && slotTime === activity.start_time;
+    return activity && slotTime == activity.start_time;
   };
 
   return (
@@ -187,14 +202,29 @@ const ManageSchedules = () => {
               />
             </Box>
 
-            <TableContainer component={Paper}>
-              <Table>
+            <TableContainer
+              component={Paper}
+              sx={{ maxHeight: 600, overflowY: "auto" }}
+            >
+              <Table stickyHeader>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: "bold" }}>Time</TableCell>
+                    <TableCell
+                      width="20%"
+                      sx={{
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Time
+                    </TableCell>
                     {priestList.map((priest) => (
                       <TableCell key={priest.priestID} align="center">
-                        <Typography sx={{ fontWeight: "bold" }}>
+                        <Typography
+                          sx={{
+                            fontWeight: "bold",
+                            textTransform: "uppercase",
+                          }}
+                        >
                           {priest.first_name} {priest.last_name}
                         </Typography>
                       </TableCell>
@@ -221,6 +251,9 @@ const ManageSchedules = () => {
                                 ? "#355173"
                                 : "transparent",
                               color: activity ? "#fff" : "inherit",
+                              border: activity
+                                ? "none"
+                                : "1px solid rgba((232, 232, 232)",
                             }}
                           >
                             {isStart ? (
@@ -232,11 +265,9 @@ const ManageSchedules = () => {
                                   }
                                   icon={faPenToSquare}
                                   className="ml-2 cursor-pointer"
-                                />{" "}
+                                />
                               </>
-                            ) : (
-                              ""
-                            )}
+                            ) : null}
                           </TableCell>
                         );
                       })}
