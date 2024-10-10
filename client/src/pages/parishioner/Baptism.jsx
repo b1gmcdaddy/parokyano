@@ -60,22 +60,21 @@ const Baptism = () => {
     last_name: "",
     birth_date: "",
     birth_place: "",
-    gender: "",
     father_name: "",
     mother_name: "",
     details: {
+      gender: "",
       father_age: "",
       mother_age: "",
+      isChurchMarried: "",
+      isCivilMarried: "",
+      isLiveIn: "",
       marriage_date: "",
+      marriage_place: "",
       liveIn_years: "",
-      churchMarriedDate: "",
-      churchMarriedPlace: "",
     },
     address: "",
     contact_no: "",
-    isChurchMarried: "",
-    isCivilMarried: "",
-    isLiveIn: "",
     preferred_date: "",
     preferred_time: "",
     priest_id: "",
@@ -123,8 +122,8 @@ const Baptism = () => {
   };
 
   useEffect(() => {
-    console.log(formData.preferred_time);
-  }, [formData.preferred_time]);
+    console.log(formData);
+  }, [formData]);
 
   const handleDetails = (e) => {
     setFormData((prevState) => ({
@@ -292,8 +291,8 @@ const Baptism = () => {
                 variant="outlined"
                 sx={inputstlying}
                 name="gender"
-                onChange={handleChange}
-                value={formData.gender}
+                onChange={handleDetails}
+                value={formData.details.gender}
                 required
               >
                 <MenuItem value="male">Male</MenuItem>
@@ -406,8 +405,8 @@ const Baptism = () => {
                 <RadioGroup
                   row
                   name="isChurchMarried"
-                  value={formData.isChurchMarried}
-                  onChange={handleChange}
+                  value={formData.details.isChurchMarried}
+                  onChange={handleDetails}
                 >
                   <FormControlLabel
                     value="1"
@@ -422,7 +421,7 @@ const Baptism = () => {
                 </RadioGroup>
               </FormControl>
             </Grid>
-            {formData.isChurchMarried === "1" && (
+            {formData.details.isChurchMarried === "1" && (
               <>
                 <Grid item xs={12} sm={3} sx={{ marginRight: { md: "15px" } }}>
                   <label>When?</label>
@@ -432,8 +431,8 @@ const Baptism = () => {
                     variant="outlined"
                     size="small"
                     sx={inputstlying}
-                    name="churchMarriedDate"
-                    value={formData.details.churchMarriedDate}
+                    name="marriage_date"
+                    value={formData.details.marriage_date}
                     onChange={handleDetails}
                   />
                 </Grid>
@@ -444,14 +443,14 @@ const Baptism = () => {
                     variant="outlined"
                     size="small"
                     sx={inputstlying}
-                    name="churchMarriedPlace"
-                    value={formData.details.churchMarriedPlace}
+                    name="marriage_place"
+                    value={formData.details.marriage_place}
                     onChange={handleDetails}
                   />
                 </Grid>
               </>
             )}
-            {formData.isChurchMarried === "0" && (
+            {formData.details.isChurchMarried === "0" && (
               <>
                 <Grid item xs={5} sm={3}>
                   <FormControl component="fieldset">
@@ -459,8 +458,8 @@ const Baptism = () => {
                     <RadioGroup
                       row
                       name="isCivilMarried"
-                      value={formData.isCivilMarried}
-                      onChange={handleChange}
+                      value={formData.details.isCivilMarried}
+                      onChange={handleDetails}
                     >
                       <FormControlLabel
                         value="1"
@@ -475,15 +474,15 @@ const Baptism = () => {
                     </RadioGroup>
                   </FormControl>
                 </Grid>
-                {formData.isCivilMarried === "0" && (
+                {formData.details.isCivilMarried === "0" && (
                   <Grid item xs={5} sm={3}>
                     <FormControl component="fieldset">
                       <label>Live-in?</label>
                       <RadioGroup
                         row
                         name="isLiveIn"
-                        value={formData.isLiveIn}
-                        onChange={handleChange}
+                        value={formData.details.isLiveIn}
+                        onChange={handleDetails}
                       >
                         <FormControlLabel
                           value="1"
@@ -499,7 +498,7 @@ const Baptism = () => {
                     </FormControl>
                   </Grid>
                 )}
-                {formData.isLiveIn === "1" && (
+                {formData.details.isLiveIn === "1" && (
                   <Grid item xs={12} sm={3}>
                     <label>How many years?</label>
                     <TextField
@@ -608,8 +607,8 @@ const Baptism = () => {
                   value={godparent.isCatholic}
                   onChange={(e) => handleGodparentChange(index, e)}
                 >
-                  <MenuItem value="yes">Yes</MenuItem>
-                  <MenuItem value="no">No</MenuItem>
+                  <MenuItem value="1">Yes</MenuItem>
+                  <MenuItem value="0">No</MenuItem>
                 </TextField>
               </Grid>
             </Grid>

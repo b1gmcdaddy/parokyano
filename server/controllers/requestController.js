@@ -82,29 +82,21 @@ const createRequestCertificate = (req, res) => {
 
 const createRequestBaptism = (req, res) => {
   const request = req.body;
-  const details = JSON.stringify(request.details);
-
   const dateToday = new Date();
-  console.log(request);
-  console.log(request.sponsors);
 
+  // Insert the main request
   db.query(
-    "INSERT INTO request (first_name, middle_name, last_name, birth_date, birth_place, gender, father_name, mother_name, details, address, contact_no, isChurchMarried, isCivilMarried, isLiveIn, preferred_date, preferred_time, priest_id, payment_method, transaction_no, date_requested, service_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    "INSERT INTO request (first_name, middle_name, last_name, birth_date, birth_place, father_name, mother_name, address, contact_no, preferred_date, preferred_time, priest_id, payment_method, transaction_no, date_requested, service_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
     [
       request.first_name,
       request.middle_name,
       request.last_name,
       request.birth_date,
       request.birth_place,
-      request.gender,
       request.father_name,
       request.mother_name,
-      details,
       request.address,
       request.contact_no,
-      request.isChurchMarried,
-      request.isCivilMarried,
-      request.isLiveIn,
       request.preferred_date,
       request.preferred_time,
       request.priest_id,
@@ -121,40 +113,67 @@ const createRequestBaptism = (req, res) => {
           error: err.message,
         });
       }
-      db.query(
-        `SELECT requestID from request WHERE transaction_no = '${request.transaction_no}'`,
-        (err, result) => {
-          if (err) {
-            console.error("Error submitting to database", err);
-            return res.status(500).json({
-              message: "Failed to create baptism request",
-              error: err.message,
-            });
-          }
-          for (let i = 0; i < request.sponsors.length; i++) {
+
+      // Get the newly inserted request's ID
+      const requestID = result.insertId;
+
+      // Insert sponsors
+      const sponsorQueries = request.sponsors.map(
+        (sponsor) =>
+          new Promise((resolve, reject) => {
             db.query(
-              `INSERT INTO sponsor (name, isCatholic, request_id) VALUES (?, ?, ?)`,
-              [
-                request.sponsors[i].name,
-                request.sponsors[i].isCatholic,
-                result[0].requestID,
-              ]
+              "INSERT INTO sponsor (name, isCatholic, request_id) VALUES (?, ?, ?)",
+              [sponsor.name, sponsor.isCatholic, requestID],
+              (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+              }
             );
-          }
-          (err, result) => {
-            if (err) {
-              console.error("Error submitting to database", err);
-              return res.status(500).json({
-                message: "Failed to create sponsor request",
-                error: err.message,
+          })
+      );
+
+      // After all sponsor insertions complete, insert the baptism details
+      Promise.all(sponsorQueries)
+        .then(() => {
+          db.query(
+            "INSERT INTO baptism (gender, father_age, mother_age, isChurchMarried, isCivilMarried, isLiveIn, marriage_date, marriage_place, liveIn_years, request_id) VALUES (?,?,?,?,?,?,?,?,?,?)",
+            [
+              request.details.gender,
+              request.details.father_age,
+              request.details.mother_age,
+              request.details.isChurchMarried,
+              request.details.isCivilMarried,
+              request.details.isLiveIn,
+              request.details.marriage_date,
+              request.details.marriage_place,
+              request.details.liveIn_years,
+              requestID,
+            ],
+            (err, result) => {
+              if (err) {
+                console.error(
+                  "Error submitting baptism details to database",
+                  err
+                );
+                return res.status(500).json({
+                  message: "Failed to create baptism request",
+                  error: err.message,
+                });
+              }
+              return res.status(200).json({
+                message: "Baptism request submitted successfully",
               });
             }
-            return res.status(200).json({
-              message: "Baptism request submitted successfully",
-            });
-          };
-        }
-      );
+          );
+        })
+        .catch((err) => {
+          console.error("Error inserting sponsors", err);
+          res.status(500).json({
+            message:
+              "Failed to create baptism request due to sponsor insertion",
+            error: err.message,
+          });
+        });
     }
   );
 };

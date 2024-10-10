@@ -76,6 +76,8 @@ const BaptismPending = ({ open, data, handleClose }) => {
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
   const [errorOpen, setErrorOpen] = useState(false);
+  const [sponsors, setSponsors] = useState([]);
+  const [details, setDetails] = useState({});
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -122,32 +124,6 @@ const BaptismPending = ({ open, data, handleClose }) => {
     setDialogOpen(true);
   };
 
-  useEffect(() => {
-    if (open && data) {
-      const details = JSON.parse(data.details);
-      setFormData({
-        requestID: data.requestID,
-        first_name: data.first_name || "",
-        middle_name: data.middle_name || "",
-        last_name: data.last_name || "",
-        birth_date: formatDate(data.birth_date),
-        birth_place: data.birth_place || "",
-        gender: data.gender || "",
-        father_name: data.father_name || "",
-        father_age: details.father_age || "",
-        mother_name: data.mother_name || "",
-        mother_age: details.mother_age || "",
-        payment_method: data.payment_method || "",
-        preferred_date: formatDate(data.preferred_date),
-        preferred_time: data.preferred_time || "",
-        preferred_priest: data.priest_id || "",
-        godparents: details.godparents || [],
-        payment_status: data.payment_status || "",
-        transaction_no: data.transaction_no || "",
-      });
-    }
-  }, [open, data]);
-
   const fetchService = async () => {
     try {
       const response = await axios.get(
@@ -165,6 +141,34 @@ const BaptismPending = ({ open, data, handleClose }) => {
     }
   };
 
+  const fetchSponsors = async (id) => {
+    try {
+      const response = await axios.get(`${config.API}/sponsor/retrieve`, {
+        params: {
+          reqID: id,
+        },
+      });
+      setSponsors(response.data.result);
+      return response.data;
+    } catch (err) {
+      console.error("error retrieving sponsors", err);
+    }
+  };
+
+  const fetchBaptismDetails = async (id) => {
+    try {
+      const response = await axios.get(`${config.API}/baptism/retrieve`, {
+        params: {
+          reqID: id,
+        },
+      });
+      setDetails(response.data.result[0]);
+      return response.data;
+    } catch (err) {
+      console.error("error retrieving sponsors", err);
+    }
+  };
+
   useEffect(() => {
     const fetchPriest = async () => {
       try {
@@ -175,14 +179,45 @@ const BaptismPending = ({ open, data, handleClose }) => {
           },
         });
         setPriests(response.data);
-        console.log(response.data);
       } catch (err) {
         console.error(err);
       }
     };
     fetchPriest();
     fetchService();
-  }, []);
+    fetchSponsors(data.requestID);
+    fetchBaptismDetails(data.requestID);
+  }, [open]);
+
+  useEffect(() => {
+    if (open && data) {
+      setFormData({
+        requestID: data.requestID,
+        first_name: data.first_name || "",
+        middle_name: data.middle_name || "",
+        last_name: data.last_name || "",
+        birth_date: formatDate(data.birth_date),
+        birth_place: data.birth_place || "",
+        gender: details.gender,
+        father_name: data.father_name || "",
+        father_age: details.father_age || "",
+        mother_name: data.mother_name || "",
+        mother_age: details.mother_age || "",
+        payment_method: data.payment_method || "",
+        preferred_date: formatDate(data.preferred_date),
+        preferred_time: data.preferred_time || "",
+        preferred_priest: data.priest_id || "",
+        payment_status: data.payment_status || "",
+        transaction_no: data.transaction_no || "",
+        birthCert: details?.birthCert,
+        parent_marriageCert: details?.parent_marriageCert,
+      });
+    }
+  }, [open, data, details]);
+
+  useEffect(() => {
+    console.log(details);
+  }, [details]);
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
@@ -374,7 +409,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
                 sx={TextFieldStyle}
               />
             </Grid>
-            <Grid item sm={3}>
+            {/* <Grid item sm={3}>
               <label>Age:</label>
               <TextField
                 value={formData.father_age}
@@ -384,7 +419,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
                 fullWidth
                 sx={TextFieldStyle}
               />
-            </Grid>
+            </Grid> */}
 
             <Grid item sm={9}>
               <label>Mother's complete name:</label>
@@ -396,7 +431,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
                 sx={TextFieldStyle}
               />
             </Grid>
-            <Grid item sm={3}>
+            {/* <Grid item sm={3}>
               <label>Age:</label>
               <TextField
                 value={formData.mother_age}
@@ -406,7 +441,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
                 fullWidth
                 sx={TextFieldStyle}
               />
-            </Grid>
+            </Grid> */}
 
             <Grid item sm={12}>
               <Grid container spacing={2}>
@@ -423,39 +458,41 @@ const BaptismPending = ({ open, data, handleClose }) => {
                     {" "}
                     {/* Ninong */}
                     <Grid container>
-                      {formData.godparents.map((godparent, index) => (
-                        <Grid container spacing={2} key={index}>
-                          <Grid item sm={0.7}>
-                            <p>{index + 1}.</p>
-                          </Grid>
-                          <Grid item sm={6.3}>
-                            <TextField
-                              fullWidth
-                              value={godparent.name}
-                              sx={TextFieldStyle}
-                              name="godparent"
-                            />
-                          </Grid>
-                          <Grid item sm={5}>
-                            <RadioGroup
-                              row
-                              defaultValue={godparent.isCatholic}
-                              sx={{ marginTop: "-7px" }}
-                            >
-                              <FormControlLabel
-                                value="yes"
-                                control={<Radio />}
-                                label="Yes"
+                      {sponsors &&
+                        sponsors.map((godparent, index) => (
+                          <Grid container spacing={2} key={index}>
+                            <Grid item sm={0.7}>
+                              <p>{index + 1}.</p>
+                            </Grid>
+                            <Grid item sm={6.3}>
+                              <TextField
+                                fullWidth
+                                value={godparent.name}
+                                sx={TextFieldStyle}
+                                name="godparent"
                               />
-                              <FormControlLabel
-                                value="no"
-                                control={<Radio />}
-                                label="No"
-                              />
-                            </RadioGroup>
+                            </Grid>
+                            <Grid item sm={5}>
+                              <RadioGroup
+                                row
+                                defaultValue={godparent.isCatholic}
+                                sx={{ marginTop: "-7px" }}
+                                value={godparent.isCatholic}
+                              >
+                                <FormControlLabel
+                                  value="1"
+                                  control={<Radio />}
+                                  label="Yes"
+                                />
+                                <FormControlLabel
+                                  value="0"
+                                  control={<Radio />}
+                                  label="No"
+                                />
+                              </RadioGroup>
+                            </Grid>
                           </Grid>
-                        </Grid>
-                      ))}
+                        ))}
                     </Grid>
                   </Box>
                 </Grid>
