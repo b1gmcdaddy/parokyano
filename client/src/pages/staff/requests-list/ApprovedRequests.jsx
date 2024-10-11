@@ -90,7 +90,7 @@ const ApprovedRequests = () => {
             handleClose={() => setModalOpen(false)}
           />
         );
-      case "Baptism - General" || "Baptism - Appointment":
+      case "Baptism - Appointment":
         return (
           <BaptismApproved
             open={modalOpen}
@@ -294,7 +294,7 @@ const ApprovedRequests = () => {
                         backgroundColor: "#e0e0e0",
                       }}
                     >
-                      {req.requested_by}
+                      {req.requested_by || req.father_name}
                     </TableCell>
                     <TableCell
                       sx={{

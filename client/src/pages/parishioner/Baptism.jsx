@@ -108,6 +108,11 @@ const Baptism = () => {
   // };
   // const isCaptchaChecked = captchaValue !== null;
 
+  useEffect(() => {
+    console.log(formData.preferred_date);
+    console.log(formData.preferred_time);
+  }, [formData]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -118,7 +123,7 @@ const Baptism = () => {
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   useEffect(() => {
@@ -237,7 +242,6 @@ const Baptism = () => {
                 sx={inputstlying}
                 name="middle_name"
                 onChange={handleChange}
-                required
               />
             </Grid>
             <Grid item xs={12} sm={4}>

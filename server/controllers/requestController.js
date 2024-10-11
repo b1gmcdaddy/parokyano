@@ -723,6 +723,44 @@ const updateByParams = (req, res) => {
   });
 };
 
+// experimental
+const updateBulk = (req, res) => {
+  const { formData, details, id } = req.body;
+
+  const columns = Object.keys(formData)
+    .map((key) => `${key} = ?`)
+    .join(", ");
+  const values = [...Object.values(formData), id];
+
+  db.query(
+    `UPDATE request SET ${columns} WHERE requestID = ?`,
+    values,
+    (err, result) => {
+      if (err) {
+        console.error("Error updating request", err);
+        return res.status(500).json({ message: "Error updating request" });
+      }
+
+      const baptismColumns = Object.keys(details)
+        .map((key) => `${key} = ?`)
+        .join(", ");
+      const baptismValues = [...Object.values(details), id];
+
+      db.query(
+        `UPDATE baptism SET ${baptismColumns} WHERE request_id = ?`,
+        baptismValues,
+        (err, result) => {
+          if (err) {
+            console.error("Error updating baptism", err);
+            return res.status(500).json({ message: "Error updating baptism" });
+          }
+          res.status(200).json({ message: "Update successful" });
+        }
+      );
+    }
+  );
+};
+
 module.exports = {
   createRequestIntention,
   createRequestCertificate,
@@ -747,4 +785,5 @@ module.exports = {
   searchIntentions,
   searchCertRecords,
   updateByParams,
+  updateBulk,
 };

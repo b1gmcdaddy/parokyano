@@ -72,7 +72,7 @@ const fetchSponsors = async (id) => {
       },
     });
     console.log(response.data);
-    return response.data;
+    return;
   } catch (err) {
     console.error("error retrieving sponsors", err);
   }

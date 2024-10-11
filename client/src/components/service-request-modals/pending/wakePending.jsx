@@ -238,13 +238,14 @@ const WakePending = ({ open, data, handleClose }) => {
           });
 
           console.log("request cancelled!");
-          // axios.delete(`${config.API}/priest/deleteSched`, {
-          //   params: {
-          //     col: "request_id",
-          //     val: formData.requestID,
-          //   },
-          // });
+          axios.delete(`${config.API}/priest/deleteSched`, {
+            params: {
+              col: "request_id",
+              val: formData.requestID,
+            },
+          });
           console.log("priest sched deleted!");
+          break;
         } catch (err) {
           console.error("error updating request", err);
         }
