@@ -6,18 +6,12 @@ const cors = require("cors");
 //CORS policies
 app.use(
   cors({
-    origin: [process.env.CORS_ORIGIN],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    origin: process.env.CORS_ORIGIN || "*", // Use the environment variable or allow all origins by default
+    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+    credentials: true, // Allow cookies and credentials
   })
 );
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", process.env.CORS_ORIGIN);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
 
 app.use(express.json());
 

@@ -288,14 +288,14 @@ const BaptismPending = ({ open, data, handleClose }) => {
           });
 
           console.log("request cancelled!");
-          axios.delete(`${config.API}/priest/deleteSched`, {
-            params: {
-              col: "request_id",
-              val: data.requestID,
-            },
-          });
-          console.log("priest sched deleted!");
-          break;
+          // axios.delete(`${config.API}/priest/deleteSched`, {
+          //   params: {
+          //     col: "request_id",
+          //     val: data.requestID,
+          //   },
+          // });
+          // console.log("priest sched deleted!");
+          // break;
         } catch (err) {
           console.error("error updating request", err);
         }

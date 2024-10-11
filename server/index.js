@@ -3,27 +3,38 @@
 const mysql = require("mysql2");
 const bp = require("body-parser");
 const app = require("./routes");
+const cors = require("cors");
+require("dotenv").config();
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "parokyano",
-  connectTimeout: 30000, // Increase connection timeout to 30 seconds
-  // ssl: { rejectUnauthorized: false }, // Uncomment if SSL is required
+const pool = mysql.createPool({
+  host: process.env.MYSQL_ADDON_HOST,
+  user: process.env.MYSQL_ADDON_USER,
+  password: process.env.MYSQL_ADDON_PASSWORD,
+  database: process.env.MYSQL_ADDON_NAME,
+  connectTimeout: 30000,
+  port: process.env.PORT,
 });
 const PORT = process.env.PORT;
 
-connection.connect((err) => {
+pool.getConnection((err, connection) => {
   // connection.release();
   if (err) {
     console.log("error connecting to db", err.stack);
     return;
   }
   console.log("connected to db as " + connection.threadId);
+  connection.release();
 });
 
-app.use(bp.urlencoded({extended: true}));
+// app.use(bp.urlencoded({ extended: true }));
+
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173", // Allow requests from this origin
+//     methods: ["GET", "POST", "PUT", "DELETE"], // Specify the allowed HTTP methods
+//     allowedHeaders: ["Content-Type", "Authorization"], // Specify the allowed headers
+//   })
+// );
 
 app.get("/", (req, res) => {
   res.json({
