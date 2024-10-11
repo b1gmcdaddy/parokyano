@@ -33,6 +33,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
+    height: "40px"
   },
 };
 
