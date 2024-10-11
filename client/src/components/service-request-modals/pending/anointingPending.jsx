@@ -234,7 +234,26 @@ const AnointingPending = ({ open, data, handleClose }) => {
         console.log("updated ", formData);
         break;
       case "cancel":
-        alert("Cancel action confirmed.");
+        try {
+          axios.put(`${config.API}/request/update`, null, {
+            params: {
+              col: "status",
+              val: "cancelled",
+              id: formData.requestID,
+            },
+          });
+
+          console.log("request cancelled!");
+          // axios.delete(`${config.API}/priest/deleteSched`, {
+          //   params: {
+          //     col: "request_id",
+          //     val: formData.requestID,
+          //   },
+          // });
+          console.log("priest sched deleted!");
+        } catch (err) {
+          console.error("error updating request", err);
+        }
         break;
       default:
         break;
