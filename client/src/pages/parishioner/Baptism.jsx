@@ -66,12 +66,14 @@ const Baptism = () => {
       gender: "",
       father_age: "",
       mother_age: "",
-      isChurchMarried: "",
-      isCivilMarried: "",
-      isLiveIn: "",
-      marriage_date: "",
-      marriage_place: "",
-      liveIn_years: "",
+      isChurchMarried: 0,
+      isCivilMarried: 0,
+      isLiveIn: 0,
+      marriage_date: 0,
+      marriage_place: 0,
+      liveIn_years: 0,
+      birthCert: 0,
+      parent_marriageCert: 0,
     },
     address: "",
     contact_no: "",
@@ -100,6 +102,7 @@ const Baptism = () => {
         console.error("Error fetching priests:", error);
       }
     };
+    console.log(priests);
     getPriests();
   }, []);
 

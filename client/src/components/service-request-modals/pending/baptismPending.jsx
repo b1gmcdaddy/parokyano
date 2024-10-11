@@ -144,7 +144,13 @@ const BaptismPending = ({ open, data, handleClose }) => {
           reqID: id,
         },
       });
-      setDetails(response.data.result[0]);
+      setDetails({
+        birthCert: response.data.result[0].birthCert,
+        parent_marriageCert: response.data.result[0].parent_marriageCert,
+        gender: response.data.result[0].gender,
+        father_age: response.data.result[0].father_age,
+        mother_age: response.data.result[0].mother_age,
+      });
 
       return;
     } catch (err) {
@@ -170,7 +176,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
     fetchService();
     fetchSponsors(data.requestID);
     fetchBaptismDetails(data.requestID);
-  }, [open]);
+  }, [open, data]);
 
   useEffect(() => {
     if (open && data) {
@@ -179,7 +185,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
         first_name: data.first_name || "",
         middle_name: data.middle_name || "",
         last_name: data.last_name || "",
-        birth_date: data.birth_date,
+        birth_date: dayjs(data.birth_date).format("YYYY-MM-DD"),
         birth_place: data.birth_place || "",
         // gender: details?.gender || "",
         father_name: data.father_name || "",
@@ -187,7 +193,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
         mother_name: data.mother_name || "",
         // mother_age: details?.mother_age || "",
         payment_method: data.payment_method || "",
-        preferred_date: data.preferred_date,
+        preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
         preferred_time: data.preferred_time || "",
         priest_id: data.priest_id || "",
         payment_status: data.payment_status || "",
@@ -200,7 +206,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
 
   useEffect(() => {
     console.log(details);
-    console.log(formData.birth_date);
+    // console.log(formData.birth_date);
   }, [details]);
 
   const handleCloseDialog = () => {
@@ -221,6 +227,9 @@ const BaptismPending = ({ open, data, handleClose }) => {
           ) {
             const res = await axios.put(`${config.API}/request/update-bulk`, {
               formData,
+              id: data.requestID,
+            });
+            await axios.put(`${config.API}/baptism/update-bulk`, {
               details,
               id: data.requestID,
             });

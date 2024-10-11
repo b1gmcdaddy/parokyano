@@ -725,7 +725,8 @@ const updateByParams = (req, res) => {
 
 // experimental
 const updateBulk = (req, res) => {
-  const { formData, details, id } = req.body;
+  const { formData, id } = req.body;
+  console.log(formData);
 
   const columns = Object.keys(formData)
     .map((key) => `${key} = ?`)
@@ -740,23 +741,7 @@ const updateBulk = (req, res) => {
         console.error("Error updating request", err);
         return res.status(500).json({ message: "Error updating request" });
       }
-
-      const baptismColumns = Object.keys(details)
-        .map((key) => `${key} = ?`)
-        .join(", ");
-      const baptismValues = [...Object.values(details), id];
-
-      db.query(
-        `UPDATE baptism SET ${baptismColumns} WHERE request_id = ?`,
-        baptismValues,
-        (err, result) => {
-          if (err) {
-            console.error("Error updating baptism", err);
-            return res.status(500).json({ message: "Error updating baptism" });
-          }
-          res.status(200).json({ message: "Update successful" });
-        }
-      );
+      return res.status(200).json({ message: "Update successful" });
     }
   );
 };
