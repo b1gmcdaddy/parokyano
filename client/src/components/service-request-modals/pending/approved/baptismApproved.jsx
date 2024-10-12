@@ -27,23 +27,30 @@ import config from "../../../../config";
 import dayjs from "dayjs";
 import util from "../../../../utils/DateTimeFormatter";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "md",
-  bgcolor: "white",
-  borderRadius: "10px",
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  maxWidth: 'md',  
+  bgcolor: 'white',
+  borderRadius: '10px',
   boxShadow: 3,
   px: 4,
-  py: 3,
-  maxHeight: "97vh",
-  overflowY: "auto",
-  scrollbarWidth: "none",
-  "&::-webkit-scrollbar": {
-    display: "none",
-  },
+  py: 2,
+  maxHeight: '97vh',
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+};
+
+const modalContentStyle = {
+overflowY: 'auto',
+flexGrow: 1,
+scrollbarWidth: 'none',   
+  "&::-webkit-scrollbar": {  
+      display: "none"
+}
 };
 
 const TextFieldStyle = {
@@ -247,460 +254,465 @@ const BaptismApproved = ({ open, data, handleClose }) => {
     <>
       <Modal open={open} onClose={handleClose}>
         {formData && sponsors && priests && details && formData ? (
-          <Box sx={style}>
-            <Grid container justifyContent={"flex-end"}>
-              <Grid item>
-                <IconButton onClick={handleClose} size="small">
-                  <FontAwesomeIcon icon={faXmark} />
-                </IconButton>
-              </Grid>
-            </Grid>
-            <Grid container justifyContent={"center"} spacing={0.8}>
-              <Grid item sm={12}>
-                <Typography
-                  variant="subtitle1"
-                  sx={{ textAlign: "center", fontWeight: "bold" }}
-                >
-                  Baptism Request Information
-                </Typography>
-              </Grid>
-              <Grid item sm={4}>
-                <label>First name of child:</label>
-                <TextField
-                  fullWidth
-                  sx={TextFieldStyle}
-                  value={formData.first_name}
-                />
-              </Grid>
-              <Grid item sm={4}>
-                <label>Middle name of child:</label>
-                <TextField
-                  fullWidth
-                  sx={TextFieldStyle}
-                  value={formData.middle_name}
-                />
-              </Grid>
-              <Grid item sm={4}>
-                <label>Last name of child:</label>
-                <TextField
-                  fullWidth
-                  sx={TextFieldStyle}
-                  value={formData.last_name}
-                />
-              </Grid>
-
-              <Grid item sm={4}>
-                <label>Date of birth:</label>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    name="birth_date"
-                    fullWidth
-                    sx={TextFieldStyle}
-                    value={
-                      formData.birth_date ? dayjs(formData.birth_date) : null
-                    }
-                    onChange={(birth_date) =>
-                      handleDateChange("birth_date", birth_date)
-                    }
-                    renderInput={(params) => <TextField {...params} required />}
-                  />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item sm={4}>
-                <label>Place of brith:</label>
-                <TextField
-                  fullWidth
-                  sx={TextFieldStyle}
-                  name="birth_place"
-                  value={formData.birth_place}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item sm={4}>
-                <label>Gender:</label>
-                <TextField
-                  value={details?.gender}
-                  fullWidth
-                  name="gender"
-                  select
-                  onChange={handleDetailsChange}
-                  sx={TextFieldStyle}
-                >
-                  <MenuItem value="male">Male</MenuItem>
-                  <MenuItem value="female">Female</MenuItem>
-                </TextField>
-              </Grid>
-
-              <Grid item sm={9}>
-                <label>Father's complete name:</label>
-                <TextField
-                  fullWidth
-                  sx={TextFieldStyle}
-                  name="father_name"
-                  value={formData.father_name}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item sm={3}>
-                <label>Age:</label>
-                <TextField
-                  fullWidth
-                  sx={TextFieldStyle}
-                  name="father_age"
-                  value={details.father_age}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-              <Grid item sm={9}>
-                <label>Mother's complete name:</label>
-                <TextField
-                  fullWidth
-                  sx={TextFieldStyle}
-                  name="mother_name"
-                  value={formData.mother_name}
-                  onChange={handleDetailsChange}
-                />
-              </Grid>
-              <Grid item sm={3}>
-                <label>Age:</label>
-                <TextField
-                  fullWidth
-                  sx={TextFieldStyle}
-                  name="mother_age"
-                  value={details.mother_age}
-                  onChange={handleDetailsChange}
-                />
-              </Grid>
-
-              <Grid item sm={12}>
-                <Grid container spacing={2}>
-                  <Grid item sm={8}>
-                    <Grid container>
-                      <Grid item sm={8}>
-                        <Typography variant="subtitle1">Godparents:</Typography>
-                      </Grid>
-                      <Grid item sm={4}>
-                        <Typography variant="subtitle1">Catholic?</Typography>
-                      </Grid>
-                    </Grid>
-                    <Box fullWidth sx={{ height: "175px", overflowY: "auto" }}>
-                      {" "}
-                      {/* Ninong */}
-                      <Grid container>
-                        {sponsors.map((godparent, index) => (
-                          <Grid container spacing={2} key={index}>
-                            <Grid item sm={0.7}>
-                              <p>{index + 1}.</p>
-                            </Grid>
-                            <Grid item sm={6.3}>
-                              <TextField
-                                fullWidth
-                                value={godparent.name}
-                                sx={TextFieldStyle}
-                              />
-                            </Grid>
-                            <Grid item sm={5}>
-                              <RadioGroup
-                                row
-                                defaultValue={godparent.isCatholic}
-                                value={godparent.isCatholic}
-                                sx={{ marginTop: "-7px" }}
-                              >
-                                <FormControlLabel
-                                  value="1"
-                                  control={<Radio />}
-                                  label="Yes"
-                                />
-                                <FormControlLabel
-                                  value="0"
-                                  control={<Radio />}
-                                  label="No"
-                                />
-                              </RadioGroup>
-                            </Grid>
-                          </Grid>
-                        ))}
-                      </Grid>
-                    </Box>
-                  </Grid>
-                  <Grid item sm={4}>
-                    <Box fullWidth sx={{ height: "175px" }}>
-                      <Grid container>
-                        <Grid item sm={12}>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{ fontWeight: "bold" }}
-                          >
-                            Requirements:
-                          </Typography>
-                        </Grid>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={<Checkbox />}
-                            label={
-                              <Typography sx={{ fontSize: "13px" }}>
-                                Photocopy of Birth Certificate
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={<Checkbox />}
-                            label={
-                              <Typography sx={{ fontSize: "13px" }}>
-                                Photocopy of Parent - Marriage Certificate
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                        <Grid item sm={12}>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{ display: "inline-block" }}
-                          >
-                            Payment:
-                          </Typography>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{
-                              fontWeight: "bold",
-                              display: "inline-block",
-                              marginLeft: "10px",
-                            }}
-                          >
-                            800
-                          </Typography>
-                        </Grid>
-                        <Grid item sm={6}>
-                          <TextField
-                            fullWidth
-                            value={"cash"}
-                            sx={TextFieldStyle}
-                          />
-                        </Grid>
-                        <Grid item sm={6}>
-                          <TextField fullWidth select sx={TextFieldStyle}>
-                            <MenuItem
-                              value={"Unpaid"}
-                              sx={{ fontWeight: "bold", color: "#950000" }}
-                            >
-                              Unpaid
-                            </MenuItem>
-                            <MenuItem
-                              value={"Paid"}
-                              sx={{ fontWeight: "bold", color: "#247E38" }}
-                            >
-                              Paid
-                            </MenuItem>
-                          </TextField>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </Grid>
+          <Box sx={modalStyle}>
+            <Box sx={{position: 'sticky', paddingBottom: '10px'}}>
+              <Grid container justifyContent={"flex-end"}>
+                <Grid item>
+                  <IconButton onClick={handleClose} size="small">
+                    <FontAwesomeIcon icon={faXmark} />
+                  </IconButton>
+                </Grid>
+                <Grid item sm={12}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ textAlign: "center", fontWeight: "bold" }}
+                  >
+                    Baptism Request Information
+                  </Typography>
                 </Grid>
               </Grid>
+            </Box>
+            
+            <Box sx={modalContentStyle}>
+              <Grid container justifyContent={"center"} spacing={0.8}>
+                <Grid item sm={4}>
+                  <label>First name of child:</label>
+                  <TextField
+                    fullWidth
+                    sx={TextFieldStyle}
+                    value={formData.first_name}
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Middle name of child:</label>
+                  <TextField
+                    fullWidth
+                    sx={TextFieldStyle}
+                    value={formData.middle_name}
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Last name of child:</label>
+                  <TextField
+                    fullWidth
+                    sx={TextFieldStyle}
+                    value={formData.last_name}
+                  />
+                </Grid>
 
-              <Grid item sm={12}>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
+                <Grid item sm={4}>
+                  <label>Date of birth:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      name="birth_date"
+                      fullWidth
+                      sx={TextFieldStyle}
+                      value={
+                        formData.birth_date ? dayjs(formData.birth_date) : null
+                      }
+                      onChange={(birth_date) =>
+                        handleDateChange("birth_date", birth_date)
+                      }
+                      renderInput={(params) => <TextField {...params} required />}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Place of brith:</label>
+                  <TextField
+                    fullWidth
+                    sx={TextFieldStyle}
+                    name="birth_place"
+                    value={formData.birth_place}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Gender:</label>
+                  <TextField
+                    value={details?.gender}
+                    fullWidth
+                    name="gender"
+                    select
+                    onChange={handleDetailsChange}
+                    sx={TextFieldStyle}
+                  >
+                    <MenuItem value="male">Male</MenuItem>
+                    <MenuItem value="female">Female</MenuItem>
+                  </TextField>
+                </Grid>
+
+                <Grid item sm={9}>
+                  <label>Father's complete name:</label>
+                  <TextField
+                    fullWidth
+                    sx={TextFieldStyle}
+                    name="father_name"
+                    value={formData.father_name}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item sm={3}>
+                  <label>Age:</label>
+                  <TextField
+                    fullWidth
+                    sx={TextFieldStyle}
+                    name="father_age"
+                    value={details.father_age}
+                    onChange={handleChange}
+                  />
+                </Grid>
+
+                <Grid item sm={9}>
+                  <label>Mother's complete name:</label>
+                  <TextField
+                    fullWidth
+                    sx={TextFieldStyle}
+                    name="mother_name"
+                    value={formData.mother_name}
+                    onChange={handleDetailsChange}
+                  />
+                </Grid>
+                <Grid item sm={3}>
+                  <label>Age:</label>
+                  <TextField
+                    fullWidth
+                    sx={TextFieldStyle}
+                    name="mother_age"
+                    value={details.mother_age}
+                    onChange={handleDetailsChange}
+                  />
+                </Grid>
+
+                <Grid item sm={12}>
+                  <Grid container spacing={2}>
+                    <Grid item sm={8}>
+                      <Grid container>
+                        <Grid item sm={8}>
+                          <Typography variant="subtitle1">Godparents:</Typography>
+                        </Grid>
+                        <Grid item sm={4}>
+                          <Typography variant="subtitle1">Catholic?</Typography>
+                        </Grid>
+                      </Grid>
+                      <Box fullWidth sx={{ height: "175px", overflowY: "auto" }}>
+                        {" "}
+                        {/* Ninong */}
+                        <Grid container>
+                          {sponsors.map((godparent, index) => (
+                            <Grid container spacing={2} key={index}>
+                              <Grid item sm={0.7}>
+                                <p>{index + 1}.</p>
+                              </Grid>
+                              <Grid item sm={6.3}>
+                                <TextField
+                                  fullWidth
+                                  value={godparent.name}
+                                  sx={TextFieldStyle}
+                                />
+                              </Grid>
+                              <Grid item sm={5}>
+                                <RadioGroup
+                                  row
+                                  defaultValue={godparent.isCatholic}
+                                  value={godparent.isCatholic}
+                                  sx={{ marginTop: "-7px" }}
+                                >
+                                  <FormControlLabel
+                                    value="1"
+                                    control={<Radio />}
+                                    label="Yes"
+                                  />
+                                  <FormControlLabel
+                                    value="0"
+                                    control={<Radio />}
+                                    label="No"
+                                  />
+                                </RadioGroup>
+                              </Grid>
+                            </Grid>
+                          ))}
+                        </Grid>
+                      </Box>
+                    </Grid>
+                    <Grid item sm={4}>
+                      <Box fullWidth sx={{ height: "175px" }}>
+                        <Grid container>
+                          <Grid item sm={12}>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              Requirements:
+                            </Typography>
+                          </Grid>
+                          <Grid item sm={12}>
+                            <FormControlLabel
+                              control={<Checkbox />}
+                              label={
+                                <Typography sx={{ fontSize: "13px" }}>
+                                  Photocopy of Birth Certificate
+                                </Typography>
+                              }
+                            />
+                          </Grid>
+                          <Grid item sm={12}>
+                            <FormControlLabel
+                              control={<Checkbox />}
+                              label={
+                                <Typography sx={{ fontSize: "13px" }}>
+                                  Photocopy of Parent - Marriage Certificate
+                                </Typography>
+                              }
+                            />
+                          </Grid>
+                          <Grid item sm={12}>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ display: "inline-block" }}
+                            >
+                              Payment:
+                            </Typography>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{
+                                fontWeight: "bold",
+                                display: "inline-block",
+                                marginLeft: "10px",
+                              }}
+                            >
+                              800
+                            </Typography>
+                          </Grid>
+                          <Grid item sm={6}>
+                            <TextField
+                              fullWidth
+                              value={"cash"}
+                              sx={TextFieldStyle}
+                            />
+                          </Grid>
+                          <Grid item sm={6}>
+                            <TextField fullWidth select sx={TextFieldStyle}>
+                              <MenuItem
+                                value={"Unpaid"}
+                                sx={{ fontWeight: "bold", color: "#950000" }}
+                              >
+                                Unpaid
+                              </MenuItem>
+                              <MenuItem
+                                value={"Paid"}
+                                sx={{ fontWeight: "bold", color: "#247E38" }}
+                              >
+                                Paid
+                              </MenuItem>
+                            </TextField>
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid item sm={12}>
                   <div
                     style={{
-                      flex: 0.1,
-                      height: "1px",
-                      backgroundColor: "black",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
                     }}
-                  />
-                  <div>
-                    <p
+                  >
+                    <div
                       style={{
-                        width: "80px",
-                        textAlign: "center",
-                        fontWeight: "bold",
+                        flex: 0.1,
+                        height: "1px",
+                        backgroundColor: "black",
                       }}
-                    >
-                      Assigned
-                    </p>
+                    />
+                    <div>
+                      <p
+                        style={{
+                          width: "80px",
+                          textAlign: "center",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Assigned
+                      </p>
+                    </div>
+                    <div
+                      style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                    />
                   </div>
-                  <div
-                    style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                </Grid>
+
+                <Grid item sm={3}>
+                  <label>Priest:</label>
+                  <TextField
+                    disabled
+                    fullWidth
+                    sx={TextFieldStyleDis}
+                    value={
+                      priests.find(
+                        (priest) => priest.priestID === formData.priest_id
+                      )?.first_name +
+                      " " +
+                      priests.find(
+                        (priest) => priest.priestID === formData.priest_id
+                      )?.last_name
+                    }
                   />
-                </div>
-              </Grid>
+                </Grid>
+                <Grid item sm={3}>
+                  <label>Date:</label>
+                  <TextField
+                    disabled
+                    fullWidth
+                    sx={TextFieldStyleDis}
+                    value={util.formatDate(formData.preferred_date)}
+                  />
+                </Grid>
+                <Grid item sm={3}>
+                  <label>Time:</label>
+                  <TextField
+                    disabled
+                    fullWidth
+                    sx={TextFieldStyleDis}
+                    value={formData.preferred_time}
+                  />
+                </Grid>
+                <Grid item sm={3}>
+                  <label>Venue:</label>
+                  <TextField disabled fullWidth sx={TextFieldStyleDis} />
+                </Grid>
 
-              <Grid item sm={3}>
-                <label>Priest:</label>
-                <TextField
-                  disabled
-                  fullWidth
-                  sx={TextFieldStyleDis}
-                  value={
-                    priests.find(
-                      (priest) => priest.priestID === formData.priest_id
-                    )?.first_name +
-                    " " +
-                    priests.find(
-                      (priest) => priest.priestID === formData.priest_id
-                    )?.last_name
-                  }
-                />
-              </Grid>
-              <Grid item sm={3}>
-                <label>Date:</label>
-                <TextField
-                  disabled
-                  fullWidth
-                  sx={TextFieldStyleDis}
-                  value={util.formatDate(formData.preferred_date)}
-                />
-              </Grid>
-              <Grid item sm={3}>
-                <label>Time:</label>
-                <TextField
-                  disabled
-                  fullWidth
-                  sx={TextFieldStyleDis}
-                  value={formData.preferred_time}
-                />
-              </Grid>
-              <Grid item sm={3}>
-                <label>Venue:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis} />
-              </Grid>
-
-              <Grid item sm={12}>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
+                <Grid item sm={12}>
                   <div
                     style={{
-                      flex: 0.1,
-                      height: "1px",
-                      backgroundColor: "black",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
                     }}
-                  />
-                  <div>
-                    <p
+                  >
+                    <div
                       style={{
-                        width: "95px",
-                        textAlign: "center",
-                        fontWeight: "bold",
+                        flex: 0.1,
+                        height: "1px",
+                        backgroundColor: "black",
                       }}
-                    >
-                      Reschedule
-                    </p>
+                    />
+                    <div>
+                      <p
+                        style={{
+                          width: "95px",
+                          textAlign: "center",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Reschedule
+                      </p>
+                    </div>
+                    <div
+                      style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                    />
                   </div>
-                  <div
-                    style={{ flex: 1, height: "1px", backgroundColor: "black" }}
-                  />
-                </div>
-              </Grid>
+                </Grid>
 
-              <Grid item sm={2.5}>
-                <label>Priest:</label>
-                <TextField fullWidth select sx={TextFieldStyle} />
-              </Grid>
-              <Grid item sm={3}>
-                <label>Date:</label>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker fullWidth sx={TextFieldStyle} />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item sm={2.7}>
-                <label>Time:</label>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <TimePicker fullWidth sx={TextFieldStyle} />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item sm={1.8}>
-                <label>Venue:</label>
-                <TextField disabled fullWidth sx={TextFieldStyle} />
-              </Grid>
-              <Grid item sm={2}>
-                <Button
-                  onClick={() => handleOpenDialog("reschedule")}
-                  fullWidth
+                <Grid item sm={2.5}>
+                  <label>Priest:</label>
+                  <TextField fullWidth select sx={TextFieldStyle} />
+                </Grid>
+                <Grid item sm={3}>
+                  <label>Date:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker fullWidth sx={TextFieldStyle} />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item sm={2.7}>
+                  <label>Time:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimePicker fullWidth sx={TextFieldStyle} />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item sm={1.8}>
+                  <label>Venue:</label>
+                  <TextField disabled fullWidth sx={TextFieldStyle} />
+                </Grid>
+                <Grid item sm={2}>
+                  <Button
+                    onClick={() => handleOpenDialog("reschedule")}
+                    fullWidth
+                    sx={{
+                      bgcolor: "#247E38",
+                      marginTop: "24px",
+                      height: "30px",
+                      fontWeight: "bold",
+                      color: "white",
+                      "&:hover": { bgcolor: "#34AC4F" },
+                    }}
+                  >
+                    SET
+                  </Button>
+                </Grid>
+
+                <Grid
+                  item
+                  sm={12}
                   sx={{
-                    bgcolor: "#247E38",
-                    marginTop: "24px",
-                    height: "30px",
-                    fontWeight: "bold",
-                    color: "white",
-                    "&:hover": { bgcolor: "#34AC4F" },
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
                   }}
                 >
-                  SET
-                </Button>
-              </Grid>
+                  <Typography variant="body2" sx={{ marginRight: "5px" }}>
+                    Transaction Code:
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    040124hash
+                  </Typography>
+                </Grid>
 
-              <Grid
-                item
-                sm={12}
-                sx={{
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                }}
-              >
-                <Typography variant="body2" sx={{ marginRight: "5px" }}>
-                  Transaction Code:
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                  040124hash
-                </Typography>
-              </Grid>
-
-              <Grid
-                item
-                sm={12}
-                sx={{
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                }}
-              >
-                <Button
-                  onClick={() => handleOpenDialog("update")}
+                <Grid
+                  item
+                  sm={12}
                   sx={{
-                    bgcolor: "#CDAB52",
-                    marginTop: "14px",
-                    height: "35px",
-                    width: "90px",
-                    fontWeight: "bold",
-                    color: "white",
-                    "&:hover": { bgcolor: "#F0CA67" },
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
                   }}
                 >
-                  UPDATE
-                </Button>
-                <Button
-                  onClick={() => handleOpenDialog("cancel")}
-                  sx={{
-                    bgcolor: "#C34444",
-                    margin: "14px 0px 0px 5px",
-                    height: "35px",
-                    width: "90px",
-                    fontWeight: "bold",
-                    color: "white",
-                    "&:hover": { bgcolor: "#F05A5A" },
-                  }}
-                >
-                  CANCEL
-                </Button>
+                  <Button
+                    onClick={() => handleOpenDialog("update")}
+                    sx={{
+                      bgcolor: "#CDAB52",
+                      marginTop: "14px",
+                      height: "35px",
+                      width: "90px",
+                      fontWeight: "bold",
+                      color: "white",
+                      "&:hover": { bgcolor: "#F0CA67" },
+                    }}
+                  >
+                    UPDATE
+                  </Button>
+                  <Button
+                    onClick={() => handleOpenDialog("cancel")}
+                    sx={{
+                      bgcolor: "#C34444",
+                      margin: "14px 0px 0px 5px",
+                      height: "35px",
+                      width: "90px",
+                      fontWeight: "bold",
+                      color: "white",
+                      "&:hover": { bgcolor: "#F05A5A" },
+                    }}
+                  >
+                    CANCEL
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
+            </Box>
             <ConfirmationDialog
               open={dialogOpen}
               onClose={handleCloseDialog}
