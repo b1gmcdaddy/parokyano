@@ -21,6 +21,7 @@ import util from "../../../../utils/DateTimeFormatter";
 import axios from "axios";
 import config from "../../../../config";
 import dayjs from "dayjs";
+import Snackbar from "@mui/material/Snackbar";
 
 const style = {
   position: "absolute",
@@ -50,6 +51,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
   const [service] = useState("funeral mass");
   const [formData, setFormData] = useState({});
   const [priests, setPriests] = useState([]);
+  const [error, setError] = useState(null);
 
   const fetchPriest = async () => {
     try {
@@ -68,15 +70,14 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
   useEffect(() => {
     if (open && data) {
       setFormData({
-        requestID: data.requestID,
         first_name: data.first_name,
         address: data.address,
         contact_no: data.contact_no,
         requested_by: data.requested_by,
         relationship: data.relationship,
-        preferred_date: data.preferred_date,
+        preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
         preferred_time: data.preferred_time,
-        preferred_priest: data.priest_id,
+        priest_id: data.priest_id,
         isParishioner: data.isParishioner,
         transaction_no: data.transaction_no,
         service_id: data.service_id,
@@ -94,16 +95,40 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
     setDialogOpen(false);
   };
 
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
+  };
+
   {
     /** for sameple if success, ari butang backend**/
   }
-  const handleConfirm = (action) => {
+  const handleConfirm = async (action) => {
     switch (action) {
       // case 'approve':
       //   alert('Approval action confirmed.');
       //   break;
       case "update":
-        alert("Update action confirmed.");
+        const res = await axios.put(`${config.API}/request/update-bulk`, {
+          formData,
+          id: data.requestID,
+        });
+        if (res.status !== 200) {
+          console.log("error updating request");
+          setError({
+            message: res.data.message,
+            details: res.data?.details,
+          });
+        } else {
+          console.log("request updated!");
+          axios.post(`${config.API}/logs/create`, {
+            activity: `Updated Funeral Mass Request - Transaction number: ${data.transaction_no}`,
+            user_id: 1,
+            request_id: data.requestID,
+          });
+          console.log("logs success!");
+          // refetchData();
+          handleClose();
+        }
         break;
       case "cancel":
         try {
@@ -111,18 +136,27 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
             params: {
               col: "status",
               val: "cancelled",
-              id: formData.requestID,
+              id: data.requestID,
             },
           });
 
           console.log("request cancelled!");
-          // axios.delete(`${config.API}/priest/deleteSched`, {
-          //   params: {
-          //     col: "request_id",
-          //     val: formData.requestID,
-          //   },
-          // });
-          console.log("priest sched deleted!");
+          axios
+            .delete(`${config.API}/priest/deleteSched`, {
+              params: {
+                col: "request_id",
+                val: data.requestID,
+              },
+            })
+            .then(() => {
+              console.log("priest sched deleted!");
+              axios.post(`${config.API}/logs/create`, {
+                activity: `Cancelled Funeral Mass Request - Transaction number: ${data.transaction_no}`,
+                user_id: 1,
+                request_id: data.requestID,
+              });
+              console.log("logs success!");
+            });
         } catch (err) {
           console.error("error updating request", err);
         }
@@ -163,7 +197,9 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                 <TextField
                   fullWidth
                   sx={TextFieldStyle}
+                  name="first_name"
                   value={formData.first_name}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
 
@@ -174,7 +210,9 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                 <TextField
                   fullWidth
                   sx={TextFieldStyle}
+                  name="requested_by"
                   value={formData.requested_by}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
 
@@ -185,7 +223,9 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                 <TextField
                   fullWidth
                   sx={TextFieldStyle}
+                  name="relationship"
                   value={formData.relationship}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
 
@@ -196,7 +236,9 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                 <TextField
                   fullWidth
                   sx={TextFieldStyle}
+                  name="contact_no"
                   value={formData.contact_no}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
 
@@ -240,11 +282,11 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                   sx={TextFieldStyleDis}
                   value={
                     priests.find(
-                      (priest) => priest.priestID === formData.preferred_priest
+                      (priest) => priest.priestID === formData.priest_id
                     )?.first_name +
                     " " +
                     priests.find(
-                      (priest) => priest.priestID === formData.preferred_priest
+                      (priest) => priest.priestID === formData.priest_id
                     )?.last_name
                   }
                 />

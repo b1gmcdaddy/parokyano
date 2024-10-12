@@ -131,7 +131,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
         },
       });
       setSponsors(response.data.result);
-      return response.data;
+      return;
     } catch (err) {
       console.error("error retrieving sponsors", err);
     }
@@ -206,8 +206,9 @@ const BaptismPending = ({ open, data, handleClose }) => {
 
   useEffect(() => {
     console.log(details);
-    // console.log(formData.birth_date);
-  }, [details]);
+    console.log(data);
+    console.log(sponsors);
+  }, [details, data, sponsors]);
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
@@ -259,7 +260,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
                   col2: "payment_status",
                   val2: "paid",
                   col3: "preferred_date",
-                  val3: formData.preferred_date,
+                  val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
                   col4: "priest_id",
                   val4: formData.priest_id,
                   col5: "requestID",
@@ -269,7 +270,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
               console.log("request success!");
               axios.post(`${config.API}/priest/createPriestSched`, {
                 date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
-                activity: `Funeral mass for ${formData.first_name}`,
+                activity: `Baptism for ${formData.first_name} ${formData.last_name}`,
                 start_time: formData.preferred_time,
                 end_time: endTime(formData.preferred_time, service.duration),
                 priest_id: formData.preferred_priest,
@@ -277,13 +278,19 @@ const BaptismPending = ({ open, data, handleClose }) => {
               });
               console.log("priest sched success!");
               axios.post(`${config.API}/logs/create`, {
-                activity: `Approved Funeral Mass for ${formData.first_name}`,
+                activity: `Approved Baptism for ${formData.first_name} ${formData.last_name}`,
                 user_id: 1,
                 request_id: formData.requestID,
               });
               console.log("logs success!");
               handleClose();
             }
+          } else {
+            setError({
+              message: "Requirements not met",
+              details:
+                "Please complete all requirements and have payment ready to proceed",
+            });
           }
         } catch (err) {
           console.log("error submitting to server", err);
@@ -303,14 +310,24 @@ const BaptismPending = ({ open, data, handleClose }) => {
           });
 
           console.log("request cancelled!");
-          // axios.delete(`${config.API}/priest/deleteSched`, {
-          //   params: {
-          //     col: "request_id",
-          //     val: data.requestID,
-          //   },
-          // });
-          // console.log("priest sched deleted!");
-          // break;
+          axios
+            .delete(`${config.API}/priest/deleteSched`, {
+              params: {
+                col: "request_id",
+                val: data.requestID,
+              },
+            })
+            .then(() => {
+              console.log("priest sched deleted!");
+              axios.post(`${config.API}/logs/create`, {
+                activity: `Cancelled Baptism Request - Transaction number: ${data.transaction_no}`,
+                user_id: 1,
+                request_id: data.requestID,
+              });
+              console.log("logs success!");
+            });
+          handleClose();
+          break;
         } catch (err) {
           console.error("error updating request", err);
         }
@@ -340,7 +357,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
 
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          {formData && details && sponsors.length ? (
+          {formData && details && sponsors && priests && formData ? (
             <>
               <Grid container justifyContent={"flex-end"}>
                 <Grid item>

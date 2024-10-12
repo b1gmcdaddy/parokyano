@@ -20,6 +20,8 @@ import ConfirmationDialog from "../../../ConfirmationModal";
 import util from "../../../../utils/DateTimeFormatter";
 import config from "../../../../config";
 import axios from "axios";
+import Snackbar from "@mui/material/Snackbar";
+import dayjs from "dayjs";
 
 const style = {
   position: "absolute",
@@ -48,23 +50,38 @@ const AnointingApproved = ({ open, data, handleClose }) => {
   const [currentAction, setCurrentAction] = useState("");
   const [formData, setFormData] = useState({});
   const [service] = useState("anointing");
+  const [priests, setPriests] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+  }, [open]);
 
   useEffect(() => {
     if (open && data) {
       setFormData({
-        requestID: data.requestID,
-        type: data.type,
         age: data.age,
         first_name: data.first_name,
-        last_name: data.last_name,
         relationship: data.relationship,
-        spouse_name: data.spouse_name,
         address: data.address,
         requested_by: data.requested_by,
         contact_no: data.contact_no,
-        preferred_date: data.preferred_date,
+        preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
         preferred_time: data.preferred_time,
-        preferred_priest: data.preferred_priest,
+        priest_id: data.priest_id,
         isParishioner: data.isParishioner,
         transaction_no: data.transaction_no,
         patient_status: data.patient_status,
@@ -73,6 +90,37 @@ const AnointingApproved = ({ open, data, handleClose }) => {
       });
     }
   }, [open, data]);
+
+  // const refetchData = async () => {
+  //   try {
+  //     const response = await axios.get(`${config.API}/request/retrieve`, {
+  //       params: {
+  //         col: "requestID",
+  //         val: data.requestID,
+  //       },
+  //     });
+  //     setFormData({
+  //       age: response.data.age,
+  //       first_name: response.data.first_name,
+  //       relationship: response.data.relationship,
+  //       address: response.data.address,
+  //       requested_by: response.data.requested_by,
+  //       contact_no: response.data.contact_no,
+  //       preferred_date: dayjs(response.data.preferred_date).format(
+  //         "YYYY-MM-DD"
+  //       ),
+  //       preferred_time: response.data.preferred_time,
+  //       priest_id: response.data.priest_id,
+  //       isParishioner: response.data.isParishioner,
+  //       transaction_no: response.data.transaction_no,
+  //       patient_status: response.data.patient_status,
+  //       payment_status: response.data.payment_status,
+  //       service_id: response.data.service_id,
+  //     });
+  //   } catch (err) {
+  //     console.error("error retrieving request", err);
+  //   }
+  // };
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -83,16 +131,40 @@ const AnointingApproved = ({ open, data, handleClose }) => {
     setDialogOpen(false);
   };
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   {
     /** for sameple if success, ari butang backend**/
   }
-  const handleConfirm = (action) => {
+  const handleConfirm = async (action) => {
     switch (action) {
       // case 'approve':
       //   alert('Approval action confirmed.');
       //   break;
       case "update":
-        alert("Update action confirmed.");
+        const res = await axios.put(`${config.API}/request/update-bulk`, {
+          formData,
+          id: data.requestID,
+        });
+        if (res.status !== 200) {
+          console.log("error updating request");
+          setError({
+            message: res.data.message,
+            details: res.data?.details,
+          });
+        } else {
+          console.log("request updated!");
+          axios.post(`${config.API}/logs/create`, {
+            activity: `Updated Anointing Request - Transaction number: ${data.transaction_no}`,
+            user_id: 1,
+            request_id: data.requestID,
+          });
+          console.log("logs success!");
+          // refetchData();
+          handleClose();
+        }
         break;
       case "cancel":
         try {
@@ -100,18 +172,27 @@ const AnointingApproved = ({ open, data, handleClose }) => {
             params: {
               col: "status",
               val: "cancelled",
-              id: formData.requestID,
+              id: data.requestID,
             },
           });
 
           console.log("request cancelled!");
-          // axios.delete(`${config.API}/priest/deleteSched`, {
-          //   params: {
-          //     col: "request_id",
-          //     val: formData.requestID,
-          //   },
-          // });
-          console.log("priest sched deleted!");
+          axios
+            .delete(`${config.API}/priest/deleteSched`, {
+              params: {
+                col: "request_id",
+                val: data.requestID,
+              },
+            })
+            .then(() => {
+              console.log("priest sched deleted!");
+              axios.post(`${config.API}/logs/create`, {
+                activity: `Cancelled Anointing Request - Transaction number: ${data.transaction_no}`,
+                user_id: 1,
+                request_id: data.requestID,
+              });
+              console.log("logs success!");
+            });
         } catch (err) {
           console.error("error updating request", err);
         }
@@ -123,10 +204,30 @@ const AnointingApproved = ({ open, data, handleClose }) => {
         break;
     }
   };
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
   return (
     <>
+      {error && (
+        <Snackbar
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}
+          message={
+            <>
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+                {error.message}
+              </span>
+              <p>{error.details}</p>
+            </>
+          }
+        />
+      )}
+
       <Modal open={open} onClose={handleClose}>
-        {formData && formData ? (
+        {formData && priests && formData ? (
           <Box sx={style}>
             <Grid container justifyContent={"flex-end"}>
               <Grid item>
@@ -151,15 +252,23 @@ const AnointingApproved = ({ open, data, handleClose }) => {
               <Grid item sm={8}>
                 <TextField
                   fullWidth
+                  name="first_name"
                   sx={TextFieldStyle}
                   value={formData.first_name}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
               <Grid item sm={0.8}>
                 <label>Age:</label>
               </Grid>
               <Grid item sm={2.2}>
-                <TextField fullWidth sx={TextFieldStyle} value={formData.age} />
+                <TextField
+                  fullWidth
+                  sx={TextFieldStyle}
+                  value={formData.age}
+                  name="age"
+                  onChange={(e) => handleChange(e)}
+                />
               </Grid>
 
               <Grid item sm={1.3}>
@@ -168,8 +277,10 @@ const AnointingApproved = ({ open, data, handleClose }) => {
               <Grid item sm={10.7}>
                 <TextField
                   fullWidth
+                  name="address"
                   sx={TextFieldStyle}
                   value={formData.address}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
 
@@ -180,7 +291,9 @@ const AnointingApproved = ({ open, data, handleClose }) => {
                 <TextField
                   fullWidth
                   sx={TextFieldStyle}
+                  name="requested_by"
                   value={formData.requested_by}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
               <Grid item sm={1.9}>
@@ -189,8 +302,10 @@ const AnointingApproved = ({ open, data, handleClose }) => {
               <Grid item sm={2.9}>
                 <TextField
                   fullWidth
+                  name="relationship"
                   sx={TextFieldStyle}
                   value={formData.relationship}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
 
@@ -201,7 +316,9 @@ const AnointingApproved = ({ open, data, handleClose }) => {
                 <TextField
                   fullWidth
                   sx={TextFieldStyle}
+                  name="contact_no"
                   value={formData.contact_no}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
               <Grid item sm={2.3}>
@@ -211,7 +328,9 @@ const AnointingApproved = ({ open, data, handleClose }) => {
                 <TextField
                   fullWidth
                   sx={TextFieldStyle}
+                  name="patient_status"
                   value={formData.patient_status}
+                  onChange={(e) => handleChange(e)}
                 />
               </Grid>
 
@@ -253,7 +372,15 @@ const AnointingApproved = ({ open, data, handleClose }) => {
                   disabled
                   fullWidth
                   sx={TextFieldStyleDis}
-                  value={formData.preferred_priest}
+                  value={
+                    priests.find(
+                      (priest) => priest.priestID === formData.priest_id
+                    )?.first_name +
+                    " " +
+                    priests.find(
+                      (priest) => priest.priestID === formData.priest_id
+                    )?.last_name
+                  }
                 />
               </Grid>
               <Grid item sm={4}>
