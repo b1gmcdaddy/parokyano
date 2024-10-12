@@ -2,9 +2,9 @@ import NavParishioner from "../../components/NavParishioner";
 import Header from "../../components/Header";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Footer from "../../components/Footer";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
 import {
   MenuItem,
   Grid,
@@ -17,7 +17,7 @@ import {
   Container,
   FormHelperText,
 } from "@mui/material";
-import { React, useEffect, useState } from "react";
+import {React, useEffect, useState} from "react";
 import generateHash from "../../utils/GenerateHash";
 import config from "../../config";
 import axios from "axios";
@@ -33,7 +33,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
-    height: "40px"
+    height: "40px",
   },
 };
 
@@ -55,12 +55,9 @@ const Wedding = () => {
       middleName: "",
       lastName: "",
       isCatholic: null,
-      // isChurchMarried: null,
     },
     contact_no: "",
     relationship: "", // marital status ni
-    // isCatholic: null,
-    // isChurchMarried: null,
     sponsors: [{}],
     transaction_no: hash,
     service_id: id,
@@ -97,7 +94,7 @@ const Wedding = () => {
   const handleSponsor = (e, index, field) => {
     const temp = [...formData.sponsors];
     temp[index][field] = e.target.value;
-    setFormData((prevState) => ({ ...prevState, sponsors: temp }));
+    setFormData((prevState) => ({...prevState, sponsors: temp}));
   };
 
   const addSponsor = (e) => {
@@ -105,7 +102,7 @@ const Wedding = () => {
       ...prevState,
       sponsors: [
         ...formData.sponsors,
-        { name: null, age: null, isMarrried: null, isCatholic: null },
+        {name: null, age: null, isMarrried: null, isCatholic: null},
       ],
     }));
   };
@@ -121,7 +118,7 @@ const Wedding = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   useEffect(() => {
@@ -152,7 +149,7 @@ const Wedding = () => {
 
       <NoPaymentModal open={open} data={modalData} />
 
-      <Container maxWidth="md" sx={{ marginBottom: "4em" }}>
+      <Container maxWidth="md" sx={{marginBottom: "4em"}}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4} className="mb-10">
             <Grid item xs={12} sm={4}>
@@ -248,12 +245,12 @@ const Wedding = () => {
                 size="small"
                 sx={inputstlying}
                 name="contact_no"
-                inputProps={{ maxLength: 11 }}
+                inputProps={{maxLength: 11}}
                 onChange={handleChange}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
@@ -271,8 +268,7 @@ const Wedding = () => {
                 name="relationship"
                 onChange={handleChange}
                 value={formData.relationship}
-                required
-              >
+                required>
                 <MenuItem value="None">None</MenuItem>
                 <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                 <MenuItem value="Live-in for under 4 years">
@@ -291,8 +287,7 @@ const Wedding = () => {
                 <RadioGroup
                   row
                   name="isCatholic"
-                  onChange={handleWeddingDetails}
-                >
+                  onChange={handleWeddingDetails}>
                   <FormControlLabel
                     value="1"
                     control={<Radio size="small" />}
@@ -331,8 +326,7 @@ const Wedding = () => {
 
           <Container
             maxWidth="md"
-            className="bg-neutral-100 md:p-8 rounded-lg mb-5"
-          >
+            className="bg-neutral-100 md:p-8 rounded-lg mb-5">
             <Grid container spacing={3}>
               {formData.sponsors.map((s, index) => (
                 <>
@@ -373,8 +367,7 @@ const Wedding = () => {
                       className="bg-white"
                       name="isMarrried"
                       value={formData.sponsors.isMarrried}
-                      onChange={(e) => handleSponsor(e, index, "isMarrried")}
-                    >
+                      onChange={(e) => handleSponsor(e, index, "isMarrried")}>
                       <MenuItem value="1">Married</MenuItem>
                       <MenuItem value="0">Not Married</MenuItem>
                     </TextField>
@@ -387,8 +380,7 @@ const Wedding = () => {
                         className="ml-2"
                         name="isCatholic"
                         value={formData.sponsors.isCatholic}
-                        onChange={(e) => handleSponsor(e, index, "isCatholic")}
-                      >
+                        onChange={(e) => handleSponsor(e, index, "isCatholic")}>
                         <FormControlLabel
                           value="1"
                           control={<Radio size="small" />}
@@ -407,91 +399,6 @@ const Wedding = () => {
                   </Grid>
                 </>
               ))}
-
-              {/* <Grid item xs={9} md={4}>
-                                <label>Sponsor's Full Name:</label>
-                                <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
-                                name="sponsor2_name" autoComplete="off" className="bg-white" />
-                            </Grid> 
-                            <Grid item xs={3} md={2}>
-                                <label>Age:</label>
-                                <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
-                                name="sponsor2_age" autoComplete="off" className="bg-white" />
-                            </Grid>
-                            <Grid item xs={6} md={3}>
-                                <label>Marital Status:</label>
-                                <TextField fullWidth select size="small" variant="outlined" sx={inputstlying} className="bg-white" >
-                                    <MenuItem value="Married">Married</MenuItem>
-                                    <MenuItem value="Not Married">Not Married</MenuItem>
-                                </TextField>
-                            </Grid>
-                            <Grid item xs={6} md={3}>
-                                <FormControl component="fieldset">
-                                    <label className="ml-2">Catholic?</label>
-                                    <RadioGroup row className="ml-2">
-                                    <FormControlLabel value="yes" control={<Radio size="small" />} label="Yes" />
-                                    <FormControlLabel value="no" control={<Radio size="small" />} label="No" />
-                                    </RadioGroup>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <hr className="border-neutral-300 border-[0.1px]"/>
-                            </Grid>
-                            <Grid item xs={9} md={4}>
-                                <label>Sponsor's Full Name:</label>
-                                <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
-                                name="sponsor3_name" autoComplete="off" className="bg-white" />
-                            </Grid> 
-                            <Grid item xs={3} md={2}>
-                                <label>Age:</label>
-                                <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
-                                name="sponsor3_age" autoComplete="off" className="bg-white" />
-                            </Grid>
-                            <Grid item xs={6} md={3}>
-                                <label>Marital Status:</label>
-                                <TextField fullWidth select size="small" variant="outlined" sx={inputstlying} className="bg-white" >
-                                    <MenuItem value="Married">Married</MenuItem>
-                                    <MenuItem value="Not Married">Not Married</MenuItem>
-                                </TextField>
-                            </Grid>
-                            <Grid item xs={6} md={3}>
-                                <FormControl component="fieldset">
-                                    <label className="ml-2">Catholic?</label>
-                                    <RadioGroup row className="ml-2">
-                                    <FormControlLabel value="yes" control={<Radio size="small" />} label="Yes" />
-                                    <FormControlLabel value="no" control={<Radio size="small" />} label="No" />
-                                    </RadioGroup>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <hr className="border-neutral-300 border-[0.1px]"/>
-                            </Grid>
-                            <Grid item xs={9} md={4}>
-                                <label>Sponsor's Full Name:</label>
-                                <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
-                                name="sponsor4_name" autoComplete="off" className="bg-white" />
-                            </Grid> 
-                            <Grid item xs={3} md={2}>
-                                <label>Age:</label>
-                                <TextField fullWidth variant="outlined" size="small" sx={inputstlying}
-                                name="sponsor4_age" autoComplete="off" className="bg-white" />
-                            </Grid>
-                            <Grid item xs={6} md={3}>
-                                <label>Marital Status:</label>
-                                <TextField fullWidth select size="small" variant="outlined" sx={inputstlying} className="bg-white" >
-                                    <MenuItem value="Married">Married</MenuItem>
-                                    <MenuItem value="Not Married">Not Married</MenuItem>
-                                </TextField>
-                            </Grid>
-                            <Grid item xs={6} md={3}>
-                                <FormControl component="fieldset">
-                                    <label className="ml-2">Catholic?</label>
-                                    <RadioGroup row className="ml-2">
-                                    <FormControlLabel value="yes" control={<Radio size="small" />} label="Yes" />
-                                    <FormControlLabel value="no" control={<Radio size="small" />} label="No" />
-                                    </RadioGroup>
-                                </FormControl>
-                            </Grid> */}
             </Grid>
           </Container>
 
@@ -508,20 +415,17 @@ const Wedding = () => {
                 backgroundColor: "white",
                 color: "#355173",
               },
-            }}
-          >
+            }}>
             Add Sponsor
           </Button>
 
           <Grid
             item
-            sx={{ display: "flex", justifyContent: "center", marginTop: "5em" }}
-          >
+            sx={{display: "flex", justifyContent: "center", marginTop: "5em"}}>
             <Button
               variant="contained"
               type="submit"
-              sx={{ backgroundColor: "#355173" }}
-            >
+              sx={{backgroundColor: "#355173"}}>
               Submit Request
             </Button>
           </Grid>
