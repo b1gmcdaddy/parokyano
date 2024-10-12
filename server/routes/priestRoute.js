@@ -8,7 +8,7 @@ const {
   createSchedule,
   editPriest,
   editSchedule,
-  deleteSchedule,
+  deleteSchedule2,
   retrieveScheduleByParams,
 } = require("../controllers/priestController");
 
@@ -19,6 +19,6 @@ router.post("/createPriest", createPriest);
 router.post("/createPriestSched", createSchedule);
 router.put("/editPriest", editPriest);
 router.put("/editSched", editSchedule);
-// router.delete("/deleteSched", deleteSchedule);
+router.delete("/deleteSched", deleteSchedule2);
 
 module.exports = router;

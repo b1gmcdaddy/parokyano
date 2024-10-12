@@ -193,7 +193,7 @@ const deleteSchedule = (req, res) => {
 };
 
 const deleteSchedule2 = (req, res) => {
-  const { col, val } = req.params;
+  const { col, val } = req.query;
 
   db.query(
     `DELETE FROM priestschedule WHERE ${col} = ?`,
