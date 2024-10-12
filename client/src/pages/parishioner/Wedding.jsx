@@ -102,7 +102,7 @@ const Wedding = () => {
       ...prevState,
       sponsors: [
         ...formData.sponsors,
-        {name: null, age: null, isMarrried: null, isCatholic: null},
+        {name: null, age: null, isMarried: null, isCatholic: null},
       ],
     }));
   };
@@ -365,9 +365,9 @@ const Wedding = () => {
                       variant="outlined"
                       sx={inputstlying}
                       className="bg-white"
-                      name="isMarrried"
-                      value={formData.sponsors.isMarrried}
-                      onChange={(e) => handleSponsor(e, index, "isMarrried")}>
+                      name="isMarried"
+                      value={formData.sponsors.isMarried}
+                      onChange={(e) => handleSponsor(e, index, "isMarried")}>
                       <MenuItem value="1">Married</MenuItem>
                       <MenuItem value="0">Not Married</MenuItem>
                     </TextField>

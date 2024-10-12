@@ -36,7 +36,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
-    height: "40px"
+    height: "40px",
   },
 };
 
@@ -99,7 +99,7 @@ const Blessing = () => {
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   useEffect(() => {
@@ -265,7 +265,7 @@ const Blessing = () => {
               <label>Preferred Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  slotProps={{ textField: { fullWidth: true }}}
+                  slotProps={{textField: {fullWidth: true}}}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
@@ -281,7 +281,7 @@ const Blessing = () => {
               <label>Preferred Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
-                  slotProps={{ textField: { fullWidth: true }}}
+                  slotProps={{textField: {fullWidth: true}}}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}

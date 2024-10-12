@@ -1,5 +1,5 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -20,6 +20,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Menu,
 } from "@mui/material";
 import {
   DatePicker,
@@ -27,8 +28,8 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState, useEffect } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useState, useEffect} from "react";
 import React from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
@@ -75,7 +76,7 @@ const boxModal = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px", bgcolor: "white" },
+  "& .MuiInputBase-root": {height: "30px", bgcolor: "white"},
 };
 
 const tabStyle = {
@@ -98,51 +99,20 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const sponsors = [
-  {
-    name: "John Dominic Cocjic",
-    age: "22",
-    marital: "Married",
-    catholic: "Yes",
-  },
-  { name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes" },
-  { name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes" },
-  { name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes" },
-  {
-    name: "John Dominic Cocjic",
-    age: "22",
-    marital: "Married",
-    catholic: "Yes",
-  },
-  { name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes" },
-  { name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes" },
-  { name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes" },
-  {
-    name: "John Dominic Cocjic",
-    age: "22",
-    marital: "Married",
-    catholic: "Yes",
-  },
-  { name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes" },
-  { name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes" },
-  { name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes" },
-];
-
 const fetchWeddingDetails = async (id) => {
   try {
     const response = await axios.get(`${config.API}/wedding/retrieve`, {
-      params: {
-        reqID: id,
-      },
+      params: {reqID: id},
     });
 
-    return response.data;
+    return response.data?.result[0];
   } catch (err) {
     console.error(err);
+    return null;
   }
 };
 
-function RequirementsModal({ id }) {
+function RequirementsModal({id}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -150,30 +120,43 @@ function RequirementsModal({ id }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("wedding");
-  const [requirements, setRequirements] = useState({});
+  const [selectedWeddingId, setSelectedWeddingId] = useState(null);
+  const [requirements, setRequirements] = useState({
+    groom_baptismCert: 0,
+    groom_confirmationCert: 0,
+    groom_birthCert: 0,
+    spouse_baptismCert: 0,
+    spouse_confirmationCert: 0,
+    spouse_birthCert: 0,
+    isParishPermit: 0,
+    isPrenuptial: 0,
+    isPreCana: 0,
+    isMarriageLicense: 0,
+  });
 
   useEffect(() => {
     const fetchAndSetRequirements = async () => {
       const req = await fetchWeddingDetails(id);
-      console.log("req", req.result[0]);
       if (req) {
         setRequirements({
-          groom_baptismCert: req.result[0].groom_baptismCert,
-          groom_confirmationCert: req.result[0].groom_confirmationCert,
-          groom_birthCert: req.result[0].groom_birthCert,
-          spouse_baptismCert: req.result[0].spouse_baptismCert,
-          spouse_confirmationCert: req.result[0].spouse_confirmationCert,
-          spouse_birthCert: req.result[0].spouse_birthCert,
-          isPrenuptial: req.result[0].isPrenuptial,
-          isPreCana: req.result[0].isPreCana,
-          isMarriageLicense: req.result[0].isMarriageLicense,
+          groom_baptismCert: req.groom_baptismCert || 0,
+          groom_confirmationCert: req.groom_confirmationCert || 0,
+          groom_birthCert: req.groom_birthCert || 0,
+          spouse_baptismCert: req.spouse_baptismCert || 0,
+          spouse_confirmationCert: req.spouse_confirmationCert || 0,
+          spouse_birthCert: req.spouse_birthCert || 0,
+          isParishPermit: req.isParishPermit || 0,
+          isPrenuptial: req.isPrenuptial || 0,
+          isPreCana: req.isPreCana || 0,
+          isMarriageLicense: req.isMarriageLicense || 0,
         });
+        setSelectedWeddingId(req.wedding_id);
       }
     };
     if (open) {
       fetchAndSetRequirements();
     }
-  }, [open]);
+  }, [open, id]);
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -188,16 +171,17 @@ function RequirementsModal({ id }) {
     setTabValue(newValue);
   };
 
-  {
-    /** for sameple if success, ari butang backend**/
-  }
-  const handleConfirm = (action) => {
-    switch (action) {
-      case "Update wedding requirement":
-        alert("Update action confirmed.");
-        break;
-      default:
-        break;
+  const updateRequirements = async () => {
+    try {
+      await axios.put(
+        `${config.API}/wedding/requirements/${selectedWeddingId}`,
+        requirements
+      );
+      alert("Wedding requirements updated successfully!");
+      handleClose();
+    } catch (err) {
+      console.error("Error updating wedding requirements:", err);
+      alert("Failed to update wedding requirements. Please try again.");
     }
   };
 
@@ -211,9 +195,8 @@ function RequirementsModal({ id }) {
           fontSize: "11px",
           marginLeft: "5px",
           color: "white",
-          "&:hover": { bgcolor: "#4C74A5" },
-        }}
-      >
+          "&:hover": {bgcolor: "#4C74A5"},
+        }}>
         Requirements
       </Button>
       <Modal open={open}>
@@ -229,8 +212,7 @@ function RequirementsModal({ id }) {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Requirements Information
               </Typography>
             </Grid>
@@ -240,8 +222,7 @@ function RequirementsModal({ id }) {
                 variant="fullWidth"
                 value={tabValue}
                 onChange={handleTabChange}
-                sx={{ borderRadius: "10px 10px 0px 0px" }}
-              >
+                sx={{borderRadius: "10px 10px 0px 0px"}}>
                 <Tab label="Groom" sx={tabStyle} />
                 <Tab label="Bride" sx={tabStyle} />
               </Tabs>
@@ -251,8 +232,7 @@ function RequirementsModal({ id }) {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "0px 0px 5px 5px",
-                }}
-              >
+                }}>
                 <Grid container justifyContent={"center"}>
                   <Box>
                     {tabValue === 0 && (
@@ -262,10 +242,16 @@ function RequirementsModal({ id }) {
                             control={
                               <Checkbox
                                 checked={requirements.groom_birthCert === 1}
+                                onChange={(e) =>
+                                  setRequirements((prev) => ({
+                                    ...prev,
+                                    groom_birthCert: e.target.checked ? 1 : 0,
+                                  }))
+                                }
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -276,10 +262,16 @@ function RequirementsModal({ id }) {
                             control={
                               <Checkbox
                                 checked={requirements.groom_baptismCert === 1}
+                                onChange={(e) =>
+                                  setRequirements((prev) => ({
+                                    ...prev,
+                                    groom_baptismCert: e.target.checked ? 1 : 0,
+                                  }))
+                                }
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -292,10 +284,18 @@ function RequirementsModal({ id }) {
                                 checked={
                                   requirements.groom_confirmationCert === 1
                                 }
+                                onChange={(e) =>
+                                  setRequirements((prev) => ({
+                                    ...prev,
+                                    groom_confirmationCert: e.target.checked
+                                      ? 1
+                                      : 0,
+                                  }))
+                                }
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -310,10 +310,16 @@ function RequirementsModal({ id }) {
                             control={
                               <Checkbox
                                 checked={requirements.spouse_birthCert === 1}
+                                onChange={(e) =>
+                                  setRequirements((prev) => ({
+                                    ...prev,
+                                    spouse_birthCert: e.target.checked ? 1 : 0,
+                                  }))
+                                }
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -324,10 +330,18 @@ function RequirementsModal({ id }) {
                             control={
                               <Checkbox
                                 checked={requirements.spouse_baptismCert === 1}
+                                onChange={(e) =>
+                                  setRequirements((prev) => ({
+                                    ...prev,
+                                    spouse_baptismCert: e.target.checked
+                                      ? 1
+                                      : 0,
+                                  }))
+                                }
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -338,12 +352,20 @@ function RequirementsModal({ id }) {
                             control={
                               <Checkbox
                                 checked={
-                                  requirements.groom_confirmationCert === 1
+                                  requirements.spouse_confirmationCert === 1
+                                }
+                                onChange={(e) =>
+                                  setRequirements((prev) => ({
+                                    ...prev,
+                                    spouse_confirmationCert: e.target.checked
+                                      ? 1
+                                      : 0,
+                                  }))
                                 }
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -356,9 +378,9 @@ function RequirementsModal({ id }) {
               </Box>
             </Grid>
 
-            <Grid item sm={12} sx={{ marginTop: "5px" }}>
+            <Grid item sm={12} sx={{marginTop: "5px"}}>
               <div
-                style={{ flex: 0.1, height: "1.8px", backgroundColor: "black" }}
+                style={{flex: 0.1, height: "1.8px", backgroundColor: "black"}}
               />
             </Grid>
 
@@ -366,10 +388,18 @@ function RequirementsModal({ id }) {
               <Grid item sm={12}>
                 <FormControlLabel
                   control={
-                    <Checkbox checked={requirements.isMarriageLicense === 1} />
+                    <Checkbox
+                      checked={requirements.isMarriageLicense === 1}
+                      onChange={(e) =>
+                        setRequirements((prev) => ({
+                          ...prev,
+                          isMarriageLicense: e.target.checked ? 1 : 0,
+                        }))
+                      }
+                    />
                   }
                   label={
-                    <Typography sx={{ fontSize: "15px" }}>
+                    <Typography sx={{fontSize: "15px"}}>
                       Marriage License
                     </Typography>
                   }
@@ -377,9 +407,19 @@ function RequirementsModal({ id }) {
               </Grid>
               <Grid item sm={12}>
                 <FormControlLabel
-                  control={<Checkbox checked={""} />}
+                  control={
+                    <Checkbox
+                      checked={requirements.isParishPermit === 1}
+                      onChange={(e) =>
+                        setRequirements((prev) => ({
+                          ...prev,
+                          isParishPermit: e.target.checked ? 1 : 0,
+                        }))
+                      }
+                    />
+                  }
                   label={
-                    <Typography sx={{ fontSize: "15px" }}>
+                    <Typography sx={{fontSize: "15px"}}>
                       Parish Permit
                     </Typography>
                   }
@@ -388,82 +428,131 @@ function RequirementsModal({ id }) {
               <Grid item sm={12}>
                 <FormControlLabel
                   control={
-                    <Checkbox checked={requirements.isPrenuptial === 1} />
+                    <Checkbox
+                      checked={requirements.isPrenuptial === 1}
+                      onChange={(e) =>
+                        setRequirements((prev) => ({
+                          ...prev,
+                          isPrenuptial: e.target.checked ? 1 : 0,
+                        }))
+                      }
+                    />
                   }
                   label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Prenuptial Questionnaire
+                    <Typography sx={{fontSize: "15px"}}>
+                      Prenuptial Agreement
                     </Typography>
                   }
                 />
               </Grid>
               <Grid item sm={12}>
                 <FormControlLabel
-                  control={<Checkbox checked={requirements.isPreCana === 1} />}
+                  control={
+                    <Checkbox
+                      checked={requirements.isPreCana === 1}
+                      onChange={(e) =>
+                        setRequirements((prev) => ({
+                          ...prev,
+                          isPreCana: e.target.checked ? 1 : 0,
+                        }))
+                      }
+                    />
+                  }
                   label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Pre-Cana Seminar
+                    <Typography sx={{fontSize: "15px"}}>
+                      Pre-Cana Certificate
                     </Typography>
                   }
                 />
               </Grid>
             </Box>
-            <Grid item sm={12} sx={{ textAlign: "center" }}>
+
+            <Grid item sm={12} sx={{marginTop: "10px"}}>
               <Button
-                onClick={() => handleOpenDialog("Update wedding requirement")}
-                sx={{
-                  bgcolor: "#CDAB52",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": { bgcolor: "#F0CA67" },
-                }}
-              >
-                UPDATE
+                onClick={updateRequirements}
+                variant="contained"
+                sx={{bgcolor: "#355173"}}>
+                Save
               </Button>
             </Grid>
           </Grid>
-          <ConfirmationDialog
-            open={dialogOpen}
-            onClose={handleCloseDialog}
-            action={currentAction}
-            onConfirm={handleConfirm}
-            service={service}
-          />
         </Box>
       </Modal>
     </React.Fragment>
   );
 }
 
-function SponsorsModal() {
+function SponsorsModal({id}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("wedding");
+  const [sponsors, setSponsors] = useState([]);
+  const [newSponsor, setNewSponsor] = useState({
+    name: "",
+    age: "",
+    isMarried: "",
+    isCatholic: "",
+  });
+  const [sponsorid, setsponsorid] = useState(null);
 
-  const handleOpenDialog = (action) => {
-    setCurrentAction(action);
-    setDialogOpen(true);
+  const fetchSponsors = async () => {
+    try {
+      const response = await axios.get(`${config.API}/sponsor/retrieve`, {
+        params: {
+          reqID: id,
+        },
+      });
+      setSponsors(response.data.result);
+    } catch (err) {
+      console.error("error retrieving sponsors", err);
+    }
   };
 
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
+  useEffect(() => {
+    fetchSponsors();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const {name, value} = e.target;
+    setNewSponsor((prev) => ({...prev, [name]: value}));
   };
 
-  {
-    /** for sameple if success, ari butang backend**/
-  }
-  const handleConfirm = (action) => {
-    switch (action) {
-      case "Update sponsors":
-        alert("Update action confirmed.");
-        break;
-      default:
-        break;
+  const handleAddSponsor = async () => {
+    try {
+      const response = await axios.post(
+        `${config.API}/sponsor/create-sponsor`,
+        {
+          ...newSponsor,
+          request_id: id,
+        }
+      );
+      const newSponsorData = {
+        ...newSponsor,
+      };
+      fetchSponsors();
+      setNewSponsor({name: "", age: "", isMarried: "", isCatholic: ""});
+    } catch (err) {
+      console.error("Error adding sponsor", err);
+    }
+  };
+
+  const handleDeleteSponsor = async (sponsor) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete ${sponsor.name}?`
+    );
+
+    if (confirmDelete) {
+      try {
+        await axios.delete(
+          `${config.API}/sponsor/delete-sponsor/${sponsor.sponsorID}`
+        );
+        fetchSponsors();
+        alert("Sponsor deleted successfully!");
+      } catch (err) {
+        console.error("Error deleting sponsor", err);
+        alert("Failed to delete sponsor.");
+      }
     }
   };
 
@@ -477,9 +566,8 @@ function SponsorsModal() {
           fontSize: "11px",
           marginLeft: "5px",
           color: "white",
-          "&:hover": { bgcolor: "#4C74A5" },
-        }}
-      >
+          "&:hover": {bgcolor: "#4C74A5"},
+        }}>
         Sponsors
       </Button>
       <Modal open={open}>
@@ -495,45 +583,74 @@ function SponsorsModal() {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Sponsors Information
               </Typography>
             </Grid>
             <Grid item sm={4.5}>
               <label>Full Name:</label>
-              <TextField fullWidth sx={TextFieldStyle} />
+              <TextField
+                name="name"
+                value={newSponsor.name}
+                fullWidth
+                onChange={handleInputChange}
+                sx={TextFieldStyle}
+              />
             </Grid>
             <Grid item sm={1.5}>
               <label>Age:</label>
-              <TextField fullWidth sx={TextFieldStyle} />
+              <TextField
+                name="age"
+                value={newSponsor.age}
+                onChange={handleInputChange}
+                fullWidth
+                sx={TextFieldStyle}
+              />
             </Grid>
             <Grid item sm={3}>
               <label>Marital Status:</label>
-              <TextField select fullWidth sx={TextFieldStyle} />
+              <TextField
+                value={newSponsor.isMarried}
+                select
+                name="isMarried"
+                onChange={handleInputChange}
+                fullWidth
+                sx={TextFieldStyle}>
+                <MenuItem value="1">Married</MenuItem>
+                <MenuItem value="0">Not Married</MenuItem>
+              </TextField>
             </Grid>
             <Grid item sm={3}>
               <label>Catholic?:</label>
-              <TextField select fullWidth sx={TextFieldStyle} />
+              <TextField
+                select
+                name="isCatholic"
+                value={newSponsor.isCatholic}
+                onChange={handleInputChange}
+                fullWidth
+                sx={TextFieldStyle}>
+                <MenuItem value="1">Yes</MenuItem>
+                <MenuItem value="0">No</MenuItem>
+              </TextField>
             </Grid>
-            <Grid item sm={12} sx={{ textAlign: "center" }}>
+            <Grid item sm={12} sx={{textAlign: "center"}}>
               <Button
+                onClick={handleAddSponsor}
                 sx={{
                   bgcolor: "#355173",
                   height: "28px",
                   width: "150px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#4C74A5" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#4C74A5"},
+                }}>
                 Add Sponsor
               </Button>
             </Grid>
 
             <Grid item sm={12}>
               <TableContainer component={Paper}>
-                <Table sx={{ tableLayout: "fixed" }}>
+                <Table sx={{tableLayout: "fixed"}}>
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">Full Name</TableCell>
@@ -542,8 +659,7 @@ function SponsorsModal() {
                       <TableCell align="center">Catholic?</TableCell>
                       <TableCell
                         align="center"
-                        sx={{ width: "50px" }}
-                      ></TableCell>
+                        sx={{width: "50px"}}></TableCell>
                     </TableRow>
                   </TableHead>
                 </Table>
@@ -557,20 +673,25 @@ function SponsorsModal() {
                   "&::-webkit-scrollbar": {
                     display: "none",
                   },
-                }}
-              >
-                <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+                }}>
+                <Table sx={{tableLayout: "fixed", width: "100%"}}>
                   <TableBody>
                     {sponsors.map((sponsor) => (
-                      <TableRow key={sponsor.name}>
+                      <TableRow key={sponsor.sponsorID}>
                         <TableCell align="center" component="th">
                           {sponsor.name}
                         </TableCell>
                         <TableCell align="center">{sponsor.age}</TableCell>
-                        <TableCell align="center">{sponsor.marital}</TableCell>
-                        <TableCell align="center">{sponsor.catholic}</TableCell>
-                        <TableCell align="center" sx={{ width: "50px" }}>
-                          <IconButton size="small">
+                        <TableCell align="center">
+                          {sponsor.isMarried == 1 ? "Yes" : "No"}
+                        </TableCell>
+                        <TableCell align="center">
+                          {sponsor.isCatholic == 1 ? "Yes" : "No"}
+                        </TableCell>
+                        <TableCell align="center" sx={{width: "50px"}}>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDeleteSponsor(sponsor)}>
                             <FontAwesomeIcon icon={faXmark} />
                           </IconButton>
                         </TableCell>
@@ -580,37 +701,14 @@ function SponsorsModal() {
                 </Table>
               </div>
             </Grid>
-
-            <Grid item sm={12} sx={{ textAlign: "center" }}>
-              <Button
-                onClick={() => handleOpenDialog("Update sponsors")}
-                sx={{
-                  bgcolor: "#CDAB52",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": { bgcolor: "#F0CA67" },
-                }}
-              >
-                UPDATE
-              </Button>
-            </Grid>
           </Grid>
-          <ConfirmationDialog
-            open={dialogOpen}
-            onClose={handleCloseDialog}
-            action={currentAction}
-            onConfirm={handleConfirm}
-            service={service}
-          />
         </Box>
       </Modal>
     </React.Fragment>
   );
 }
 
-const WeddingPending = ({ open, data, handleClose }) => {
+const WeddingPending = ({open, data, handleClose}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completeRequirements, setCompleteRequirements] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
@@ -619,43 +717,66 @@ const WeddingPending = ({ open, data, handleClose }) => {
   const [errorOpen, setErrorOpen] = useState(false);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
-    requestID: data.requestID,
-    type: data.type,
-    first_name: data.first_name,
-    last_name: data.last_name,
-    relationship: data.relationship,
-    spouse_name: data.spouse_name,
-    address: data.address,
-    requested_by: data.requested_by,
-    contact_no: data.contact_no,
-    preferred_date: data.preferred_date,
-    preferred_time: data.preferred_time,
-    preferred_priest: data.preferred_priest,
-    isParishioner: data.isParishioner,
-    transaction_no: data.transaction_no,
-    payment_status: data.payment_status,
-    service_id: data.service_id,
+    requestID: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    relationship: "",
+    spouse_firstName: "",
+    spouse_middleName: "",
+    spouse_lastName: "",
+    contact_no: "",
+    preferred_date: "",
+    preferred_time: "",
+    preferred_priest: "",
+    transaction_no: "",
+    payment_status: "",
+    service_id: "",
   });
 
-  //  retrieve wedding details
-
+  // START RETRIEVE WEDDING DETAILS
   useEffect(() => {
-    const requirements = async () => {
-      const req = await fetchWeddingDetails(data.requestID);
-      console.log("req", req.result[0]);
-      if (req) {
-        setCompleteRequirements(req.result[0].isComplete);
+    const fetchWeddingData = async () => {
+      try {
+        const weddingDetails = await fetchWeddingDetails(data.requestID);
+
+        if (weddingDetails) {
+          setFormData((prevData) => ({
+            ...prevData,
+            spouse_firstName: weddingDetails.spouse_firstName || "",
+            spouse_middleName: weddingDetails.spouse_middleName || "",
+            spouse_lastName: weddingDetails.spouse_lastName || "",
+          }));
+        }
+      } catch (err) {
+        console.error("Error fetching wedding details", err);
       }
     };
 
-    requirements();
-  }, [open]);
+    if (open && data) {
+      // Set groom details first
+      setFormData({
+        requestID: data.requestID,
+        first_name: data.first_name,
+        middle_name: data.middle_name,
+        last_name: data.last_name,
+        contact_no: data.contact_no,
+        relationship: data.relationship,
+        preferred_date: data.preferred_date,
+        preferred_time: data.preferred_time,
+        preferred_priest: data.priest_id,
+        transaction_no: data.transaction_no,
+        payment_status: data.payment_status,
+        service_id: data.service_id,
+        spouse_firstName: "", // Initialize spouse fields to empty
+        spouse_middleName: "",
+        spouse_lastName: "",
+      });
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0];
-  };
+      // Fetch and set spouse details after setting groom details
+      fetchWeddingData();
+    }
+  }, [open, data]);
 
   const fetchService = async () => {
     try {
@@ -692,19 +813,21 @@ const WeddingPending = ({ open, data, handleClose }) => {
     fetchPriest();
     fetchService();
   }, []);
+  // END RETRIEVE WEDDING DETAILS
 
+  // START FORM HANDLERS AND CONTROLS
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
+    setFormData({...formData, [name]: time.format("HH-mm-ss")});
   };
 
   const handleOpenDialog = (action) => {
@@ -715,10 +838,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
+  // END FORM HANDLERS AND CONTROLS
 
-  {
-    /** for sameple if success, ari butang backend**/
-  }
   const handleConfirm = async (action) => {
     switch (action) {
       case "approve":
@@ -791,7 +912,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -813,8 +934,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Request Information
               </Typography>
             </Grid>
@@ -826,14 +946,12 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "5px",
-                }}
-              >
+                }}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       Groom:
                     </Typography>
                   </Grid>
@@ -878,14 +996,12 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "5px",
-                }}
-              >
+                }}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       Bride:
                     </Typography>
                   </Grid>
@@ -893,17 +1009,25 @@ const WeddingPending = ({ open, data, handleClose }) => {
                     <label>First Name:</label>
                     <TextField
                       fullWidth
-                      value={formData.spouse_name}
+                      value={formData?.spouse_firstName}
                       sx={TextFieldStyle}
                     />
                   </Grid>
                   <Grid item sm={4}>
                     <label>Middle Name:</label>
-                    <TextField fullWidth value={""} sx={TextFieldStyle} />
+                    <TextField
+                      fullWidth
+                      value={formData?.spouse_middleName}
+                      sx={TextFieldStyle}
+                    />
                   </Grid>
                   <Grid item sm={4}>
                     <label>Last Name:</label>
-                    <TextField fullWidth value={""} sx={TextFieldStyle} />
+                    <TextField
+                      fullWidth
+                      value={formData?.spouse_lastName}
+                      sx={TextFieldStyle}
+                    />
                   </Grid>
                 </Grid>
               </Box>
@@ -927,8 +1051,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                 value={formData.relationship}
                 fullWidth
                 select
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                 <MenuItem value="Live-in for under 4 years">
                   Live-in for under 4 years
@@ -947,8 +1070,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                 value={formData?.payment_status}
                 select
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="unpaid">Unpaid</MenuItem>
                 <MenuItem value="paid">Paid</MenuItem>
               </TextField>
@@ -957,8 +1079,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
             <Grid item sm={12} textAlign={"center"}>
               <Typography
                 variant="subtitle1"
-                sx={{ display: "inline-block", fontSize: "14px" }}
-              >
+                sx={{display: "inline-block", fontSize: "14px"}}>
                 Requirements:
               </Typography>
               <Typography
@@ -968,8 +1089,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   marginLeft: "5px",
                   fontSize: "14px",
                   color: completeRequirements === 1 ? "green" : "red",
-                }}
-              >
+                }}>
                 {completeRequirements === 1 ? "Complete" : "Incomplete"}
               </Typography>
               <RequirementsModal id={data.requestID} />
@@ -979,8 +1099,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
-                }}
-              >
+                }}>
                 Sponsors:
               </Typography>
               {/* <Typography
@@ -993,7 +1112,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
               >
                 Incomplete
               </Typography> */}
-              <SponsorsModal />
+              <SponsorsModal id={data.requestID} />
             </Grid>
 
             <Grid item sm={12}>
@@ -1003,14 +1122,12 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "5px",
-                }}
-              >
+                }}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       INTERVIEW
                     </Typography>
                   </Grid>
@@ -1020,8 +1137,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                         <Grid item sm={12}>
                           <Typography
                             variant="subtitle1"
-                            sx={{ fontWeight: "bold", fontSize: "13px" }}
-                          >
+                            sx={{fontWeight: "bold", fontSize: "13px"}}>
                             Preferred
                           </Typography>
                         </Grid>
@@ -1032,8 +1148,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                             fullWidth
                             sx={TextFieldStyle}
                             value={formData.preferred_priest}
-                            onChange={handleChange}
-                          >
+                            onChange={handleChange}>
                             {priests.map((priest) => (
                               <MenuItem key={priest.id} value={priest.priestID}>
                                 {`${priest.first_name} ${priest.last_name}`}
@@ -1090,9 +1205,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "white",
-                              "&:hover": { bgcolor: "#4C74A5" },
-                            }}
-                          >
+                              "&:hover": {bgcolor: "#4C74A5"},
+                            }}>
                             Assign
                           </Button>
                         </Grid>
@@ -1105,8 +1219,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                         <Grid item sm={12}>
                           <Typography
                             variant="subtitle1"
-                            sx={{ fontWeight: "bold", fontSize: "13px" }}
-                          >
+                            sx={{fontWeight: "bold", fontSize: "13px"}}>
                             Assigned
                           </Typography>
                         </Grid>
@@ -1117,8 +1230,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                             fullWidth
                             sx={TextFieldStyle}
                             value={formData.preferred_priest}
-                            onChange={handleChange}
-                          >
+                            onChange={handleChange}>
                             {priests.map((priest) => (
                               <MenuItem key={priest.id} value={priest.priestID}>
                                 {`${priest.first_name} ${priest.last_name}`}
@@ -1147,9 +1259,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "#355173",
-                              "&:hover": { bgcolor: "#D3CECE" },
-                            }}
-                          >
+                              "&:hover": {bgcolor: "#D3CECE"},
+                            }}>
                             CLEAR
                           </Button>
                         </Grid>
@@ -1167,14 +1278,12 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "5px",
-                }}
-              >
+                }}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       WEDDING
                     </Typography>
                   </Grid>
@@ -1184,8 +1293,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                         <Grid item sm={12}>
                           <Typography
                             variant="subtitle1"
-                            sx={{ fontWeight: "bold", fontSize: "13px" }}
-                          >
+                            sx={{fontWeight: "bold", fontSize: "13px"}}>
                             Preferred
                           </Typography>
                         </Grid>
@@ -1196,8 +1304,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                             fullWidth
                             sx={TextFieldStyle}
                             value={formData.preferred_priest}
-                            onChange={handleChange}
-                          >
+                            onChange={handleChange}>
                             {priests.map((priest) => (
                               <MenuItem key={priest.id} value={priest.priestID}>
                                 {`${priest.first_name} ${priest.last_name}`}
@@ -1230,9 +1337,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "white",
-                              "&:hover": { bgcolor: "#4C74A5" },
-                            }}
-                          >
+                              "&:hover": {bgcolor: "#4C74A5"},
+                            }}>
                             Assign
                           </Button>
                         </Grid>
@@ -1245,8 +1351,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                         <Grid item sm={12}>
                           <Typography
                             variant="subtitle1"
-                            sx={{ fontWeight: "bold", fontSize: "13px" }}
-                          >
+                            sx={{fontWeight: "bold", fontSize: "13px"}}>
                             Assigned
                           </Typography>
                         </Grid>
@@ -1257,8 +1362,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                             fullWidth
                             sx={TextFieldStyle}
                             value={formData.preferred_priest}
-                            onChange={handleChange}
-                          >
+                            onChange={handleChange}>
                             {priests.map((priest) => (
                               <MenuItem key={priest.id} value={priest.priestID}>
                                 {`${priest.first_name} ${priest.last_name}`}
@@ -1287,9 +1391,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "#355173",
-                              "&:hover": { bgcolor: "#D3CECE" },
-                            }}
-                          >
+                              "&:hover": {bgcolor: "#D3CECE"},
+                            }}>
                             CLEAR
                           </Button>
                         </Grid>
@@ -1308,12 +1411,11 @@ const WeddingPending = ({ open, data, handleClose }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ marginRight: "5px" }}>
+              }}>
+              <Typography variant="body2" sx={{marginRight: "5px"}}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+              <Typography variant="body2" sx={{fontWeight: "bold"}}>
                 {formData.transaction_no}
               </Typography>
             </Grid>
@@ -1326,8 +1428,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -1336,9 +1437,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F0CA67" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F0CA67"},
+                }}>
                 UPDATE
               </Button>
               <Button
@@ -1350,9 +1450,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F05A5A" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F05A5A"},
+                }}>
                 CANCEL
               </Button>
             </Grid>

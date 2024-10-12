@@ -203,12 +203,13 @@ const createRequestWedding = async (req, res) => {
       .query(insertRequestQuery, insertRequestValues);
     const requestID = insertResult.insertId;
 
-    const insertSponsorQuery = `INSERT INTO sponsor (name, age, isCatholic, request_id) VALUES (?, ?, ?, ?)`;
+    const insertSponsorQuery = `INSERT INTO sponsor (name, age, isMarried, isCatholic, request_id) VALUES (?, ?, ?, ?, ?)`;
 
     for (let sponsor of request.sponsors) {
       const sponsorValues = [
         sponsor.name,
         sponsor.age,
+        sponsor.isMarried,
         sponsor.isCatholic,
         requestID,
       ];

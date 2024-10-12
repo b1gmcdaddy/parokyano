@@ -4,7 +4,7 @@ const db = require("./db");
 const _ = require("lodash");
 
 const retrieveByParams = (req, res) => {
-  const { reqID } = req.query;
+  const {reqID} = req.query;
 
   db.query(
     `SELECT * FROM sponsor WHERE request_id = ?`,
@@ -24,6 +24,45 @@ const retrieveByParams = (req, res) => {
   );
 };
 
+const addSponsor = async (req, res) => {
+  const {name, age, isMarried, isCatholic, request_id} = req.body;
+
+  try {
+    const query = `INSERT INTO sponsor (name, age, isMarried, isCatholic, request_id) VALUES (?, ?, ?, ?, ?)`;
+
+    db.query(query, [name, age, isMarried, isCatholic, request_id]);
+
+    return res.status(201).json({
+      message: "Sponsor added successfully",
+    });
+  } catch (err) {
+    console.error("Error adding sponsor to the database", err);
+    return res.status(500).json({
+      message: "Failed to add sponsor",
+    });
+  }
+};
+
+const deleteSponsor = async (req, res) => {
+  const {sponsorID} = req.params;
+
+  try {
+    const deleteSponsorQuery = `DELETE FROM sponsor WHERE sponsorID = ?`;
+    db.query(deleteSponsorQuery, [sponsorID]);
+
+    return res.status(200).json({
+      message: "Sponsor deleted successfully",
+    });
+  } catch (err) {
+    console.error("Error deleting sponsor from the database", err);
+    return res.status(500).json({
+      message: "Failed to delete sponsor",
+    });
+  }
+};
+
 module.exports = {
   retrieveByParams,
+  addSponsor,
+  deleteSponsor,
 };
