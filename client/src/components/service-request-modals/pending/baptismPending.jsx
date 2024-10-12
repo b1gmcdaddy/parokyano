@@ -268,14 +268,20 @@ const BaptismPending = ({ open, data, handleClose }) => {
               });
               console.log("request success!");
               axios.post(`${config.API}/priest/createPriestSched`, {
-                date: formData.preferred_date,
-                activity: `${formData.type} at ${formData.address}`,
+                date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                activity: `Funeral mass for ${formData.first_name}`,
                 start_time: formData.preferred_time,
                 end_time: endTime(formData.preferred_time, service.duration),
-                priest_id: formData.priest_id,
-                request_id: data.requestID,
+                priest_id: formData.preferred_priest,
+                request_id: formData.requestID,
               });
-              alert("success!");
+              console.log("priest sched success!");
+              axios.post(`${config.API}/logs/create`, {
+                activity: `Approved Funeral Mass for ${formData.first_name}`,
+                user_id: 1,
+                request_id: formData.requestID,
+              });
+              console.log("logs success!");
               handleClose();
             }
           }

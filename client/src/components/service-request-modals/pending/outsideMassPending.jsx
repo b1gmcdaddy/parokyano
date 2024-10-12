@@ -207,7 +207,7 @@ const OutsidePending = ({ open, data, handleClose }) => {
               },
             }
           );
-          if (response.data.length > 0 || response.data != "") {
+          if (response.status !== 200) {
             console.log("resposne: ", response);
             console.log("error!");
             setError({
@@ -222,7 +222,7 @@ const OutsidePending = ({ open, data, handleClose }) => {
                 col2: "payment_status",
                 val2: "paid",
                 col3: "preferred_date",
-                val3: formData.preferred_date,
+                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
                 col4: "priest_id",
                 val4: formData.preferred_priest,
                 col5: "requestID",
@@ -231,13 +231,20 @@ const OutsidePending = ({ open, data, handleClose }) => {
             });
             console.log("request success!");
             axios.post(`${config.API}/priest/createPriestSched`, {
-              date: formData.preferred_date,
-              activity: `${formData.type} at ${formData.address}`,
+              date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+              activity: `Outside mass at ${formData.address}`,
               start_time: formData.preferred_time,
               end_time: endTime(formData.preferred_time, service.duration),
               priest_id: formData.preferred_priest,
+              request_id: formData.requestID,
             });
             console.log("priest sched success!");
+            axios.post(`${config.API}/logs/create`, {
+              activity: `Approved Outside Mass at ${formData.address}`,
+              user_id: 1,
+              request_id: formData.requestID,
+            });
+            console.log("logs success!");
             handleClose();
           }
         } catch (err) {
@@ -258,13 +265,6 @@ const OutsidePending = ({ open, data, handleClose }) => {
           });
 
           console.log("request cancelled!");
-          // axios.delete(`${config.API}/priest/deleteSched`, {
-          //   params: {
-          //     col: "request_id",
-          //     val: formData.requestID,
-          //   },
-          // });
-          console.log("priest sched deleted!");
         } catch (err) {
           console.error("error updating request", err);
         }

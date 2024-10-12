@@ -24,6 +24,7 @@ const userRoute = require("./routes/userRoute");
 const sponsorRoute = require("./routes/sponsorRoute");
 const weddingRoute = require("./routes/weddingRoute");
 const baptismRoute = require("./routes/baptismRoute");
+const logsRoute = require("./routes/logsRoutes");
 
 app.use("/request", requestRoute);
 app.use("/service", serviceRoute);
@@ -33,6 +34,7 @@ app.use("/user", userRoute);
 app.use("/sponsor", sponsorRoute);
 app.use("/wedding", weddingRoute);
 app.use("/baptism", baptismRoute);
+app.use("/logs", logsRoute);
 
 //debugging purposes
 app.use((err, req, res, next) => {

@@ -89,7 +89,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
       setFormData({
         requestID: data.requestID,
         type: data.type,
-        name: data.first_name,
+        first_name: data.first_name,
         address: data.address,
         requested_by: data.requested_by,
         relationship: data.relationship,
@@ -192,22 +192,12 @@ const AnointingPending = ({ open, data, handleClose }) => {
             }
           );
           console.log(response);
-          if (Object.keys(response.data).length > 0 || response.data != "") {
+          if (response.status !== 200) {
             setError({
               message: response.data.message,
               details: response.data?.details,
             });
           } else {
-            axios.post(`${config.API}/priest/createPriestSched`, {
-              date: formData.preferred_date,
-              activity: `${formData.type} at ${formData.address}`,
-              start_time: formData.preferred_time,
-              end_time: endTime(formData.preferred_time, service.duration),
-              priest_id: formData.preferred_priest,
-              request_id: formData.requestID,
-            });
-            console.log("priest sched success!");
-
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
@@ -215,7 +205,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
                 col2: "payment_status",
                 val2: "paid",
                 col3: "preferred_date",
-                val3: formData.preferred_date,
+                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
                 col4: "priest_id",
                 val4: formData.preferred_priest,
                 col5: "requestID",
@@ -223,6 +213,21 @@ const AnointingPending = ({ open, data, handleClose }) => {
               },
             });
             console.log("request success!");
+            axios.post(`${config.API}/priest/createPriestSched`, {
+              date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+              activity: `Anointing for ${formData.first_name} at ${formData.address}`,
+              start_time: formData.preferred_time,
+              end_time: endTime(formData.preferred_time, service.duration),
+              priest_id: formData.preferred_priest,
+              request_id: formData.requestID,
+            });
+            console.log("priest sched success!");
+            axios.post(`${config.API}/logs/create`, {
+              activity: `Approved Anointing for ${formData.first_name} at ${formData.address}`,
+              user_id: 1,
+              request_id: formData.requestID,
+            });
+            console.log("logs success!");
 
             handleClose();
           }
@@ -244,13 +249,6 @@ const AnointingPending = ({ open, data, handleClose }) => {
           });
 
           console.log("request cancelled!");
-          // axios.delete(`${config.API}/priest/deleteSched`, {
-          //   params: {
-          //     col: "request_id",
-          //     val: formData.requestID,
-          //   },
-          // });
-          console.log("priest sched deleted!");
         } catch (err) {
           console.error("error updating request", err);
         }
@@ -306,7 +304,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
                 name="name"
                 onChange={handleChange}
                 sx={TextFieldStyle}
-                value={formData.name}
+                value={formData.first_name}
                 readonly
               />
             </Grid>

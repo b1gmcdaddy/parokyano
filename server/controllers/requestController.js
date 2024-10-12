@@ -4,6 +4,7 @@ const express = require("express");
 const db = require("./db");
 const _ = require("lodash");
 const { parse } = require("dotenv");
+const dayjs = require("dayjs");
 
 const dateToday = new Date().toJSON().slice(0, 10);
 
@@ -273,7 +274,7 @@ const createRequestMass = (req, res) => {
       request.contact_no,
       request.requested_by,
       request.relationship,
-      request.preferred_date,
+      dayjs(request.preferred_date).format("YYYY-MM-DD"),
       request.preferred_time,
       request.preferred_priest,
       request.isParishioner,
@@ -305,7 +306,7 @@ const createRequestAnointing = (req, res) => {
       request.address,
       request.relationship,
       request.patient_status,
-      request.preferred_date,
+      dayjs(request.preferred_date).format("YYYY-MM-DD"),
       request.preferred_time,
       request.preferred_priest,
       request.isParishioner,
