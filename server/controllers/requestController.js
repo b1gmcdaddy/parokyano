@@ -314,7 +314,7 @@ const createRequestBlessing = (req, res) => {
       request.address,
       request.requested_by,
       request.contact_no,
-      request.preferred_date,
+      dayjs(request.preferred_date).format("YYYY-MM-DD"),
       request.preferred_time,
       request.preferred_priest,
       request.isParishioner,

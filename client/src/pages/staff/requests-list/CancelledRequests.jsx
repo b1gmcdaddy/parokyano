@@ -86,7 +86,12 @@ const CancelledRequests = () => {
           <AnointingCancelled open={modalOpen}
           handleClose={() => setModalOpen(false)}/>
         );
-      case "Baptism - General" || "Baptism - Appointment":
+      case "Baptism - General":
+        return (
+          <BaptismCancelled open={modalOpen}
+          handleClose={() => setModalOpen(false)}/>
+        );
+      case "Baptism - Appointment":
         return (
           <BaptismCancelled open={modalOpen}
           handleClose={() => setModalOpen(false)}/>

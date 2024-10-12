@@ -17,6 +17,8 @@ const retrieveByParams = (req, res) => {
           error: err.message,
         });
       }
+      console.log("req", reqID);
+      console.log(result);
       return res.status(200).json({
         result,
       });
