@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Header from "../../components/Header";
@@ -13,9 +13,9 @@ import {
   FormHelperText,
 } from "@mui/material";
 import Footer from "../../components/Footer";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import generateHash from "../../utils/GenerateHash";
 import axios from "axios";
@@ -27,7 +27,7 @@ import {
   TimeField,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ValidateForm from "../../utils/Validators";
 
@@ -106,19 +106,20 @@ const Anointing = () => {
         console.log("error submitting to server", err);
       }
     }
+    return;
   };
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   useEffect(() => {
@@ -137,7 +138,8 @@ const Anointing = () => {
       <Header backgroundImage={imageHeader} title="ANNOINTING OF THE SICK" />
       <Link
         to="/"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
+        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center"
+      >
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <p className="xs:hidden md:flex">Return to Home</p>
       </Link>
@@ -147,7 +149,7 @@ const Anointing = () => {
 
       <NoPaymentModal open={open} data={modalData} />
 
-      <Container maxWidth="lg" sx={{marginBottom: "50px"}}>
+      <Container maxWidth="lg" sx={{ marginBottom: "50px" }}>
         <form>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={4}>
@@ -182,12 +184,12 @@ const Anointing = () => {
                 size="small"
                 sx={inputstlying}
                 name="contact_no"
-                inputProps={{maxLength: 11}}
+                inputProps={{ maxLength: 11 }}
                 onChange={handleChange}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
@@ -269,7 +271,7 @@ const Anointing = () => {
                   name="preferred_time"
                   onChange={(time) => handleTimeChange("preferred_time", time)}
                   renderInput={(params) => <TextField {...params} required />}
-                  timeSteps={{hours: 30, minutes: 30}} // if mabuang, delete hours
+                  timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
                   minTime={dayjs().set("hour", 7)}
                   maxTime={dayjs().set("hour", 16)}
                   required
@@ -286,7 +288,8 @@ const Anointing = () => {
                 sx={inputstlying}
                 name="preferred_priest"
                 onChange={handleChange}
-                required>
+                required
+              >
                 {priestList.map((priest, index) => (
                   <MenuItem key={index} value={priest.priestID}>
                     {priest.first_name + " " + priest.last_name}
@@ -301,8 +304,9 @@ const Anointing = () => {
               sm={2}
               sx={{
                 display: "flex",
-                justifyContent: {xs: "center", sm: "flex-start"},
-              }}>
+                justifyContent: { xs: "center", sm: "flex-start" },
+              }}
+            >
               <label>Are you a Parishioner?</label>
             </Grid>
             <Grid item xs={6} sm={3}>
@@ -311,10 +315,11 @@ const Anointing = () => {
                 sx={{
                   marginTop: "-6px",
                   display: "flex",
-                  justifyContent: {xs: "center", sm: "flex-start"},
+                  justifyContent: { xs: "center", sm: "flex-start" },
                 }}
                 name="isParishioner"
-                onChange={handleChange}>
+                onChange={handleChange}
+              >
                 <FormControlLabel
                   value="1"
                   control={<Radio size="small" />}
@@ -333,10 +338,11 @@ const Anointing = () => {
               sm={7}
               sx={{
                 display: "flex",
-                justifyContent: {xs: "center", sm: "flex-end"},
-              }}>
+                justifyContent: { xs: "center", sm: "flex-end" },
+              }}
+            >
               <p>
-                <p style={{fontWeight: "bold", display: "inline"}}>Note: </p>
+                <p style={{ fontWeight: "bold", display: "inline" }}>Note: </p>
                 Please pick up the priest
               </p>
             </Grid>
@@ -354,7 +360,8 @@ const Anointing = () => {
               }`}
               disabled={!isCaptchaChecked}
               onClick={handlesubmit}
-              type="button">
+              type="button"
+            >
               SUBMIT REQUEST
             </button>
           </div>

@@ -83,6 +83,8 @@ const BaptismApproved = ({ open, data, handleClose }) => {
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("baptism");
   const [sponsors, setSponsors] = useState([]);
+  const [details, setDetails] = useState({});
+  const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
     requestID: data.requestID,
     type: data.type,
@@ -104,6 +106,60 @@ const BaptismApproved = ({ open, data, handleClose }) => {
     payment_status: data.payment_status,
     service_id: data.service_id,
   });
+
+  const fetchSponsors = async (id) => {
+    try {
+      const response = await axios.get(`${config.API}/sponsor/retrieve`, {
+        params: {
+          reqID: id,
+        },
+      });
+      setSponsors(response.data.result);
+      return response.data;
+    } catch (err) {
+      console.error("error retrieving sponsors", err);
+    }
+  };
+
+  const fetchBaptismDetails = async (id) => {
+    try {
+      const response = await axios.get(`${config.API}/baptism/retrieve`, {
+        params: {
+          reqID: id,
+        },
+      });
+      setDetails({
+        birthCert: response.data.result[0].birthCert,
+        parent_marriageCert: response.data.result[0].parent_marriageCert,
+        gender: response.data.result[0].gender,
+        father_age: response.data.result[0].father_age,
+        mother_age: response.data.result[0].mother_age,
+      });
+
+      return;
+    } catch (err) {
+      console.error("error retrieving sponsors", err);
+    }
+  };
+
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+    fetchSponsors(data.requestID);
+    fetchBaptismDetails(data.requestID);
+  }, [open, data]);
 
   useEffect(() => {
     setSponsors(fetchSponsors(data.requestID));
