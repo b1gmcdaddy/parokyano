@@ -34,6 +34,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
+    height: "40px"
   },
 };
 
@@ -192,7 +193,7 @@ const CertificateBaptism = () => {
               </label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  fullWidth
+                  slotProps={{ textField: { fullWidth: true }}}
                   variant="outlined"
                   disableFuture
                   size="small"
@@ -277,7 +278,7 @@ const CertificateBaptism = () => {
               <label>Date of Baptism:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  fullWidth
+                  slotProps={{ textField: { fullWidth: true }}}
                   variant="outlined"
                   disableFuture
                   size="small"

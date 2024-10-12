@@ -39,6 +39,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
+    height: "40px"
   },
 };
 
@@ -273,7 +274,7 @@ const OutsideMass = () => {
               <label>Preferred Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  fullWidth
+                  slotProps={{ textField: { fullWidth: true }}}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
@@ -294,7 +295,7 @@ const OutsideMass = () => {
               <label>Preferred Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
-                  fullWidth
+                  slotProps={{ textField: { fullWidth: true }}}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}

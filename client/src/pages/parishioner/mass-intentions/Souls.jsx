@@ -34,6 +34,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
+    height: "40px"
   },
 };
 
@@ -222,7 +223,7 @@ const Souls = () => {
               <label>Mass Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  fullWidth
+                  slotProps={{ textField: { fullWidth: true }}}
                   variant="outlined"
                   disablePast
                   size="small"

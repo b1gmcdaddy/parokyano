@@ -31,6 +31,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
+    height: "40px"
   },
 };
 
@@ -179,8 +180,8 @@ const Petition = () => {
               <label>Mass Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
+                  slotProps={{ textField: { fullWidth: true }}}
                   name="mass_date"
-                  fullWidth
                   variant="outlined"
                   disablePast
                   size="small"
