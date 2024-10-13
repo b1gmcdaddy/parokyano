@@ -6,6 +6,6 @@ const {
 } = require("../controllers/weddingController");
 
 router.get("/retrieve", retrieveByParams);
-router.put("/requirements/:wedding_id", updateRequirements);
+router.put("/requirements/:id", updateRequirements);
 
 module.exports = router;

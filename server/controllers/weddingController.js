@@ -24,7 +24,7 @@ const retrieveByParams = (req, res) => {
   );
 };
 
-const updateRequirements = async (req, res) => {
+const updateRequirements = (req, res) => {
   const {id} = req.params;
   const {
     groom_baptismCert,
@@ -39,8 +39,22 @@ const updateRequirements = async (req, res) => {
     isMarriageLicense,
   } = req.body;
 
+  const isComplete =
+    groom_baptismCert === 1 &&
+    groom_confirmationCert === 1 &&
+    groom_birthCert === 1 &&
+    spouse_baptismCert === 1 &&
+    spouse_confirmationCert === 1 &&
+    spouse_birthCert === 1 &&
+    isParishPermit === 1 &&
+    isPrenuptial === 1 &&
+    isPreCana === 1 &&
+    isMarriageLicense === 1
+      ? 1
+      : 0;
+
   try {
-    const result = db.query(
+    const [result] = db.query(
       `UPDATE wedding SET 
         groom_baptismCert = ?, 
         groom_confirmationCert = ?, 
@@ -51,7 +65,8 @@ const updateRequirements = async (req, res) => {
         isParishPermit = ?, 
         isPrenuptial = ?, 
         isPreCana = ?, 
-        isMarriageLicense = ? 
+        isMarriageLicense = ?, 
+        isComplete = ?
       WHERE wedding_id = ?`,
       [
         groom_baptismCert,
@@ -64,20 +79,17 @@ const updateRequirements = async (req, res) => {
         isPrenuptial,
         isPreCana,
         isMarriageLicense,
+        isComplete,
         id,
       ]
     );
 
-    if (result.affectedRows > 0) {
-      return res
-        .status(200)
-        .json({message: "Wedding requirements updated successfully."});
-    } else {
-      return res.status(404).json({error: "Wedding request not found."});
-    }
+    return res
+      .status(200)
+      .json({message: "Wedding requirements updated successfully."});
   } catch (error) {
-    console.error("Error updating wedding requirements:", error);
-    return res.status(500).json({error: "Internal server error."});
+    // console.error("Error updating wedding requirements:", error);
+    // return res.status(500).json({error: "Internal server error."});
   }
 };
 

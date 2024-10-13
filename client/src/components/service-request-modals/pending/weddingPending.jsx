@@ -112,10 +112,9 @@ const fetchWeddingDetails = async (id) => {
   }
 };
 
-function RequirementsModal({id}) {
+function RequirementsModal({id, onClose}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const [tabValue, setTabValue] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
@@ -139,16 +138,16 @@ function RequirementsModal({id}) {
       const req = await fetchWeddingDetails(id);
       if (req) {
         setRequirements({
-          groom_baptismCert: req.groom_baptismCert || 0,
-          groom_confirmationCert: req.groom_confirmationCert || 0,
-          groom_birthCert: req.groom_birthCert || 0,
-          spouse_baptismCert: req.spouse_baptismCert || 0,
-          spouse_confirmationCert: req.spouse_confirmationCert || 0,
-          spouse_birthCert: req.spouse_birthCert || 0,
-          isParishPermit: req.isParishPermit || 0,
-          isPrenuptial: req.isPrenuptial || 0,
-          isPreCana: req.isPreCana || 0,
-          isMarriageLicense: req.isMarriageLicense || 0,
+          groom_baptismCert: req.groom_baptismCert ?? 0,
+          groom_confirmationCert: req.groom_confirmationCert ?? 0,
+          groom_birthCert: req.groom_birthCert ?? 0,
+          spouse_baptismCert: req.spouse_baptismCert ?? 0,
+          spouse_confirmationCert: req.spouse_confirmationCert ?? 0,
+          spouse_birthCert: req.spouse_birthCert ?? 0,
+          isParishPermit: req.isParishPermit ?? 0,
+          isPrenuptial: req.isPrenuptial ?? 0,
+          isPreCana: req.isPreCana ?? 0,
+          isMarriageLicense: req.isMarriageLicense ?? 0,
         });
         setSelectedWeddingId(req.wedding_id);
       }
@@ -158,31 +157,31 @@ function RequirementsModal({id}) {
     }
   }, [open, id]);
 
-  const handleOpenDialog = (action) => {
-    setCurrentAction(action);
-    setDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
-  const updateRequirements = async () => {
+  const updateRequirements = () => {
     try {
-      await axios.put(
+      axios.put(
         `${config.API}/wedding/requirements/${selectedWeddingId}`,
         requirements
       );
-      alert("Wedding requirements updated successfully!");
-      handleClose();
-    } catch (err) {
-      console.error("Error updating wedding requirements:", err);
-      alert("Failed to update wedding requirements. Please try again.");
+      alert("success update requirements");
+      fetchWeddingDetails(id);
+    } catch (error) {
+      // console.error(error);
+      alert("failed to update requirements");
+      fetchWeddingDetails(id);
     }
+    console.log(selectedWeddingId);
   };
 
   return (
@@ -199,7 +198,7 @@ function RequirementsModal({id}) {
         }}>
         Requirements
       </Button>
-      <Modal open={open}>
+      <Modal open={open} onClose={handleClose}>
         <Box sx={boxModal}>
           <Grid container justifyContent={"flex-end"}>
             <Grid item>
@@ -467,7 +466,7 @@ function RequirementsModal({id}) {
               </Grid>
             </Box>
 
-            <Grid item sm={12} sx={{marginTop: "10px"}}>
+            <Grid item sm={12} sx={{marginTop: "10px", textAlign: "center"}}>
               <Button
                 onClick={updateRequirements}
                 variant="contained"
@@ -735,26 +734,27 @@ const WeddingPending = ({open, data, handleClose}) => {
   });
 
   // START RETRIEVE WEDDING DETAILS
-  useEffect(() => {
-    const fetchWeddingData = async () => {
-      try {
-        const weddingDetails = await fetchWeddingDetails(data.requestID);
+  const fetchWeddingData = async () => {
+    try {
+      const weddingDetails = await fetchWeddingDetails(data.requestID);
 
-        if (weddingDetails) {
-          setFormData((prevData) => ({
-            ...prevData,
-            spouse_firstName: weddingDetails.spouse_firstName || "",
-            spouse_middleName: weddingDetails.spouse_middleName || "",
-            spouse_lastName: weddingDetails.spouse_lastName || "",
-          }));
-        }
-      } catch (err) {
-        console.error("Error fetching wedding details", err);
+      if (weddingDetails) {
+        setFormData((prevData) => ({
+          ...prevData,
+          spouse_firstName: weddingDetails.spouse_firstName || "",
+          spouse_middleName: weddingDetails.spouse_middleName || "",
+          spouse_lastName: weddingDetails.spouse_lastName || "",
+        }));
+
+        setCompleteRequirements(weddingDetails.isComplete || 0);
       }
-    };
+    } catch (err) {
+      console.error("Error fetching wedding details", err);
+    }
+  };
 
+  useEffect(() => {
     if (open && data) {
-      // Set groom details first
       setFormData({
         requestID: data.requestID,
         first_name: data.first_name,
@@ -768,12 +768,10 @@ const WeddingPending = ({open, data, handleClose}) => {
         transaction_no: data.transaction_no,
         payment_status: data.payment_status,
         service_id: data.service_id,
-        spouse_firstName: "", // Initialize spouse fields to empty
+        spouse_firstName: "",
         spouse_middleName: "",
         spouse_lastName: "",
       });
-
-      // Fetch and set spouse details after setting groom details
       fetchWeddingData();
     }
   }, [open, data]);
@@ -837,6 +835,10 @@ const WeddingPending = ({open, data, handleClose}) => {
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
+  };
+
+  const handleCloseRequirementsDialog = async () => {
+    await fetchWeddingData();
   };
   // END FORM HANDLERS AND CONTROLS
 
@@ -1088,11 +1090,14 @@ const WeddingPending = ({open, data, handleClose}) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
-                  color: completeRequirements === 1 ? "green" : "red",
+                  color: completeRequirements == 1 ? "green" : "red",
                 }}>
-                {completeRequirements === 1 ? "Complete" : "Incomplete"}
+                {completeRequirements == 1 ? "Complete" : "Incomplete"}
               </Typography>
-              <RequirementsModal id={data.requestID} />
+              <RequirementsModal
+                id={data.requestID}
+                onClose={handleCloseRequirementsDialog}
+              />
               <Typography
                 variant="subtitle1"
                 sx={{
