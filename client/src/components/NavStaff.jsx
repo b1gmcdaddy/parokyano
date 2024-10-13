@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 //all icons are temporary
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -44,6 +44,7 @@ const NavStaff = (props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+  const navigate = useNavigate();
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -58,6 +59,10 @@ const NavStaff = (props) => {
     if (!isClosing) {
       setMobileOpen(!mobileOpen);
     }
+  };
+
+  const navigateSettings = () =>{
+    navigate('/settings');
   };
 
   const drawer = (
@@ -129,7 +134,9 @@ const NavStaff = (props) => {
           <Typography variant="h6" noWrap component="div" sx={{letterSpacing: "3px", color: "#00000e", flexGrow: 1, mx: { md: '30px' }}}>
             Parokyano
           </Typography>
-          <SettingsRoundedIcon className='md:mr-8 text-neutral-950' sx={{mx: { md: '30px' }}} />
+          <IconButton onClick={navigateSettings}>
+           <SettingsRoundedIcon on className='md:mr-8 text-neutral-950' sx={{mx: { md: '30px' }}} />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Box
