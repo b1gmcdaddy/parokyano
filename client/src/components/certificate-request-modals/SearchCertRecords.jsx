@@ -31,14 +31,14 @@ const SearchCertRecords = ({open, data, close}) => {
       try {
         const res = await axios.get(`${config.API}/request/search-records`, {
           params: {
+            service_id:
+              data.service_id === 3 ? 5 : data.service_id === 4 ? 7 : null,
             first_name: data.first_name || "",
             last_name: data.last_name || "",
             contact_no: data.contact_no || "",
-            birth_date: data.birth_date || "",
-            preferred_date: data.preferred_date || "",
-            preferred_time: data.preferred_time || "",
-            service_id:
-              data.service_id === 3 ? 5 : data.service_id === 4 ? 7 : null,
+            mother_name: data.mother_name || "",
+            father_name: data.father_name || "",
+            birth_place: data.birth_place || "",
             status: "pending", //pending for testing purposes (change to 'finished' later)..
           },
         });
@@ -49,7 +49,7 @@ const SearchCertRecords = ({open, data, close}) => {
       }
     };
     searchRecords();
-    // console.log(data.service_id);
+    console.log(data);
   }, [open, data]);
 
   const handleOpenCompareModal = (rec) => {
@@ -68,24 +68,25 @@ const SearchCertRecords = ({open, data, close}) => {
 
   const cancelCertRequest = async () => {
     try {
-      const response = await axios.put(
-        `${config.API}/request/approve-cert`,
-        null,
-        {
-          params: {
-            col: "status",
-            val: "cancelled",
-            col3: "requestID",
-            val3: data.requestID,
-          },
-        }
-      );
-      alert("Certificate request cancelled successfully..");
+      axios.put(`${config.API}/request/update`, null, {
+        params: {
+          col: "status",
+          val: "cancelled",
+          id: data.requestID,
+        },
+      });
+
+      console.log("request cancelled!");
+      axios.post(`${config.API}/logs/create`, {
+        activity: `Cancelled Certificate Request - Transaction number: ${data.transaction_no}`,
+        user_id: 1,
+        request_id: data.requestID,
+      });
+      console.log("logs success!");
+      alert("certificate request successfulyl  cancelled!");
       window.location.reload();
-      close();
     } catch (err) {
-      console.error(err);
-      alert("error updating..");
+      console.error("error updating request", err);
     }
   };
 

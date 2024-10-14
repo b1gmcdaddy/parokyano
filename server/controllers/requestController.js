@@ -648,50 +648,93 @@ const approveDynamic = (req, res) => {
 //   });
 // };
 
+// dynamic version..
 const searchCertRecords = (req, res) => {
   const {
     first_name,
     last_name,
     contact_no,
-    birth_date,
-    preferred_date,
-    service_id,
+    mother_name,
+    father_name,
+    birth_place,
     status,
   } = req.query;
 
-  const query = `
-    SELECT r.*
-    FROM request r
-    WHERE r.service_id = ? AND r.status = ?
-      AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.birth_date LIKE ? OR r.preferred_date LIKE ?)`;
+  const serviceId = req.query.service_id;
 
-  const firstNameMatch = `%${first_name}%`;
-  const lastNameMatch = `%${last_name}%`;
-  const contactNoMatch = `%${contact_no}%`;
-  const birthDateMatch = `%${birth_date}%`;
-  const preferredDateMatch = `%${preferred_date}%`;
+  let query = `SELECT r.* FROM request r WHERE r.service_id = ? AND r.status = ?`;
+  const queryParams = [serviceId, status];
 
-  db.query(
-    query,
-    [
-      service_id,
-      status,
-      firstNameMatch,
-      lastNameMatch,
-      contactNoMatch,
-      birthDateMatch,
-      preferredDateMatch,
-    ],
-    (err, result) => {
-      if (err) {
-        console.error("error retrieving matching records", err);
-        return res
-          .status(500)
-          .json({error: "error retrieving matching records"});
+  switch (parseInt(serviceId)) {
+    case 5: // baptismal
+      if (
+        first_name ||
+        last_name ||
+        contact_no ||
+        mother_name ||
+        father_name ||
+        birth_place
+      ) {
+        query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
+        queryParams.push(
+          `%${first_name || ""}%`,
+          `%${last_name || ""}%`,
+          `%${contact_no || ""}%`,
+          `%${mother_name || ""}%`,
+          `%${father_name || ""}%`,
+          `%${birth_place || ""}%`
+        );
       }
-      res.status(200).json({result});
+      break;
+
+    case 7: // for wedding
+      if (first_name || last_name || contact_no) {
+        query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ?)`;
+        queryParams.push(
+          `%${first_name || ""}%`,
+          `%${last_name || ""}%`,
+          `%${contact_no || ""}%`
+        );
+      }
+      break;
+
+    //for confirmation
+    // case 3: // Service 3 requires birth_place
+    //   if (birth_place) {
+    //     query += ` AND r.birth_place LIKE ?`;
+    //     queryParams.push(`%${birth_place || ""}%`);
+    //   }
+    //   break;
+
+    default: // Default case to handle other service_ids
+      if (
+        first_name ||
+        last_name ||
+        contact_no ||
+        mother_name ||
+        father_name ||
+        birth_place
+      ) {
+        query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
+        queryParams.push(
+          `%${first_name || ""}%`,
+          `%${last_name || ""}%`,
+          `%${contact_no || ""}%`,
+          `%${mother_name || ""}%`,
+          `%${father_name || ""}%`,
+          `%${birth_place || ""}%`
+        );
+      }
+      break;
+  }
+
+  db.query(query, queryParams, (err, result) => {
+    if (err) {
+      console.error("error retrieving matching records", err);
+      return res.status(500).json({error: "error retrieving matching records"});
     }
-  );
+    res.status(200).json({result});
+  });
 };
 
 //single column update
