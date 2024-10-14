@@ -63,6 +63,7 @@ const NavStaff = (props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+  const navigate = useNavigate();
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -79,7 +80,25 @@ const NavStaff = (props) => {
     }
   };
 
-  const navigate = useNavigate();
+  const navigateSettings = () =>{
+    navigate('/settings');
+  };
+
+  const drawer = (
+    <div style={{backgroundColor: "#355173", height: "100vh"}}>
+      <Toolbar />
+      <Box justifyContent='center' alignItems='center' sx={{ display: 'flex', flexDirection: 'column', margin: 2 }}>
+                    <div>
+                        <Avatar sx={{width: 100, height: 100}}>
+                          <PersonIcon sx={{width: 70, height: 70}}/>
+                        </Avatar>
+                    </div>
+                    <div>
+                        <Typography variant='h6' sx={{marginTop: "14px", color:"whitesmoke"}}>
+                            Hello World!
+                        </Typography>
+                    </div>
+                </Box>
 
   const drawer = (
     <div style={{ backgroundColor: "#355173", height: "100vh" }}>
@@ -179,10 +198,9 @@ const NavStaff = (props) => {
           >
             Parokyano
           </Typography>
-          <SettingsRoundedIcon
-            className="md:mr-8 text-neutral-950"
-            sx={{ mx: { md: "30px" } }}
-          />
+          <IconButton onClick={navigateSettings}>
+           <SettingsRoundedIcon on className='md:mr-8 text-neutral-950' sx={{mx: { md: '30px' }}} />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Box
