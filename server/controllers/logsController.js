@@ -5,7 +5,7 @@ const db = require("./db");
 const dateToday = new Date().toJSON().slice(0, 10);
 
 const createLog = (req, res) => {
-  const {activity, user_id, request_id} = req.body;
+  const { activity, user_id, request_id } = req.body;
   db.query(
     `INSERT INTO logs (date, activity,user_id, request_id) VALUES (?, ?, ?,  ?)`,
     [dateToday, activity, user_id, request_id],
@@ -30,17 +30,17 @@ const retrieveAll = (req, res) => {
   db.query(`SELECT * from logs WHERE request_id = ?`, [id], (err, result) => {
     if (err) {
       console.error("error retrieving logs", err);
-      return res
-        .status(500)
-        .json({
-          error: "error retrieving logs",
-          message: "error retrieving logs",
-          details: err,
-        });
+      return res.status(500).json({
+        error: "error retrieving logs",
+        message: "error retrieving logs",
+        details: err,
+      });
     }
     res.status(200).json({ result });
+  });
+};
 const retrieveAllLogs = (req, res) => {
-  const {page, limit} = req.query;
+  const { page, limit } = req.query;
   const offset = Number(page - 1) * parseInt(limit);
 
   const query = `SELECT logs.log_id, logs.activity, logs.date, logs.request_id, 
@@ -54,7 +54,7 @@ const retrieveAllLogs = (req, res) => {
       return res.status(500);
     } else {
       console.log(result);
-      res.status(200).json({result});
+      res.status(200).json({ result });
     }
   });
 };
