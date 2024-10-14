@@ -297,7 +297,26 @@ const BaptismPending = ({ open, data, handleClose }) => {
         }
         break;
       case "update":
-        alert("Update action confirmed.");
+        const res = await axios.put(`${config.API}/request/update-bulk`, {
+          formData,
+          id: data.requestID,
+        });
+        if (res.status !== 200) {
+          console.log("error updating request");
+          setError({
+            message: res.data.message,
+            details: res.data?.details,
+          });
+        } else {
+          console.log("request updated!");
+          axios.post(`${config.API}/logs/create`, {
+            activity: `Updated Pending Baptism Request`,
+            user_id: 1,
+            request_id: data.requestID,
+          });
+          console.log("logs success!");
+          handleClose();
+        }
         break;
       case "cancel":
         try {
@@ -320,7 +339,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
             .then(() => {
               console.log("priest sched deleted!");
               axios.post(`${config.API}/logs/create`, {
-                activity: `Cancelled Baptism Request - Transaction number: ${data.transaction_no}`,
+                activity: `Cancelled Pending Request for Baptism`,
                 user_id: 1,
                 request_id: data.requestID,
               });

@@ -24,6 +24,25 @@ const createLog = (req, res) => {
   );
 };
 
+const retrieveAll = (req, res) => {
+  const id = req.query.id;
+
+  db.query(`SELECT * from logs WHERE request_id = ?`, [id], (err, result) => {
+    if (err) {
+      console.error("error retrieving logs", err);
+      return res
+        .status(500)
+        .json({
+          error: "error retrieving logs",
+          message: "error retrieving logs",
+          details: err,
+        });
+    }
+    res.status(200).json({ result });
+  });
+};
+
 module.exports = {
   createLog,
+  retrieveAll,
 };

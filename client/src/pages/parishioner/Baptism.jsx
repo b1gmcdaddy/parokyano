@@ -40,7 +40,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
-    height: "40px"
+    height: "40px",
   },
 };
 
@@ -530,7 +530,7 @@ const Baptism = () => {
               <label>Preferred Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  slotProps={{ textField: { fullWidth: true }}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   type="date"
                   variant="outlined"
                   sx={inputstlying}
@@ -547,7 +547,7 @@ const Baptism = () => {
               <label>Preferred Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
-                  slotProps={{ textField: { fullWidth: true }}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   sx={inputstlying}
                   size="small"
@@ -601,6 +601,7 @@ const Baptism = () => {
                   name="name"
                   value={godparent.name}
                   onChange={(e) => handleGodparentChange(index, e)}
+                  required
                 />
               </Grid>
               <Grid item xs={12} sm={3}>
@@ -614,6 +615,7 @@ const Baptism = () => {
                   name="isCatholic"
                   value={godparent.isCatholic}
                   onChange={(e) => handleGodparentChange(index, e)}
+                  required
                 >
                   <MenuItem value="1">Yes</MenuItem>
                   <MenuItem value="0">No</MenuItem>

@@ -1,43 +1,62 @@
-import * as React from 'react';
-import { Link } from 'react-router-dom';
+import * as React from "react";
+import { Link, useNavigate } from "react-router-dom";
 //all icons are temporary
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import CampaignIcon from '@mui/icons-material/Campaign';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import BadgeIcon from '@mui/icons-material/Badge';
-import PersonIcon from '@mui/icons-material/Person';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { Avatar }  from '@mui/material';
-import PropTypes from 'prop-types';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import MenuIcon from '@mui/icons-material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import BadgeIcon from "@mui/icons-material/Badge";
+import PersonIcon from "@mui/icons-material/Person";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Avatar } from "@mui/material";
+import PropTypes from "prop-types";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import MenuIcon from "@mui/icons-material/Menu";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 
 const sideBarWidth = 240;
 
 const sideBarItems = [
   { icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard" },
   { icon: <CampaignIcon />, label: "Announcements", path: "/staff-events" },
-  { icon: <AssignmentIcon />, label: "Service Requests", path: "/service-requests" },
-  { icon: <BadgeIcon />, label: "Certificate Requests", path: "/cert-requests" },
-  { icon: <FormatListBulletedIcon />, label: "Mass Intentions", path: "/manage-intentions" },
-  { icon: <ReceiptLongIcon />, label: "Transactions", path: "/manage-transactions" },
-  { icon: <CalendarMonthIcon />, label: "Schedules", path: "/manage-schedules" },
+  {
+    icon: <AssignmentIcon />,
+    label: "Service Requests",
+    path: "/service-requests",
+  },
+  {
+    icon: <BadgeIcon />,
+    label: "Certificate Requests",
+    path: "/cert-requests",
+  },
+  {
+    icon: <FormatListBulletedIcon />,
+    label: "Mass Intentions",
+    path: "/manage-intentions",
+  },
+  {
+    icon: <ReceiptLongIcon />,
+    label: "Transactions",
+    path: "/manage-transactions",
+  },
+  {
+    icon: <CalendarMonthIcon />,
+    label: "Schedules",
+    path: "/manage-schedules",
+  },
 ];
 
 const NavStaff = (props) => {
@@ -60,53 +79,74 @@ const NavStaff = (props) => {
     }
   };
 
-  const drawer = (
-    <div style={{backgroundColor: "#355173", height: "100vh"}}>
-      <Toolbar />
-      <Box justifyContent='center' alignItems='center' sx={{ display: 'flex', flexDirection: 'column', margin: 2 }}>
-                    <div>
-                        <Avatar sx={{width: 100, height: 100}}>
-                          <PersonIcon sx={{width: 70, height: 70}}/>
-                        </Avatar>
-                    </div>
-                    <div>
-                        <Typography variant='h6' sx={{marginTop: "14px", color:"whitesmoke"}}>
-                            Hello World!
-                        </Typography>
-                    </div>
-                </Box>
+  const navigate = useNavigate();
 
-      <List sx={{color: 'whitesmoke'}}>
+  const drawer = (
+    <div style={{ backgroundColor: "#355173", height: "100vh" }}>
+      <Toolbar />
+      <Box
+        justifyContent="center"
+        alignItems="center"
+        sx={{ display: "flex", flexDirection: "column", margin: 2 }}
+      >
+        <div>
+          <Avatar sx={{ width: 100, height: 100 }}>
+            <PersonIcon sx={{ width: 70, height: 70 }} />
+          </Avatar>
+        </div>
+        <div>
+          <Typography
+            variant="h6"
+            sx={{ marginTop: "14px", color: "whitesmoke" }}
+          >
+            Hello World!
+          </Typography>
+        </div>
+      </Box>
+
+      <List sx={{ color: "whitesmoke" }}>
         {sideBarItems.map((items, index) => (
           <ListItem key={index} disablePadding>
             <ListItemButton component={Link} to={items.path}>
-              <ListItemIcon sx={{color: 'white'}}>
-                {items.icon}
-              </ListItemIcon>
+              <ListItemIcon sx={{ color: "white" }}>{items.icon}</ListItemIcon>
               <ListItemText primary={items.label} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
 
-      <Box justifyContent='center' sx={{position: 'fixed', bottom: '1em', left: '1.5em'}}>
-                    <List>
-                        <ListItemButton>
-                            <ListItemIcon sx={{color: 'white'}}>
-                                <LogoutIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Logout" sx={{color: 'white'}} />
-                        </ListItemButton>
-                    </List>
-                </Box>
+      <Box
+        justifyContent="center"
+        sx={{ position: "fixed", bottom: "1em", left: "1.5em" }}
+      >
+        <List>
+          <ListItemButton>
+            <ListItemIcon sx={{ color: "white" }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              sx={{ color: "white" }}
+              onClick={() => {
+                const refreshToken = localStorage.getItem("refreshToken");
+
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                navigate("/login");
+              }}
+            />
+          </ListItemButton>
+        </List>
+      </Box>
     </div>
   );
 
   // Remove this const when copying and pasting into your project.
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -122,14 +162,27 @@ const NavStaff = (props) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{letterSpacing: "3px", color: "#00000e", flexGrow: 1, mx: { md: '30px' }}}>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{
+              letterSpacing: "3px",
+              color: "#00000e",
+              flexGrow: 1,
+              mx: { md: "30px" },
+            }}
+          >
             Parokyano
           </Typography>
-          <SettingsRoundedIcon className='md:mr-8 text-neutral-950' sx={{mx: { md: '30px' }}} />
+          <SettingsRoundedIcon
+            className="md:mr-8 text-neutral-950"
+            sx={{ mx: { md: "30px" } }}
+          />
         </Toolbar>
       </AppBar>
       <Box
@@ -144,11 +197,14 @@ const NavStaff = (props) => {
           onTransitionEnd={handleDrawerTransitionEnd}
           onClose={handleDrawerClose}
           ModalProps={{
-            keepMounted: true, 
+            keepMounted: true,
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: sideBarWidth },
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: sideBarWidth,
+            },
           }}
         >
           {drawer}
@@ -156,19 +212,19 @@ const NavStaff = (props) => {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: sideBarWidth },
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: sideBarWidth,
+            },
           }}
           open
         >
           {drawer}
         </Drawer>
       </Box>
-     
     </Box>
   );
-}
-
-
+};
 
 export default NavStaff;

@@ -27,29 +27,29 @@ import dayjs from "dayjs";
 import Snackbar from "@mui/material/Snackbar";
 
 const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  maxWidth: 'md',  
-  bgcolor: 'white',
-  borderRadius: '10px',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  maxWidth: "md",
+  bgcolor: "white",
+  borderRadius: "10px",
   boxShadow: 3,
   px: 4,
   py: 2,
-  maxHeight: '97vh',
-  overflow: 'hidden',
-  display: 'flex',
-  flexDirection: 'column',
+  maxHeight: "97vh",
+  overflow: "hidden",
+  display: "flex",
+  flexDirection: "column",
 };
 
 const modalContentStyle = {
-overflowY: 'auto',
-flexGrow: 1,
-scrollbarWidth: 'none',   
-  "&::-webkit-scrollbar": {  
-      display: "none"
-}
+  overflowY: "auto",
+  flexGrow: 1,
+  scrollbarWidth: "none",
+  "&::-webkit-scrollbar": {
+    display: "none",
+  },
 };
 
 const TextFieldStyle = {
@@ -253,7 +253,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
       <Modal open={open} onClose={handleClose}>
         {formData && priests && formData ? (
           <Box sx={modalStyle}>
-            <Box sx={{position: 'sticky', paddingBottom: '10px'}}>
+            <Box sx={{ position: "sticky", paddingBottom: "10px" }}>
               <Grid container justifyContent={"flex-end"}>
                 <Grid item>
                   <IconButton onClick={handleClose} size="small">
@@ -389,7 +389,11 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       </p>
                     </div>
                     <div
-                      style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                      style={{
+                        flex: 1,
+                        height: "1px",
+                        backgroundColor: "black",
+                      }}
                     />
                   </div>
                 </Grid>
@@ -457,7 +461,11 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       </p>
                     </div>
                     <div
-                      style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                      style={{
+                        flex: 1,
+                        height: "1px",
+                        backgroundColor: "black",
+                      }}
                     />
                   </div>
                 </Grid>

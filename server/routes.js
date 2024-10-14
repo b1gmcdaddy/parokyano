@@ -25,7 +25,9 @@ const sponsorRoute = require("./routes/sponsorRoute");
 const weddingRoute = require("./routes/weddingRoute");
 const baptismRoute = require("./routes/baptismRoute");
 const logsRoute = require("./routes/logsRoutes");
+const authRoute = require("./routes/authRoute");
 
+app.use("/auth", authRoute);
 app.use("/request", requestRoute);
 app.use("/service", serviceRoute);
 app.use("/announcement", announcementRoute);

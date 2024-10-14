@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import React from "react";
 import NavStaff from "../../components/NavStaff";
 import SearchIcon from "@mui/icons-material/Search";
@@ -18,6 +19,7 @@ import IntentionsPending from "./intentions-list/IntentionsPending";
 import PrintIntentions from "./intentions-list/PrintIntentions";
 
 const ManageIntentions = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
   const [inputValue, setValue] = useState("");
   const [filter, setFilter] = useState([]);
@@ -54,6 +56,10 @@ const ManageIntentions = () => {
         limit: rowsPerPage, // Rows per page
       },
     });
+    if (response.status === 401) {
+      navigate("/login");
+      return;
+    }
     setFilter(response.data.result);
     setTotalItems(response.data.count[0].count);
   };

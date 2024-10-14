@@ -1,5 +1,7 @@
 import "./App.css";
-import {Routes, Route} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+
 import Home from "./pages/parishioner/Home";
 import Certificates from "./pages/parishioner/Certificate";
 import About from "./pages/parishioner/About";
@@ -55,7 +57,8 @@ import OutsideApproved from "./components/service-request-modals/pending/approve
 import OutsideCancelled from "./components/service-request-modals/pending/cancelled/outsideMassCancelled";
 import ConfirmationDialog from "./components/ConfirmationModal";
 import Settings from "./pages/staff/Settings";
-  
+import LoginRedirect from "./utils/LoginRedirect";
+
 function App() {
   return (
     <main>
@@ -64,7 +67,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/certificates" element={<Certificates />} />
         <Route path="/certificate-baptism" element={<CertificateBaptism />} />
-        <Route path="/certificate-confirmation" element={<CertificateConfirmation />}/>
+        <Route
+          path="/certificate-confirmation"
+          element={<CertificateConfirmation />}
+        />
         <Route path="/certificate-wedding" element={<CertificateWedding />} />
         <Route path="/about" element={<About />} />
         <Route path="/events" element={<Events />} />
@@ -87,41 +93,102 @@ function App() {
         {/*  unya na nani e lahi2 og routes ang parishioner & staff... diri lang sa tanan  */}
         {/*  -----------STAFF-----------  */}
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<StaffDashboard />} />
-        <Route path="/staff-events" element={<ManageEvents />}/>
-        <Route path="/service-requests" element={<ServiceRequests />} />
-        <Route path="/manage-intentions" element={<ManageIntentions />} />
-        <Route path="/generate-reports" element={<GenerateReports />} />
-        <Route path="/manage-schedules" element={<ManageSchedules />} />
-        <Route path="/manage-transactions" element={<ManageTransactions />} />
-        <Route path="/settings" element={<Settings/>}/>
+        <Route
+          path="/dashboard"
+          element={
+            <LoginRedirect>
+              <StaffDashboard />
+            </LoginRedirect>
+          }
+        />
+        <Route
+          path="/staff-events"
+          element={
+            <LoginRedirect>
+              <ManageEvents />
+            </LoginRedirect>
+          }
+        />
+        <Route
+          path="/service-requests"
+          element={
+            <LoginRedirect>
+              <ServiceRequests />
+            </LoginRedirect>
+          }
+        />
+        <Route
+          path="/manage-intentions"
+          element={
+            <LoginRedirect>
+              <ManageIntentions />
+            </LoginRedirect>
+          }
+        />
+        <Route
+          path="/generate-reports"
+          element={
+            <LoginRedirect>
+              <GenerateReports />
+            </LoginRedirect>
+          }
+        />
+        <Route
+          path="/manage-schedules"
+          element={
+            <LoginRedirect>
+              <ManageSchedules />
+            </LoginRedirect>
+          }
+        />
+        <Route
+          path="/manage-transactions"
+          element={
+            <LoginRedirect>
+              <ManageTransactions />
+            </LoginRedirect>
+          }
+        />
+        <Route
+          path="/cert-requests"
+          element={
+            <LoginRedirect>
+              <CertificateRequests />
+            </LoginRedirect>
+          }
+        />
+        <Route path="/settings" element={<Settings />} />
 
-         {/* Temporary modals wala pa na integrate */}
-        <Route path="/funeralpending" element={<FuneralMassModalPending/>}/>
-        <Route path="/funeralapproved" element={<FuneralMassModalApproved/>}/>
-        <Route path="/funeralcancelled" element={<FuneralMassModalCancelled/>}/>
-        <Route path="/anointingpending" element={<AnointingPending/>}/>
-        <Route path="/anointingapproved" element={<AnointingApproved/>}/>
-        <Route path="/anointingcancelled" element={<AnointingCancelled/>}/>
-        <Route path="/blessingpending" element={<BlessingPending/>}/>
-        <Route path="/blessingapproved" element={<BlessingApproved/>}/>
-        <Route path="/blessingcancelled" element={<BlessingCancelled/>}/>
-        <Route path="/baptismpending" element={<BaptismPending/>}/>
-        <Route path="/baptismapproved" element={<BaptismApproved/>}/>
-        <Route path="/baptismcancelled" element={<BaptismCancelled/>}/>
-        <Route path="/weddingpending" element={<WeddingPending/>}/>
-        <Route path="/weddingapproved" element={<WeddingApproved/>}/>
-        <Route path="/weddingcancelled" element={<WeddingCancelled/>}/>
-        <Route path="/wakemasspending" element={<WakePending/>}/>
-        <Route path="/wakemassapproved" element ={<WakeApproved/>}/>
-        <Route path="/wakemasscancelled" element={<WakeCancelled/>}/>
-        <Route path="/outsidemasspending" element={<OutsidePending/>}/>
-        <Route path="/outsidemassapproved" element={<OutsideApproved/>}/>
-        <Route path="/outsidemasscancelled" element={<OutsideCancelled/>}/>
-        <Route path="/cert-requests" element={<CertificateRequests />} />
+        {/* Temporary modals wala pa na integrate */}
+        <Route path="/funeralpending" element={<FuneralMassModalPending />} />
+        <Route path="/funeralapproved" element={<FuneralMassModalApproved />} />
+        <Route
+          path="/funeralcancelled"
+          element={<FuneralMassModalCancelled />}
+        />
+        <Route path="/anointingpending" element={<AnointingPending />} />
+        <Route path="/anointingapproved" element={<AnointingApproved />} />
+        <Route path="/anointingcancelled" element={<AnointingCancelled />} />
+        <Route path="/blessingpending" element={<BlessingPending />} />
+        <Route path="/blessingapproved" element={<BlessingApproved />} />
+        <Route path="/blessingcancelled" element={<BlessingCancelled />} />
+        <Route path="/baptismpending" element={<BaptismPending />} />
+        <Route path="/baptismapproved" element={<BaptismApproved />} />
+        <Route path="/baptismcancelled" element={<BaptismCancelled />} />
+        <Route path="/weddingpending" element={<WeddingPending />} />
+        <Route path="/weddingapproved" element={<WeddingApproved />} />
+        <Route path="/weddingcancelled" element={<WeddingCancelled />} />
+        <Route path="/wakemasspending" element={<WakePending />} />
+        <Route path="/wakemassapproved" element={<WakeApproved />} />
+        <Route path="/wakemasscancelled" element={<WakeCancelled />} />
+        <Route path="/outsidemasspending" element={<OutsidePending />} />
+        <Route path="/outsidemassapproved" element={<OutsideApproved />} />
+        <Route path="/outsidemasscancelled" element={<OutsideCancelled />} />
 
         {/*  -----------ADMIN-----------  */}
-        {<Route path="/manage-accounts" element={<ManageAccounts />} /> }
+        {<Route path="/manage-accounts" element={<ManageAccounts />} />}
+
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </main>
   );
