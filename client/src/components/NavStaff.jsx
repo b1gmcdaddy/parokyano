@@ -1,7 +1,5 @@
 import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import * as React from "react";
-import { Link, useNavigate } from "react-router-dom";
 //all icons are temporary
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import DashboardIcon from "@mui/icons-material/Dashboard";
