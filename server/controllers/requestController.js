@@ -572,8 +572,8 @@ const approveIntention = (req, res) => {
 };
 
 // may be used for approval/cancellation/printing??
-const approveCertificate = (req, res) => {
-  const {col, val, col2, val2, col3, val3} = req.query;
+const approveDynamic = (req, res) => {
+  const {col, val, col2, val2, col3, val3, col4, val4} = req.query;
   const setClause = [];
   const values = [];
 
@@ -587,13 +587,18 @@ const approveCertificate = (req, res) => {
     values.push(val2);
   }
 
+  if (col3 && val3) {
+    setClause.push(`${col3} = ?`);
+    values.push(val3);
+  }
+
   if (setClause.length == 0 || setClause == null) {
     return res.status(400).json({message: "no data to update"});
   }
 
-  if (col3 && val3) {
-    values.push(val3);
-    const query = `UPDATE request SET ${setClause.join(", ")} WHERE ${col3}=?`;
+  if (col4 && val4) {
+    values.push(val4);
+    const query = `UPDATE request SET ${setClause.join(", ")} WHERE ${col4}=?`;
     db.query(query, values, (err, results) => {
       if (err) {
         console.error(err);
@@ -739,7 +744,7 @@ module.exports = {
   retrieveMultipleParams,
   approveService,
   approveIntention,
-  approveCertificate,
+  approveDynamic,
   retrieveMultipleDateFiltered,
   getCount,
   retrieveRequests,

@@ -725,9 +725,11 @@ const WeddingPending = ({open, data, handleClose}) => {
     spouse_middleName: "",
     spouse_lastName: "",
     contact_no: "",
-    preferred_date: "",
-    preferred_time: "",
+    interview_date: "",
+    interview_time: "",
     preferred_priest: "",
+    wedding_date: "",
+    wedding_time: "",
     transaction_no: "",
     payment_status: "",
     service_id: "",
@@ -762,9 +764,11 @@ const WeddingPending = ({open, data, handleClose}) => {
         last_name: data.last_name,
         contact_no: data.contact_no,
         relationship: data.relationship,
-        preferred_date: data.preferred_date,
-        preferred_time: data.preferred_time,
+        interview_date: data.interview_date,
+        interview_time: data.interview_time,
         preferred_priest: data.priest_id,
+        wedding_date: data.preferred_date,
+        wedding_time: data.preferred_time,
         transaction_no: data.transaction_no,
         payment_status: data.payment_status,
         service_id: data.service_id,
@@ -821,11 +825,10 @@ const WeddingPending = ({open, data, handleClose}) => {
 
   const handleDateChange = (name, date) => {
     setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
-    console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleOpenDialog = (action) => {
@@ -842,68 +845,129 @@ const WeddingPending = ({open, data, handleClose}) => {
   };
   // END FORM HANDLERS AND CONTROLS
 
-  const handleConfirm = async (action) => {
-    switch (action) {
-      case "approve":
-        console.log(formData);
-        try {
-          const response = await axios.get(
-            `${config.API}/priest/retrieve-schedule-by-params`,
-            {
-              params: {
-                priest: formData.preferred_priest,
-                date: formData.preferred_date,
-                start: formData.preferred_time,
-                end: endTime(formData.preferred_time, service.duration),
-              },
-            }
-          );
-          console.log(response);
-          if (Object.keys(response.data).length > 0 || response.data != "") {
-            setError({
-              message: response.data.message,
-              details: response.data?.details,
-            });
-          } else {
-            axios.put(`${config.API}/request/approve-service`, null, {
-              params: {
-                col: "status",
-                val: "approved",
-                col2: "payment_status",
-                val2: "paid",
-                col3: "preferred_date",
-                val3: formData.preferred_date,
-                col4: "priest_id",
-                val4: formData.preferred_priest,
-                col5: "requestID",
-                val5: formData.requestID,
-              },
-            });
-            console.log("request success!");
-            axios.post(`${config.API}/priest/createPriestSched`, {
-              date: formData.preferred_date,
-              activity: `${formData.type} at ${formData.address}`,
-              start_time: formData.preferred_time,
-              end_time: endTime(formData.preferred_time, service.duration),
-              priest_id: formData.preferred_priest,
-            });
-            console.log("priest sched success!");
-            handleClose();
-          }
-        } catch (err) {
-          console.log("error submitting to server", err);
+  // START SET INTERVIEW METHOD
+  const handleSetInterview = async () => {
+    try {
+      const res = await axios.get(`${config.API}/priest/retrieve-schedule`);
+      const schedules = res.data;
+
+      let hasConflict = false;
+
+      for (var i = 0; i < schedules.length; i++) {
+        if (
+          dayjs(schedules[i].date).format("YYYY-MM-DD") ===
+            formData.interview_date &&
+          schedules[i].start_time === formData.interview_time &&
+          schedules[i].priest_id === formData.preferred_priest
+        ) {
+          hasConflict = true;
+          break;
         }
-        break;
-      case "update":
-        alert("Update action confirmed.");
-        break;
-      case "cancel":
-        alert("Cancel action confirmed.");
-        break;
-      default:
-        break;
+      }
+
+      if (hasConflict) {
+        alert("Conflict found: The priest is already scheduled at this time.");
+        return;
+      } else {
+        axios.put(`${config.API}/request/approve-dynamic`, null, {
+          params: {
+            col: "interview_date",
+            val: dayjs(formData.interview_date).format("YYYY-MM-DD"),
+            col2: "interview_time",
+            val2: formData.interview_time,
+            col3: "priest_id",
+            val3: formData.preferred_priest,
+            col4: "requestID",
+            val4: formData.requestID,
+          },
+        });
+
+        axios.post(`${config.API}/priest/createPriestSched`, {
+          date: dayjs(formData.interview_date).format("YYYY-MM-DD"),
+          activity: `Marriage Interview for ${formData.first_name}`,
+          start_time: formData.interview_time,
+          end_time: endTime(formData.interview_time, service.duration),
+          priest_id: formData.preferred_priest,
+          request_id: formData.requestID,
+        });
+
+        axios.post(`${config.API}/logs/create`, {
+          activity: `Set Marriage Interview Schedule for ${formData.first_name}`,
+          user_id: 1,
+          request_id: formData.requestID,
+        });
+
+        alert("Marriage Interview Set!");
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error(err);
+      alert("ERROR Setting Interview");
     }
   };
+  // END SET INTERVIEW METHOD
+
+  // START APPROVE WEDDING METHOD
+  const handleApproveWedding = async () => {
+    try {
+      const res = await axios.get(`${config.API}/priest/retrieve-schedule`);
+      const schedules = res.data;
+
+      let hasConflict = false;
+
+      for (var i = 0; i < schedules.length; i++) {
+        if (
+          dayjs(schedules[i].date).format("YYYY-MM-DD") ===
+            formData.wedding_date &&
+          schedules[i].start_time === formData.wedding_time &&
+          schedules[i].priest_id === formData.preferred_priest
+        ) {
+          hasConflict = true;
+          break;
+        }
+      }
+
+      if (hasConflict) {
+        alert("Conflict found: The priest is already scheduled at this time.");
+        return;
+      } else {
+        axios.put(`${config.API}/request/approve-service`, null, {
+          params: {
+            col: "status",
+            val: "approved",
+            col2: "payment_status",
+            val2: "paid",
+            col3: "preferred_date",
+            val3: dayjs(formData.wedding_date).format("YYYY-MM-DD"),
+            col4: "preferred_time",
+            val4: formData.wedding_time,
+            col5: "requestID",
+            val5: formData.requestID,
+          },
+        });
+
+        axios.post(`${config.API}/priest/createPriestSched`, {
+          date: dayjs(formData.wedding_date).format("YYYY-MM-DD"),
+          activity: `Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
+          start_time: formData.wedding_time,
+          end_time: endTime(formData.wedding_time, service.duration),
+          priest_id: formData.preferred_priest,
+          request_id: formData.requestID,
+        });
+
+        axios.post(`${config.API}/logs/create`, {
+          activity: `Approved Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
+          user_id: 1,
+          request_id: formData.requestID,
+        });
+        alert("Wedding Approved!");
+        window.location.reload();
+      }
+    } catch (err) {
+      console.log("error submitting to server", err);
+    }
+  };
+  // END APPROVE WEDDING METHOD
 
   return (
     <>
@@ -1107,16 +1171,7 @@ const WeddingPending = ({open, data, handleClose}) => {
                 }}>
                 Sponsors:
               </Typography>
-              {/* <Typography
-                variant="subtitle1"
-                sx={{
-                  display: "inline-block",
-                  marginLeft: "5px",
-                  fontSize: "14px",
-                }}
-              >
-                Incomplete
-              </Typography> */}
+
               <SponsorsModal id={data.requestID} />
             </Grid>
 
@@ -1129,7 +1184,7 @@ const WeddingPending = ({open, data, handleClose}) => {
                   borderRadius: "5px",
                 }}>
                 <Grid container spacing={1}>
-                  <Grid item sm={12}>
+                  <Grid item sm={6}>
                     <Typography
                       variant="subtitle1"
                       sx={{fontWeight: "bold", fontSize: "14px"}}>
@@ -1137,20 +1192,22 @@ const WeddingPending = ({open, data, handleClose}) => {
                     </Typography>
                   </Grid>
                   <Grid item sm={6}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
+                      WEDDING
+                    </Typography>
+                  </Grid>
+                  <Grid item sm={6}>
                     <Box fullWidth>
                       <Grid container>
-                        <Grid item sm={12}>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{fontWeight: "bold", fontSize: "13px"}}>
-                            Preferred
-                          </Typography>
-                        </Grid>
                         <Grid item sm={12}>
                           <label>Priest:</label>
                           <TextField
                             select
                             fullWidth
+                            disabled={completeRequirements !== 1}
+                            name="preferred_priest"
                             sx={TextFieldStyle}
                             value={formData.preferred_priest}
                             onChange={handleChange}>
@@ -1166,14 +1223,16 @@ const WeddingPending = ({open, data, handleClose}) => {
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                               fullWidth
+                              disabled={completeRequirements !== 1}
+                              name="interview_date"
                               sx={TextFieldStyle}
                               value={
-                                formData.preferred_date
-                                  ? dayjs(formData.preferred_date)
+                                formData.interview_date
+                                  ? dayjs(formData.interview_date)
                                   : null
                               }
                               onChange={(date) =>
-                                handleTimeChange("preferred_date", date)
+                                handleDateChange("interview_date", date)
                               }
                               renderInput={(params) => (
                                 <TextField {...params} required />
@@ -1186,14 +1245,16 @@ const WeddingPending = ({open, data, handleClose}) => {
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <TimePicker
                               fullWidth
+                              name="interview_time"
+                              disabled={completeRequirements !== 1}
                               sx={TextFieldStyle}
                               value={
-                                formData.preferred_time
-                                  ? dayjs(formData.preferred_time, "HH:mm:ss")
+                                formData.interview_time
+                                  ? dayjs(formData.interview_time, "HH:mm:ss")
                                   : null
                               }
                               onChange={(time) =>
-                                handleTimeChange("preferred_time", time)
+                                handleTimeChange("interview_time", time)
                               }
                               renderInput={(params) => (
                                 <TextField {...params} required />
@@ -1204,6 +1265,7 @@ const WeddingPending = ({open, data, handleClose}) => {
                         <Grid item sm={12}>
                           <Button
                             fullWidth
+                            onClick={handleSetInterview}
                             sx={{
                               backgroundColor: "#355173",
                               marginTop: "5px",
@@ -1212,7 +1274,7 @@ const WeddingPending = ({open, data, handleClose}) => {
                               color: "white",
                               "&:hover": {bgcolor: "#4C74A5"},
                             }}>
-                            Assign
+                            Assign INTERVIEW
                           </Button>
                         </Grid>
                       </Grid>
@@ -1222,17 +1284,11 @@ const WeddingPending = ({open, data, handleClose}) => {
                     <Box fullWidth>
                       <Grid container>
                         <Grid item sm={12}>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{fontWeight: "bold", fontSize: "13px"}}>
-                            Assigned
-                          </Typography>
-                        </Grid>
-                        <Grid item sm={12}>
                           <label>Priest:</label>
                           <TextField
                             select
                             fullWidth
+                            disabled={completeRequirements !== 1}
                             sx={TextFieldStyle}
                             value={formData.preferred_priest}
                             onChange={handleChange}>
@@ -1246,18 +1302,51 @@ const WeddingPending = ({open, data, handleClose}) => {
                         <Grid item sm={6}>
                           <label>Date:</label>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker fullWidth sx={TextFieldStyle} />
+                            <DatePicker
+                              fullWidth
+                              disabled={completeRequirements !== 1}
+                              name="wedding_date"
+                              sx={TextFieldStyle}
+                              value={
+                                formData.wedding_date
+                                  ? dayjs(formData.wedding_date)
+                                  : null
+                              }
+                              onChange={(date) =>
+                                handleDateChange("wedding_date", date)
+                              }
+                              renderInput={(params) => (
+                                <TextField {...params} required />
+                              )}
+                            />
                           </LocalizationProvider>
                         </Grid>
                         <Grid item sm={6}>
                           <label>Time:</label>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <TimePicker fullWidth sx={TextFieldStyle} />
+                            <TimePicker
+                              fullWidth
+                              name="wedding_time"
+                              disabled={completeRequirements !== 1}
+                              sx={TextFieldStyle}
+                              value={
+                                formData.wedding_time
+                                  ? dayjs(formData.wedding_time, "HH:mm:ss")
+                                  : null
+                              }
+                              onChange={(time) =>
+                                handleTimeChange("wedding_time", time)
+                              }
+                              renderInput={(params) => (
+                                <TextField {...params} required />
+                              )}
+                            />
                           </LocalizationProvider>
                         </Grid>
                         <Grid item sm={12}>
                           <Button
                             fullWidth
+                            onClick={handleApproveWedding}
                             sx={{
                               bgcolor: "#BBB6B6",
                               marginTop: "5px",
@@ -1266,139 +1355,7 @@ const WeddingPending = ({open, data, handleClose}) => {
                               color: "#355173",
                               "&:hover": {bgcolor: "#D3CECE"},
                             }}>
-                            CLEAR
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Grid>
-
-            <Grid item sm={12}>
-              <Box
-                fullWidth
-                sx={{
-                  bgcolor: "#D9D9D9",
-                  padding: "10px",
-                  borderRadius: "5px",
-                }}>
-                <Grid container spacing={1}>
-                  <Grid item sm={12}>
-                    <Typography
-                      variant="subtitle1"
-                      sx={{fontWeight: "bold", fontSize: "14px"}}>
-                      WEDDING
-                    </Typography>
-                  </Grid>
-                  <Grid item sm={6}>
-                    <Box fullWidth>
-                      <Grid container>
-                        <Grid item sm={12}>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{fontWeight: "bold", fontSize: "13px"}}>
-                            Preferred
-                          </Typography>
-                        </Grid>
-                        <Grid item sm={7}>
-                          <label>Priest:</label>
-                          <TextField
-                            select
-                            fullWidth
-                            sx={TextFieldStyle}
-                            value={formData.preferred_priest}
-                            onChange={handleChange}>
-                            {priests.map((priest) => (
-                              <MenuItem key={priest.id} value={priest.priestID}>
-                                {`${priest.first_name} ${priest.last_name}`}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        </Grid>
-                        {/* <Grid item sm={5}>
-                          <label>Venue:</label>
-                          <TextField disabled fullWidth sx={TextFieldStyle} />
-                        </Grid> */}
-                        <Grid item sm={6}>
-                          <label>Date:</label>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker fullWidth sx={TextFieldStyle} />
-                          </LocalizationProvider>
-                        </Grid>
-                        <Grid item sm={6}>
-                          <label>Time:</label>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <TimePicker fullWidth sx={TextFieldStyle} />
-                          </LocalizationProvider>
-                        </Grid>
-                        <Grid item sm={12}>
-                          <Button
-                            fullWidth
-                            sx={{
-                              backgroundColor: "#355173",
-                              marginTop: "5px",
-                              height: "30px",
-                              fontWeight: "bold",
-                              color: "white",
-                              "&:hover": {bgcolor: "#4C74A5"},
-                            }}>
-                            Assign
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </Grid>
-                  <Grid item sm={6}>
-                    <Box fullWidth>
-                      <Grid container>
-                        <Grid item sm={12}>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{fontWeight: "bold", fontSize: "13px"}}>
-                            Assigned
-                          </Typography>
-                        </Grid>
-                        <Grid item sm={12}>
-                          <label>Priest:</label>
-                          <TextField
-                            select
-                            fullWidth
-                            sx={TextFieldStyle}
-                            value={formData.preferred_priest}
-                            onChange={handleChange}>
-                            {priests.map((priest) => (
-                              <MenuItem key={priest.id} value={priest.priestID}>
-                                {`${priest.first_name} ${priest.last_name}`}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        </Grid>
-                        <Grid item sm={6}>
-                          <label>Date:</label>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker fullWidth sx={TextFieldStyle} />
-                          </LocalizationProvider>
-                        </Grid>
-                        <Grid item sm={6}>
-                          <label>Time:</label>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <TimePicker fullWidth sx={TextFieldStyle} />
-                          </LocalizationProvider>
-                        </Grid>
-                        <Grid item sm={12}>
-                          <Button
-                            fullWidth
-                            sx={{
-                              bgcolor: "#BBB6B6",
-                              marginTop: "5px",
-                              height: "30px",
-                              fontWeight: "bold",
-                              color: "#355173",
-                              "&:hover": {bgcolor: "#D3CECE"},
-                            }}>
-                            CLEAR
+                            CONFIRM WEDDING
                           </Button>
                         </Grid>
                       </Grid>
@@ -1465,7 +1422,6 @@ const WeddingPending = ({open, data, handleClose}) => {
             open={dialogOpen}
             onClose={handleCloseDialog}
             action={currentAction}
-            onConfirm={handleConfirm}
             service={"service"}
           />
         </Box>

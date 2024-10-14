@@ -33,14 +33,14 @@ const CompareRecords = ({open, close, certData, recordData}) => {
   const handleConfirm = async () => {
     try {
       const response = await axios.put(
-        `${config.API}/request/approve-cert`,
+        `${config.API}/request/approve-dynamic`,
         null,
         {
           params: {
             col: "status",
             val: "approved",
-            col3: "requestID",
-            val3: certData.requestID,
+            col4: "requestID",
+            val4: certData.requestID,
           },
         }
       );

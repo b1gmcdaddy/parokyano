@@ -151,10 +151,14 @@ const Settings = () => {
               </Box>
 
               <Box sx={{width: "100%", marginTop: "20px"}}>
-                <Typography variant="h6" sx={{marginBottom: "10px"}}>
+                <Typography
+                  sx={{
+                    fontSize: "1rem",
+                    lineHeight: "1.75rem",
+                  }}>
                   Activity Logs
-                </Typography>
-
+                </Typography>{" "}
+                <Divider sx={{marginTop: "12px"}} />
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <TableContainer
