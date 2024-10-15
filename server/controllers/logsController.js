@@ -43,7 +43,7 @@ const retrieveAllLogs = (req, res) => {
   const { page, limit } = req.query;
   const offset = Number(page - 1) * parseInt(limit);
 
-  const query = `SELECT logs.log_id, logs.activity, logs.date, logs.request_id, 
+  const query = `SELECT logs.logID, logs.activity, logs.date, logs.request_id, 
         user.first_name, user.last_name, user.user_type 
         FROM logs 
         JOIN user ON logs.user_id = user.userID ORDER BY logs.date DESC LIMIT ? OFFSET ?`;
