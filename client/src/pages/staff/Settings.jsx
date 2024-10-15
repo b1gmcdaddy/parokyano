@@ -15,15 +15,52 @@ import {
   TableContainer,
   TableHead,
   Divider,
+  Modal,
+  RadioGroup,
+  FormControlLabel,
+  Radio
 } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faUnlockAlt} from "@fortawesome/free-solid-svg-icons";
+import {faArrowLeft, faUnlockAlt, faXmark} from "@fortawesome/free-solid-svg-icons";
 import ConfirmationDialog from "../../components/ConfirmationModal";
 import axios from "axios";
 import config from "../../config";
 import util from "../../utils/DateTimeFormatter";
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DatePicker} from "@mui/x-date-pickers";
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  maxWidth: '100vw',  
+  bgcolor: 'white',
+  borderRadius: '10px',
+  boxShadow: 3,
+  px: 4,
+  py: 2,
+  maxHeight: '100vh',
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+};
+
+const modalContentStyle = {
+overflowY: 'auto',
+flexGrow: 1,
+scrollbarWidth: 'none',   
+  "&::-webkit-scrollbar": {  
+      display: "none"
+}
+};
+
+const TextFieldStyleModal ={
+  "& .MuiInputBase-root":{height:'30px', bgcolor:'white'}
+};
 
 const TextFieldStyle = {
   "& .MuiInputBase-root": {height: "40px"},
@@ -39,6 +76,29 @@ const Settings = () => {
   const [currentAction, setCurrentAction] = useState("");
   const [service] = useState("change password");
   const [logs, setLogs] = useState([]);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const [radioValue, setRadioValue] = useState("");
+  const [otherValue, setOtherValue] = useState("");
+  const handleClose = (event, reason) => {
+    if (reason === "backdropClick") {
+      setOpen(false);
+    }
+  };
+
+  const handleRadioChange = (e) => {
+    const { value } = e.target;
+    setRadioValue(value);
+    if (e.target.value !== "others") {
+      setOtherValue("");
+    }
+  };
+
+  const handleOtherChange = (e) => {
+    setOtherValue(e.target.value);
+  };
+
+  const isOtherSelected = radioValue === "others";
 
   // PAGINATION
   const [page, setPage] = useState(0);
@@ -127,7 +187,7 @@ const Settings = () => {
                 </Typography>
 
                 <Box sx={{display: "flex", gap: 2}}>
-                  <Button
+                  <Button onClick={handleOpen}
                     sx={{
                       backgroundColor: "#355173",
                       height: "35px",
@@ -416,6 +476,210 @@ const Settings = () => {
               </Box>
             </>
           )}
+
+<Modal open={open} onClose={handleClose}>
+        <Box sx={modalStyle}>
+          <Box sx={{position: 'sticky', paddingBottom: '10px'}}>
+            <Grid container justifyContent={"flex-end"}>
+              <Grid item>
+                <IconButton onClick={() => setOpen(false)} size="small">
+                  <FontAwesomeIcon icon={faXmark} />
+                </IconButton>
+              </Grid>
+              <Grid item sm={12}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ textAlign: "center", fontWeight: "bold" }}
+                  >
+                    Manual Confirmation Certificate Request
+                  </Typography>
+                </Grid>
+            </Grid>
+          </Box>
+
+          <Box sx={modalContentStyle}>
+            <Grid container justifyContent={"center"} spacing={2}>
+              <Grid item sm={4}>
+                <label>First Name:</label>
+                <TextField fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
+              <Grid item sm={4}>
+                <label>Middle Name:</label>
+                <TextField fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
+              <Grid item sm={4}>
+                <label>Last Name:</label>
+                <TextField fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
+
+              <Grid item sm={4}>
+                <label>Place of Birth:</label>
+                <TextField fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
+              <Grid item sm={4}>
+                <label>Father's Name:</label>
+                <TextField fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
+              <Grid item sm={4}>
+                <label>Mother's Maiden Name:</label>
+                <TextField fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
+
+              <Grid item sm={6}>
+              <label>Date of Confirmation:</label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  slotProps={{ textField: { fullWidth: true }}}
+                  variant="outlined"
+                  size="small"
+                  disableFuture
+                  sx={TextFieldStyleModal}
+                  name="preferred_date"
+                  renderInput={(params) => <TextField {...params} required />}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item sm={6}>
+              <label>Contact Number:</label>
+              <TextField fullWidth sx={TextFieldStyleModal}/>
+            </Grid>
+
+            <Grid item sm={12}>
+              <label>Purpose:</label>
+            </Grid>
+            <Grid item sm={12}>
+              <RadioGroup
+                row
+                name="type"
+                sx={{ marginTop: "-5px" }}
+                onChange={handleRadioChange}
+              >
+                <FormControlLabel
+                  value="marriage"
+                  control={<Radio size="small" />}
+                  label="Marriage"
+                />
+                <FormControlLabel
+                  value="passport"
+                  control={<Radio size="small" />}
+                  label="Passport"
+                />
+                 <FormControlLabel
+                  value="school"
+                  control={<Radio size="small" />}
+                  label="School"
+                />
+                 <FormControlLabel
+                  value="late registration"
+                  control={<Radio size="small" />}
+                  label="Late Registration"
+                />
+                 <FormControlLabel
+                  value="sss"
+                  control={<Radio size="small" />}
+                  label="SSS"
+                />
+                <FormControlLabel
+                  value="others"
+                  control={<Radio size="small" />}
+                  label="Others:"
+                />
+                <TextField
+                  disabled={!isOtherSelected}
+                  value={otherValue}
+                  sx={{
+                    "& .MuiInputBase-root": { height: "30px" },
+                    opacity: isOtherSelected ? 1 : 0.4,
+                    marginTop: "5px",
+                  }}
+                  onChange={handleOtherChange}
+                />
+              </RadioGroup>
+            </Grid>
+
+            <Grid item sm={12}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
+                />
+                <div>
+                  <p
+                    style={{
+                      width: "80px",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Optional
+                  </p>
+                </div>
+                <div
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                />
+              </div>
+            </Grid>
+
+            <Grid item sm={4}>
+              <label>Book no.</label>
+              <TextField fullWidth sx={TextFieldStyleModal}/>
+            </Grid>
+            <Grid item sm={4}>
+              <label>Page no.</label>
+              <TextField fullWidth sx={TextFieldStyleModal}/>
+            </Grid>
+            <Grid item sm={4}>
+              <label>Line no.</label>
+              <TextField fullWidth sx={TextFieldStyleModal}/>
+            </Grid>
+
+            <Grid
+              item
+              sm={12}
+              sx={{
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                sx={{
+                  bgcolor: "#355173",
+                  marginTop: "14px",
+                  height: "35px",
+                  width: "90px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": { bgcolor: "#247E38" },
+                }}
+              >
+                Submit
+              </Button>
+              <Button
+                onClick={() => setOpen(false)}
+                sx={{
+                  bgcolor: "#C34444",
+                  margin: "14px 0px 0px 5px",
+                  height: "35px",
+                  width: "90px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": { bgcolor: "#F05A5A" },
+                }}
+              >
+                CANCEL
+              </Button>
+            </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Modal>
         </Box>
       </Box>
     </>
