@@ -294,7 +294,11 @@ const ApprovedRequests = () => {
                         backgroundColor: "#e0e0e0",
                       }}
                     >
-                      {req.requested_by || req.father_name}
+                      {req.service_id == 5 || req.service_id == 6
+                        ? req.father_name
+                        : req.service_id == 7
+                        ? req.first_name
+                        : req.requested_by}
                     </TableCell>
                     <TableCell
                       sx={{

@@ -1,6 +1,10 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Modal, Box, Grid, Typography, IconButton, TextField} from "@mui/material"
+import { useEffect, useState } from "react";
+import axios from "axios";
+import config from "../../../../config";
+import util from "../../../../utils/DateTimeFormatter";
 
 const modalStyle = {
   position: 'absolute',
@@ -37,7 +41,25 @@ const TextFieldStyleDis ={
     bgcolor:'#D9D9D9'
 };
 
-const WakeCancelled = ({open, handleClose}) =>{
+const WakeCancelled = ({open, data, handleClose}) =>{
+  const [priests, setPriests] = useState([]);
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+  }, [open]);
+
     return(
         <>
         <Modal
@@ -64,28 +86,28 @@ const WakeCancelled = ({open, handleClose}) =>{
                 <label>Name of the deceased:</label>
               </Grid>
               <Grid item sm={8}>
-                <TextField disabled fullWidth  sx={TextFieldStyle}/>
+                <TextField disabled value={data.first_name} fullWidth  sx={TextFieldStyle}/>
               </Grid>
 
               <Grid item sm={4}>
                 <label>Requested by:</label>
               </Grid>
               <Grid item sm={8}>
-                <TextField disabled fullWidth  sx={TextFieldStyle}/>
+                <TextField disabled value={data.requested_by} fullWidth  sx={TextFieldStyle}/>
               </Grid>
 
               <Grid item sm={4.3}>
                 <label>Relationship to the deceased:</label>
               </Grid>
               <Grid item sm={7.7}>
-                <TextField disabled fullWidth  sx={TextFieldStyle}/>
+                <TextField disabled value={data.relationship} fullWidth  sx={TextFieldStyle}/>
               </Grid>
 
               <Grid item sm={4}>
                 <label>Contact Number:</label>
               </Grid>
               <Grid item sm={8}>
-                <TextField disabled fullWidth  sx={TextFieldStyle}/>
+                <TextField disabled value={data.contact_no} fullWidth  sx={TextFieldStyle}/>
               </Grid>
 
               <Grid item sm={12}>
@@ -100,20 +122,33 @@ const WakeCancelled = ({open, handleClose}) =>{
 
               <Grid item sm={4}>
                 <label>Priest:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+                <TextField
+                    disabled
+                    fullWidth
+                    sx={TextFieldStyleDis}
+                    value={
+                      priests.find(
+                        (priest) => priest.priestID === data.priest_id
+                      )?.first_name +
+                      " " +
+                      priests.find(
+                        (priest) => priest.priestID === data.priest_id
+                      )?.last_name
+                    }
+                />
               </Grid>
               <Grid item sm={4}>
                 <label>Date:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+                <TextField disabled value={util.formatDate(data.preferred_date)} fullWidth sx={TextFieldStyleDis}/>
               </Grid>
               <Grid item sm={4}>
                 <label>Time:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+                <TextField disabled value={util.formatTime(data.preferred_time)} fullWidth sx={TextFieldStyleDis}/>
               </Grid>
 
               <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
                 <Typography variant="body2" sx={{marginRight: '5px'}}>Transaction Code:</Typography>
-                <Typography variant="body2" sx={{fontWeight:'bold'}}>040124hash</Typography>
+                <Typography variant="body2" sx={{fontWeight:'bold'}}>{data.transaction_no}</Typography>
               </Grid>
             </Grid>
           </Box>

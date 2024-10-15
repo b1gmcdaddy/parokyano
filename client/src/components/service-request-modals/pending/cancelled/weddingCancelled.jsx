@@ -1,10 +1,12 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Modal, Box, Button, Grid, Typography, IconButton, TextField, Tabs, Tab, FormControlLabel, Checkbox, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody} from "@mui/material"
-import { useState} from "react"
+import { Modal, Box, Button, Grid, Typography, IconButton, TextField, Tabs, Tab, FormControlLabel, Checkbox, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, MenuItem} from "@mui/material"
 import React from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import config from "../../../../config";
 
-const style = {
+const modalStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -14,13 +16,20 @@ const style = {
   borderRadius: '10px',
   boxShadow: 3,
   px: 4,
-  py: 3,
+  py: 2,
   maxHeight: '97vh',
-  overflowY: 'auto',
-  scrollbarWidth: 'none',   
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+};
+
+const modalContentStyle = {
+overflowY: 'auto',
+flexGrow: 1,
+scrollbarWidth: 'none',   
   "&::-webkit-scrollbar": {  
       display: "none"
-  }
+}
 };
 
 const boxModal = {
@@ -52,26 +61,59 @@ const tabStyle ={
   bgcolor:'#D9D9D9',
 }
 
-const sponsors = [
-  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
-  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
-  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
-  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
-  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
-  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
-  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
-  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
-  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
-];
+const fetchWeddingDetails = async (id) => {
+  try {
+    const response = await axios.get(`${config.API}/wedding/retrieve`, {
+      params: {reqID: id},
+    });
 
-function RequirementsModal() {
+    return response.data?.result[0];
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
+function RequirementsModal({id}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [tabValue, setTabValue] = useState(0);
+  const [requirements, setRequirements] = useState({
+    groom_baptismCert: 0,
+    groom_confirmationCert: 0,
+    groom_birthCert: 0,
+    spouse_baptismCert: 0,
+    spouse_confirmationCert: 0,
+    spouse_birthCert: 0,
+    isParishPermit: 0,
+    isPrenuptial: 0,
+    isPreCana: 0,
+    isMarriageLicense: 0,
+  });
+
+  useEffect(() => {
+    const fetchAndSetRequirements = async () => {
+      const req = await fetchWeddingDetails(id);
+      if (req) {
+        setRequirements({
+          groom_baptismCert: req.groom_baptismCert ?? 0,
+          groom_confirmationCert: req.groom_confirmationCert ?? 0,
+          groom_birthCert: req.groom_birthCert ?? 0,
+          spouse_baptismCert: req.spouse_baptismCert ?? 0,
+          spouse_confirmationCert: req.spouse_confirmationCert ?? 0,
+          spouse_birthCert: req.spouse_birthCert ?? 0,
+          isParishPermit: req.isParishPermit ?? 0,
+          isPrenuptial: req.isPrenuptial ?? 0,
+          isPreCana: req.isPreCana ?? 0,
+          isMarriageLicense: req.isMarriageLicense ?? 0,
+        });
+      }
+    };
+    if (open) {
+      fetchAndSetRequirements();
+    }
+  }, [open, id]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -104,32 +146,26 @@ function RequirementsModal() {
                     {tabValue === 0 && (
                       <>
                         <Grid item sm={12}>
-                        <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Marriage License</Typography>} />
+                            <FormControlLabel disabled checked={requirements.groom_birthCert === 1} control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Birth Certificate</Typography>} />
                         </Grid>
                         <Grid item sm={12}>
-                            <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Birth Certificate</Typography>} />
+                            <FormControlLabel disabled checked={requirements.groom_baptismCert === 1} control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Baptismal Certificate</Typography>} />
                         </Grid>
                         <Grid item sm={12}>
-                            <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Baptismal Certificate</Typography>} />
-                        </Grid>
-                        <Grid item sm={12}>
-                            <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Confirmation Certificate</Typography>} />
+                            <FormControlLabel disabled checked={requirements.groom_confirmationCert === 1} control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Confirmation Certificate</Typography>} />
                         </Grid>
                       </>
                     )}
                     {tabValue === 1 && (
                         <>
                           <Grid item sm={12}>
-                            <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Marriage License</Typography>} />
+                              <FormControlLabel disabled checked={requirements.spouse_birthCert === 1} control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Birth Certificate</Typography>} />
                           </Grid>
                           <Grid item sm={12}>
-                              <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Birth Certificate</Typography>} />
+                              <FormControlLabel disabled checked={requirements.spouse_baptismCert === 1} control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Baptismal Certificate</Typography>} />
                           </Grid>
                           <Grid item sm={12}>
-                              <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Baptismal Certificate</Typography>} />
-                          </Grid>
-                          <Grid item sm={12}>
-                              <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Confirmation Certificate</Typography>} />
+                              <FormControlLabel disabled checked={requirements.spouse_confirmationCert === 1} control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Confirmation Certificate</Typography>} />
                           </Grid>
                         </>
                     )}
@@ -144,13 +180,16 @@ function RequirementsModal() {
 
             <Box>
               <Grid item sm={12}>
-                <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Parish Permit</Typography>} />
+                <FormControlLabel disabled checked={requirements.isMarriageLicense === 1} control={<Checkbox/>} label={<Typography sx={{ fontSize: '15px' }}>Marriage License</Typography>} />
               </Grid>
               <Grid item sm={12}>
-                <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Prenuptial Questionnaire</Typography>} />
+                <FormControlLabel disabled checked={requirements.isParishPermit === 1} control={<Checkbox/>} label={<Typography sx={{ fontSize: '15px' }}>Parish Permit</Typography>} />
               </Grid>
               <Grid item sm={12}>
-                <FormControlLabel disabled control={<Checkbox/>}  label={<Typography sx={{ fontSize: '15px' }}>Pre-Cana Seminar</Typography>} />
+                <FormControlLabel disabled checked={requirements.isPrenuptial === 1} control={<Checkbox/>} label={<Typography sx={{ fontSize: '15px' }}>Prenuptial Questionnaire</Typography>} />
+              </Grid>
+              <Grid item sm={12}>
+                <FormControlLabel disabled checked={requirements.isPreCana === 1} control={<Checkbox/>} label={<Typography sx={{ fontSize: '15px' }}>Pre-Cana Seminar</Typography>} />
               </Grid>
             </Box>
           </Grid>
@@ -160,10 +199,27 @@ function RequirementsModal() {
   );
 }
 
-function SponsorsModal() {
+function SponsorsModal({id}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [sponsors, setSponsors] = useState([]);
+  const fetchSponsors = async () => {
+    try {
+      const response = await axios.get(`${config.API}/sponsor/retrieve`, {
+        params: {
+          reqID: id,
+        },
+      });
+      setSponsors(response.data.result);
+    } catch (err) {
+      console.error("error retrieving sponsors", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchSponsors();
+  }, []);
   
   return(
     <React.Fragment>
@@ -214,8 +270,8 @@ function SponsorsModal() {
                           {sponsor.name}
                         </TableCell>
                         <TableCell align="center">{sponsor.age}</TableCell>
-                        <TableCell align="center">{sponsor.marital}</TableCell>
-                        <TableCell align="center">{sponsor.catholic}</TableCell>
+                        <TableCell align="center">{sponsor.isMarried}</TableCell>
+                        <TableCell align="center">{sponsor.isCatholic}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -230,26 +286,58 @@ function SponsorsModal() {
 }
 
 
-const WeddingCancelled = ({open, handleClose}) =>{
+const WeddingCancelled = ({open, data, handleClose}) =>{
+  const [completeRequirements, setCompleteRequirements] = useState(0);
+  const [spouseDetails, setSpouseData] = useState({
+    spouse_firstName: "",
+    spouse_middleName: "",
+    spouse_lastName: "",
+  });
+
+  const fetchWeddingData = async () => {
+    try {
+      const weddingDetails = await fetchWeddingDetails(data.requestID);
+
+      if (weddingDetails) {
+        setSpouseData(() => ({
+          spouse_firstName: weddingDetails.spouse_firstName || "",
+          spouse_middleName: weddingDetails.spouse_middleName || "",
+          spouse_lastName: weddingDetails.spouse_lastName || "",
+        }));
+
+        setCompleteRequirements(weddingDetails.isComplete || 0);
+      }
+    } catch (err) {
+      console.error("Error fetching wedding details", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchWeddingData();
+  }, []);
+
     return(
         <>
         <Modal
           open={open} 
           onClose={handleClose}
         >
-        <Box sx={style}>
-          <Grid container justifyContent={"flex-end"}>
-            <Grid item>
-              <IconButton onClick={handleClose} size="small">
-                <FontAwesomeIcon icon={faXmark} />
-              </IconButton>
+        <Box sx={modalStyle}>
+          <Box sx={{position: 'sticky', paddingBottom: '10px'}}>
+            <Grid container justifyContent={"flex-end"}>
+              <Grid item>
+                <IconButton onClick={handleClose} size="small">
+                  <FontAwesomeIcon icon={faXmark} />
+                </IconButton>
+              </Grid>
+              <Grid item sm={12}>
+                <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Wedding Request Information</Typography> 
+              </Grid>
             </Grid>
-          </Grid>
+          </Box>
+
+          <Box sx={modalContentStyle}>
           <Grid container justifyContent={"center"} spacing={2}>
-            <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Wedding Request Information</Typography> 
-            </Grid>
-            
             <Grid item sm={12}>
               <Box fullWidth sx={{bgcolor:'#D9D9D9',padding:'10px', borderRadius:'5px'}}>
                 <Grid container spacing={1}>
@@ -258,15 +346,15 @@ const WeddingCancelled = ({open, handleClose}) =>{
                   </Grid>
                   <Grid item sm={4}>
                     <label>First Name:</label>
-                    <TextField disabled fullWidth sx={TextFieldStyle}/>
+                    <TextField disabled value={data.first_name} fullWidth sx={TextFieldStyle}/>
                   </Grid>
                   <Grid item sm={4}>
                     <label>Middle Name:</label>
-                    <TextField disabled fullWidth sx={TextFieldStyle}/>
+                    <TextField disabled value={data?.middle_name} fullWidth sx={TextFieldStyle}/>
                   </Grid>
                   <Grid item sm={4}>
                     <label>Last Name:</label>
-                    <TextField disabled fullWidth sx={TextFieldStyle}/>
+                    <TextField disabled value={data.last_name} fullWidth sx={TextFieldStyle}/>
                   </Grid>
                 </Grid>
               </Box>
@@ -280,15 +368,15 @@ const WeddingCancelled = ({open, handleClose}) =>{
                   </Grid>
                   <Grid item sm={4}>
                     <label>First Name:</label>
-                    <TextField disabled fullWidth sx={TextFieldStyle}/>
+                    <TextField value={spouseDetails.spouse_firstName} disabled fullWidth sx={TextFieldStyle}/>
                   </Grid>
                   <Grid item sm={4}>
                     <label>Middle Name:</label>
-                    <TextField disabled fullWidth sx={TextFieldStyle}/>
+                    <TextField disabled value={spouseDetails?.spouse_middleName} fullWidth sx={TextFieldStyle}/>
                   </Grid>
                   <Grid item sm={4}>
                     <label>Last Name:</label>
-                    <TextField disabled fullWidth sx={TextFieldStyle}/>
+                    <TextField disabled value={spouseDetails.spouse_lastName} fullWidth sx={TextFieldStyle}/>
                   </Grid>
                 </Grid>
               </Box>
@@ -296,31 +384,33 @@ const WeddingCancelled = ({open, handleClose}) =>{
 
             <Grid item sm={4}>
               <label>Contact No:</label>
-              <TextField disabled fullWidth sx={TextFieldStyle}/>
+              <TextField disabled value={data.contact_no} fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={4}>
               <label>Status:</label>
-              <TextField disabled select fullWidth sx={TextFieldStyle}/>
+              <TextField disabled value={data.relationship} fullWidth sx={TextFieldStyle}/>
             </Grid>
             <Grid item sm={4}>
               <label>Payment:</label>
-              <TextField disabled select fullWidth sx={TextFieldStyle}/>
+              <TextField disabled value={data.payment_status} fullWidth sx={TextFieldStyle}/>
             </Grid>
 
             <Grid item sm={12} textAlign={"center"}>
               <Typography variant="subtitle1" sx={{display:'inline-block', fontSize:'14px'}}>Requirements:</Typography>
-              <Typography variant="subtitle1" sx={{display:'inline-block', marginLeft:'5px', fontSize:'14px'}}>Incomplete</Typography>
-              <RequirementsModal/>
+              <Typography variant="subtitle1" sx={{ display: "inline-block", marginLeft: "5px", fontSize: "14px", color: completeRequirements == 1 ? "green" : "red",}}>
+                {completeRequirements == 1 ? "Complete" : "Incomplete"}
+              </Typography>
+              <RequirementsModal id={data.requestID}/>
               <Typography variant="subtitle1" sx={{display:'inline-block', marginLeft:'5px', fontSize:'14px'}}>Sponsors:</Typography>
-              <Typography variant="subtitle1" sx={{display:'inline-block', marginLeft:'5px', fontSize:'14px'}}>Incomplete</Typography>
-              <SponsorsModal/>
+              <SponsorsModal id={data.requestID}/>
             </Grid>
 
             <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
               <Typography variant="body2" sx={{marginRight: '5px'}}>Transaction Code:</Typography>
-              <Typography variant="body2" sx={{fontWeight:'bold'}}>040124hash</Typography>
+              <Typography variant="body2" sx={{fontWeight:'bold'}}>{data.transaction_no}</Typography>
             </Grid>
           </Grid>
+          </Box>
         </Box>
         </Modal>
         </>

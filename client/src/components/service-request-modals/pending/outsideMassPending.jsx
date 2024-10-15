@@ -79,7 +79,7 @@ const OutsidePending = ({ open, data, handleClose }) => {
     relationship: "",
     preferred_date: "",
     preferred_time: "",
-    preferred_priest: "",
+    priest_id: "",
     isParishioner: "",
     transaction_no: "",
     service_id: "",
@@ -96,9 +96,9 @@ const OutsidePending = ({ open, data, handleClose }) => {
         contact_no: data.contact_no,
         requested_by: data.requested_by,
         relationship: data.relationship,
-        preferred_date: data.preferred_date,
+        preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
         preferred_time: data.preferred_time,
-        preferred_priest: data.priest_id,
+        priest_id: data.priest_id,
         isParishioner: data.isParishioner,
         transaction_no: data.transaction_no,
         service_id: data.service_id,
@@ -200,7 +200,7 @@ const OutsidePending = ({ open, data, handleClose }) => {
             `${config.API}/priest/retrieve-schedule-by-params`,
             {
               params: {
-                priest: formData.preferred_priest,
+                priest: formData.priest_id,
                 date: formData.preferred_date,
                 start: formData.preferred_time,
                 end: endTime(formData.preferred_time, service.duration),
@@ -224,7 +224,7 @@ const OutsidePending = ({ open, data, handleClose }) => {
                 col3: "preferred_date",
                 val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
                 col4: "priest_id",
-                val4: formData.preferred_priest,
+                val4: formData.priest_id,
                 col5: "requestID",
                 val5: formData.requestID,
               },
@@ -237,7 +237,7 @@ const OutsidePending = ({ open, data, handleClose }) => {
                 ? formData.preferred_time
                 : data.preferred_time,
               end_time: endTime(formData.preferred_time, service.duration),
-              priest_id: formData.preferred_priest,
+              priest_id: formData.priest_id,
               request_id: formData.requestID,
             });
             console.log("priest sched success!");
@@ -253,29 +253,52 @@ const OutsidePending = ({ open, data, handleClose }) => {
           console.log("error submitting to server", err);
         }
         break;
-      case "update":
-        alert("Update action confirmed.");
-        break;
-      case "cancel":
-        try {
-          axios.put(`${config.API}/request/update`, null, {
-            params: {
-              col: "status",
-              val: "cancelled",
-              id: formData.requestID,
-            },
+      case "update": // UPDATE PENDING REQUEST
+        const res = await axios.put(`${config.API}/request/update-bulk`, {
+          formData,
+          id: data.requestID,
+        });
+        if (res.status !== 200) {
+          console.log("error updating request");
+          setError({
+            message: res.data.message,
+            details: res.data?.details,
           });
+        } else {
+          console.log("request updated!");
 
-          console.log("request cancelled!");
-        } catch (err) {
-          console.error("error updating request", err);
+          axios.post(`${config.API}/logs/create`, {
+            activity: `Updated OutsideMass Request - Transaction number: ${data.transaction_no}`,
+            user_id: 1,
+            request_id: data.requestID,
+          });
+          console.log("logs success!");
+          // refetchData();
         }
+        window.location.reload();
+        break;
+      case "cancel": // CANCEL PENDING REQUEST
+        await axios.put(`${config.API}/request/update`, null, {
+          params: {
+            col: "status",
+            val: "cancelled",
+            id: formData.requestID,
+          },
+        });
+
+        console.log("request cancelled!");
+
+        await axios.post(`${config.API}/logs/create`, {
+          activity: `Cancelled OutsideMass Request - Transaction number: ${data.transaction_no}`,
+          user_id: 1,
+          request_id: data.requestID,
+        });
+        window.location.reload();
         break;
       default:
         break;
     }
   };
-
   return (
     <>
       {error && (
@@ -434,8 +457,8 @@ const OutsidePending = ({ open, data, handleClose }) => {
             <Grid item sm={3}>
               <label>Priest:</label>
               <TextField
-                value={formData.preferred_priest}
-                name="preferred_priest"
+                value={formData.priest_id}
+                name="priest_id"
                 onChange={handleChange}
                 select
                 fullWidth

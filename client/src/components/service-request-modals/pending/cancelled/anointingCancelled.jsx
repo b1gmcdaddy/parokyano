@@ -1,6 +1,10 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Modal, Box, Grid, Typography, IconButton, TextField} from "@mui/material"
+import { useEffect, useState } from "react";
+import axios from "axios";
+import config from "../../../../config";
+import util from "../../../../utils/DateTimeFormatter";
 
 const modalStyle = {
   position: 'absolute',
@@ -33,7 +37,25 @@ const TextFieldStyleDis ={
   bgcolor:'#D9D9D9'
 };
 
-const AnointingCancelled = ({open, handleClose}) =>{
+const AnointingCancelled = ({open, data, handleClose}) =>{
+  const [priests, setPriests] = useState([]);
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+  }, [open]);
+
     return(
         <>
         <Modal
@@ -61,46 +83,46 @@ const AnointingCancelled = ({open, handleClose}) =>{
                 <label>Name:</label>
               </Grid>
               <Grid item sm={8}>
-                <TextField disabled fullWidth  sx={TextFieldStyleDis}/>
+                <TextField disabled value={data.first_name} fullWidth  sx={TextFieldStyleDis}/>
               </Grid>
               <Grid item sm={.8}>
                 <label>Age:</label>
               </Grid>
               <Grid item sm={2.2}>
-                <TextField disabled fullWidth  sx={TextFieldStyleDis}/>
+                <TextField disabled value={data.age} fullWidth  sx={TextFieldStyleDis}/>
               </Grid>
 
               <Grid item sm={1.3}>
                 <label>Address:</label>
               </Grid>
               <Grid item sm={10.7}>
-                <TextField disabled fullWidth  sx={TextFieldStyleDis}/>
+                <TextField disabled value={data.address} fullWidth  sx={TextFieldStyleDis}/>
               </Grid>
 
               <Grid item sm={2.2}>
                 <label>Requested by:</label>
               </Grid>
               <Grid item sm={5}>
-                <TextField fullWidth  sx={TextFieldStyleDis}/>
+                <TextField disabled fullWidth value={data.requested_by}  sx={TextFieldStyleDis}/>
               </Grid>
               <Grid item sm={1.9}>
                 <label>Relationship:</label>
               </Grid>
               <Grid item sm={2.9}>
-                <TextField fullWidth  sx={TextFieldStyleDis}/>
+                <TextField disabled fullWidth value={data.relationship}  sx={TextFieldStyleDis}/>
               </Grid>
 
               <Grid item sm={1.9}>
                 <label>Contact no:</label>
               </Grid>
               <Grid item sm={4.9}>
-                <TextField fullWidth  sx={TextFieldStyleDis}/>
+                <TextField disabled fullWidth value={data.contact_no}  sx={TextFieldStyleDis}/>
               </Grid>
               <Grid item sm={2.3}>
                 <label>Sickness/Status:</label>
               </Grid>
               <Grid item sm={2.9}>
-                <TextField fullWidth  sx={TextFieldStyleDis}/>
+                <TextField disabled fullWidth value={data.patient_status}   sx={TextFieldStyleDis}/>
               </Grid>
 
               <Grid item sm={12}>
@@ -115,20 +137,33 @@ const AnointingCancelled = ({open, handleClose}) =>{
 
               <Grid item sm={4}>
                 <label>Priest:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+                <TextField
+                    disabled
+                    fullWidth
+                    sx={TextFieldStyleDis}
+                    value={
+                      priests.find(
+                        (priest) => priest.priestID === data.priest_id
+                      )?.first_name +
+                      " " +
+                      priests.find(
+                        (priest) => priest.priestID === data.priest_id
+                      )?.last_name
+                    }
+                />
               </Grid>
               <Grid item sm={4}>
                 <label>Date:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+                <TextField disabled value={util.formatDate(data.preferred_date)} fullWidth sx={TextFieldStyleDis}/>
               </Grid>
               <Grid item sm={4}>
                 <label>Time:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+                <TextField disabled value={util.formatTime(data.preferred_time)} fullWidth sx={TextFieldStyleDis}/>
               </Grid>
 
               <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
                 <Typography variant="body2" sx={{marginRight: '5px'}}>Transaction Code:</Typography>
-                <Typography variant="body2" sx={{fontWeight:'bold'}}>040124hash</Typography>
+                <Typography variant="body2" sx={{fontWeight:'bold'}}>{data.transactio_no}</Typography>
               </Grid>
             </Grid>
           </Box>

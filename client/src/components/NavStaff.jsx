@@ -198,10 +198,7 @@ const NavStaff = (props) => {
           >
             Parokyano
           </Typography>
-          <SettingsRoundedIcon
-            className="md:mr-8 text-neutral-950"
-            sx={{ mx: { md: "30px" } }}
-          />
+
           <IconButton onClick={navigateSettings}>
             <SettingsRoundedIcon
               on
