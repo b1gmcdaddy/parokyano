@@ -79,52 +79,68 @@ const CancelledRequests = () => {
     fetchTotalItems();
   }, [page]);
 
-  const renderModal = () =>{
+  const renderModal = () => {
     switch (modalType) {
       case "Anointing of the sick":
         return (
-          <AnointingCancelled open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <AnointingCancelled
+            open={modalOpen}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Baptism - General":
         return (
-          <BaptismCancelled open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <BaptismCancelled
+            open={modalOpen}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Baptism - Appointment":
         return (
-          <BaptismCancelled open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <BaptismCancelled
+            open={modalOpen}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Blessing":
         return (
-          <BlessingCancelled open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <BlessingCancelled
+            open={modalOpen}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Funeral Mass":
         return (
-          <FuneralMassModalCancelled open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <FuneralMassModalCancelled
+            open={modalOpen}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Outside Mass":
         return (
-          <OutsideCancelled open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <OutsideCancelled
+            open={modalOpen}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Wake Mass":
         return (
-          <WakeCancelled open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <WakeCancelled
+            open={modalOpen}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       case "Wedding - Civilly Married":
         return (
-          <WeddingCancelled open={modalOpen}
-          handleClose={() => setModalOpen(false)}/>
+          <WeddingCancelled
+            open={modalOpen}
+            handleClose={() => setModalOpen(false)}
+          />
         );
       default:
         return null;
     }
-  }
+  };
 
   return (
     <div style={{ margin: "0 auto" }}>
@@ -266,7 +282,11 @@ const CancelledRequests = () => {
                       backgroundColor: "#e0e0e0",
                     }}
                   >
-                    {req.requested_by}
+                    {req.service_id == 5 || req.service_id == 6
+                      ? req.father_name
+                      : req.service_id == 7
+                      ? req.first_name
+                      : req.requested_by}
                   </TableCell>
                   <TableCell
                     sx={{
