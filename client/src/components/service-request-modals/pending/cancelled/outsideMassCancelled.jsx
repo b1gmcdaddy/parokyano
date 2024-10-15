@@ -1,7 +1,10 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Modal, Box, Grid, Typography, IconButton, TextField, RadioGroup, FormControlLabel, Radio} from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react";
+import axios from "axios";
+import config from "../../../../config";
+import util from "../../../../utils/DateTimeFormatter";
 
 const modalStyle = {
   position: 'absolute',
@@ -39,9 +42,26 @@ const TextFieldStyleDis ={
   bgcolor:'#D9D9D9'
 };
 
-const OutsideCancelled = ({open, handleClose}) =>{
+const OutsideCancelled = ({open, data, handleClose}) =>{
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
+  const [priests, setPriests] = useState([]);
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+  }, [open]);
   
   const handleRadioChange = (e) => {
     setRadioValue(e.target.value);
@@ -82,9 +102,9 @@ const OutsideCancelled = ({open, handleClose}) =>{
                 <label>Type:</label>
               </Grid>
               <Grid item sm={11}>
-                <RadioGroup row name="type" sx={{marginTop:'-5px'}} value={radioValue} onChange={handleRadioChange}>
-                  <FormControlLabel disabled value="Chapel" control={<Radio size="small" />} label="Chapel" />
-                  <FormControlLabel disabled value="Company" control={<Radio size="small" />} label="Company"/>
+                <RadioGroup row name="type" sx={{marginTop:'-5px'}} value={data.type} onChange={handleRadioChange}>
+                  <FormControlLabel disabled value="chapel" control={<Radio size="small" />} label="Chapel" />
+                  <FormControlLabel disabled value="company" control={<Radio size="small" />} label="Company"/>
                   <FormControlLabel disabled value="others" control={<Radio size="small" />} label="Others:" />
                   <TextField disabled value={otherValue} onChange={handleOtherChange} sx={{"& .MuiInputBase-root":{height:'30px'}, opacity: isOtherSelected ? 1 : 0.4, marginTop: '5px'}}/>
                 </RadioGroup>
@@ -95,27 +115,27 @@ const OutsideCancelled = ({open, handleClose}) =>{
                 <label>Celebration/Celebrator:</label>
               </Grid>
               <Grid item sm={8.8}>
-                <TextField disabled fullWidth  sx={TextFieldStyle}/>
+                <TextField disabled value={data.first_name} fullWidth  sx={TextFieldStyle}/>
               </Grid>
               
               <Grid item sm={1.3}>
                 <label>Address:</label>
               </Grid>
               <Grid item sm={10.7}>
-                <TextField disabled fullWidth  sx={TextFieldStyle}/>
+                <TextField disabled value={data.address} fullWidth  sx={TextFieldStyle}/>
               </Grid>
 
               <Grid item sm={2.4}>
                 <label>Contact Person:</label>
               </Grid>
               <Grid item sm={4}>
-                <TextField disabled fullWidth  sx={TextFieldStyle}/>
+                <TextField disabled value={data.requested_by} fullWidth  sx={TextFieldStyle}/>
               </Grid>
               <Grid item sm={1.9}>
                 <label>Contact no:</label>
               </Grid>
               <Grid item sm={3.7}>
-                <TextField disabled fullWidth  sx={TextFieldStyle}/>
+                <TextField disabled value={data.contact_no} fullWidth  sx={TextFieldStyle}/>
               </Grid>
 
               <Grid item sm={12}>
@@ -130,19 +150,32 @@ const OutsideCancelled = ({open, handleClose}) =>{
 
               <Grid item sm={4}>
                 <label>Priest:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+                <TextField
+                    disabled
+                    fullWidth
+                    sx={TextFieldStyleDis}
+                    value={
+                      priests.find(
+                        (priest) => priest.priestID === data.priest_id
+                      )?.first_name +
+                      " " +
+                      priests.find(
+                        (priest) => priest.priestID === data.priest_id
+                      )?.last_name
+                    }
+                />
               </Grid>
               <Grid item sm={4}>
                 <label>Date:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+                <TextField disabled value={util.formatDate(data.preferred_date)} fullWidth sx={TextFieldStyleDis}/>
               </Grid>
               <Grid item sm={4}>
                 <label>Time:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+                <TextField disabled value={util.formatTime(data.preferred_time)} fullWidth sx={TextFieldStyleDis}/>
               </Grid>
               <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
                 <Typography variant="body2" sx={{marginRight: '5px'}}>Transaction Code:</Typography>
-                <Typography variant="body2" sx={{fontWeight:'bold'}}>040124hash</Typography>
+                <Typography variant="body2" sx={{fontWeight:'bold'}}>{data.transaction_no}</Typography>
               </Grid>
             </Grid>
           </Box>

@@ -36,6 +36,7 @@ const CancelledRequests = () => {
   const totalPages = Math.ceil(totalItems / rowsPerPage);
   const [modalType, setModalType] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalData, setModalData] = useState(null);
 
   const fetchRequests = async () => {
     try {
@@ -85,6 +86,7 @@ const CancelledRequests = () => {
         return (
           <AnointingCancelled
             open={modalOpen}
+            data={modalData}
             handleClose={() => setModalOpen(false)}
           />
         );
@@ -92,6 +94,7 @@ const CancelledRequests = () => {
         return (
           <BaptismCancelled
             open={modalOpen}
+            data={modalData}
             handleClose={() => setModalOpen(false)}
           />
         );
@@ -99,6 +102,7 @@ const CancelledRequests = () => {
         return (
           <BaptismCancelled
             open={modalOpen}
+            data={modalData}
             handleClose={() => setModalOpen(false)}
           />
         );
@@ -106,6 +110,7 @@ const CancelledRequests = () => {
         return (
           <BlessingCancelled
             open={modalOpen}
+            data={modalData}
             handleClose={() => setModalOpen(false)}
           />
         );
@@ -113,6 +118,7 @@ const CancelledRequests = () => {
         return (
           <FuneralMassModalCancelled
             open={modalOpen}
+            data={modalData}
             handleClose={() => setModalOpen(false)}
           />
         );
@@ -120,6 +126,7 @@ const CancelledRequests = () => {
         return (
           <OutsideCancelled
             open={modalOpen}
+            data={modalData}
             handleClose={() => setModalOpen(false)}
           />
         );
@@ -127,6 +134,7 @@ const CancelledRequests = () => {
         return (
           <WakeCancelled
             open={modalOpen}
+            data={modalData}
             handleClose={() => setModalOpen(false)}
           />
         );
@@ -134,6 +142,7 @@ const CancelledRequests = () => {
         return (
           <WeddingCancelled
             open={modalOpen}
+            data={modalData}
             handleClose={() => setModalOpen(false)}
           />
         );
@@ -329,6 +338,7 @@ const CancelledRequests = () => {
                         },
                       }}
                       onClick={() => {
+                        setModalData(req);
                         setModalType(req.service_name);
                         setModalOpen(true);
                       }}
