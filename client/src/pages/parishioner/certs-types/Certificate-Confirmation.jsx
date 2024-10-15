@@ -52,7 +52,7 @@ const CertificateConfirmation = () => {
     first_name: "",
     middle_name: "",
     last_name: "",
-    birth_date: "",
+    birth_date: null,
     birth_place: "",
     contact_no: "",
     father_name: "",
