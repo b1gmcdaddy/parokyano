@@ -484,6 +484,31 @@ const getCountRequestsDateFiltered = (req, res) => {
   });
 };
 
+///////// For Dashboard 'Upcoming Events'/////////////
+const getUpcomingEvents = (req, res) => {
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  const query = `
+    SELECT * 
+    FROM request 
+    WHERE status = 'approved' 
+    AND preferred_date >= ? 
+    ORDER BY preferred_date DESC 
+    LIMIT 5
+  `;
+
+  db.query(query, [currentDate], (err, result) => {
+    if (err) {
+      console.error("Error retrieving approved requests:", err);
+      return res
+        .status(500)
+        .json({message: "An error occurred while retrieving requests."});
+    }
+
+    res.status(200).json({success: true, data: result});
+  });
+};
+
 const getCountCerts = (req, res) => {
   const status = req.query.status;
   const query = `SELECT COUNT(*) as count FROM request WHERE service_id = 2 OR service_id = 3 OR service_id = 4 AND status = ?`;
@@ -803,6 +828,7 @@ module.exports = {
   approveDynamic,
   retrieveMultipleDateFiltered,
   getCount,
+  getUpcomingEvents,
   retrieveRequests,
   retrieveCerts,
   getCountRequests,

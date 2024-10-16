@@ -19,9 +19,10 @@ import {
   faStamp,
   faHandsPraying,
 } from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import axios from "axios";
 import config from "../../config";
+import util from "../../utils/DateTimeFormatter";
 
 const StaffDashboard = () => {
   const [serviceRequests, setServiceRequests] = useState(0);
@@ -29,6 +30,20 @@ const StaffDashboard = () => {
   const [massIntentions, setMassIntentions] = useState(0);
   const [dateFilter, setDateFilter] = useState("Today");
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+
+  const navigate = useNavigate();
+
+  const serviceMap = {
+    5: "Baptism",
+    6: "Baptism",
+    7: "Wedding",
+    8: "Wedding",
+    9: "Wake Mass",
+    10: "Outside Mass",
+    11: "Funeral Mass",
+    12: "Anointing of the Sick",
+    13: "Blessing",
+  };
 
   const fetchRequestCounts = async (filter) => {
     try {
@@ -50,6 +65,18 @@ const StaffDashboard = () => {
   useEffect(() => {
     fetchRequestCounts(dateFilter);
   }, [dateFilter]);
+
+  useEffect(() => {
+    const fetchUpcomingEvents = async () => {
+      try {
+        const response = await axios.get(`${config.API}/request/upcoming`);
+        setUpcomingEvents(response.data.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchUpcomingEvents();
+  }, []);
 
   return (
     <Box sx={{display: "flex", mx: {md: "30px"}}}>
@@ -169,11 +196,13 @@ const StaffDashboard = () => {
             }}
             className="gap-2">
             <Typography
+              onClick={() => navigate("/service-requests")}
               sx={{
                 display: "flex",
                 justifyContent: "flex-end",
                 width: "100%",
                 color: "whitesmoke",
+                cursor: "pointer",
               }}>
               See More
             </Typography>
@@ -185,16 +214,30 @@ const StaffDashboard = () => {
           <Box
             sx={{border: "solid 1px", maxHeight: "400px", overflowY: "auto"}}>
             <Container maxWidth="lg">
-              <Paper
-                sx={{
-                  padding: "16px",
-                  marginBottom: "16px",
-                  backgroundColor: "#F5F5F5",
-                }}>
-                <Typography variant="h6"></Typography>
-                <Typography variant="body1">Requested by:</Typography>
-                <Typography variant="body2">Date:</Typography>
-              </Paper>
+              {upcomingEvents.map((req) => (
+                <Paper
+                  key={req.requestID}
+                  sx={{
+                    padding: "16px",
+                    marginBottom: "16px",
+                    backgroundColor: "#F5F5F5",
+                  }}>
+                  <Typography variant="h6">
+                    {serviceMap[req.service_id]}
+                  </Typography>
+                  <Typography variant="body1">
+                    <b>Requested by:</b>{" "}
+                    {req.service_id == 5 || req.service_id == 6
+                      ? req.father_name
+                      : req.service_id == 7
+                      ? req.first_name
+                      : req.requested_by}
+                  </Typography>
+                  <Typography variant="body2">
+                    <b>Date</b>: {util.formatDate(req.preferred_date)}
+                  </Typography>
+                </Paper>
+              ))}
             </Container>
           </Box>
         </Box>

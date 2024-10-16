@@ -20,6 +20,7 @@ const {
   getCount,
   retrieveRequests,
   retrieveCerts,
+  getUpcomingEvents,
   getCountRequests,
   getCountRequestsDateFiltered,
   getCountCerts,
@@ -56,5 +57,6 @@ router.get("/search-records", searchCertRecords);
 router.get("/retrieve-multiple-byDate", retrieveMultipleDateFiltered);
 router.put("/update", updateByParams);
 router.put("/update-bulk", updateBulk);
+router.get("/upcoming", getUpcomingEvents);
 
 module.exports = router;
