@@ -83,8 +83,9 @@ const CertificateForClaiming = () => {
     setOpenModal(false);
   };
 
-  const openPrintModal = () => {
+  const openPrintModal = (cert) => {
     setOpenPrint(true);
+    setModalData(cert);
   };
 
   const handlePageChange = (newPage) => {
@@ -121,7 +122,11 @@ const CertificateForClaiming = () => {
           close={closeInfoModal}
         />
       )}
-      <PrintCertificate open={openPrint} close={() => setOpenPrint(false)} />
+      <PrintCertificate
+        open={openPrint}
+        data={modalData}
+        close={() => setOpenPrint(false)}
+      />
 
       {loading ? (
         <p>Loading...</p>
@@ -299,7 +304,7 @@ const CertificateForClaiming = () => {
                         </Button>
                         <Button
                           type="button"
-                          onClick={openPrintModal}
+                          onClick={() => openPrintModal(cert)}
                           sx={{
                             backgroundColor: "#44C360",
                             color: "white",
