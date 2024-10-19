@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import NavStaff from "../../components/NavStaff";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,14 +12,14 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
   faChurch,
   faStamp,
   faHandsPraying,
 } from "@fortawesome/free-solid-svg-icons";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import config from "../../config";
 import util from "../../utils/DateTimeFormatter";
@@ -30,6 +30,9 @@ const StaffDashboard = () => {
   const [massIntentions, setMassIntentions] = useState(0);
   const [dateFilter, setDateFilter] = useState("Today");
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+
+  const location = useLocation();
+  const user = location.state?.user;
 
   const navigate = useNavigate();
 
@@ -50,10 +53,10 @@ const StaffDashboard = () => {
       const response = await axios.get(
         `${config.API}/request/count-request-date`,
         {
-          params: {dateFilter: filter},
+          params: { dateFilter: filter },
         }
       );
-      const {countA, countB, countC} = response.data;
+      const { countA, countB, countC } = response.data;
       setServiceRequests(countC);
       setCertRequests(countB);
       setMassIntentions(countA);
@@ -79,11 +82,12 @@ const StaffDashboard = () => {
   }, []);
 
   return (
-    <Box sx={{display: "flex", mx: {md: "30px"}}}>
-      <NavStaff />
+    <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+      <NavStaff user={user} />
       <Box
         component="main"
-        sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
+      >
         <Toolbar />
         <Box
           sx={{
@@ -91,28 +95,32 @@ const StaffDashboard = () => {
             justifyContent: "space-between",
             marginTop: "8px",
             alignItems: "center",
-          }}>
+          }}
+        >
           <Typography
-            sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>
+            sx={{ fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600 }}
+          >
             Dashboard
           </Typography>
           <Link to="/generate-reports">
             <Button
               variant="contained"
               type="button"
-              sx={{backgroundColor: "#355173"}}>
+              sx={{ backgroundColor: "#355173" }}
+            >
               Generate Reports
             </Button>
           </Link>
         </Box>
         <div className="mt-8 border-1 border-neutral-900 inline-block">
-          <FormControl variant="standard" sx={{minWidth: 120}}>
+          <FormControl variant="standard" sx={{ minWidth: 120 }}>
             {/* <InputLabel id="demo-simple-select-label">Date</InputLabel> */}
             <Select
               onChange={(e) => setDateFilter(e.target.value)}
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={dateFilter}>
+              value={dateFilter}
+            >
               <MenuItem value="Today">Today</MenuItem>
               <MenuItem value="This Week">This Week</MenuItem>
               <MenuItem value="This Month">This Month</MenuItem>
@@ -121,10 +129,11 @@ const StaffDashboard = () => {
         </div>
         <Box
           sx={{
-            display: {md: "flex"},
+            display: { md: "flex" },
             justifyContent: "space-between",
             marginTop: "30px",
-          }}>
+          }}
+        >
           <Paper
             sx={{
               padding: "16px",
@@ -132,15 +141,21 @@ const StaffDashboard = () => {
               flexDirection: "column",
               alignItems: "flex-start",
               backgroundColor: "#D9D9D9",
-            }}>
-            <Box sx={{display: "flex", alignItems: "center"}}>
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               <FontAwesomeIcon icon={faChurch} />
-              <Typography sx={{marginLeft: "8px", fontWeight: "bold"}}>
+              <Typography sx={{ marginLeft: "8px", fontWeight: "bold" }}>
                 Service Requests
               </Typography>
             </Box>
             <Typography
-              sx={{display: "flex", justifyContent: "flex-end", width: "100%"}}>
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                width: "100%",
+              }}
+            >
               {serviceRequests}
             </Typography>
           </Paper>
@@ -151,15 +166,21 @@ const StaffDashboard = () => {
               flexDirection: "column",
               alignItems: "flex-start",
               backgroundColor: "#D9D9D9",
-            }}>
-            <Box sx={{display: "flex", alignItems: "center"}}>
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               <FontAwesomeIcon icon={faStamp} />
-              <Typography sx={{marginLeft: "8px", fontWeight: "bold"}}>
+              <Typography sx={{ marginLeft: "8px", fontWeight: "bold" }}>
                 Certificate Requests
               </Typography>
             </Box>
             <Typography
-              sx={{display: "flex", justifyContent: "flex-end", width: "100%"}}>
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                width: "100%",
+              }}
+            >
               {certRequests}
             </Typography>
           </Paper>
@@ -170,20 +191,26 @@ const StaffDashboard = () => {
               flexDirection: "column",
               alignItems: "flex-start",
               backgroundColor: "#D9D9D9",
-            }}>
-            <Box sx={{display: "flex", alignItems: "center"}}>
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               <FontAwesomeIcon icon={faHandsPraying} />
-              <Typography sx={{marginLeft: "8px", fontWeight: "bold"}}>
+              <Typography sx={{ marginLeft: "8px", fontWeight: "bold" }}>
                 Mass Intentions
               </Typography>
             </Box>
             <Typography
-              sx={{display: "flex", justifyContent: "flex-end", width: "100%"}}>
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                width: "100%",
+              }}
+            >
               {massIntentions}
             </Typography>
           </Paper>
         </Box>
-        <Box sx={{display: "flex", marginTop: {md: "4em", xs: "2em"}}}>
+        <Box sx={{ display: "flex", marginTop: { md: "4em", xs: "2em" } }}>
           <h1 className="text-xl font-semibold">Upcoming Events</h1>
         </Box>
         <Box className="md:mt-5 xs:mt-2">
@@ -194,7 +221,8 @@ const StaffDashboard = () => {
               display: "flex",
               alignItems: "center",
             }}
-            className="gap-2">
+            className="gap-2"
+          >
             <Typography
               onClick={() => navigate("/service-requests")}
               sx={{
@@ -203,7 +231,8 @@ const StaffDashboard = () => {
                 width: "100%",
                 color: "whitesmoke",
                 cursor: "pointer",
-              }}>
+              }}
+            >
               See More
             </Typography>
             <FontAwesomeIcon
@@ -212,7 +241,8 @@ const StaffDashboard = () => {
             />
           </Box>
           <Box
-            sx={{border: "solid 1px", maxHeight: "400px", overflowY: "auto"}}>
+            sx={{ border: "solid 1px", maxHeight: "400px", overflowY: "auto" }}
+          >
             <Container maxWidth="lg">
               {upcomingEvents.map((req) => (
                 <Paper
@@ -221,7 +251,8 @@ const StaffDashboard = () => {
                     padding: "16px",
                     marginBottom: "16px",
                     backgroundColor: "#F5F5F5",
-                  }}>
+                  }}
+                >
                   <Typography variant="h6">
                     {serviceMap[req.service_id]}
                   </Typography>

@@ -27,41 +27,10 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import { jwtDecode } from "jwt-decode";
 
 const sideBarWidth = 240;
 
-const staffSideBarItems = [
-  { icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard" },
-  { icon: <CampaignIcon />, label: "Announcements", path: "/staff-events" },
-  {
-    icon: <AssignmentIcon />,
-    label: "Service Requests",
-    path: "/service-requests",
-  },
-  {
-    icon: <BadgeIcon />,
-    label: "Certificate Requests",
-    path: "/cert-requests",
-  },
-  {
-    icon: <FormatListBulletedIcon />,
-    label: "Mass Intentions",
-    path: "/manage-intentions",
-  },
-  {
-    icon: <ReceiptLongIcon />,
-    label: "Transactions",
-    path: "/manage-transactions",
-  },
-  {
-    icon: <CalendarMonthIcon />,
-    label: "Schedules",
-    path: "/manage-schedules",
-  },
-];
-
-const adminSideBarItems = [
+const sideBarItems = [
   { icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard" },
   {
     icon: <PersonAddAlt1Icon />,
@@ -98,12 +67,9 @@ const adminSideBarItems = [
 
 const NavStaff = (props) => {
   const { window } = props;
-  const user = JSON.parse(localStorage.getItem("user"));
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const navigate = useNavigate();
-  const token = localStorage.getItem("accessToken");
-  const decoded = jwtDecode(token);
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -124,10 +90,8 @@ const NavStaff = (props) => {
     navigate("/settings");
   };
 
-  const drawerColor = decoded.role == "staff" ? "#355173" : "rgb(15 23 42)";
-
   const drawer = (
-    <div style={{ backgroundColor: drawerColor, height: "100vh" }}>
+    <div style={{ backgroundColor: "#355173", height: "100vh" }}>
       <Toolbar />
       <Box
         justifyContent="center"
@@ -142,91 +106,45 @@ const NavStaff = (props) => {
         <div>
           <Typography
             variant="h6"
-            sx={{ marginTop: "14px", color: "whitesmoke", textAlign: "center" }}
+            sx={{ marginTop: "14px", color: "whitesmoke" }}
           >
-            {user.name}
-          </Typography>
-          <Typography
-            variant="subtitle2"
-            sx={{ marginTop: "14px", color: "whitesmoke", textAlign: "center" }}
-          >
-            {decoded.role == "admin" ? "Admin" : "Staff"}
+            Hello World!
           </Typography>
         </div>
       </Box>
 
       <List sx={{ color: "whitesmoke" }}>
-        {decoded.role == "staff" &&
-          staffSideBarItems.map((items, index) => (
-            <ListItem
-              key={index}
-              disablePadding
-              sx={{
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.3)",
-                },
-              }}
-            >
-              <ListItemButton component={Link} to={items.path}>
-                <ListItemIcon sx={{ color: "white" }}>
-                  {items.icon}
-                </ListItemIcon>
-                <ListItemText primary={items.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-
-        {decoded.role == "admin" &&
-          adminSideBarItems.map((items, index) => (
-            <ListItem
-              key={index}
-              disablePadding
-              sx={{
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.3)",
-                },
-              }}
-            >
-              <ListItemButton component={Link} to={items.path}>
-                <ListItemIcon sx={{ color: "white" }}>
-                  {items.icon}
-                </ListItemIcon>
-                <ListItemText primary={items.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+        {sideBarItems.map((items, index) => (
+          <ListItem key={index} disablePadding>
+            <ListItemButton component={Link} to={items.path}>
+              <ListItemIcon sx={{ color: "white" }}>{items.icon}</ListItemIcon>
+              <ListItemText primary={items.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
       </List>
 
       <Box
         justifyContent="center"
-        sx={{ position: "fixed", bottom: "1em", width: "100%" }}
+        sx={{ position: "fixed", bottom: "1em", left: "1.5em" }}
       >
         <List>
-          <ListItem
-            sx={{
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-              },
-            }}
-            disablePadding
-          >
-            <ListItemButton>
-              <ListItemIcon sx={{ color: "white", paddingLeft: ".2em" }}>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary="Logout"
-                sx={{ color: "white" }}
-                onClick={() => {
-                  const refreshToken = localStorage.getItem("refreshToken");
+          <ListItemButton>
+            <ListItemIcon sx={{ color: "white" }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              sx={{ color: "white" }}
+              onClick={() => {
+                const refreshToken = localStorage.getItem("refreshToken");
 
-                  localStorage.removeItem("accessToken");
-                  localStorage.removeItem("refreshToken");
-                  navigate("/login");
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                navigate("/login");
+              }}
+            />
+          </ListItemButton>
         </List>
       </Box>
     </div>

@@ -36,7 +36,7 @@ import ManageTransactions from "./pages/staff/ManageTransactions";
 
 import CertificateRequests from "./pages/staff/CertificateRequests";
 import Settings from "./pages/staff/Settings";
-import LoginRedirect from "./utils/LoginRedirect";
+import { StaffRoute, AdminRoute } from "./utils/LoginRedirect";
 
 function App() {
   return (
@@ -75,77 +75,85 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <LoginRedirect>
+            <StaffRoute>
               <StaffDashboard />
-            </LoginRedirect>
+            </StaffRoute>
           }
         />
         <Route
           path="/staff-events"
           element={
-            <LoginRedirect>
+            <StaffRoute>
               <ManageEvents />
-            </LoginRedirect>
+            </StaffRoute>
           }
         />
         <Route
           path="/service-requests"
           element={
-            <LoginRedirect>
+            <StaffRoute>
               <ServiceRequests />
-            </LoginRedirect>
+            </StaffRoute>
           }
         />
         <Route
           path="/manage-intentions"
           element={
-            <LoginRedirect>
+            <StaffRoute>
               <ManageIntentions />
-            </LoginRedirect>
+            </StaffRoute>
           }
         />
         <Route
           path="/generate-reports"
           element={
-            <LoginRedirect>
+            <StaffRoute>
               <GenerateReports />
-            </LoginRedirect>
+            </StaffRoute>
           }
         />
         <Route
           path="/manage-schedules"
           element={
-            <LoginRedirect>
+            <StaffRoute>
               <ManageSchedules />
-            </LoginRedirect>
+            </StaffRoute>
           }
         />
         <Route
           path="/manage-transactions"
           element={
-            <LoginRedirect>
+            <StaffRoute>
               <ManageTransactions />
-            </LoginRedirect>
+            </StaffRoute>
           }
         />
         <Route
           path="/cert-requests"
           element={
-            <LoginRedirect>
+            <StaffRoute>
               <CertificateRequests />
-            </LoginRedirect>
+            </StaffRoute>
           }
         />
         <Route
           path="/settings"
           element={
-            <LoginRedirect>
+            <StaffRoute>
               <Settings />
-            </LoginRedirect>
+            </StaffRoute>
           }
         />
 
         {/*  -----------ADMIN-----------  */}
+        <Route
+          path="/manage-accounts"
+          element={
+            <AdminRoute>
+              <ManageAccounts />
+            </AdminRoute>
+          }
+        />
         {<Route path="/manage-accounts" element={<ManageAccounts />} />}
 
         <Route path="*" element={<Navigate to="/" />} />

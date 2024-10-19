@@ -31,9 +31,9 @@ const Login = () => {
       const response = await axios.post(`${config.API}/auth/login`, loginData);
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);
-      console.log(response.data);
-      if (response.data.role == "staff") {
-        navigate("/dashboard");
+      localStorage.setItem("user", JSON.stringify(response.data));
+      if (response.data.role == "staff" || response.data.role == "admin") {
+        navigate("/dashboard", { state: { user: response.data } });
       }
     } catch (err) {
       console.error("Login error:", err);

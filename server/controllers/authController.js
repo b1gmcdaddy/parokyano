@@ -1,25 +1,33 @@
 const jwt = require("jsonwebtoken");
 const db = require("../controllers/db");
-const secretKey = "your-secret-key";
-const refreshTokenSecret = "your-refresh-token-secret";
+const bcrypt = require("bcrypt");
+const secretKey = "please-Lord-graduate-mi";
+const refreshTokenSecret = "one-God-one-church";
 let refreshTokens = [];
 
 exports.login = (req, res) => {
   const { email, password } = req.body;
 
-  const query = `SELECT userID, first_name, last_name, email, user_type FROM user WHERE status = "active" AND email = ? AND password = ?`;
+  const query = `SELECT * FROM user WHERE email = ?`;
 
-  db.query(query, [email, password], (error, results) => {
-    if (error) {
-      console.error("SQL error:", error);
-      return res.status(500).json({ error: "Server error" });
+  db.query(query, [email], async (err, results) => {
+    if (err) {
+      console.error("Error fetching user", err);
+      return res.status(500).json({ message: "Database error" });
     }
+
     if (results.length === 0) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const user = results[0];
-    console.log("user", user);
+    console.log(user);
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
     const accessToken = jwt.sign(
       { id: user.userID, role: user.user_type },
       secretKey,
@@ -42,6 +50,7 @@ exports.login = (req, res) => {
       id: user.userID,
       accessToken,
       refreshToken,
+      name: user.first_name + " " + user.last_name,
     });
   });
 };

@@ -1,6 +1,8 @@
 require("dotenv").config();
-
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 const db = require("./db");
+const { has } = require("lodash");
 
 const retrieveAllUsers = (req, res) => {
   db.query("Select * FROM user", (err, result) => {
@@ -17,8 +19,10 @@ const retrieveAllUsers = (req, res) => {
 
 const dateToday = new Date().toJSON().slice(0, 10);
 
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
   const data = req.body;
+  const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+  console.log(hashedPassword);
 
   db.query(
     "INSERT INTO user (first_name, last_name, user_type, date_started, contact_no, email, username, password, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -30,7 +34,7 @@ const createUser = (req, res) => {
       data.contact_no,
       data.email,
       data.username,
-      data.password,
+      hashedPassword,
       data.status,
     ],
     (err, result) => {
@@ -38,7 +42,7 @@ const createUser = (req, res) => {
         console.error("error submitting to db", err);
         return res.status(500);
       }
-      return res.status(200).json({message: "User created successfully"});
+      return res.status(200).json({ message: "User created successfully" });
     }
   );
 };
@@ -63,7 +67,7 @@ const editUser = (req, res) => {
         console.error("error updating user", err);
         return res.status(500);
       }
-      return res.status(200).json({message: "User updated successfully"});
+      return res.status(200).json({ message: "User updated successfully" });
     }
   );
 };
