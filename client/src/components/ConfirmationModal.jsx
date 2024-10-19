@@ -1,10 +1,10 @@
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Grid, Typography, IconButton } from "@mui/material";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {Button, Grid, Typography, IconButton} from "@mui/material";
 
-const ConfirmationDialog = ({ open, onClose, action, onConfirm, service }) => {
+const ConfirmationDialog = ({open, onClose, action, onConfirm, service}) => {
   const handleConfirm = () => {
     onConfirm(action);
     onClose();
@@ -63,7 +63,7 @@ const ConfirmationDialog = ({ open, onClose, action, onConfirm, service }) => {
     }
   };
 
-  const { title, message, service: serviceInfo } = getMessage();
+  const {title, message, service: serviceInfo} = getMessage();
 
   return (
     <>
@@ -75,8 +75,7 @@ const ConfirmationDialog = ({ open, onClose, action, onConfirm, service }) => {
             borderRadius: "16px",
             boxShadow: "0px 4px 20px black",
           },
-        }}
-      >
+        }}>
         <DialogContent>
           <Grid container justifyContent={"flex-end"}>
             <Grid item>
@@ -89,13 +88,12 @@ const ConfirmationDialog = ({ open, onClose, action, onConfirm, service }) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 {title} Request Confirmation
               </Typography>
             </Grid>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+              <Typography variant="subtitle1" sx={{textAlign: "center"}}>
                 {message} {serviceInfo} request?
               </Typography>
             </Grid>
@@ -107,8 +105,7 @@ const ConfirmationDialog = ({ open, onClose, action, onConfirm, service }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Button
                 onClick={() => handleConfirm()}
                 sx={{
@@ -117,9 +114,8 @@ const ConfirmationDialog = ({ open, onClose, action, onConfirm, service }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#58FF7D" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#58FF7D"},
+                }}>
                 YES
               </Button>
               <Button
@@ -131,9 +127,8 @@ const ConfirmationDialog = ({ open, onClose, action, onConfirm, service }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F05A5A" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F05A5A"},
+                }}>
                 NO
               </Button>
             </Grid>

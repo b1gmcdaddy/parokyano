@@ -1,5 +1,5 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -17,14 +17,15 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useEffect, useState } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useEffect, useState} from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import util from "../../../../utils/DateTimeFormatter";
 import axios from "axios";
 import config from "../../../../config";
 import dayjs from "dayjs";
 import Snackbar from "@mui/material/Snackbar";
+import sendSMS from "../../../../utils/smsService";
 
 const modalStyle = {
   position: "absolute",
@@ -53,15 +54,15 @@ const modalContentStyle = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px" },
+  "& .MuiInputBase-root": {height: "30px"},
 };
 
 const TextFieldStyleDis = {
-  "& .MuiInputBase-root": { height: "30px" },
+  "& .MuiInputBase-root": {height: "30px"},
   bgcolor: "#D9D9D9",
 };
 
-const BlessingApproved = ({ open, data, handleClose }) => {
+const BlessingApproved = ({open, data, handleClose}) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -155,7 +156,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
   // };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const isOtherSelected = radioValue === "others";
@@ -241,7 +242,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -253,7 +254,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
       <Modal open={open} onClose={handleClose}>
         {formData && priests && formData ? (
           <Box sx={modalStyle}>
-            <Box sx={{ position: "sticky", paddingBottom: "10px" }}>
+            <Box sx={{position: "sticky", paddingBottom: "10px"}}>
               <Grid container justifyContent={"flex-end"}>
                 <Grid item>
                   <IconButton onClick={handleClose} size="small">
@@ -263,8 +264,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                 <Grid item sm={12}>
                   <Typography
                     variant="subtitle1"
-                    sx={{ textAlign: "center", fontWeight: "bold" }}
-                  >
+                    sx={{textAlign: "center", fontWeight: "bold"}}>
                     Blessing Request Information
                   </Typography>
                 </Grid>
@@ -280,10 +280,9 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                   <RadioGroup
                     row
                     name="type"
-                    sx={{ marginTop: "-5px" }}
+                    sx={{marginTop: "-5px"}}
                     value={formData.type}
-                    readonly
-                  >
+                    readonly>
                     <FormControlLabel
                       value="House Blessing"
                       control={<Radio size="small" />}
@@ -303,7 +302,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       disabled={isOtherSelected ? false : true}
                       value={otherValue}
                       sx={{
-                        "& .MuiInputBase-root": { height: "30px" },
+                        "& .MuiInputBase-root": {height: "30px"},
                         opacity: isOtherSelected ? 1 : 0.4,
                         marginTop: "5px",
                       }}
@@ -368,8 +367,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     <div
                       style={{
                         flex: 0.1,
@@ -383,8 +381,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                           width: "80px",
                           textAlign: "center",
                           fontWeight: "bold",
-                        }}
-                      >
+                        }}>
                         Assigned
                       </p>
                     </div>
@@ -440,8 +437,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     <div
                       style={{
                         flex: 0.1,
@@ -455,8 +451,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                           width: "95px",
                           textAlign: "center",
                           fontWeight: "bold",
-                        }}
-                      >
+                        }}>
                         Reschedule
                       </p>
                     </div>
@@ -496,9 +491,8 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       height: "30px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#34AC4F" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#34AC4F"},
+                    }}>
                     SET
                   </Button>
                 </Grid>
@@ -511,12 +505,11 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}
-                >
-                  <Typography variant="body2" sx={{ marginRight: "5px" }}>
+                  }}>
+                  <Typography variant="body2" sx={{marginRight: "5px"}}>
                     Transaction Code:
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
                     040124hash
                   </Typography>
                 </Grid>
@@ -529,8 +522,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}
-                >
+                  }}>
                   <Button
                     onClick={() => handleOpenDialog("update")}
                     sx={{
@@ -540,9 +532,8 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       width: "90px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#F0CA67" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#F0CA67"},
+                    }}>
                     UPDATE
                   </Button>
                   <Button
@@ -554,9 +545,8 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       width: "90px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#F05A5A" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#F05A5A"},
+                    }}>
                     CANCEL
                   </Button>
                 </Grid>
@@ -581,20 +571,20 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                 <Skeleton variant="rectangular" width="100%" height={40} />
               </Grid>
             ))}
-            <Grid item sm={12} sx={{ mt: 2 }}>
+            <Grid item sm={12} sx={{mt: 2}}>
               <Skeleton variant="rectangular" width="30%" height={40} />
             </Grid>
-            <Grid item sm={12} sx={{ mt: 1 }}>
+            <Grid item sm={12} sx={{mt: 1}}>
               <Skeleton variant="text" width="50%" height={30} />
               <Skeleton variant="rectangular" width="100%" height={150} />
             </Grid>
-            <Grid item sm={12} sx={{ mt: 2 }}>
+            <Grid item sm={12} sx={{mt: 2}}>
               <Skeleton variant="rectangular" width="30%" height={40} />
               <Skeleton
                 variant="rectangular"
                 width="30%"
                 height={40}
-                sx={{ ml: 2 }}
+                sx={{ml: 2}}
               />
             </Grid>
           </Grid>
