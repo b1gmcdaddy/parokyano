@@ -18,9 +18,26 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import config from "../config";
+import util from "../utils/DateTimeFormatter";
 
 const TransactionModal = ({ open, data, close }) => {
+  const [staff, setStaff] = useState([]);
   console.log(data);
+
+  const fetchStaff = async () => {
+    try {
+      const response = await axios.get(`${config.API}/user/retrieveUsers`);
+      setStaff(response.data);
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchStaff();
+  }, [open, data]);
+
   return (
     <Dialog
       fullWidth
@@ -49,7 +66,7 @@ const TransactionModal = ({ open, data, close }) => {
                 <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
                   <strong>Transaction number:</strong>
                 </Typography>
-                <Typography variant="subtitle2" sx={{}}>
+                <Typography variant="subtitle2" sx={{ color: "red" }}>
                   {data.transaction_no}
                 </Typography>
               </Grid>
@@ -59,16 +76,18 @@ const TransactionModal = ({ open, data, close }) => {
                   <strong>Name:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
-                  {data.requested_by}
+                  {data.requested_by === null
+                    ? `${data.first_name} ${data.last_name}`
+                    : data.requested_by}
                 </Typography>
               </Grid>
 
               <Grid container justifyContent={"left"} sx={{ padding: 1 }}>
                 <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
-                  <strong>Amount Paid:</strong>
+                  <strong>Donation:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
-                  {data.donation}
+                  {data.donation === null ? "N/A" : data.donation}
                 </Typography>
               </Grid>
 
@@ -86,7 +105,7 @@ const TransactionModal = ({ open, data, close }) => {
                   <strong>Date paid:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
-                  {data.transaction_date}
+                  {util.formatDate(data.transaction_date)}
                 </Typography>
               </Grid>
 
@@ -95,7 +114,7 @@ const TransactionModal = ({ open, data, close }) => {
                   <strong>Payment for:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
-                  // dummy
+                  {data.service_name}
                 </Typography>
               </Grid>
 
@@ -104,7 +123,7 @@ const TransactionModal = ({ open, data, close }) => {
                   <strong>Mode of payment:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
-                  {data.payment_method}
+                  {data.payment_method === "cash" ? "Cash" : "GCash"}
                 </Typography>
               </Grid>
 
@@ -113,7 +132,11 @@ const TransactionModal = ({ open, data, close }) => {
                   <strong>Handled by:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
-                  // dummy
+                  {staff.find((staff) => staff.userID == data.user_id)
+                    ?.first_name +
+                    " " +
+                    staff.find((staff) => staff.userID == data.user_id)
+                      ?.last_name}
                 </Typography>
               </Grid>
             </Grid>

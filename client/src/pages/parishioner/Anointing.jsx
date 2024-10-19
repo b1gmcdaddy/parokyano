@@ -40,7 +40,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
-    height: "40px"
+    height: "40px",
   },
 };
 
@@ -154,6 +154,7 @@ const Anointing = () => {
         <form>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Name: (of the person to be annointed)</label>
               <TextField
                 fullWidth
@@ -166,6 +167,7 @@ const Anointing = () => {
               />
             </Grid>
             <Grid item xs={3} sm={1}>
+              <span style={{ color: "red" }}>*</span>
               <label>Age:</label>
               <TextField
                 fullWidth
@@ -178,6 +180,7 @@ const Anointing = () => {
               />
             </Grid>
             <Grid item xs={9} sm={3}>
+              <span style={{ color: "red" }}>*</span>
               <label>Contact Number:</label>
               <TextField
                 fullWidth
@@ -196,6 +199,7 @@ const Anointing = () => {
               )}
             </Grid>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Requested By:</label>
               <TextField
                 fullWidth
@@ -209,6 +213,7 @@ const Anointing = () => {
             </Grid>
 
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Address:</label>
               <TextField
                 fullWidth
@@ -221,6 +226,7 @@ const Anointing = () => {
               />
             </Grid>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Relationship:</label>
               <TextField
                 fullWidth
@@ -233,6 +239,7 @@ const Anointing = () => {
               />
             </Grid>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Patient Status:</label>
               <TextField
                 fullWidth
@@ -246,10 +253,11 @@ const Anointing = () => {
             </Grid>
 
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  slotProps={{ textField: { fullWidth: true }}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
@@ -262,10 +270,11 @@ const Anointing = () => {
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
-                  slotProps={{ textField: { fullWidth: true }}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
@@ -280,6 +289,7 @@ const Anointing = () => {
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Priest:</label>
               <TextField
                 fullWidth

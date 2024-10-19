@@ -351,7 +351,7 @@ const retrieveMultipleParams = (req, res) => {
   const { col1, val1, col2, val2, order, page, limit } = req.query;
   const offset = Number(page - 1) * parseInt(limit);
 
-  const query = `SELECT * FROM request WHERE ${col1} = ? AND ${col2} = ? ORDER BY ${order} DESC LIMIT ? OFFSET ?`;
+  const query = `SELECT r.*, s.name AS 'service_name' FROM request r, service s WHERE r.${col1} = ? AND r.${col2} = ? AND r.service_id = s.serviceID ORDER BY ${order} DESC LIMIT ? OFFSET ?`;
 
   db.query(query, [val1, val2, parseInt(limit), offset], (err, result) => {
     if (err) {

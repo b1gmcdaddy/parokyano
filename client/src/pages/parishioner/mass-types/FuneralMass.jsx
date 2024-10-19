@@ -37,7 +37,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
-    height: "40px"
+    height: "40px",
   },
 };
 
@@ -148,6 +148,7 @@ const FuneralMass = () => {
         <form>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6}>
+              <span style={{ color: "red" }}>*</span>
               <label>Name of the deceased:</label>
               <TextField
                 fullWidth
@@ -160,6 +161,7 @@ const FuneralMass = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
+              <span style={{ color: "red" }}>*</span>
               <label>Contact Number:</label>
               <TextField
                 fullWidth
@@ -179,6 +181,7 @@ const FuneralMass = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
+              <span style={{ color: "red" }}>*</span>
               <label>Requested by:</label>
               <TextField
                 fullWidth
@@ -191,6 +194,7 @@ const FuneralMass = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
+              <span style={{ color: "red" }}>*</span>
               <label>Relationship to the deceased:</label>
               <TextField
                 fullWidth
@@ -204,10 +208,11 @@ const FuneralMass = () => {
             </Grid>
 
             <Grid item xs={12} sm={3}>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  slotProps={{ textField: { fullWidth: true }}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
@@ -225,10 +230,11 @@ const FuneralMass = () => {
               )}
             </Grid>
             <Grid item xs={12} sm={3}>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
-                  slotProps={{ textField: { fullWidth: true }}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
@@ -243,6 +249,7 @@ const FuneralMass = () => {
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={6}>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Priest:</label>
               <TextField
                 fullWidth
@@ -271,6 +278,7 @@ const FuneralMass = () => {
                 justifyContent: { xs: "center", sm: "flex-start" },
               }}
             >
+              <span style={{ color: "red" }}>*</span>
               <label>Are you a Parishioner?</label>
             </Grid>
             <Grid item xs={6} sm={3}>

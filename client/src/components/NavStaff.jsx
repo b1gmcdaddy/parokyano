@@ -197,16 +197,14 @@ const NavStaff = (props) => {
           ))}
       </List>
 
-      <Box
-        justifyContent="center"
-        sx={{ position: "fixed", bottom: "1em", width: "100%" }}
-      >
+      <Box justifyContent="center" sx={{ position: "fixed", bottom: "1em" }}>
         <List>
           <ListItem
             sx={{
               "&:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.2)",
               },
+              width: "100%",
             }}
             disablePadding
           >

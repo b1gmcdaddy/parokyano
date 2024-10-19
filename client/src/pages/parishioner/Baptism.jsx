@@ -67,12 +67,12 @@ const Baptism = () => {
       gender: "",
       father_age: "",
       mother_age: "",
-      isChurchMarried: 0,
-      isCivilMarried: 0,
-      isLiveIn: 0,
-      marriage_date: 0,
-      marriage_place: 0,
-      liveIn_years: 0,
+      isChurchMarried: "",
+      isCivilMarried: "",
+      isLiveIn: "",
+      marriage_date: "",
+      marriage_place: "",
+      liveIn_years: "",
       birthCert: 0,
       parent_marriageCert: 0,
     },
@@ -226,6 +226,7 @@ const Baptism = () => {
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2} sx={{ marginBottom: "10px" }}>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Child's First Name:</label>
               <TextField
                 fullWidth
@@ -249,6 +250,7 @@ const Baptism = () => {
               />
             </Grid>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Child's Last Name:</label>
               <TextField
                 fullWidth
@@ -262,6 +264,7 @@ const Baptism = () => {
             </Grid>
 
             <Grid item xs={12} sm={3}>
+              <span style={{ color: "red" }}>*</span>
               <label>Date of Birth:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -279,6 +282,7 @@ const Baptism = () => {
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={6}>
+              <span style={{ color: "red" }}>*</span>
               <label>Place of Birth:</label>
               <TextField
                 fullWidth
@@ -291,6 +295,7 @@ const Baptism = () => {
               />
             </Grid>
             <Grid item xs={12} sm={3}>
+              <span style={{ color: "red" }}>*</span>
               <label>Gender:</label>
               <TextField
                 fullWidth
@@ -308,6 +313,7 @@ const Baptism = () => {
               </TextField>
             </Grid>
             <Grid item xs={12} sm={9}>
+              <span style={{ color: "red" }}>*</span>
               <label>Father's Complete Name:</label>
               <TextField
                 fullWidth
@@ -333,6 +339,7 @@ const Baptism = () => {
               />
             </Grid>
             <Grid item xs={12} sm={9}>
+              <span style={{ color: "red" }}>*</span>
               <label>Mother's Complete Maiden Name:</label>
               <TextField
                 fullWidth
@@ -358,6 +365,7 @@ const Baptism = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
+              <span style={{ color: "red" }}>*</span>
               <label>Present Address:</label>
               <TextField
                 fullWidth
@@ -370,6 +378,7 @@ const Baptism = () => {
               />
             </Grid>
             <Grid item xs={12} sm={3}>
+              <span style={{ color: "red" }}>*</span>
               <label>Contact Number:</label>
               <TextField
                 fullWidth
@@ -389,6 +398,7 @@ const Baptism = () => {
               )}
             </Grid>
             <Grid item xs={12} sm={3}>
+              <span style={{ color: "red" }}>*</span>
               <label>Payment Method:</label>
               <TextField
                 fullWidth
@@ -432,6 +442,7 @@ const Baptism = () => {
             {formData.details.isChurchMarried === "1" && (
               <>
                 <Grid item xs={12} sm={3} sx={{ marginRight: { md: "15px" } }}>
+                  <span style={{ color: "red" }}>*</span>
                   <label>When?</label>
                   <TextField
                     fullWidth
@@ -445,6 +456,7 @@ const Baptism = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3} sx={{ marginBottom: "14px" }}>
+                  <span style={{ color: "red" }}>*</span>
                   <label>Where?</label>
                   <TextField
                     fullWidth
@@ -485,6 +497,7 @@ const Baptism = () => {
                 {formData.details.isCivilMarried === "0" && (
                   <Grid item xs={5} sm={3}>
                     <FormControl component="fieldset">
+                      <span style={{ color: "red" }}>*</span>
                       <label>Live-in?</label>
                       <RadioGroup
                         row
@@ -508,6 +521,7 @@ const Baptism = () => {
                 )}
                 {formData.details.isLiveIn === "1" && (
                   <Grid item xs={12} sm={3}>
+                    <span style={{ color: "red" }}>*</span>
                     <label>How many years?</label>
                     <TextField
                       fullWidth
@@ -527,6 +541,7 @@ const Baptism = () => {
           {/*------------preferrrd sched and priest----------*/}
           <Grid container spacing={2} sx={{ marginBottom: "1.5em" }}>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -544,6 +559,7 @@ const Baptism = () => {
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
@@ -562,6 +578,7 @@ const Baptism = () => {
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={4}>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Priest:</label>
               <TextField
                 fullWidth
@@ -592,6 +609,7 @@ const Baptism = () => {
               sx={{ marginBottom: "6px" }}
             >
               <Grid item xs={12} sm={9}>
+                <span style={{ color: "red" }}>*</span>
                 <label>{`Godparent ${index + 1}:`}</label>
                 <TextField
                   fullWidth
@@ -605,6 +623,7 @@ const Baptism = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={3}>
+                <span style={{ color: "red" }}>*</span>
                 <label>Catholic?</label>
                 <TextField
                   fullWidth
