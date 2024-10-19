@@ -1,5 +1,5 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -28,14 +28,15 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState, useEffect } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useState, useEffect} from "react";
 import React from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
 import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
+import sendSMS from "../../../utils/smsService";
 
 const style = {
   position: "absolute",
@@ -76,7 +77,7 @@ const boxModal = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px", bgcolor: "white" },
+  "& .MuiInputBase-root": {height: "30px", bgcolor: "white"},
 };
 
 const tabStyle = {
@@ -102,7 +103,7 @@ const endTime = (timeString, hoursToAdd) => {
 const fetchWeddingDetails = async (id) => {
   try {
     const response = await axios.get(`${config.API}/wedding/retrieve`, {
-      params: { reqID: id },
+      params: {reqID: id},
     });
 
     return response.data?.result[0];
@@ -112,7 +113,7 @@ const fetchWeddingDetails = async (id) => {
   }
 };
 
-function RequirementsModal({ id, onClose }) {
+function RequirementsModal({id, onClose}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [tabValue, setTabValue] = useState(0);
@@ -194,9 +195,8 @@ function RequirementsModal({ id, onClose }) {
           fontSize: "11px",
           marginLeft: "5px",
           color: "white",
-          "&:hover": { bgcolor: "#4C74A5" },
-        }}
-      >
+          "&:hover": {bgcolor: "#4C74A5"},
+        }}>
         Requirements
       </Button>
       <Modal open={open} onClose={handleClose}>
@@ -212,8 +212,7 @@ function RequirementsModal({ id, onClose }) {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Requirements Information
               </Typography>
             </Grid>
@@ -223,8 +222,7 @@ function RequirementsModal({ id, onClose }) {
                 variant="fullWidth"
                 value={tabValue}
                 onChange={handleTabChange}
-                sx={{ borderRadius: "10px 10px 0px 0px" }}
-              >
+                sx={{borderRadius: "10px 10px 0px 0px"}}>
                 <Tab label="Groom" sx={tabStyle} />
                 <Tab label="Bride" sx={tabStyle} />
               </Tabs>
@@ -234,8 +232,7 @@ function RequirementsModal({ id, onClose }) {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "0px 0px 5px 5px",
-                }}
-              >
+                }}>
                 <Grid container justifyContent={"center"}>
                   <Box>
                     {tabValue === 0 && (
@@ -254,7 +251,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -274,7 +271,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -298,7 +295,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -322,7 +319,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -344,7 +341,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -368,7 +365,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -381,9 +378,9 @@ function RequirementsModal({ id, onClose }) {
               </Box>
             </Grid>
 
-            <Grid item sm={12} sx={{ marginTop: "5px" }}>
+            <Grid item sm={12} sx={{marginTop: "5px"}}>
               <div
-                style={{ flex: 0.1, height: "1.8px", backgroundColor: "black" }}
+                style={{flex: 0.1, height: "1.8px", backgroundColor: "black"}}
               />
             </Grid>
 
@@ -402,7 +399,7 @@ function RequirementsModal({ id, onClose }) {
                     />
                   }
                   label={
-                    <Typography sx={{ fontSize: "15px" }}>
+                    <Typography sx={{fontSize: "15px"}}>
                       Marriage License
                     </Typography>
                   }
@@ -422,7 +419,7 @@ function RequirementsModal({ id, onClose }) {
                     />
                   }
                   label={
-                    <Typography sx={{ fontSize: "15px" }}>
+                    <Typography sx={{fontSize: "15px"}}>
                       Parish Permit
                     </Typography>
                   }
@@ -442,7 +439,7 @@ function RequirementsModal({ id, onClose }) {
                     />
                   }
                   label={
-                    <Typography sx={{ fontSize: "15px" }}>
+                    <Typography sx={{fontSize: "15px"}}>
                       Prenuptial Agreement
                     </Typography>
                   }
@@ -462,7 +459,7 @@ function RequirementsModal({ id, onClose }) {
                     />
                   }
                   label={
-                    <Typography sx={{ fontSize: "15px" }}>
+                    <Typography sx={{fontSize: "15px"}}>
                       Pre-Cana Certificate
                     </Typography>
                   }
@@ -470,12 +467,11 @@ function RequirementsModal({ id, onClose }) {
               </Grid>
             </Box>
 
-            <Grid item sm={12} sx={{ marginTop: "10px", textAlign: "center" }}>
+            <Grid item sm={12} sx={{marginTop: "10px", textAlign: "center"}}>
               <Button
                 onClick={updateRequirements}
                 variant="contained"
-                sx={{ bgcolor: "#355173" }}
-              >
+                sx={{bgcolor: "#355173"}}>
                 Save
               </Button>
             </Grid>
@@ -486,7 +482,7 @@ function RequirementsModal({ id, onClose }) {
   );
 }
 
-function SponsorsModal({ id }) {
+function SponsorsModal({id}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -518,8 +514,8 @@ function SponsorsModal({ id }) {
   }, []);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewSponsor((prev) => ({ ...prev, [name]: value }));
+    const {name, value} = e.target;
+    setNewSponsor((prev) => ({...prev, [name]: value}));
   };
 
   const handleAddSponsor = async () => {
@@ -535,7 +531,7 @@ function SponsorsModal({ id }) {
         ...newSponsor,
       };
       fetchSponsors();
-      setNewSponsor({ name: "", age: "", isMarried: "", isCatholic: "" });
+      setNewSponsor({name: "", age: "", isMarried: "", isCatholic: ""});
     } catch (err) {
       console.error("Error adding sponsor", err);
     }
@@ -570,9 +566,8 @@ function SponsorsModal({ id }) {
           fontSize: "11px",
           marginLeft: "5px",
           color: "white",
-          "&:hover": { bgcolor: "#4C74A5" },
-        }}
-      >
+          "&:hover": {bgcolor: "#4C74A5"},
+        }}>
         Sponsors
       </Button>
       <Modal open={open}>
@@ -588,8 +583,7 @@ function SponsorsModal({ id }) {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Sponsors Information
               </Typography>
             </Grid>
@@ -621,8 +615,7 @@ function SponsorsModal({ id }) {
                 name="isMarried"
                 onChange={handleInputChange}
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="1">Married</MenuItem>
                 <MenuItem value="0">Not Married</MenuItem>
               </TextField>
@@ -635,13 +628,12 @@ function SponsorsModal({ id }) {
                 value={newSponsor.isCatholic}
                 onChange={handleInputChange}
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="1">Yes</MenuItem>
                 <MenuItem value="0">No</MenuItem>
               </TextField>
             </Grid>
-            <Grid item sm={12} sx={{ textAlign: "center" }}>
+            <Grid item sm={12} sx={{textAlign: "center"}}>
               <Button
                 onClick={handleAddSponsor}
                 sx={{
@@ -650,16 +642,15 @@ function SponsorsModal({ id }) {
                   width: "150px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#4C74A5" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#4C74A5"},
+                }}>
                 Add Sponsor
               </Button>
             </Grid>
 
             <Grid item sm={12}>
               <TableContainer component={Paper}>
-                <Table sx={{ tableLayout: "fixed" }}>
+                <Table sx={{tableLayout: "fixed"}}>
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">Full Name</TableCell>
@@ -668,8 +659,7 @@ function SponsorsModal({ id }) {
                       <TableCell align="center">Catholic?</TableCell>
                       <TableCell
                         align="center"
-                        sx={{ width: "50px" }}
-                      ></TableCell>
+                        sx={{width: "50px"}}></TableCell>
                     </TableRow>
                   </TableHead>
                 </Table>
@@ -683,9 +673,8 @@ function SponsorsModal({ id }) {
                   "&::-webkit-scrollbar": {
                     display: "none",
                   },
-                }}
-              >
-                <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+                }}>
+                <Table sx={{tableLayout: "fixed", width: "100%"}}>
                   <TableBody>
                     {sponsors.map((sponsor) => (
                       <TableRow key={sponsor.sponsorID}>
@@ -699,11 +688,10 @@ function SponsorsModal({ id }) {
                         <TableCell align="center">
                           {sponsor.isCatholic == 1 ? "Yes" : "No"}
                         </TableCell>
-                        <TableCell align="center" sx={{ width: "50px" }}>
+                        <TableCell align="center" sx={{width: "50px"}}>
                           <IconButton
                             size="small"
-                            onClick={() => handleDeleteSponsor(sponsor)}
-                          >
+                            onClick={() => handleDeleteSponsor(sponsor)}>
                             <FontAwesomeIcon icon={faXmark} />
                           </IconButton>
                         </TableCell>
@@ -720,7 +708,7 @@ function SponsorsModal({ id }) {
   );
 }
 
-const WeddingPending = ({ open, data, handleClose }) => {
+const WeddingPending = ({open, data, handleClose}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completeRequirements, setCompleteRequirements] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
@@ -836,16 +824,16 @@ const WeddingPending = ({ open, data, handleClose }) => {
 
   // START FORM HANDLERS AND CONTROLS
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleOpenDialog = (action) => {
@@ -913,6 +901,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
           user_id: 1,
           request_id: formData.requestID,
         });
+        // sendSMS(data.service_id, formData, "approve-wed-interview");
 
         alert("Marriage Interview Set!");
         window.location.reload();
@@ -977,6 +966,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
           user_id: 1,
           request_id: formData.requestID,
         });
+        // sendSMS(data.service_id, formData, "approve");
         alert("Wedding Approved!");
         window.location.reload();
       }
@@ -1022,7 +1012,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
         });
 
         console.log("request cancelled!");
-
+        // sendSMS(data.service_id, formData, "cancel");
         await axios.post(`${config.API}/logs/create`, {
           activity: `Cancelled Wedding Request - Transaction number: ${data.transaction_no}`,
           user_id: 1,
@@ -1044,7 +1034,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -1066,8 +1056,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Request Information
               </Typography>
             </Grid>
@@ -1079,14 +1068,12 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "5px",
-                }}
-              >
+                }}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       Groom:
                     </Typography>
                   </Grid>
@@ -1131,14 +1118,12 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "5px",
-                }}
-              >
+                }}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       Bride:
                     </Typography>
                   </Grid>
@@ -1188,8 +1173,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                 value={formData.relationship}
                 fullWidth
                 select
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                 <MenuItem value="Live-in for under 4 years">
                   Live-in for under 4 years
@@ -1208,8 +1192,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                 value={formData?.payment_status}
                 select
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="unpaid">Unpaid</MenuItem>
                 <MenuItem value="paid">Paid</MenuItem>
               </TextField>
@@ -1218,8 +1201,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
             <Grid item sm={12} textAlign={"center"}>
               <Typography
                 variant="subtitle1"
-                sx={{ display: "inline-block", fontSize: "14px" }}
-              >
+                sx={{display: "inline-block", fontSize: "14px"}}>
                 Requirements:
               </Typography>
               <Typography
@@ -1229,8 +1211,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   marginLeft: "5px",
                   fontSize: "14px",
                   color: completeRequirements == 1 ? "green" : "red",
-                }}
-              >
+                }}>
                 {completeRequirements == 1 ? "Complete" : "Incomplete"}
               </Typography>
               <RequirementsModal
@@ -1243,8 +1224,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
-                }}
-              >
+                }}>
                 Sponsors:
               </Typography>
 
@@ -1258,22 +1238,19 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "5px",
-                }}
-              >
+                }}>
                 <Grid container spacing={1}>
                   <Grid item sm={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       INTERVIEW
                     </Typography>
                   </Grid>
                   <Grid item sm={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       WEDDING
                     </Typography>
                   </Grid>
@@ -1289,8 +1266,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                             name="priest_id"
                             sx={TextFieldStyle}
                             value={formData.priest_id}
-                            onChange={handleChange}
-                          >
+                            onChange={handleChange}>
                             {priests.map((priest) => (
                               <MenuItem key={priest.id} value={priest.priestID}>
                                 {`${priest.first_name} ${priest.last_name}`}
@@ -1352,9 +1328,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "white",
-                              "&:hover": { bgcolor: "#4C74A5" },
-                            }}
-                          >
+                              "&:hover": {bgcolor: "#4C74A5"},
+                            }}>
                             Assign INTERVIEW
                           </Button>
                         </Grid>
@@ -1372,8 +1347,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                             disabled={completeRequirements !== 1}
                             sx={TextFieldStyle}
                             value={formData.priest_id}
-                            onChange={handleChange}
-                          >
+                            onChange={handleChange}>
                             {priests.map((priest) => (
                               <MenuItem key={priest.id} value={priest.priestID}>
                                 {`${priest.first_name} ${priest.last_name}`}
@@ -1435,9 +1409,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                               height: "30px",
                               fontWeight: "bold",
                               color: "#355173",
-                              "&:hover": { bgcolor: "#D3CECE" },
-                            }}
-                          >
+                              "&:hover": {bgcolor: "#D3CECE"},
+                            }}>
                             CONFIRM WEDDING
                           </Button>
                         </Grid>
@@ -1456,12 +1429,11 @@ const WeddingPending = ({ open, data, handleClose }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ marginRight: "5px" }}>
+              }}>
+              <Typography variant="body2" sx={{marginRight: "5px"}}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+              <Typography variant="body2" sx={{fontWeight: "bold"}}>
                 {formData.transaction_no}
               </Typography>
             </Grid>
@@ -1474,8 +1446,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -1484,9 +1455,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F0CA67" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F0CA67"},
+                }}>
                 UPDATE
               </Button>
               <Button
@@ -1498,9 +1468,8 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F05A5A" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F05A5A"},
+                }}>
                 CANCEL
               </Button>
             </Grid>

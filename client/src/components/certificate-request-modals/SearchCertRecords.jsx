@@ -17,6 +17,7 @@ import axios from "axios";
 import config from "../../config";
 import CompareRecords from "./CompareRecords";
 import ConfirmationDialog from "../ConfirmationModal";
+import sendSMS from "../../utils/smsService";
 
 const SearchCertRecords = ({open, data, close}) => {
   const [certType, setCertType] = useState(null);
@@ -82,6 +83,7 @@ const SearchCertRecords = ({open, data, close}) => {
         user_id: 1,
         request_id: data.requestID,
       });
+      // sendSMS(data.service_id, data, "cancel-cert");
       console.log("logs success!");
       alert("certificate request successfulyl  cancelled!");
       window.location.reload();

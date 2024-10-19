@@ -1,5 +1,5 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -18,14 +18,15 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState, useEffect } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useState, useEffect} from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
 import dayjs from "dayjs";
 import axios from "axios";
 import config from "../../../config";
 import Snackbar from "@mui/material/Snackbar";
+import sendSMS from "../../../utils/smsService";
 
 const style = {
   position: "absolute",
@@ -41,11 +42,11 @@ const style = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px" },
+  "& .MuiInputBase-root": {height: "30px"},
 };
 
 const TextFieldStyleDis = {
-  "& .MuiInputBase-root": { height: "30px" },
+  "& .MuiInputBase-root": {height: "30px"},
   bgcolor: "#D9D9D9",
 };
 
@@ -63,7 +64,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BlessingPending = ({ open, data, handleClose }) => {
+const BlessingPending = ({open, data, handleClose}) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -148,16 +149,16 @@ const BlessingPending = ({ open, data, handleClose }) => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH-mm-ss") });
+    setFormData({...formData, [name]: time.format("HH-mm-ss")});
   };
 
   const handleCloseDialog = () => {
@@ -165,8 +166,8 @@ const BlessingPending = ({ open, data, handleClose }) => {
   };
 
   const handleRadioChange = (e) => {
-    const { value } = e.target;
-    setFormData((prevData) => ({ ...prevData, type: value }));
+    const {value} = e.target;
+    setFormData((prevData) => ({...prevData, type: value}));
     setRadioValue(value);
     if (e.target.value !== "others") {
       setOtherValue("");
@@ -220,6 +221,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
               },
             });
             console.log("request success!");
+            console.log(formData);
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Blessing for ${formData.first_name} at ${formData.address}`,
@@ -235,6 +237,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
               request_id: formData.requestID,
             });
             console.log("logs success!");
+            // sendSMS(data.service_id, formData, "approve");
             handleClose();
           }
         } catch (err) {
@@ -275,6 +278,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
         });
 
         console.log("request cancelled!");
+        // sendSMS(data.service_id, formData, "cancel");
 
         await axios.post(`${config.API}/logs/create`, {
           activity: `Cancelled Blessing Request - Transaction number: ${data.transaction_no}`,
@@ -297,7 +301,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -319,8 +323,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Blessing Request Information
               </Typography>
             </Grid>
@@ -332,10 +335,9 @@ const BlessingPending = ({ open, data, handleClose }) => {
               <RadioGroup
                 row
                 name="type"
-                sx={{ marginTop: "-5px" }}
+                sx={{marginTop: "-5px"}}
                 value={formData.type}
-                onChange={handleRadioChange}
-              >
+                onChange={handleRadioChange}>
                 <FormControlLabel
                   value="House Blessing"
                   control={<Radio size="small" />}
@@ -356,7 +358,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
                   value={otherValue}
                   onChange={handleOtherChange}
                   sx={{
-                    "& .MuiInputBase-root": { height: "30px" },
+                    "& .MuiInputBase-root": {height: "30px"},
                     opacity: isOtherSelected ? 1 : 0.4,
                     marginTop: "5px",
                   }}
@@ -373,8 +375,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 name="first_name"
                 onChange={handleChange}
                 sx={TextFieldStyle}
-                value={formData.first_name}
-              ></TextField>
+                value={formData.first_name}></TextField>
             </Grid>
 
             <Grid item sm={1.3}>
@@ -424,10 +425,9 @@ const BlessingPending = ({ open, data, handleClose }) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <div
-                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
+                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
                 />
                 <div>
                   <p
@@ -435,13 +435,12 @@ const BlessingPending = ({ open, data, handleClose }) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     Preferred
                   </p>
                 </div>
                 <div
-                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
                 />
               </div>
             </Grid>
@@ -454,8 +453,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 onChange={handleChange}
                 select
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 {priests.map((priest) => (
                   <MenuItem key={priest.priestID} value={priest.priestID}>
                     {priest.first_name + " " + priest.last_name}
@@ -506,9 +504,8 @@ const BlessingPending = ({ open, data, handleClose }) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#4C74A5" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#4C74A5"},
+                }}>
                 Assign
               </Button>
             </Grid>
@@ -519,10 +516,9 @@ const BlessingPending = ({ open, data, handleClose }) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <div
-                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
+                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
                 />
                 <div>
                   <p
@@ -530,13 +526,12 @@ const BlessingPending = ({ open, data, handleClose }) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     Assigned
                   </p>
                 </div>
                 <div
-                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
                 />
               </div>
             </Grid>
@@ -562,9 +557,8 @@ const BlessingPending = ({ open, data, handleClose }) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "#355173",
-                  "&:hover": { bgcolor: "#D3CECE" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#D3CECE"},
+                }}>
                 CLEAR
               </Button>
             </Grid>
@@ -577,12 +571,11 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ marginRight: "5px" }}>
+              }}>
+              <Typography variant="body2" sx={{marginRight: "5px"}}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+              <Typography variant="body2" sx={{fontWeight: "bold"}}>
                 {formData.transaction_no}
               </Typography>
             </Grid>
@@ -595,8 +588,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -606,9 +598,8 @@ const BlessingPending = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F0CA67" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F0CA67"},
+                }}>
                 UPDATE
               </Button>
               <Button
@@ -620,9 +611,8 @@ const BlessingPending = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F05A5A" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F05A5A"},
+                }}>
                 CANCEL
               </Button>
             </Grid>

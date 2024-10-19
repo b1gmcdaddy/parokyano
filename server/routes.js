@@ -26,6 +26,7 @@ const weddingRoute = require("./routes/weddingRoute");
 const baptismRoute = require("./routes/baptismRoute");
 const logsRoute = require("./routes/logsRoutes");
 const authRoute = require("./routes/authRoute");
+const smsRoute = require("./routes/smsRoute");
 
 app.use("/auth", authRoute);
 app.use("/request", requestRoute);
@@ -37,6 +38,7 @@ app.use("/sponsor", sponsorRoute);
 app.use("/wedding", weddingRoute);
 app.use("/baptism", baptismRoute);
 app.use("/logs", logsRoute);
+app.use("/sms", smsRoute);
 
 //debugging purposes
 app.use((err, req, res, next) => {
