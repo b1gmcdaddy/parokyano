@@ -112,9 +112,9 @@ const GenerateReports = () => {
               required
             >
               {/* <MenuItem value="9999">All</MenuItem> */}
-              <MenuItem value="Baptism">Baptism - Appointment</MenuItem>
-              <MenuItem value="5">Baptism - General</MenuItem>
-              <MenuItem value="6">Wedding</MenuItem>
+              <MenuItem value="5">Baptism - Appointment</MenuItem>
+              <MenuItem value="6">Baptism - General</MenuItem>
+              <MenuItem value="7">Wedding</MenuItem>
               <MenuItem value="12">Anointing of the Sick</MenuItem>
               <MenuItem value="11">Funeral Mass</MenuItem>
               <MenuItem value="10">Outside Mass</MenuItem>
@@ -188,6 +188,7 @@ const GenerateReports = () => {
               <StaffReport
                 startDate={reportDetails.startDate}
                 endDate={reportDetails.endDate}
+                category={reportDetails.category}
               />
             </Container>
           </Box>
@@ -237,7 +238,11 @@ const GenerateReports = () => {
             ref={componentRef}
           >
             <Container maxWidth="lg" sx={{ backgroundColor: "white" }}>
-              <StaffReportSpecific category={reportDetails.category} />
+              <StaffReportSpecific
+                startDate={reportDetails.startDate}
+                endDate={reportDetails.endDate}
+                category={reportDetails.category}
+              />
             </Container>
           </Box>
         </Box>

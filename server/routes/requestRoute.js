@@ -6,7 +6,7 @@ const {
   createRequestCertificate,
   retrieveByParams,
   getRequestSummary,
-  getSummaryWithTypeParam,
+  getSpecificSummary,
   createRequestBaptism,
   createRequestWedding,
   createRequestMass,
@@ -42,7 +42,7 @@ router.get("/retrieve", retrieveByParams);
 router.get("/retrieve-multiple", retrieveMultipleParams);
 router.get("/count", getCount);
 router.get("/summary", getRequestSummary);
-router.get("/type-summary", getSummaryWithTypeParam);
+router.get("/summary-specific", getSpecificSummary);
 router.put("/approve-service", approveService);
 router.put("/approve-intention", approveIntention);
 router.put("/approve-dynamic", approveDynamic);

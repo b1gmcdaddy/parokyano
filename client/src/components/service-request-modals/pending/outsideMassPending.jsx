@@ -26,6 +26,8 @@ import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
 import sendSMS from "../../../utils/smsService";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 const style = {
   position: "absolute",
@@ -85,7 +87,6 @@ const OutsidePending = ({open, data, handleClose}) => {
     transaction_no: "",
     service_id: "",
     type: "",
-    mass_date: "",
   });
 
   useEffect(() => {
@@ -104,7 +105,6 @@ const OutsidePending = ({open, data, handleClose}) => {
         transaction_no: data.transaction_no,
         service_id: data.service_id,
         type: data.type,
-        mass_date: null,
       });
     }
     console.log(data);
@@ -168,7 +168,7 @@ const OutsidePending = ({open, data, handleClose}) => {
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleCloseDialog = () => {
@@ -208,9 +208,7 @@ const OutsidePending = ({open, data, handleClose}) => {
               },
             }
           );
-          if (response.status !== 200) {
-            console.log("resposne: ", response);
-            console.log("error!");
+          if (Object.keys(response.data).length > 0 || response.data != "") {
             setError({
               message: response.data.message,
               details: response.data?.details,
@@ -234,7 +232,9 @@ const OutsidePending = ({open, data, handleClose}) => {
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Outside mass at ${formData.address}`,
-              start_time: formData.preferred_time,
+              start_time: formData.preferred_time
+                ? formData.preferred_time
+                : data.preferred_time,
               end_time: endTime(formData.preferred_time, service.duration),
               priest_id: formData.priest_id,
               request_id: formData.requestID,
@@ -250,6 +250,10 @@ const OutsidePending = ({open, data, handleClose}) => {
             handleClose();
           }
         } catch (err) {
+          setError({
+            message: err.response.data.message,
+            details: err.response.data.details,
+          });
           console.log("error submitting to server", err);
         }
         break;
@@ -494,6 +498,7 @@ const OutsidePending = ({open, data, handleClose}) => {
                   onChange={(date) => handleDateChange("preferred_date", date)}
                   renderInput={(params) => <TextField {...params} required />}
                   sx={TextFieldStyle}
+                  disableTimezone
                 />
               </LocalizationProvider>
             </Grid>

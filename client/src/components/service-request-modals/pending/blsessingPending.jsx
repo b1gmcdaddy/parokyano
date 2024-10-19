@@ -200,7 +200,7 @@ const BlessingPending = ({open, data, handleClose}) => {
             }
           );
           console.log(response);
-          if (response.status !== 200) {
+          if (Object.keys(response.data).length > 0 || response.data != "") {
             setError({
               message: response.data.message,
               details: response.data?.details,
@@ -241,6 +241,10 @@ const BlessingPending = ({open, data, handleClose}) => {
             handleClose();
           }
         } catch (err) {
+          setError({
+            message: err.response.data.message,
+            details: err.response.data.details,
+          });
           console.log("error submitting to server", err);
         }
         break;

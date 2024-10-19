@@ -7,8 +7,8 @@ const pool = mysql.createPool({
   password: process.env.MYSQL_ADDON_PASSWORD,
   database: process.env.MYSQL_ADDON_DB,
   connectTimeout: 30000, // Increase connection timeout to 30 seconds
+  timezone: "Z",
   port: process.env.PORT,
-  // ssl: { rejectUnauthorized: false }, // Uncomment if SSL is required
 });
 
 module.exports = pool;

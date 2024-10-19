@@ -36,12 +36,19 @@ const retrieveSchedules = (req, res) => {
 
 const retrieveScheduleByParams = (req, res) => {
   const { priest, date, start, end } = req.query;
-  console.log(req.query);
+  console.log("sched: ", req.query);
   db.query(
-    `SELECT s.*, p.first_name, p.last_name FROM priestschedule s, priest p WHERE p.priestID = s.priest_id AND s.priest_id = ${priest} AND date = '${date.substring(
-      0,
-      10
-    )}' AND start_time BETWEEN '${start}' AND '${end}'`,
+    `SELECT s.*, p.first_name, p.last_name 
+  FROM priestschedule s 
+  JOIN priest p ON p.priestID = s.priest_id
+  WHERE s.priest_id = ? 
+    AND s.date = ?
+    AND (
+      (s.start_time <= '${start}' AND s.end_time >= '${end}') OR
+      (s.start_time >= '${start}' AND s.start_time < '${end}') OR
+      (s.end_time > '${start}' AND s.end_time <= '${end}')
+    )`,
+    [priest, date.substring(0, 10)],
     (err, result) => {
       if (err) {
         console.error("error retrieving from scheds db", err);
@@ -60,9 +67,9 @@ const retrieveScheduleByParams = (req, res) => {
         );
         let priestName = `${result[0].first_name} ${result[0].last_name}`;
 
-        let message = `${priestName} has a scheduled service from ${startTimeFormatted} to ${endTimeFormatted}`;
-        let details = "Service: " + result[0].activity;
-        return res.status(200).send({ message, details });
+        const message = `${priestName} has a scheduled service from ${startTimeFormatted} to ${endTimeFormatted}`;
+        const details = "Service: " + result[0].activity;
+        return res.status(409).send({ message, details });
       } else {
         return res.status(200).send();
       }
