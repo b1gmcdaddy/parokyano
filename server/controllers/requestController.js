@@ -433,6 +433,82 @@ const getCountRequests = (req, res) => {
   });
 };
 
+// For Dashboard and possibly for generate report?
+const getCountRequestsDateFiltered = (req, res) => {
+  const { dateFilter } = req.query;
+
+  const currentDate = new Date();
+
+  let dateCondition = "";
+  switch (dateFilter) {
+    case "Today":
+      dateCondition = `DATE(date_requested) = CURDATE()`;
+      break;
+    case "This Week":
+      dateCondition = `YEARWEEK(date_requested, 1) = YEARWEEK(CURDATE(), 1)`; // ISO Week
+      break;
+    case "This Month":
+      dateCondition = `YEAR(date_requested) = YEAR(CURDATE()) AND MONTH(date_requested) = MONTH(CURDATE())`;
+      break;
+    default:
+      return res.status(400).json({ error: "Invalid date filter" });
+  }
+  const queryA = `SELECT COUNT(*) as countA FROM request WHERE service_id = 1 AND status IN ('approved', 'pending') AND ${dateCondition}`;
+  const queryB = `SELECT COUNT(*) as countB FROM request WHERE service_id IN (2, 3, 4) AND status IN ('approved', 'pending') AND ${dateCondition}`;
+  const queryC = `SELECT COUNT(*) as countC FROM request WHERE service_id BETWEEN 5 AND 13 AND status IN ('approved', 'pending') AND ${dateCondition}`;
+
+  db.query(queryA, (errA, resultA) => {
+    if (errA) {
+      console.error("Error retrieving mass intentions count", errA);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    db.query(queryB, (errB, resultB) => {
+      if (errB) {
+        console.error("Error retrieving cert requests count", errB);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      db.query(queryC, (errC, resultC) => {
+        if (errC) {
+          console.error("Error retrieving service requests counts", errC);
+          return res.status(500).json({ error: "Database error" });
+        }
+        res.status(200).json({
+          countA: resultA[0].countA,
+          countB: resultB[0].countB,
+          countC: resultC[0].countC,
+        });
+      });
+    });
+  });
+};
+
+///////// For Dashboard 'Upcoming Events'/////////////
+const getUpcomingEvents = (req, res) => {
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  const query = `
+    SELECT * 
+    FROM request 
+    WHERE status = 'approved' 
+    AND preferred_date >= ? 
+    ORDER BY preferred_date DESC 
+    LIMIT 5
+  `;
+
+  db.query(query, [currentDate], (err, result) => {
+    if (err) {
+      console.error("Error retrieving approved requests:", err);
+      return res
+        .status(500)
+        .json({ message: "An error occurred while retrieving requests." });
+    }
+
+    res.status(200).json({ success: true, data: result });
+  });
+};
+
 const getCountCerts = (req, res) => {
   const status = req.query.status;
   const query = `SELECT COUNT(*) as count FROM request WHERE service_id = 2 OR service_id = 3 OR service_id = 4 AND status = ?`;
@@ -673,44 +749,6 @@ const approveDynamic = (req, res) => {
   }
 };
 
-// const updateRequest = (req, res) => {
-//   const { formData } = req.body;
-//   let setClause = [];
-//   let whereClause = [];
-//   let values = [];
-
-//   // Extract data from formData for the SET clause
-//   for (const [key, value] of Object.entries(formData)) {
-//     if (key === "requestID") {
-//       whereClause.push(`${key} = ?`);
-//       values.push(value);  // Add the condition to the values array
-//     } else {
-//       setClause.push(`${key} = ?`);
-//       values.push(value);  // Add the update fields to the values array
-//     }
-//   }
-
-//   // If no valid fields to update, return an error
-//   if (setClause.length === 0 || whereClause.length === 0) {
-//     return res.status(400).json({ message: "Invalid data for update" });
-//   }
-
-//   // Build the final SQL query
-//   const query = `UPDATE request SET ${setClause.join(', ')} WHERE ${whereClause.join(' AND ')}`;
-
-//   console.log("Generated Query:", query);
-//   console.log("Query Values:", values);
-
-//   // Execute the query
-//   db.query(query, values, (err, results) => {
-//     if (err) {
-//       console.error("Error executing query:", err);
-//       return res.status(500).json({ message: "Error during update" });
-//     }
-//     res.status(200).json({ message: "Update successful!" });
-//   });
-// };
-
 // dynamic version..
 const searchCertRecords = (req, res) => {
   const {
@@ -855,9 +893,11 @@ module.exports = {
   approveDynamic,
   retrieveMultipleDateFiltered,
   getCount,
+  getUpcomingEvents,
   retrieveRequests,
   retrieveCerts,
   getCountRequests,
+  getCountRequestsDateFiltered,
   getCountCerts,
   searchIntentions,
   searchCertRecords,

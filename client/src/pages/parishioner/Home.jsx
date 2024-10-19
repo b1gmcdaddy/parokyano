@@ -2,6 +2,12 @@ import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from "../../assets/imageHeader.jpg";
+import baptism from "../../assets/baptism.jpg";
+import massReq from "../../assets/massReq.jpg";
+import intention from "../../assets/intention.jpg";
+import anointing from "../../assets/anointing.jpg";
+import wedding from "../../assets/wedding.jpg";
+import blessing from "../../assets/blessing.jpg";
 import Header from "../../components/Header";
 import {Grid} from "@mui/material";
 import Footer from "../../components/Footer";
@@ -69,10 +75,10 @@ const Home = () => {
             style={{position: "relative"}}
             onClick={() => handleClickOpen("wedding")}>
             <img
-              src={imageHeader}
+              src={wedding}
               alt="Service 1"
               className="object-cover md:h-[380px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
-           hover:scale-105 duration-300 hover:opacity-85"
+           hover:scale-105 duration-300 opacity-85 hover:opacity-100"
             />
             <h1 style={serviceNames}>Wedding</h1>
           </Grid>
@@ -82,30 +88,30 @@ const Home = () => {
               className="relative"
               onClick={() => handleClickOpen("/baptism")}>
               <img
-                src={imageHeader}
+                src={baptism}
                 alt="Service 2"
                 className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 mb-2 cursor-pointer
-             hover:scale-105 duration-300 hover:opacity-85"
+             hover:scale-105 duration-300 opacity-85 hover:opacity-100"
               />
               <h1 style={serviceNames}>Baptism</h1>
             </div>
             <img
-              src={imageHeader}
+              src={anointing}
               alt="Service 3"
               onClick={() => navigate("/anointing")}
               className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
-             hover:scale-105 duration-300 hover:opacity-85"
+             hover:scale-105 duration-300 opacity-85 hover:opacity-100"
             />
             <h1 style={serviceNames}>Anointing of the Sick</h1>
           </Grid>
 
           <Grid item xs={12} md={3} style={{position: "relative"}}>
             <img
-              src={imageHeader}
+              src={massReq}
               alt="Service 4"
               onClick={() => handleClickOpen("/mass-selection")}
               className="object-cover md:h-[380px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
-             hover:scale-105 duration-300 hover:opacity-85"
+             hover:scale-105 duration-300 opacity-85 hover:opacity-100"
             />
             <h1 style={serviceNames}>Request a Mass</h1>
           </Grid>
@@ -115,19 +121,19 @@ const Home = () => {
               className="relative"
               onClick={() => handleClickOpen("/blessing")}>
               <img
-                src={imageHeader}
+                src={blessing}
                 alt="Service 2"
                 className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 mb-2 cursor-pointer
-             hover:scale-105 duration-300 hover:opacity-85"
+             hover:scale-105 duration-300 opacity-85 hover:opacity-100"
               />
               <h1 style={serviceNames}>Request a Blessing</h1>
             </div>
             <img
-              src={imageHeader}
+              src={intention}
               alt="Service 3"
               onClick={() => navigate("/mass-intention-select")}
               className="object-cover md:h-[186px] w-full rounded-lg shadow-md shadow-gray-500 cursor-pointer
-             hover:scale-105 duration-300 hover:opacity-85"
+             hover:scale-105 duration-300 opacity-85 hover:opacity-100"
             />
             <h1 style={serviceNames}>Mass Intentions</h1>
           </Grid>
@@ -136,7 +142,7 @@ const Home = () => {
         <div className="w-full py-12">
           <div className="max-w-[1440px] mx-auto grid md:grid-cols-2 gap-8">
             <div
-              className="w-full shadow-xl flex flex-col px-8 py-0 rounded-lg relative"
+              className="w-full shadow-xl flex justify-between flex-col px-8 py-0 rounded-lg relative"
               style={{backgroundColor: "#E8E8E8"}}>
               <div className="flex items-center">
                 <FontAwesomeIcon icon={faCross} className="text-4xl" />
@@ -149,7 +155,7 @@ const Home = () => {
                   </p>
                 </div>
                 <button
-                  className="font-medium md:absolute md:right-4 bg-white shadow-lg rounded-2xl px-3 py-2
+                  className="font-medium md:absolute md:right-4 bg-white shadow-lg rounded-md px-3 py-2
                 hover:scale-105 duration-300"
                   onClick={() => navigateToPage("certificates")}>
                   Request a Certificate
@@ -158,18 +164,18 @@ const Home = () => {
             </div>
 
             <div
-              className="w-full shadow-xl flex flex-col px-8 py-0 rounded-lg relative"
+              className="w-full shadow-xl flex justify-between flex-col px-8 py-0 rounded-lg relative"
               style={{backgroundColor: "#E8E8E8"}}>
               <div className="flex items-center">
                 <FontAwesomeIcon icon={faQuestion} className="text-4xl" />
                 <div className="p-4">
-                  <h2 className="text-lg font-bold">Got Any questions?</h2>
+                  <span className="text-lg font-bold">Got Any questions?</span>
                   <p className="text-base">
                     Visit our FAQs Section to Learn More!
                   </p>
                 </div>
                 <button
-                  className="text-white font-medium md:absolute md:right-6 shadow-lg rounded-2xl px-3 py-2
+                  className="text-white font-medium md:absolute flex-end md:right-6 shadow-lg rounded-md px-3 py-2
                   hover:scale-105 duration-300"
                   style={{backgroundColor: "#355173"}}
                   onClick={() => navigateToPage("frequently-asked")}>

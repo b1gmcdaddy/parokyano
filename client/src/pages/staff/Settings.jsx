@@ -31,6 +31,10 @@ import util from "../../utils/DateTimeFormatter";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers";
+import generateHash from "../../utils/GenerateHash";
+import all from "../../components/PaymentModal";
+import ValidateForm from "../../utils/Validators";
+import {DefaultCopyField} from "@eisberg-labs/mui-copy-field";
 
 const modalStyle = {
   position: 'absolute',
@@ -67,6 +71,29 @@ const TextFieldStyle = {
   bgcolor: "#D9D9D9",
 };
 
+const inputstyling = {
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      boxShadow: "0 3px 2px rgba(0,0,0,0.1)",
+      borderRadius: "20px",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#355173",
+      borderWidth: "0.5px",
+    },
+    "& .MuiInputBase-input": {
+      textAlign: "center",
+      fontWeight: "bold",
+      marginLeft: "30px",
+      fontSize: "25px",
+    },
+    "&.Mui-disabled .MuiInputBase-input": {
+      color: "black",
+      WebkitTextFillColor: "black",
+    },
+  },
+};
+
 const Settings = () => {
   const [currentView, setCurrentView] = useState("settings");
   const [hover, setHover] = useState(false);
@@ -77,28 +104,42 @@ const Settings = () => {
   const [service] = useState("change password");
   const [logs, setLogs] = useState([]);
   const [open, setOpen] = useState(false);
+  const [transacNoModal, setOpenTransac] = useState(false);
   const handleOpen = () => setOpen(true);
-  const [radioValue, setRadioValue] = useState("");
-  const [otherValue, setOtherValue] = useState("");
+  const id = 2;
+  const dateToday = new Date().toJSON().slice(0, 10);
+  const hash = dateToday + generateHash().slice(0, 20);
+  const [serviceInfo, setServiceInfo] = useState({});
+  const [errors, setErrors] = useState({});
+
+  const [formData, setFormData] = useState({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    birth_date: null,
+    birth_place: "",
+    contact_no: "",
+    father_name: "",
+    mother_name: "",
+    spouse_name: null,
+    preferred_date: null,
+    archive_info: {
+      book_no: "",
+      page_no: "",
+      line_no: "",
+    },
+    service_id: id,
+    transaction_no: hash,
+    date_requested: dateToday,
+    purpose: "",
+  });
+
   const handleClose = (event, reason) => {
     if (reason === "backdropClick") {
       setOpen(false);
     }
   };
 
-  const handleRadioChange = (e) => {
-    const { value } = e.target;
-    setRadioValue(value);
-    if (e.target.value !== "others") {
-      setOtherValue("");
-    }
-  };
-
-  const handleOtherChange = (e) => {
-    setOtherValue(e.target.value);
-  };
-
-  const isOtherSelected = radioValue === "others";
 
   // PAGINATION
   const [page, setPage] = useState(0);
@@ -148,6 +189,16 @@ const Settings = () => {
     setDialogOpen(false);
   };
 
+  const handleCloseTransacModal = (event, reason) =>{
+    if (reason === "backdropClick") {
+      setOpen(false);
+      setOpenTransac(false);
+    }else{
+      setOpen(false);
+      setOpenTransac(false);
+    }
+  }
+
   const handleConfirm = (action) => {
     switch (action) {
       case "change password":
@@ -156,6 +207,65 @@ const Settings = () => {
         break;
       default:
         break;
+    }
+  };
+
+  //Confirmation Modal
+  useEffect(() => {
+    const fetchServiceInfo = async () => {
+      try {
+        const response = await axios.get(
+          `${config.API}/service/retrieveByParams`,
+          {
+            params: {
+              id: id,
+            },
+          }
+        );
+        setServiceInfo(response.data);
+        console.log(response.data);
+      } catch (err) {
+        console.error("error retrieving service info from server", err);
+      }
+    };
+    fetchServiceInfo();
+  }, []);
+
+  // event handlers
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value});
+  };
+
+  const handleDateChange = (name, date) => {
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+  };
+
+  // this handles book line and page no.
+  const handleArchive = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      archive_info: {...formData.archive_info, [e.target.name]: e.target.value},
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validate = ValidateForm(formData);
+    setErrors(validate);
+    console.log(validate);
+    console.log(formData);
+    if (Object.keys(validate).length == 0 && validate.constructor == Object) {
+      try {
+        axios.post(`${config.API}/request/create-certificate`, formData);
+        //axios.post(`${config.API}/logs/create`, {
+        //  activity: `Added a Confirmation Certificate Request - Transaction number: ${formData.transaction_no}`,
+        //  user_id: 1,
+        //  request_id: formData.requestID,
+        //});
+        setOpenTransac(true);
+      } catch (err) {
+        console.error("error submitting data", err);
+      }
     }
   };
 
@@ -477,7 +587,7 @@ const Settings = () => {
             </>
           )}
 
-<Modal open={open} onClose={handleClose}>
+      <Modal open={open} onClose={handleClose}>
         <Box sx={modalStyle}>
           <Box sx={{position: 'sticky', paddingBottom: '10px'}}>
             <Grid container justifyContent={"flex-end"}>
@@ -498,189 +608,232 @@ const Settings = () => {
           </Box>
 
           <Box sx={modalContentStyle}>
-            <Grid container justifyContent={"center"} spacing={2}>
-              <Grid item sm={4}>
-                <label>First Name:</label>
-                <TextField fullWidth sx={TextFieldStyleModal}/>
-              </Grid>
-              <Grid item sm={4}>
-                <label>Middle Name:</label>
-                <TextField fullWidth sx={TextFieldStyleModal}/>
-              </Grid>
-              <Grid item sm={4}>
-                <label>Last Name:</label>
-                <TextField fullWidth sx={TextFieldStyleModal}/>
-              </Grid>
+            <form onSubmit={handleSubmit}>
+              <Grid container justifyContent={"center"} spacing={2}>
+                <Grid item sm={4}>
+                  <label>First Name:</label>
+                  <TextField name="first_name" onChange={handleChange} autoComplete="off" required fullWidth sx={TextFieldStyleModal}/>
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Middle Name:</label>
+                  <TextField name="middle_name" onChange={handleChange} autoComplete="off" required fullWidth sx={TextFieldStyleModal}/>
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Last Name:</label>
+                  <TextField name="last_name" onChange={handleChange} autoComplete="off" required fullWidth sx={TextFieldStyleModal}/>
+                </Grid>
 
-              <Grid item sm={4}>
-                <label>Place of Birth:</label>
-                <TextField fullWidth sx={TextFieldStyleModal}/>
-              </Grid>
-              <Grid item sm={4}>
-                <label>Father's Name:</label>
-                <TextField fullWidth sx={TextFieldStyleModal}/>
-              </Grid>
-              <Grid item sm={4}>
-                <label>Mother's Maiden Name:</label>
-                <TextField fullWidth sx={TextFieldStyleModal}/>
-              </Grid>
+                <Grid item sm={4}>
+                  <label>Place of Birth:</label>
+                  <TextField name="birth_place" onChange={handleChange} autoComplete="off" required fullWidth sx={TextFieldStyleModal}/>
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Father's Name:</label>
+                  <TextField name="father_name" onChange={handleChange} autoComplete="off" required fullWidth sx={TextFieldStyleModal}/>
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Mother's Maiden Name:</label>
+                  <TextField name="mother_name" onChange={handleChange} autoComplete="off" required fullWidth sx={TextFieldStyleModal}/>
+                </Grid>
 
+                <Grid item sm={6}>
+                <label>Date of Confirmation:</label>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    slotProps={{ textField: { fullWidth: true }}}
+                    variant="outlined"
+                    size="small"
+                    disableFuture
+                    sx={TextFieldStyleModal}
+                    name="preferred_date"
+                    onChange={(date) => handleDateChange("preferred_date", date)}
+                    renderInput={(params) => <TextField {...params} required />}
+                  />
+                </LocalizationProvider>
+              </Grid>
               <Grid item sm={6}>
-              <label>Date of Confirmation:</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  slotProps={{ textField: { fullWidth: true }}}
-                  variant="outlined"
-                  size="small"
-                  disableFuture
-                  sx={TextFieldStyleModal}
-                  name="preferred_date"
-                  renderInput={(params) => <TextField {...params} required />}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item sm={6}>
-              <label>Contact Number:</label>
-              <TextField fullWidth sx={TextFieldStyleModal}/>
-            </Grid>
+                <label>Contact Number:</label>
+                <TextField name="contact_no" onChange={handleChange} autoComplete="off" required fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
 
-            <Grid item sm={12}>
-              <label>Purpose:</label>
-            </Grid>
-            <Grid item sm={12}>
-              <RadioGroup
-                row
-                name="type"
-                sx={{ marginTop: "-5px" }}
-                onChange={handleRadioChange}
-              >
-                <FormControlLabel
-                  value="marriage"
-                  control={<Radio size="small" />}
-                  label="Marriage"
-                />
-                <FormControlLabel
-                  value="passport"
-                  control={<Radio size="small" />}
-                  label="Passport"
-                />
-                 <FormControlLabel
-                  value="school"
-                  control={<Radio size="small" />}
-                  label="School"
-                />
-                 <FormControlLabel
-                  value="late registration"
-                  control={<Radio size="small" />}
-                  label="Late Registration"
-                />
-                 <FormControlLabel
-                  value="sss"
-                  control={<Radio size="small" />}
-                  label="SSS"
-                />
-                <FormControlLabel
-                  value="others"
-                  control={<Radio size="small" />}
-                  label="Others:"
-                />
-                <TextField
-                  disabled={!isOtherSelected}
-                  value={otherValue}
-                  sx={{
-                    "& .MuiInputBase-root": { height: "30px" },
-                    opacity: isOtherSelected ? 1 : 0.4,
-                    marginTop: "5px",
+              <Grid item sm={12}>
+                <label>Purpose:</label>
+              </Grid>
+              <Grid item sm={12}>
+                <RadioGroup
+                  row
+                  name="purpose"
+                  sx={{ marginTop: "-5px" }}
+                  onChange={handleChange} 
+                  required
+                >
+                  <FormControlLabel
+                    value="marriage"
+                    control={<Radio size="small" />}
+                    label="Marriage"
+                  />
+                  <FormControlLabel
+                    value="passport"
+                    control={<Radio size="small" />}
+                    label="Passport"
+                  />
+                  <FormControlLabel
+                    value="school"
+                    control={<Radio size="small" />}
+                    label="School"
+                  />
+                  <FormControlLabel
+                    value="late registration"
+                    control={<Radio size="small" />}
+                    label="Late Registration"
+                  />
+                  <FormControlLabel
+                    value="sss"
+                    control={<Radio size="small" />}
+                    label="SSS"
+                  />
+                  <FormControlLabel
+                    value="others"
+                    control={<Radio size="small" />}
+                    label="Others:"
+                  />
+                  <TextField
+                    disabled={formData.purpose === "others" ? false : true}
+                    sx={{
+                      "& .MuiInputBase-root": { height: "30px" },
+                      opacity: formData.purpose === "others" ? 1 : 0.4,
+                      marginTop: "5px",
+                    }}
+                  />
+                </RadioGroup>
+              </Grid>
+
+              <Grid item sm={12}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
                   }}
-                  onChange={handleOtherChange}
-                />
-              </RadioGroup>
-            </Grid>
+                >
+                  <div
+                    style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
+                  />
+                  <div>
+                    <p
+                      style={{
+                        width: "80px",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Optional
+                    </p>
+                  </div>
+                  <div
+                    style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                  />
+                </div>
+              </Grid>
 
-            <Grid item sm={12}>
-              <div
-                style={{
+              <Grid item sm={4}>
+                <label>Book no.</label>
+                <TextField name="book_no" onChange={handleArchive} autoComplete="off" fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
+              <Grid item sm={4}>
+                <label>Page no.</label>
+                <TextField name="page_no" onChange={handleArchive} autoComplete="off" fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
+              <Grid item sm={4}>
+                <label>Line no.</label>
+                <TextField name="line_no" onChange={handleArchive} autoComplete="off" fullWidth sx={TextFieldStyleModal}/>
+              </Grid>
+
+              <Grid
+                item
+                sm={12}
+                sx={{
+                  textAlign: "center",
                   display: "flex",
                   flexDirection: "row",
-                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <div
-                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
-                />
-                <div>
-                  <p
-                    style={{
-                      width: "80px",
-                      textAlign: "center",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Optional
-                  </p>
-                </div>
-                <div
-                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
-                />
-              </div>
-            </Grid>
-
-            <Grid item sm={4}>
-              <label>Book no.</label>
-              <TextField fullWidth sx={TextFieldStyleModal}/>
-            </Grid>
-            <Grid item sm={4}>
-              <label>Page no.</label>
-              <TextField fullWidth sx={TextFieldStyleModal}/>
-            </Grid>
-            <Grid item sm={4}>
-              <label>Line no.</label>
-              <TextField fullWidth sx={TextFieldStyleModal}/>
-            </Grid>
-
-            <Grid
-              item
-              sm={12}
-              sx={{
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <Button
-                sx={{
-                  bgcolor: "#355173",
-                  marginTop: "14px",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": { bgcolor: "#247E38" },
-                }}
-              >
-                Submit
-              </Button>
-              <Button
-                onClick={() => setOpen(false)}
-                sx={{
-                  bgcolor: "#C34444",
-                  margin: "14px 0px 0px 5px",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": { bgcolor: "#F05A5A" },
-                }}
-              >
-                CANCEL
-              </Button>
-            </Grid>
-            </Grid>
-          </Box>
+                <Button
+                  type="submit"
+                  sx={{
+                    bgcolor: "#355173",
+                    marginTop: "14px",
+                    height: "35px",
+                    width: "90px",
+                    fontWeight: "bold",
+                    color: "white",
+                    "&:hover": { bgcolor: "#247E38" },
+                  }}
+                >
+                  Submit
+                </Button>
+                <Button
+                  onClick={() => setOpen(false)}
+                  sx={{
+                    bgcolor: "#C34444",
+                    margin: "14px 0px 0px 5px",
+                    height: "35px",
+                    width: "90px",
+                    fontWeight: "bold",
+                    color: "white",
+                    "&:hover": { bgcolor: "#F05A5A" },
+                  }}
+                >
+                  CLOSE
+                </Button>
+              </Grid>
+              </Grid>
+              </form>
+              
+        <Modal open={transacNoModal} onClose={handleClose}>
+            <Box sx={modalStyle}>
+              <Box sx={{position: 'sticky', paddingBottom: '10px'}}>
+                <Grid container justifyContent={"flex-end"}>
+                  <Grid item>
+                    <IconButton onClick={handleCloseTransacModal} size="small">
+                      <FontAwesomeIcon icon={faXmark} />
+                    </IconButton>
+                  </Grid>
+                  <Grid item sm={12}>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ textAlign: "center", fontWeight: "bold" }}
+                      >
+                        Transaction Number
+                      </Typography>
+                    </Grid>
+                </Grid>
+              </Box>
+              <Grid container spacing={2}>
+                <Grid item sm={12}>
+                  <DefaultCopyField
+                    fullWidth
+                    disabled
+                    value={formData.transaction_no}
+                    sx={inputstyling}
+                  />
+                </Grid>
+                <Grid item sm={12}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{textAlign: "center", color: "#950000"}}>
+                    Save the transaction number above to track the status of this
+                    request.
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+          </Modal>
         </Box>
+      </Box>
       </Modal>
-        </Box>
+    </Box>
       </Box>
     </>
   );

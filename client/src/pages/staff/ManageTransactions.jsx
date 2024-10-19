@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import React from "react";
 import NavStaff from "../../components/NavStaff";
 import SearchIcon from "@mui/icons-material/Search";
@@ -25,36 +25,6 @@ import axios from "axios";
 import config from "../../config";
 import util from "../../utils/DateTimeFormatter";
 import ManageTransactionsModal from "../../components/TransactionModal";
-
-const dummyData = [
-  {
-    intention_details: ["francis", "matthew", "john"],
-    type: "souls",
-    offered_by: "benedict jesus de la cruz",
-    payment_method: "cash",
-    schedule: "mwf 1 2",
-    transaction_no: "12345",
-    status: "unpaid",
-  },
-  {
-    intention_details: ["lucas", "matthew", "john"],
-    type: "souls",
-    offered_by: "john doe asasaasasasas",
-    payment_method: "cash",
-    schedule: "fridayasasasasasasasasas",
-    transaction_no: "19103541",
-    status: "unpaid",
-  },
-  {
-    intention_details: ["lucas", "matthew", "john"],
-    type: "souls",
-    offered_by: "jane doe",
-    payment_method: "cash",
-    schedule: "tuesdat",
-    transaction_no: "19103541",
-    status: "unpaid",
-  },
-];
 
 const ManageTransactions = () => {
   const [tableData, setTableData] = useState([]);
@@ -135,12 +105,11 @@ const ManageTransactions = () => {
         close={closeModal}
       />
 
-      <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+      <Box sx={{display: "flex", mx: {md: "30px"}}}>
         <NavStaff />
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
-        >
+          sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
           <Toolbar />
 
           <Box
@@ -148,20 +117,18 @@ const ManageTransactions = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 fontSize: "1.25rem",
                 lineHeight: "1.75rem",
                 fontWeight: 600,
-              }}
-            >
+              }}>
               List of Transactions
             </Typography>
           </Box>
 
-          <Box sx={{ width: "100%", marginTop: "20px" }}>
+          <Box sx={{width: "100%", marginTop: "20px"}}>
             <Grid container spacing={1}>
               <Grid item sm={12}>
                 <TextField
@@ -178,24 +145,22 @@ const ManageTransactions = () => {
               </Grid>
 
               <Grid item sm={12}>
-                <div style={{ margin: "0 auto" }}>
+                <div style={{margin: "0 auto"}}>
                   <TableContainer
                     sx={{
                       display: "flex",
                       borderRadius: "16px",
                       overflowX: "auto",
                       border: "none",
-                    }}
-                  >
+                    }}>
                     <Table
                       stickyHeader
                       aria-label="custom table"
                       sx={{
                         borderCollapse: "separate",
                         borderSpacing: 0,
-                        sm: { minWidth: 650 },
-                      }}
-                    >
+                        sm: {minWidth: 650},
+                      }}>
                       <TableHead>
                         <TableRow>
                           <TableCell
@@ -204,8 +169,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             NAME
                           </TableCell>
                           <TableCell
@@ -214,8 +178,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             AMOUNT
                           </TableCell>
                           <TableCell
@@ -224,8 +187,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             PAYMENT FOR
                           </TableCell>
                           <TableCell
@@ -234,8 +196,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             DATE
                           </TableCell>
                           <TableCell
@@ -244,8 +205,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             CONTACT NO.
                           </TableCell>
                           <TableCell
@@ -254,8 +214,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             ACTIONS
                           </TableCell>
                         </TableRow>
@@ -271,8 +230,7 @@ const ManageTransactions = () => {
                                   padding: 0,
                                   backgroundColor: "#ffffff",
                                   border: "none",
-                                }}
-                              >
+                                }}>
                                 <Box
                                   sx={{
                                     height: "5px",
@@ -289,8 +247,7 @@ const ManageTransactions = () => {
                                 "& > *": {
                                   borderBottom: "none",
                                 },
-                              }}
-                            >
+                              }}>
                               <TableCell
                                 sx={{
                                   border: "none",
@@ -298,8 +255,7 @@ const ManageTransactions = () => {
                                   textAlign: "center",
                                   borderRadius: "15px 0 0 15px",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 {row.type}
                               </TableCell>
                               <TableCell
@@ -308,8 +264,7 @@ const ManageTransactions = () => {
                                   padding: "16px",
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 {row.requested_by}
                               </TableCell>
                               <TableCell
@@ -318,8 +273,7 @@ const ManageTransactions = () => {
                                   padding: "16px",
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 {row.payment_method}
                               </TableCell>
                               <TableCell
@@ -328,8 +282,7 @@ const ManageTransactions = () => {
                                   padding: "16px",
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 hello
                               </TableCell>
                               <TableCell
@@ -338,8 +291,7 @@ const ManageTransactions = () => {
                                   padding: "16px",
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 {row.transaction_no}
                               </TableCell>
                               <TableCell
@@ -349,8 +301,7 @@ const ManageTransactions = () => {
                                   textAlign: "center",
                                   borderRadius: "0 15px 15px 0",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 <Button
                                   type="button"
                                   sx={{
@@ -361,8 +312,7 @@ const ManageTransactions = () => {
                                       backgroundColor: "#0036B1",
                                     },
                                   }}
-                                  onClick={() => openModal(row)}
-                                >
+                                  onClick={() => openModal(row)}>
                                   INFO
                                 </Button>
                               </TableCell>
@@ -378,8 +328,7 @@ const ManageTransactions = () => {
                       justifyContent: "center",
                       alignItems: "center",
                       marginTop: 2,
-                    }}
-                  >
+                    }}>
                     <IconButton
                       onClick={() => handlePageChange(page - 1)}
                       disabled={page === 0} // Disable on the first page
@@ -387,12 +336,11 @@ const ManageTransactions = () => {
                         backgroundColor: page === 0 ? "grey.300" : "black",
                         color: page === 0 ? "grey.600" : "white",
                         marginRight: "10px",
-                      }}
-                    >
+                      }}>
                       <KeyboardArrowLeft />
                     </IconButton>
 
-                    <Typography sx={{ margin: "0 10px", fontWeight: "bold" }}>
+                    <Typography sx={{margin: "0 10px", fontWeight: "bold"}}>
                       Page {page + 1} of {totalPages}
                     </Typography>
 
@@ -404,8 +352,7 @@ const ManageTransactions = () => {
                           page === totalPages - 1 ? "grey.300" : "black",
                         color: page === totalPages - 1 ? "grey.600" : "white",
                         marginLeft: "10px",
-                      }}
-                    >
+                      }}>
                       <KeyboardArrowRight />
                     </IconButton>
                   </Box>
