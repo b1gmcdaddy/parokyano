@@ -25,6 +25,8 @@ import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 const style = {
   position: "absolute",
@@ -84,7 +86,6 @@ const OutsidePending = ({ open, data, handleClose }) => {
     transaction_no: "",
     service_id: "",
     type: "",
-    mass_date: "",
   });
 
   useEffect(() => {
@@ -103,7 +104,6 @@ const OutsidePending = ({ open, data, handleClose }) => {
         transaction_no: data.transaction_no,
         service_id: data.service_id,
         type: data.type,
-        mass_date: null,
       });
     }
     console.log(data);
@@ -207,9 +207,7 @@ const OutsidePending = ({ open, data, handleClose }) => {
               },
             }
           );
-          if (response.status !== 200) {
-            console.log("resposne: ", response);
-            console.log("error!");
+          if (Object.keys(response.data).length > 0 || response.data != "") {
             setError({
               message: response.data.message,
               details: response.data?.details,
@@ -250,6 +248,10 @@ const OutsidePending = ({ open, data, handleClose }) => {
             handleClose();
           }
         } catch (err) {
+          setError({
+            message: err.response.data.message,
+            details: err.response.data.details,
+          });
           console.log("error submitting to server", err);
         }
         break;
@@ -499,6 +501,7 @@ const OutsidePending = ({ open, data, handleClose }) => {
                   onChange={(date) => handleDateChange("preferred_date", date)}
                   renderInput={(params) => <TextField {...params} required />}
                   sx={TextFieldStyle}
+                  disableTimezone
                 />
               </LocalizationProvider>
             </Grid>

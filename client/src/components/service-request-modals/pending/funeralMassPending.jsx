@@ -225,6 +225,10 @@ const FuneralMassModalPending = ({ open, data, handleClose }) => {
             handleClose();
           }
         } catch (err) {
+          setError({
+            message: err.response.data.message,
+            details: err.response.data.details,
+          });
           console.log("error submitting to server", err);
         }
         break;

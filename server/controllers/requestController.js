@@ -459,57 +459,119 @@ const getCount = (req, res) => {
   });
 };
 
-const getSummaryWithTypeParam = (req, res) => {
-  const { requestDate, approveDate, type } = req.query;
-  const reqSummary = {};
-
-  if (!requestDate || !approveDate || !type) {
-    return res.status(400).json("lacking dates or type parameter..");
-  }
-  const query = `SELECT status, COUNT(*) as count FROM request WHERE type = ? AND date_requested BETWEEN ? AND ? GROUP BY status`;
-  db.query(query, [type, requestDate, approveDate], (err, results) => {
-    if (err) {
-      return res.status(500).json("error retrieving db info..");
-    }
-    reqSummary[type] = { pending: 0, approved: 0, cancelled: 0 };
-    results.forEach((row) => {
-      reqSummary[type][row.status] = row.count;
-    });
-    res.json(reqSummary);
-  });
-};
-
-//tested wid postman already..
-const getRequestSummary = (req, res) => {
-  const { startDate, endDate } = req.query;
-  console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
+const getSpecificSummary = (req, res) => {
+  const { startDate, endDate, category } = req.query;
 
   if (!startDate || !endDate) {
     return res.status(400).json("lacking dates..");
   }
 
+  // const categoryQuery = category !== "" ? `AND r.service_id = ${category}` : "";
+
+  const queryApproved = `
+    SELECT r.* FROM request r 
+    WHERE r.status = 'approved' 
+      AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' 
+      ${category};
+  `;
+
+  const queryCancelled = `
+    SELECT r.* FROM request r 
+    WHERE r.status = 'cancelled' 
+      AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' 
+      ${category};
+  `;
+
+  const queryPending = `
+    SELECT r.* FROM request r 
+    WHERE r.status = 'pending' 
+      AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' 
+      ${category};
+  `;
+
+  db.query(queryApproved, (err, approved) => {
+    if (err) {
+      console.error("Error retrieving approved requests", err);
+      return res
+        .status(500)
+        .json({ error: "Error retrieving approved requests" });
+    }
+
+    db.query(queryCancelled, (err, cancelled) => {
+      if (err) {
+        console.error("Error retrieving cancelled requests", err);
+        return res
+          .status(500)
+          .json({ error: "Error retrieving cancelled requests" });
+      }
+
+      db.query(queryPending, (err, pending) => {
+        if (err) {
+          console.error("Error retrieving pending requests", err);
+          return res
+            .status(500)
+            .json({ error: "Error retrieving pending requests" });
+        }
+
+        res.status(200).json({ approved, cancelled, pending });
+      });
+    });
+  });
+};
+
+//tested wid postman already..
+const getRequestSummary = (req, res) => {
+  const { startDate, endDate, category } = req.query;
+
+  if (!startDate || !endDate) {
+    return res.status(400).json("lacking dates..");
+  }
+
+  // const categoryQuery = category != "" ? `AND r.service_id = ${category}` : "";
+
   const query = `
     SELECT 
-      s.name, 
-      COUNT(CASE WHEN r.status = 'pending' THEN 1 END) AS pending,
-      COUNT(CASE WHEN r.status = 'approved' THEN 1 END) AS approved,
-      COUNT(CASE WHEN r.status = 'cancelled' THEN 1 END) AS cancelled
+      s.name, COUNT(CASE WHEN r.status = 'pending' THEN 1 END) AS pending, COUNT(CASE WHEN r.status = 'approved' THEN 1 END) AS approved, COUNT(CASE WHEN r.status = 'cancelled' THEN 1 END) AS cancelled
     FROM 
       request r
     JOIN 
       service s ON r.service_id = s.serviceID
     WHERE 
-      r.date_requested BETWEEN '${startDate}' AND '${endDate}'
+      r.date_requested BETWEEN '${startDate}' AND '${endDate}' ${category}
     GROUP BY 
       s.serviceID;`;
 
-  db.query(query, (err, results) => {
+  console.log(query);
+
+  db.query(query, (err, summary) => {
     if (err) {
       console.error(err);
       return res.status(500).json("error retriving db info..");
     }
-    console.log(results);
-    res.status(200).json(results);
+    // console.log(summary);
+    const results = summary;
+
+    db.query(
+      `SELECT * FROM request r WHERE  r.date_requested BETWEEN '${startDate}' AND '${endDate}' AND (r.service_id = 5 OR r.service_id = 6) AND r.status = 'approved' ${category}`,
+      (err, baptisms) => {
+        if (err) {
+          console.error("error retrieving requests", err);
+          return res.status(500).json({ error: "Error retrieving requests" });
+        }
+        db.query(
+          `SELECT r.*, w.* FROM request r, wedding w WHERE (r.service_id = 7) AND r.requestID = w.request_id AND r.status = 'approved' AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' ${category}`,
+          (err, weddings) => {
+            if (err) {
+              console.error("error retrieving requests", err);
+              return res
+                .status(500)
+                .json({ error: "Error retrieving requests" });
+            }
+            res.status(200).json({ results, baptisms, weddings });
+          }
+        );
+      }
+    );
   });
 };
 
@@ -786,7 +848,7 @@ module.exports = {
   createRequestBlessing,
   retrieveByParams,
   getRequestSummary,
-  getSummaryWithTypeParam,
+  getSpecificSummary,
   retrieveMultipleParams,
   approveService,
   approveIntention,

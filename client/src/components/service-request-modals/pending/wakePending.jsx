@@ -236,11 +236,10 @@ const WakePending = ({ open, data, handleClose }) => {
           formData,
           id: data.requestID,
         });
-        if (res.status !== 200) {
-          console.log("error updating request");
+        if (Object.keys(response.data).length > 0 || response.data != "") {
           setError({
-            message: res.data.message,
-            details: res.data?.details,
+            message: response.data.message,
+            details: response.data?.details,
           });
         } else {
           console.log("request updated!");

@@ -192,7 +192,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
             }
           );
           console.log(response);
-          if (response.status !== 200) {
+          if (Object.keys(response.data).length > 0 || response.data != "") {
             setError({
               message: response.data.message,
               details: response.data?.details,

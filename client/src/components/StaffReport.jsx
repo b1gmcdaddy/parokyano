@@ -23,20 +23,26 @@ const last = formatDate(new Date(now.getFullYear(), now.getMonth() + 1, 1));
 
 const start = formatDate(new Date(now.getFullYear(), now.getMonth(), 1));
 
-const StaffReport = ({ startDate, endDate }) => {
+const StaffReport = ({ startDate, endDate, category }) => {
   const [reportInfo, setReportInfo] = useState({});
-  console.log(startDate);
-  console.log(start);
+  const [baptismInfo, setBaptismInfo] = useState({});
+  const [weddingInfo, setWeddingInfo] = useState({});
+
   const getSummaryReport = async () => {
+    console.log("clicked!");
     try {
       const res = await axios.get(`${config.API}/request/summary`, {
         params: {
           startDate: startDate != "" ? startDate : start,
           endDate: endDate != "" ? endDate : last,
+          category:
+            category != "" ? `AND r.service_id = '${parseInt(category)}'` : "",
         },
       });
-      setReportInfo(res.data);
-      console.log(res.data);
+      setReportInfo(res.data.results);
+      setBaptismInfo(res.data.baptisms);
+      setWeddingInfo(res.data.weddings);
+      console.log("query", res.data.weddings);
     } catch (err) {
       console.error("error retrieving summary", err);
     }
@@ -44,7 +50,7 @@ const StaffReport = ({ startDate, endDate }) => {
 
   useEffect(() => {
     getSummaryReport();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, category]);
 
   return (
     <>
@@ -99,6 +105,32 @@ const StaffReport = ({ startDate, endDate }) => {
                   >
                     <TableCell component="th" scope="row">
                       {report.name}
+                      {baptismInfo && (
+                        <>
+                          <div className="ml-4 mt-2">
+                            {report.name == "Baptism - Appointment" &&
+                              baptismInfo.map((baptism, index) => (
+                                <li key={index}>
+                                  {baptism.first_name} {baptism.last_name}
+                                </li>
+                              ))}
+                          </div>
+                        </>
+                      )}
+                      {weddingInfo && (
+                        <>
+                          <div className="ml-4 mt-2">
+                            {report.name.includes("Wedding") &&
+                              weddingInfo.map((wedding, index) => (
+                                <li key={index}>
+                                  {wedding.first_name} {wedding.last_name} and{" "}
+                                  {wedding.spouse_firstName}{" "}
+                                  {wedding.spouse_lastName}
+                                </li>
+                              ))}
+                          </div>
+                        </>
+                      )}
                     </TableCell>
                     <TableCell align="right">{report.pending}</TableCell>
                     <TableCell align="right">{report.approved}</TableCell>
