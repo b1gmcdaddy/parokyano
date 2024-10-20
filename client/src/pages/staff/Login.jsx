@@ -29,11 +29,16 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(`${config.API}/auth/login`, loginData);
-      localStorage.setItem("accessToken", response.data.accessToken);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
-      localStorage.setItem("user", JSON.stringify(response.data));
-      if (response.data.role == "staff" || response.data.role == "admin") {
-        navigate("/dashboard", { state: { user: response.data } });
+
+      if (response) {
+        localStorage.setItem("accessToken", response.data.accessToken);
+        localStorage.setItem("refreshToken", response.data.refreshToken);
+        localStorage.setItem("user", JSON.stringify(response.data));
+        console.log(response.data);
+
+        if (response.data.role === "staff" || response.data.role === "admin") {
+          navigate("/dashboard", { replace: true });
+        }
       }
     } catch (err) {
       console.error("Login error:", err);

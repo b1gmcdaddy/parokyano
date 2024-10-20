@@ -345,6 +345,39 @@ const ApprovedRequests = () => {
                           color: "white",
                           borderRadius: "10px",
                         }}
+                        onClick={() => {
+                          try {
+                            axios.put(`${config.API}/request/update`, null, {
+                              params: {
+                                col: "status",
+                                val: "cancelled",
+                                id: req.requestID,
+                              },
+                            });
+
+                            console.log("request cancelled!");
+                            axios
+                              .delete(`${config.API}/priest/deleteSched`, {
+                                params: {
+                                  col: "request_id",
+                                  val: req.requestID,
+                                },
+                              })
+                              .then(() => {
+                                console.log("priest sched deleted!");
+                                axios.post(`${config.API}/logs/create`, {
+                                  activity: `Cancelled Wake Mass Request - Transaction number: ${req.transaction_no}`,
+                                  user_id: 1,
+                                  request_id: req.requestID,
+                                });
+                                console.log("logs success!");
+                              });
+                            alert("Request cancelled!");
+                            window.location.reload();
+                          } catch (err) {
+                            console.error("error updating request", err);
+                          }
+                        }}
                       >
                         CANCEL
                       </Button>

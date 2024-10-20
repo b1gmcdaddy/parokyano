@@ -216,10 +216,9 @@ const NavStaff = (props) => {
                 primary="Logout"
                 sx={{ color: "white" }}
                 onClick={() => {
-                  const refreshToken = localStorage.getItem("refreshToken");
-
                   localStorage.removeItem("accessToken");
                   localStorage.removeItem("refreshToken");
+                  localStorage.removeItem("user");
                   navigate("/login");
                 }}
               />

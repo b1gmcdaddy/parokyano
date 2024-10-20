@@ -7,7 +7,7 @@ const formatTime = (time24) => {
 };
 
 const formatDate = (rawDate) => {
-  const formatted = new Date(rawDate).toLocaleDateString("en-US", {
+  const formatted = new Date(rawDate).toLocaleDateString("en-PH", {
     year: "numeric",
     month: "long",
     day: "numeric",

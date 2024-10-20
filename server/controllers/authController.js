@@ -45,7 +45,7 @@ exports.login = (req, res) => {
 
     refreshTokens.push(refreshToken);
 
-    res.json({
+    res.status(200).json({
       role: user.user_type,
       id: user.userID,
       accessToken,
