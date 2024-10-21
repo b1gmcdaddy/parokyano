@@ -170,7 +170,7 @@ const ManageTransactions = () => {
                               fontSize: "0.85rem",
                               fontWeight: "bold",
                             }}>
-                            NAME
+                            REQUESTED BY
                           </TableCell>
                           <TableCell
                             sx={{
@@ -188,7 +188,7 @@ const ManageTransactions = () => {
                               fontSize: "0.85rem",
                               fontWeight: "bold",
                             }}>
-                            PAYMENT FOR
+                            PAYMENT METHOD
                           </TableCell>
                           <TableCell
                             sx={{
@@ -215,14 +215,13 @@ const ManageTransactions = () => {
                               fontSize: "0.85rem",
                               fontWeight: "bold",
                             }}>
-                            ACTIONS
+                            VIEW
                           </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {tableData.map((row, index) => (
-                          <React.Fragment key={index}>
-                            {/* this is to add space in between rows sa table */}
+                          <React.Fragment key={row.requestID}>
                             <TableRow>
                               <TableCell
                                 colSpan={5}
@@ -256,7 +255,11 @@ const ManageTransactions = () => {
                                   borderRadius: "15px 0 0 15px",
                                   backgroundColor: "#e0e0e0",
                                 }}>
-                                {row.type}
+                                {row.service_id == 5 || row.service_id == 6
+                                  ? row.father_name
+                                  : row.service_id == 7
+                                  ? row.first_name
+                                  : row.requested_by}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -265,7 +268,40 @@ const ManageTransactions = () => {
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
                                 }}>
-                                {row.requested_by}
+                                {(() => {
+                                  const amount = (() => {
+                                    switch (row.service_id) {
+                                      case 1:
+                                        return row.donation;
+                                      case 2:
+                                        return 50;
+                                      case 3:
+                                        return 100;
+                                      case 4:
+                                        return 150;
+                                      case 5:
+                                        return 1600;
+                                      case 6:
+                                        return 800;
+                                      case 7:
+                                        return 1000;
+                                      default:
+                                        return "N/A";
+                                    }
+                                  })();
+
+                                  return amount === "N/A" ? (
+                                    amount
+                                  ) : (
+                                    <span
+                                      style={{
+                                        fontWeight: "bold",
+                                        fontSize: "16px",
+                                      }}>
+                                      ₱{amount}
+                                    </span>
+                                  );
+                                })()}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -274,7 +310,9 @@ const ManageTransactions = () => {
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
                                 }}>
-                                {row.payment_method}
+                                {row.payment_method == "cash"
+                                  ? "Cash"
+                                  : "Gcash"}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -283,7 +321,7 @@ const ManageTransactions = () => {
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
                                 }}>
-                                hello
+                                {util.formatDate(row.transaction_date)}
                               </TableCell>
                               <TableCell
                                 sx={{
@@ -292,7 +330,7 @@ const ManageTransactions = () => {
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
                                 }}>
-                                {row.transaction_no}
+                                {row.contact_no}
                               </TableCell>
                               <TableCell
                                 sx={{
