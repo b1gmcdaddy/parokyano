@@ -115,15 +115,9 @@ const createSchedule = (req, res) => {
 
 // edit priest
 const editPriest = (req, res) => {
-  const {
-    priestID,
-    first_name,
-    last_name,
-    contact_no,
-    year_started,
-    year_ended,
-    status,
-  } = req.body;
+  const {first_name, last_name, contact_no, year_started, year_ended, status} =
+    req.body;
+  const priestID = req.params.priestID;
 
   db.query(
     `UPDATE priest SET first_name = ?, last_name = ?, contact_no = ?, year_started = ?, year_ended = ?, status = ? WHERE priestID = ?`,
@@ -139,12 +133,9 @@ const editPriest = (req, res) => {
     (err, result) => {
       if (err) {
         console.error("error updating priest", err);
-        return res.status(500).json({
-          error: "server error",
-          status: "500",
-        });
+        return res.status(500).send("Error updating priest");
       }
-      return res.status(200).json({message: "priest updates!"});
+      return res.status(200).send("Priest updated successfully");
     }
   );
 };

@@ -18,9 +18,11 @@ import all from "../../components/SchedulesModal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import {jwtDecode} from "jwt-decode";
+import priestModals from "../../components/ManagePriestsModal";
 
 const ManageSchedules = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [openPriestModal, setOpenPriestModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [priestList, setPriestList] = useState([]);
@@ -39,6 +41,10 @@ const ManageSchedules = () => {
     } catch (err) {
       console.error("error retrieving schedule", err);
     }
+  };
+
+  const handleOpenPriestModal = () => {
+    setOpenPriestModal(true);
   };
 
   useEffect(() => {
@@ -153,6 +159,7 @@ const ManageSchedules = () => {
             <span>
               {decoded.role == "admin" && (
                 <Button
+                  onClick={() => handleOpenPriestModal()}
                   variant="contained"
                   type="button"
                   sx={{
@@ -175,6 +182,11 @@ const ManageSchedules = () => {
             </span>
           </Box>
 
+          {/* Manage Priests Modal for ADMINS */}
+          <priestModals.ManagePriestsModal
+            open={openPriestModal}
+            close={() => setOpenPriestModal(false)}
+          />
           {/* Add schedule modal */}
           <all.AddSchedulesModal open={openModal} close={openScheduleModal} />
           {/*Edit Sched Modal */}
