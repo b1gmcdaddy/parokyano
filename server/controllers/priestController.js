@@ -6,7 +6,7 @@ dayjs.extend(customParseFormat);
 
 // get priests
 const retrieveByParams = (req, res) => {
-  const { col, val } = req.query;
+  const {col, val} = req.query;
 
   db.query(`SELECT * FROM priest where ?? = ?`, [col, val], (err, result) => {
     if (err) {
@@ -35,7 +35,7 @@ const retrieveSchedules = (req, res) => {
 };
 
 const retrieveScheduleByParams = (req, res) => {
-  const { priest, date, start, end } = req.query;
+  const {priest, date, start, end} = req.query;
   console.log("sched: ", req.query);
   db.query(
     `SELECT s.*, p.first_name, p.last_name 
@@ -69,7 +69,7 @@ const retrieveScheduleByParams = (req, res) => {
 
         const message = `${priestName} has a scheduled service from ${startTimeFormatted} to ${endTimeFormatted}`;
         const details = "Service: " + result[0].activity;
-        return res.status(409).send({ message, details });
+        return res.status(409).send({message, details});
       } else {
         return res.status(200).send();
       }
@@ -79,14 +79,8 @@ const retrieveScheduleByParams = (req, res) => {
 
 // create priest
 const createPriest = (req, res) => {
-  const {
-    first_name,
-    last_name,
-    contact_no,
-    year_started,
-    year_ended,
-    status,
-  } = req.body;
+  const {first_name, last_name, contact_no, year_started, year_ended, status} =
+    req.body;
 
   db.query(
     `INSERT INTO priest (first_name, last_name, contact_no, year_started, year_ended, status) VALUES (?, ?, ?, ?, ?, ?)`,
@@ -103,12 +97,12 @@ const createPriest = (req, res) => {
 
 // create priest schedule
 const createSchedule = (req, res) => {
-  const { date, activity, start_time, end_time, priest_id, request_id } =
+  const {date, activity, start_time, end_time, priest_id, request_id} =
     req.body;
 
   db.query(
     `INSERT INTO priestschedule (date, activity, start_time, end_time, priest_id, request_id) VALUES (?, ?, ?, ?, ?, ?)`,
-    [date, activity, start_time, end_time, priest_id, request_id],
+    [date, activity, start_time, end_time, priest_id, request_id || null],
     (err, result) => {
       if (err) {
         console.error("error creating schedule", err);
@@ -150,57 +144,64 @@ const editPriest = (req, res) => {
           status: "500",
         });
       }
-      return res.status(200).json({ message: "priest updates!" });
+      return res.status(200).json({message: "priest updates!"});
     }
   );
 };
 
 // edit priests' sched
 const editSchedule = (req, res) => {
-  const { schedule_id, date, activity, start_time, end_time, priest_id } =
-    req.body;
+  const {date, activity, start_time, end_time, priest_id} = req.body;
+  const scheduleID = req.params.scheduleID;
 
   db.query(
-    `UPDATE priestschedule SET date = ?, activity = ?, start_time = ?, end_time = ?, priest_id = ? WHERE schedule_id = ?`,
-    [date, activity, start_time, end_time, priest_id, schedule_id],
+    `UPDATE priestschedule SET date = ?, activity = ?, start_time = ?, end_time = ?, priest_id = ? WHERE scheduleID = ?`,
+    [date, activity, start_time, end_time, priest_id, scheduleID],
     (err, result) => {
       if (err) {
-        console.error("error updating schedule", err);
+        console.error("Error updating schedule:", err);
         return res.status(500).json({
-          error: "server error",
+          error: "Server error",
           status: "500",
         });
       }
-      return res.status(200).json({ message: "priests sched updated" });
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({message: "Schedule not found"});
+      }
+
+      return res
+        .status(200)
+        .json({message: "Priest schedule updated successfully."});
     }
   );
 };
 
 // delete priests' sched
-const deleteSchedule = (req, res) => {
-  const { schedule_id } = req.params;
+// const deleteSchedule = (req, res) => {
+//   const {schedule_id} = req.params;
 
-  db.query(
-    `DELETE FROM priestschedule WHERE schedule_id = ?`,
-    [schedule_id],
-    (err, result) => {
-      if (err) {
-        console.error("error deleting schedule", err);
-        return res.status(500).json({
-          error: "server error",
-          status: "500",
-        });
-      }
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "priest sched not found" });
-      }
-      return res.status(200).json({ message: "pruest sched deleted" });
-    }
-  );
-};
+//   db.query(
+//     `DELETE FROM priestschedule WHERE schedule_id = ?`,
+//     [schedule_id],
+//     (err, result) => {
+//       if (err) {
+//         console.error("error deleting schedule", err);
+//         return res.status(500).json({
+//           error: "server error",
+//           status: "500",
+//         });
+//       }
+//       if (result.affectedRows === 0) {
+//         return res.status(404).json({error: "priest sched not found"});
+//       }
+//       return res.status(200).json({message: "pruest sched deleted"});
+//     }
+//   );
+// };
 
 const deleteSchedule2 = (req, res) => {
-  const { col, val } = req.query;
+  const {col, val} = req.query;
 
   db.query(
     `DELETE FROM priestschedule WHERE ${col} = ?`,
@@ -214,9 +215,9 @@ const deleteSchedule2 = (req, res) => {
         });
       }
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "priest sched not found" });
+        return res.status(404).json({error: "priest sched not found"});
       }
-      return res.status(200).json({ message: "pruest sched deleted" });
+      return res.status(200).json({message: "pruest sched deleted"});
     }
   );
 };

@@ -170,7 +170,7 @@ const AnointingPending = ({open, data, handleClose}) => {
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   {
@@ -214,6 +214,7 @@ const AnointingPending = ({open, data, handleClose}) => {
               },
             });
             console.log("request success!");
+
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Anointing for ${formData.first_name} at ${formData.address}`,
@@ -222,7 +223,9 @@ const AnointingPending = ({open, data, handleClose}) => {
               priest_id: formData.priest_id,
               request_id: formData.requestID,
             });
+
             console.log("priest sched success!");
+
             axios.post(`${config.API}/logs/create`, {
               activity: `Approved Anointing for ${formData.first_name} at ${formData.address}`,
               user_id: 1,

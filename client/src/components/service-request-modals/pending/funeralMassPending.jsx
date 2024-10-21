@@ -161,7 +161,7 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
   const handleCloseDialog = () => {
     setDialogOpen(false);
@@ -208,6 +208,7 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
               },
             });
             console.log("request success!");
+
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Funeral mass for ${formData.first_name}`,

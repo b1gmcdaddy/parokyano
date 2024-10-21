@@ -18,7 +18,7 @@ router.get("/retrieve-schedule-by-params", retrieveScheduleByParams);
 router.post("/createPriest", createPriest);
 router.post("/createPriestSched", createSchedule);
 router.put("/editPriest", editPriest);
-router.put("/editSched", editSchedule);
+router.put("/editSched/:scheduleID", editSchedule);
 router.delete("/deleteSched", deleteSchedule2);
 
 module.exports = router;
