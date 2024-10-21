@@ -53,7 +53,7 @@ const AnointingApproved = ({open, data, handleClose}) => {
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     type: "",
-    name: "",
+    first_name: "",
     address: "",
     requested_by: "",
     relationship: "",

@@ -1,101 +1,129 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-  Modal,
-  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
   Button,
   Grid,
-  Typography,
-  IconButton,
+  MenuItem,
   TextField,
+  Snackbar,
+  IconButton,
+  Paper,
 } from "@mui/material";
 import {
   DatePicker,
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import CloseIcon from "@mui/icons-material/Close";
 import {useEffect, useState} from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
-import util from "../../../../utils/DateTimeFormatter";
-import axios from "axios";
 import config from "../../../../config";
-import dayjs from "dayjs";
-import Snackbar from "@mui/material/Snackbar";
-
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "md",
-  bgcolor: "white",
-  borderRadius: "10px",
-  boxShadow: 3,
-  px: 4,
-  py: 2,
-  maxHeight: "97vh",
-  overflow: "hidden",
-  display: "flex",
-  flexDirection: "column",
-};
-
-const modalContentStyle = {
-  overflowY: "auto",
-  flexGrow: 1,
-  scrollbarWidth: "none",
-  "&::-webkit-scrollbar": {
-    display: "none",
-  },
-};
+import axios from "axios";
+import Skeleton from "@mui/material/Skeleton";
+import sendSMS from "../../../../utils/smsService";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": {height: "40px"},
 };
 
-const TextFieldStyleDis = {
-  "& .MuiInputBase-root": {height: "30px"},
-  bgcolor: "#D9D9D9",
+const endTime = (timeString, hoursToAdd) => {
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+  let newHours = hours + Math.floor(hoursToAdd);
+  let newMinutes = minutes + (hoursToAdd % 1) * 60;
+
+  newHours += Math.floor(newMinutes / 60);
+  newMinutes = newMinutes % 60;
+
+  return `${String(newHours).padStart(2, "0")}:${String(newMinutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(2, "0")}`;
 };
 
 const FuneralMassModalApproved = ({open, data, handleClose}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
-  const [service] = useState("funeral mass");
-  const [formData, setFormData] = useState({});
+  const [service, setService] = useState({});
   const [priests, setPriests] = useState([]);
   const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    type: "",
+    first_name: "",
+    relationship: "",
+    requested_by: "",
+    contact_no: "",
+    preferred_date: "",
+    preferred_time: "",
+    priest_id: "",
+    isParishioner: "",
+    transaction_no: "",
+    service_id: "",
+  });
 
-  const fetchPriest = async () => {
+  const fetchService = async () => {
     try {
-      const response = await axios.get(`${config.API}/priest/retrieve`, {
-        params: {
-          col: "status",
-          val: "active",
-        },
-      });
-      setPriests(response.data);
+      const response = await axios.get(
+        `${config.API}/service/retrieveByParams`,
+        {
+          params: {
+            id: data.service_id,
+          },
+        }
+      );
+      console.log(response.data);
+      setService(response.data);
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+    fetchService();
+  }, [open]);
+
+  const handleDateChange = (name, date) => {
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    console.log(formData.preferred_date);
+  };
+
+  const handleTimeChange = (name, time) => {
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+  };
+
+  useEffect(() => {
     if (open && data) {
       setFormData({
+        type: data.type,
         first_name: data.first_name,
-        address: data.address,
-        contact_no: data.contact_no,
-        requested_by: data.requested_by,
         relationship: data.relationship,
+        requested_by: data.requested_by,
+        contact_no: data.contact_no,
         preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
         preferred_time: data.preferred_time,
         priest_id: data.priest_id,
         isParishioner: data.isParishioner,
         transaction_no: data.transaction_no,
+        payment_status: data.payment_status,
         service_id: data.service_id,
       });
-      fetchPriest();
     }
   }, [open, data]);
 
@@ -108,19 +136,14 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
     setDialogOpen(false);
   };
 
-  const handleChange = (event) => {
-    setFormData({...formData, [event.target.name]: event.target.value});
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
-  {
-    /** for sameple if success, ari butang backend**/
-  }
   const handleConfirm = async (action) => {
     switch (action) {
-      // case 'approve':
-      //   alert('Approval action confirmed.');
-      //   break;
-      case "update":
+      case "update": ////// UPDATE DETAILS
         const res = await axios.put(`${config.API}/request/update-bulk`, {
           formData,
           id: data.requestID,
@@ -138,14 +161,12 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
             user_id: 1,
             request_id: data.requestID,
           });
-          console.log("logs success!");
-          // refetchData();
-          handleClose();
+          window.location.reload();
         }
         break;
-      case "cancel":
+      case "cancel": ////// CANCEL
         try {
-          axios.put(`${config.API}/request/update`, null, {
+          await axios.put(`${config.API}/request/update`, null, {
             params: {
               col: "status",
               val: "cancelled",
@@ -154,29 +175,86 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
           });
 
           console.log("request cancelled!");
-          axios
-            .delete(`${config.API}/priest/deleteSched`, {
-              params: {
-                col: "request_id",
-                val: data.requestID,
-              },
-            })
-            .then(() => {
-              console.log("priest sched deleted!");
-              axios.post(`${config.API}/logs/create`, {
-                activity: `Cancelled Funeral Mass Request - Transaction number: ${data.transaction_no}`,
-                user_id: 1,
-                request_id: data.requestID,
-              });
-              console.log("logs success!");
-            });
+          await axios.delete(`${config.API}/priest/deleteSched`, {
+            params: {
+              col: "request_id",
+              val: data.requestID,
+            },
+          });
+          axios.post(`${config.API}/logs/create`, {
+            activity: `Cancelled Funeral Mass Request - Transaction number: ${data.transaction_no}`,
+            user_id: 1,
+            request_id: data.requestID,
+          });
         } catch (err) {
           console.error("error updating request", err);
         }
         break;
-      case "reschedule":
-        alert("Reschedule action confirmed.");
+      case "reschedule": ////// RESCHEDULE
+        const response = await axios.get(
+          `${config.API}/priest/retrieve-schedule-by-params`,
+          {
+            params: {
+              priest: formData.priest_id,
+              date: formData.preferred_date,
+              start: formData.preferred_time,
+              end: endTime(formData.preferred_time, service.duration),
+            },
+          }
+        );
+
+        if (Object.keys(response.data).length > 0 || response.data != "") {
+          setError({
+            message: response.data.message,
+            details: response.data?.details,
+          });
+        } else {
+          const reschedule = {
+            preferred_date: formData.preferred_date,
+            preferred_time: formData.preferred_time,
+            priest_id: formData.priest_id,
+          };
+
+          axios.put(`${config.API}/request/update-bulk`, {
+            formData: reschedule,
+            id: data.requestID,
+          });
+
+          console.log("request rescheduled!");
+
+          axios.delete(`${config.API}/priest/deleteSched`, {
+            params: {
+              col: "request_id",
+              val: data.requestID,
+            },
+          });
+
+          console.log("deleted previous sched!");
+
+          axios.post(`${config.API}/priest/createPriestSched`, {
+            activity: `Funeral Mass for ${formData.first_name}`,
+            priest_id: formData.priest_id,
+            request_id: data.requestID,
+            start_time: formData.preferred_time,
+            end_time: endTime(formData.preferred_time, service.duration),
+            date: formData.preferred_date,
+          });
+
+          console.log("pries sched rescheduled!");
+
+          axios.post(`${config.API}/logs/create`, {
+            activity: `Rescheduled Funeral Mass for ${formData.first_name}`,
+            user_id: 1,
+            request_id: data.requestID,
+          });
+
+          console.log("log success!");
+
+          // sendSMS(data.service_id, formData, "reschedule");
+          // window.location.reload(); //replace with fetch soon
+        }
         break;
+
       default:
         break;
     }
@@ -184,309 +262,234 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
 
   return (
     <>
-      <Modal open={open} onClose={handleClose}>
-        {formData && priests && formData ? (
-          <Box sx={modalStyle}>
-            <Box sx={{position: "sticky", paddingBottom: "10px"}}>
-              <Grid container justifyContent={"flex-end"}>
-                <Grid item>
-                  <IconButton onClick={handleClose} size="small">
-                    <FontAwesomeIcon icon={faXmark} />
-                  </IconButton>
-                </Grid>
-                <Grid item sm={12}>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{textAlign: "center", fontWeight: "bold"}}>
-                    Funeral Mass Request Information
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
+      {error && (
+        <Snackbar
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}
+          message={
+            <>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
+                {error.message}
+              </span>
+              <p>{error.details}</p>
+            </>
+          }
+        />
+      )}
 
-            <Box sx={modalContentStyle}>
-              <Grid container justifyContent={"center"} spacing={2}>
-                <Grid item sm={4}>
-                  <label>Name of the deceased:</label>
-                </Grid>
-                <Grid item sm={8}>
+      <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+        {formData && priests ? (
+          <>
+            <DialogTitle sx={{m: 0, p: 2, textAlign: "center"}}>
+              Funeral Mass Request Information
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{position: "absolute", right: 8, top: 8}}>
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              <Grid container spacing={2} sx={{padding: 3}}>
+                <Grid item xs={12} sm={12}>
+                  <label>Name of Deceased:</label>
                   <TextField
                     fullWidth
-                    sx={TextFieldStyle}
                     name="first_name"
+                    size="small"
                     value={formData.first_name}
-                    onChange={(e) => handleChange(e)}
+                    onChange={handleChange}
                   />
                 </Grid>
-
-                <Grid item sm={4}>
-                  <label>Requested by:</label>
-                </Grid>
-                <Grid item sm={8}>
+                <Grid item xs={12}>
+                  <label>Contact Number: </label>
                   <TextField
                     fullWidth
-                    sx={TextFieldStyle}
-                    name="requested_by"
-                    value={formData.requested_by}
-                    onChange={(e) => handleChange(e)}
-                  />
-                </Grid>
-
-                <Grid item sm={4.3}>
-                  <label>Relationship to the deceased:</label>
-                </Grid>
-                <Grid item sm={7.7}>
-                  <TextField
-                    fullWidth
-                    sx={TextFieldStyle}
-                    name="relationship"
-                    value={formData.relationship}
-                    onChange={(e) => handleChange(e)}
-                  />
-                </Grid>
-
-                <Grid item sm={4}>
-                  <label>Contact Number:</label>
-                </Grid>
-                <Grid item sm={8}>
-                  <TextField
-                    fullWidth
-                    sx={TextFieldStyle}
+                    size="small"
                     name="contact_no"
                     value={formData.contact_no}
-                    onChange={(e) => handleChange(e)}
+                    onChange={handleChange}
                   />
                 </Grid>
-
-                <Grid item sm={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}>
-                    <div
-                      style={{
-                        flex: 0.1,
-                        height: "1px",
-                        backgroundColor: "black",
-                      }}
-                    />
-                    <div>
-                      <p
-                        style={{
-                          width: "80px",
-                          textAlign: "center",
-                          fontWeight: "bold",
-                        }}>
-                        Assigned
-                      </p>
-                    </div>
-                    <div
-                      style={{flex: 1, height: "1px", backgroundColor: "black"}}
-                    />
-                  </div>
-                </Grid>
-
-                <Grid item sm={3}>
-                  <label>Priest:</label>
+                <Grid item xs={12}>
+                  <label>Requested by:</label>
                   <TextField
-                    disabled
                     fullWidth
-                    sx={TextFieldStyleDis}
-                    value={
-                      priests.find(
-                        (priest) => priest.priestID === formData.priest_id
-                      )?.first_name +
-                      " " +
-                      priests.find(
-                        (priest) => priest.priestID === formData.priest_id
-                      )?.last_name
-                    }
+                    size="small"
+                    name="requested_by"
+                    value={formData.requested_by}
+                    onChange={handleChange}
                   />
                 </Grid>
-                <Grid item sm={3}>
-                  <label>Date:</label>
+                <Grid item xs={12}>
+                  <label>Relationship to the Deceased:</label>
                   <TextField
-                    disabled
                     fullWidth
-                    sx={TextFieldStyleDis}
-                    value={util.formatDate(formData.preferred_date)}
+                    size="small"
+                    name="relationship"
+                    value={formData.relationship}
+                    onChange={handleChange}
                   />
-                </Grid>
-                <Grid item sm={3}>
-                  <label>Time:</label>
-                  <TextField
-                    disabled
-                    fullWidth
-                    sx={TextFieldStyleDis}
-                    value={formData.preferred_time}
-                  />
-                </Grid>
-                {/* <Grid item sm={3}>
-                <label>Venue:</label>
-                <TextField disabled fullWidth sx={TextFieldStyleDis}/>
-              </Grid> */}
-
-                <Grid item sm={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}>
-                    <div
-                      style={{
-                        flex: 0.1,
-                        height: "1px",
-                        backgroundColor: "black",
-                      }}
-                    />
-                    <div>
-                      <p
-                        style={{
-                          width: "95px",
-                          textAlign: "center",
-                          fontWeight: "bold",
-                        }}>
-                        Reschedule
-                      </p>
-                    </div>
-                    <div
-                      style={{flex: 1, height: "1px", backgroundColor: "black"}}
-                    />
-                  </div>
                 </Grid>
 
-                <Grid item sm={2.5}>
-                  <label>Priest:</label>
-                  <TextField fullWidth select sx={TextFieldStyle} />
+                <Grid item xs={12}>
+                  <hr className="my-3" />
                 </Grid>
-                <Grid item sm={3}>
-                  <label>Date:</label>
+
+                <Grid item xs={12} sm={4}>
+                  <label>Selected Priest:</label>
+                  <TextField
+                    value={formData.priest_id}
+                    size="small"
+                    name="priest_id"
+                    onChange={handleChange}
+                    select
+                    fullWidth>
+                    {priests.map((priest) => (
+                      <MenuItem key={priest.priestID} value={priest.priestID}>
+                        {priest.first_name + " " + priest.last_name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <label>Selected Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker fullWidth sx={TextFieldStyle} />
+                    <DatePicker
+                      disablePast
+                      fullWidth
+                      sx={TextFieldStyle}
+                      value={
+                        formData.preferred_date
+                          ? dayjs(formData.preferred_date)
+                          : null
+                      }
+                      onChange={(date) =>
+                        handleDateChange("preferred_date", date)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item sm={2.7}>
-                  <label>Time:</label>
+                <Grid item xs={12} sm={3}>
+                  <label>Selected Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <TimePicker fullWidth sx={TextFieldStyle} />
+                    <TimePicker
+                      fullWidth
+                      sx={TextFieldStyle}
+                      value={
+                        data.preferred_time
+                          ? dayjs(data.preferred_time, "HH:mm:ss")
+                          : null
+                      }
+                      onChange={(time) =>
+                        handleTimeChange("preferred_time", time)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item sm={1.8}>
-                  <label>Venue:</label>
-                  <TextField disabled fullWidth sx={TextFieldStyle} />
-                </Grid>
-                <Grid item sm={2}>
+                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
                   <Button
                     onClick={() => handleOpenDialog("reschedule")}
-                    fullWidth
                     sx={{
                       bgcolor: "#247E38",
                       marginTop: "24px",
-                      height: "30px",
+                      height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#34AC4F"},
+                      "&:hover": {bgcolor: "#578A62"},
                     }}>
-                    SET
+                    Reschedule
                   </Button>
                 </Grid>
-
-                <Grid
-                  item
-                  sm={12}
-                  sx={{
-                    textAlign: "center",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                  }}>
-                  <Typography variant="body2" sx={{marginRight: "5px"}}>
-                    Transaction Code:
-                  </Typography>
-                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
-                    {data.transaction_no}
-                  </Typography>
+                <Grid item xs={6}>
+                  <label>Venue:</label>
+                  <TextField fullWidth size="small" disabled />
                 </Grid>
+                <Grid item xs={6}>
+                  <label>Transaction Number:</label>
+                  <Paper
+                    elevation={1}
+                    sx={{
+                      height: "40px",
+                      alignItems: "center",
+                      display: "flex",
+                      justifyContent: "center",
+                      backgroundColor: "#d1d1d1",
+                      fontWeight: "bold",
+                    }}>
+                    {data.transaction_no}
+                  </Paper>
+                </Grid>
+              </Grid>
+            </DialogContent>
 
+            <DialogActions>
+              <Grid
+                container
+                sx={{
+                  display: "flex",
+                  marginTop: "-30px",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}>
                 <Grid
                   item
+                  xs={12}
                   sm={12}
                   sx={{
-                    textAlign: "center",
                     display: "flex",
-                    flexDirection: "row",
                     justifyContent: "center",
+                    gap: "20px",
                   }}>
                   <Button
                     onClick={() => handleOpenDialog("update")}
                     sx={{
                       bgcolor: "#CDAB52",
-                      marginTop: "14px",
-                      height: "35px",
-                      width: "90px",
+                      marginTop: "24px",
+                      height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#F0CA67"},
+                      "&:hover": {bgcolor: "#A58228"},
                     }}>
                     UPDATE
                   </Button>
+
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("cancel")}
                     sx={{
                       bgcolor: "#C34444",
-                      margin: "14px 0px 0px 5px",
-                      height: "35px",
-                      width: "90px",
+                      marginTop: "24px",
+                      height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#F05A5A"},
+                      "&:hover": {bgcolor: "#f44336"},
                     }}>
                     CANCEL
                   </Button>
                 </Grid>
               </Grid>
-            </Box>
-            <ConfirmationDialog
-              open={dialogOpen}
-              onClose={handleCloseDialog}
-              action={currentAction}
-              onConfirm={handleConfirm}
-              service={service}
-            />
-          </Box>
+            </DialogActions>
+          </>
         ) : (
-          // Skeleton loading effect for the entire form
-          <Grid container spacing={2}>
-            <Grid item sm={12}>
-              <Skeleton variant="text" width="80%" height={30} />
-            </Grid>
-            {[...Array(9)].map((_, index) => (
-              <Grid item sm={4} key={index}>
-                <Skeleton variant="rectangular" width="100%" height={40} />
-              </Grid>
-            ))}
-            <Grid item sm={12} sx={{mt: 2}}>
-              <Skeleton variant="rectangular" width="30%" height={40} />
-            </Grid>
-            <Grid item sm={12} sx={{mt: 1}}>
-              <Skeleton variant="text" width="50%" height={30} />
-              <Skeleton variant="rectangular" width="100%" height={150} />
-            </Grid>
-            <Grid item sm={12} sx={{mt: 2}}>
-              <Skeleton variant="rectangular" width="30%" height={40} />
-              <Skeleton
-                variant="rectangular"
-                width="30%"
-                height={40}
-                sx={{ml: 2}}
-              />
-            </Grid>
-          </Grid>
+          <Skeleton variant="rectangular" height={400} />
         )}
-      </Modal>
+      </Dialog>
+
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        action={currentAction}
+        onConfirm={handleConfirm}
+        service={"Funeral Mass"}
+      />
     </>
   );
 };
