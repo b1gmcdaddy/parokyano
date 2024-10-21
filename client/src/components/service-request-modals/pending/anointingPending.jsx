@@ -113,12 +113,6 @@ const AnointingPending = ({open, data, handleClose}) => {
     setDialogOpen(true);
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0];
-  };
-
   const fetchService = async () => {
     try {
       const response = await axios.get(
@@ -233,7 +227,7 @@ const AnointingPending = ({open, data, handleClose}) => {
             });
             console.log("logs success!");
             // sendSMS(data.service_id, formData, "approve");
-            handleClose();
+            window.location.reload();
           }
         } catch (err) {
           console.log("error submitting to server", err);

@@ -10,12 +10,15 @@ import {
   Grid,
   TextField,
   Typography,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import ReactToPrint from "react-to-print";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileExport, faPrint} from "@fortawesome/free-solid-svg-icons";
+import dayjs from "dayjs";
 import axios from "axios";
 import config from "../../../config";
 import {Document, Packer, Paragraph, TextRun} from "docx";
@@ -30,6 +33,14 @@ const PrintIntentions = ({open, close}) => {
   const [timeSelected, setTimeSelected] = useState(null);
   const [tableData, setTableData] = useState([]);
   const componentRef = useRef();
+
+  const timeOptions = [];
+  for (let hour = 8; hour <= 19; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const time = dayjs().hour(hour).minute(minute).format("HH:mm");
+      timeOptions.push(time);
+    }
+  }
 
   const fetchData = async () => {
     if (!dateSelected) return;
@@ -259,15 +270,21 @@ const PrintIntentions = ({open, close}) => {
           <Typography component="div" sx={{ml: 2, color: "black"}}>
             Select Time:
           </Typography>
-          <TextField
-            type="time"
+          <Select
             size="small"
             sx={{
               backgroundColor: "white",
               borderRadius: "4px",
+              width: "80px",
             }}
-            onChange={handleTimeChange}
-          />
+            value={timeSelected || ""}
+            onChange={handleTimeChange}>
+            {timeOptions.map((time) => (
+              <MenuItem key={time} value={time}>
+                {time}
+              </MenuItem>
+            ))}
+          </Select>
         </Box>
 
         <Box
@@ -286,7 +303,8 @@ const PrintIntentions = ({open, close}) => {
                   Mass Intentions
                 </Typography>
                 <Typography sx={{fontStyle: "italic", fontSize: "14px"}}>
-                  {dateSelected}&nbsp;- {timeSelected}
+                  {util.formatDate(dateSelected)}&nbsp;-{" "}
+                  {util.formatTime(timeSelected)}
                 </Typography>
               </Box>
 

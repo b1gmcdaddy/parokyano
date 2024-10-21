@@ -1,72 +1,91 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Modal, Box, Button, Grid, Typography, IconButton, TextField, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody} from "@mui/material"
-import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { useState} from "react"
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {
+  Modal,
+  Box,
+  Button,
+  Grid,
+  Typography,
+  IconButton,
+  TextField,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
+import {
+  DatePicker,
+  LocalizationProvider,
+  TimePicker,
+} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useState} from "react";
 import React from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  maxWidth: 'md',  
-  bgcolor: 'white',
-  borderRadius: '10px',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  maxWidth: "md",
+  bgcolor: "white",
+  borderRadius: "10px",
   boxShadow: 3,
   px: 4,
   py: 3,
-  maxHeight: '97vh',
-  overflowY: 'auto',
-  scrollbarWidth: 'none',   
-  "&::-webkit-scrollbar": {  
-      display: "none"
-  }
+  maxHeight: "97vh",
+  overflowY: "auto",
+  scrollbarWidth: "none",
+  "&::-webkit-scrollbar": {
+    display: "none",
+  },
 };
 
 const boxModal = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  maxWidth: 'sm',  
-  bgcolor: 'white',
-  borderRadius: '10px',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  maxWidth: "sm",
+  bgcolor: "white",
+  borderRadius: "10px",
   boxShadow: 3,
   px: 4,
   py: 3,
-  maxHeight: '97vh',
-  overflowY: 'auto',
-  scrollbarWidth: 'none',   
-  "&::-webkit-scrollbar": {  
-      display: "none"
-  }
-}
-
-const TextFieldStyle ={
-  "& .MuiInputBase-root":{height:'30px', bgcolor:'white'}
+  maxHeight: "97vh",
+  overflowY: "auto",
+  scrollbarWidth: "none",
+  "&::-webkit-scrollbar": {
+    display: "none",
+  },
 };
 
-const TextFieldStyleDis ={
-  "& .MuiInputBase-root":{height:'30px'},
-  bgcolor:'#D9D9D9'
+const TextFieldStyle = {
+  "& .MuiInputBase-root": {height: "30px", bgcolor: "white"},
+};
+
+const TextFieldStyleDis = {
+  "& .MuiInputBase-root": {height: "30px"},
+  bgcolor: "#D9D9D9",
 };
 
 const sponsors = [
-  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
-  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
-  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
-  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
-  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
-  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
-  {name: "John Dominic Cocjic", age:"22", marital: "Married", catholic: "Yes"},
-  {name: "Andrew Garfiels", age:"31", marital: "Married", catholic: "Yes"},
-  {name: "Ariana Grande", age:"25", marital: "Married", catholic: "Yes"},
-  {name: "Olivia Rodrigo", age:"23", marital: "Married", catholic: "Yes"},
+  {name: "John Dominic Cocjic", age: "22", marital: "Married", catholic: "Yes"},
+  {name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes"},
+  {name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes"},
+  {name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes"},
+  {name: "John Dominic Cocjic", age: "22", marital: "Married", catholic: "Yes"},
+  {name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes"},
+  {name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes"},
+  {name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes"},
+  {name: "John Dominic Cocjic", age: "22", marital: "Married", catholic: "Yes"},
+  {name: "Andrew Garfiels", age: "31", marital: "Married", catholic: "Yes"},
+  {name: "Ariana Grande", age: "25", marital: "Married", catholic: "Yes"},
+  {name: "Olivia Rodrigo", age: "23", marital: "Married", catholic: "Yes"},
 ];
 
 function SponsorsModal() {
@@ -74,8 +93,8 @@ function SponsorsModal() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentAction, setCurrentAction] = useState('');
-  const [service] = useState('wedding');
+  const [currentAction, setCurrentAction] = useState("");
+  const [service] = useState("wedding");
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -86,21 +105,34 @@ function SponsorsModal() {
     setDialogOpen(false);
   };
 
-  {/** for sameple if success, ari butang backend**/}
+  {
+    /** for sameple if success, ari butang backend**/
+  }
   const handleConfirm = (action) => {
     switch (action) {
-      case 'Update sponsors':
-        alert('Update action confirmed.');
+      case "Update sponsors":
+        alert("Update action confirmed.");
         break;
       default:
         break;
     }
   };
-  
-  return(
+
+  return (
     <React.Fragment>
-        <Button onClick={handleOpen} sx={{backgroundColor:'#355173',height: '25px', fontSize:'11px', marginLeft:'5px', color:'white', "&:hover":{bgcolor:"#4C74A5"}}}>Sponsors</Button>
-        <Modal open={open}>
+      <Button
+        onClick={handleOpen}
+        sx={{
+          backgroundColor: "#355173",
+          height: "25px",
+          fontSize: "11px",
+          marginLeft: "5px",
+          color: "white",
+          "&:hover": {bgcolor: "#4C74A5"},
+        }}>
+        Sponsors
+      </Button>
+      <Modal open={open}>
         <Box sx={boxModal}>
           <Grid container justifyContent={"flex-end"}>
             <Grid item>
@@ -111,54 +143,69 @@ function SponsorsModal() {
           </Grid>
           <Grid container justifyContent={"center"} spacing={1}>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Wedding Sponsors Information</Typography> 
+              <Typography
+                variant="subtitle1"
+                sx={{textAlign: "center", fontWeight: "bold"}}>
+                Wedding Sponsors Information
+              </Typography>
             </Grid>
             <Grid item sm={4.5}>
               <label>Full Name:</label>
-              <TextField fullWidth sx={TextFieldStyle}/>
+              <TextField fullWidth sx={TextFieldStyle} />
             </Grid>
             <Grid item sm={1.5}>
               <label>Age:</label>
-              <TextField fullWidth sx={TextFieldStyle}/>
+              <TextField fullWidth sx={TextFieldStyle} />
             </Grid>
             <Grid item sm={3}>
               <label>Marital Status:</label>
-              <TextField select fullWidth sx={TextFieldStyle}/>
+              <TextField select fullWidth sx={TextFieldStyle} />
             </Grid>
             <Grid item sm={3}>
               <label>Catholic?:</label>
-              <TextField select fullWidth sx={TextFieldStyle}/>
+              <TextField select fullWidth sx={TextFieldStyle} />
             </Grid>
-            <Grid item sm={12} sx={{textAlign:'center'}}>
-                <Button sx={{bgcolor:'#355173', height: '28px', width:'150px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#4C74A5"}}}>Add Sponsor</Button>
+            <Grid item sm={12} sx={{textAlign: "center"}}>
+              <Button
+                sx={{
+                  bgcolor: "#355173",
+                  height: "28px",
+                  width: "150px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": {bgcolor: "#4C74A5"},
+                }}>
+                Add Sponsor
+              </Button>
             </Grid>
 
             <Grid item sm={12}>
               <TableContainer component={Paper}>
-                <Table sx={{ tableLayout: 'fixed' }}>
+                <Table sx={{tableLayout: "fixed"}}>
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">Full Name</TableCell>
                       <TableCell align="center">Age</TableCell>
                       <TableCell align="center">Marital Status</TableCell>
                       <TableCell align="center">Catholic?</TableCell>
-                      <TableCell align="center" sx={{ width: '50px' }}></TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{width: "50px"}}></TableCell>
                     </TableRow>
                   </TableHead>
                 </Table>
               </TableContainer>
               <div
                 style={{
-                  maxHeight: '35vh',
-                  overflowY: 'auto',
-                  width: '100%',
-                  scrollbarWidth: 'none',   
-                  "&::-webkit-scrollbar": {  
-                      display: "none"
-                  }
-                }}
-              >
-                <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
+                  maxHeight: "35vh",
+                  overflowY: "auto",
+                  width: "100%",
+                  scrollbarWidth: "none",
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
+                }}>
+                <Table sx={{tableLayout: "fixed", width: "100%"}}>
                   <TableBody>
                     {sponsors.map((sponsor) => (
                       <TableRow key={sponsor.name}>
@@ -168,7 +215,7 @@ function SponsorsModal() {
                         <TableCell align="center">{sponsor.age}</TableCell>
                         <TableCell align="center">{sponsor.marital}</TableCell>
                         <TableCell align="center">{sponsor.catholic}</TableCell>
-                        <TableCell align="center" sx={{ width: '50px' }}>
+                        <TableCell align="center" sx={{width: "50px"}}>
                           <IconButton size="small">
                             <FontAwesomeIcon icon={faXmark} />
                           </IconButton>
@@ -180,21 +227,38 @@ function SponsorsModal() {
               </div>
             </Grid>
 
-            <Grid item sm={12} sx={{textAlign:'center'}}>
-                <Button onClick={() => handleOpenDialog('Update sponsors')} sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
+            <Grid item sm={12} sx={{textAlign: "center"}}>
+              <Button
+                onClick={() => handleOpenDialog("Update sponsors")}
+                sx={{
+                  bgcolor: "#CDAB52",
+                  height: "35px",
+                  width: "90px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": {bgcolor: "#F0CA67"},
+                }}>
+                UPDATE
+              </Button>
             </Grid>
           </Grid>
-          <ConfirmationDialog  open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
+          <ConfirmationDialog
+            open={dialogOpen}
+            onClose={handleCloseDialog}
+            action={currentAction}
+            onConfirm={handleConfirm}
+            service={service}
+          />
         </Box>
       </Modal>
     </React.Fragment>
   );
 }
 
-const WeddingApproved = ({open, handleClose}) =>{
+const WeddingApproved = ({open, handleClose}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentAction, setCurrentAction] = useState('');
-  const [service] = useState('wedding');
+  const [currentAction, setCurrentAction] = useState("");
+  const [service] = useState("wedding");
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -205,32 +269,31 @@ const WeddingApproved = ({open, handleClose}) =>{
     setDialogOpen(false);
   };
 
-  {/** for sameple if success, ari butang backend**/}
+  {
+    /** for sameple if success, ari butang backend**/
+  }
   const handleConfirm = (action) => {
     switch (action) {
-      case 'approve':
-        alert('Approval action confirmed.');
+      case "approve":
+        alert("Approval action confirmed.");
         break;
-      case 'update':
-        alert('Update action confirmed.');
+      case "update":
+        alert("Update action confirmed.");
         break;
-      case 'cancel':
-        alert('Cancel action confirmed.');
+      case "cancel":
+        alert("Cancel action confirmed.");
         break;
-      case 'reschedule':
-        alert('Reschedule action confirmed.');
+      case "reschedule":
+        alert("Reschedule action confirmed.");
         break;
       default:
         break;
     }
   };
 
-    return(
-        <>
-        <Modal
-          open={open} 
-          onClose={handleClose}
-        >
+  return (
+    <>
+      <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Grid container justifyContent={"flex-end"}>
             <Grid item>
@@ -241,48 +304,64 @@ const WeddingApproved = ({open, handleClose}) =>{
           </Grid>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid item sm={12}>
-              <Typography variant="subtitle1" sx={{textAlign:'center', fontWeight:'bold'}}>Wedding Request Information</Typography> 
+              <Typography
+                variant="subtitle1"
+                sx={{textAlign: "center", fontWeight: "bold"}}>
+                Wedding Request Information
+              </Typography>
             </Grid>
-            
+
             <Grid item sm={12}>
-              <Box fullWidth sx={{bgcolor:'#D9D9D9',padding:'10px', borderRadius:'5px'}}>
+              <Box
+                fullWidth
+                sx={{bgcolor: "#D9D9D9", padding: "10px", borderRadius: "5px"}}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
-                    <Typography variant="subtitle1" sx={{fontWeight:'bold', fontSize:'14px'}}>Groom:</Typography>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
+                      Groom:
+                    </Typography>
                   </Grid>
                   <Grid item sm={4}>
                     <label>First Name:</label>
-                    <TextField fullWidth sx={TextFieldStyle}/>
+                    <TextField fullWidth sx={TextFieldStyle} />
                   </Grid>
                   <Grid item sm={4}>
                     <label>Middle Name:</label>
-                    <TextField fullWidth sx={TextFieldStyle}/>
+                    <TextField fullWidth sx={TextFieldStyle} />
                   </Grid>
                   <Grid item sm={4}>
                     <label>Last Name:</label>
-                    <TextField fullWidth sx={TextFieldStyle}/>
+                    <TextField fullWidth sx={TextFieldStyle} />
                   </Grid>
                 </Grid>
               </Box>
             </Grid>
 
             <Grid item sm={12}>
-              <Box fullWidth sx={{bgcolor:'#D9D9D9',padding:'10px', borderRadius:'5px'}}>
+              <Box
+                fullWidth
+                sx={{bgcolor: "#D9D9D9", padding: "10px", borderRadius: "5px"}}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
-                    <Typography variant="subtitle1" sx={{fontWeight:'bold', fontSize:'14px'}}>Bride:</Typography>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
+                      Bride:
+                    </Typography>
                   </Grid>
                   <Grid item sm={4}>
                     <label>First Name:</label>
-                    <TextField fullWidth sx={TextFieldStyle}/>
+                    <TextField fullWidth sx={TextFieldStyle} />
                   </Grid>
                   <Grid item sm={4}>
                     <label>Middle Name:</label>
-                    <TextField fullWidth sx={TextFieldStyle}/>
+                    <TextField fullWidth sx={TextFieldStyle} />
                   </Grid>
                   <Grid item sm={4}>
                     <label>Last Name:</label>
-                    <TextField fullWidth sx={TextFieldStyle}/>
+                    <TextField fullWidth sx={TextFieldStyle} />
                   </Grid>
                 </Grid>
               </Box>
@@ -290,101 +369,222 @@ const WeddingApproved = ({open, handleClose}) =>{
 
             <Grid item sm={4}>
               <label>Contact No:</label>
-              <TextField fullWidth sx={TextFieldStyle}/>
+              <TextField fullWidth sx={TextFieldStyle} />
             </Grid>
             <Grid item sm={4}>
               <label>Status:</label>
-              <TextField select fullWidth sx={TextFieldStyle}/>
+              <TextField select fullWidth sx={TextFieldStyle} />
             </Grid>
             <Grid item sm={4}>
               <label>Payment:</label>
-              <TextField select fullWidth sx={TextFieldStyle}/>
+              <TextField select fullWidth sx={TextFieldStyle} />
             </Grid>
 
             <Grid item sm={12} textAlign={"center"}>
-              <Typography variant="subtitle1" sx={{display:'inline-block', fontSize:'14px'}}>Requirements:</Typography>
-              <Typography variant="subtitle1" sx={{display:'inline-block', marginLeft:'5px', fontSize:'14px'}}>Incomplete</Typography>
-              <Typography variant="subtitle1" sx={{display:'inline-block', marginLeft:'5px', fontSize:'14px'}}>Sponsors:</Typography>
-              <Typography variant="subtitle1" sx={{display:'inline-block', marginLeft:'5px', fontSize:'14px'}}>Incomplete</Typography>
-              <SponsorsModal/>
+              <Typography
+                variant="subtitle1"
+                sx={{display: "inline-block", fontSize: "14px"}}>
+                Requirements:
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  display: "inline-block",
+                  marginLeft: "5px",
+                  fontSize: "14px",
+                }}>
+                Incomplete
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  display: "inline-block",
+                  marginLeft: "5px",
+                  fontSize: "14px",
+                }}>
+                Sponsors:
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  display: "inline-block",
+                  marginLeft: "5px",
+                  fontSize: "14px",
+                }}>
+                Incomplete
+              </Typography>
+              <SponsorsModal />
             </Grid>
 
             <Grid item sm={12}>
-                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                    <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
-                    <div>
-                        <p style={{width: '80px', textAlign: 'center', fontWeight:'bold'}}>Assigned</p>
-                    </div>
-                    <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}>
+                <div
+                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                />
+                <div>
+                  <p
+                    style={{
+                      width: "80px",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}>
+                    Assigned
+                  </p>
                 </div>
+                <div
+                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                />
+              </div>
             </Grid>
 
             <Grid item sm={3}>
               <label>Priest:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyleDis} />
             </Grid>
             <Grid item sm={3}>
               <label>Date:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyleDis} />
             </Grid>
             <Grid item sm={3}>
               <label>Time:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyleDis} />
             </Grid>
             <Grid item sm={3}>
               <label>Venue:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis}/>
+              <TextField disabled fullWidth sx={TextFieldStyleDis} />
             </Grid>
 
             <Grid item sm={12}>
-                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                    <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
-                    <div>
-                        <p style={{width: '95px', textAlign: 'center', fontWeight:'bold'}}>Reschedule</p>
-                    </div>
-                    <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}>
+                <div
+                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                />
+                <div>
+                  <p
+                    style={{
+                      width: "95px",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}>
+                    Reschedule
+                  </p>
                 </div>
+                <div
+                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                />
+              </div>
             </Grid>
 
             <Grid item sm={2.5}>
               <label>Priest:</label>
-              <TextField fullWidth select sx={TextFieldStyle}/>
+              <TextField fullWidth select sx={TextFieldStyle} />
             </Grid>
             <Grid item sm={3}>
               <label>Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker fullWidth sx={TextFieldStyle}/>
+                <DatePicker fullWidth sx={TextFieldStyle} />
               </LocalizationProvider>
             </Grid>
             <Grid item sm={2.7}>
               <label>Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <TimePicker fullWidth sx={TextFieldStyle}/>
+                <TimePicker fullWidth sx={TextFieldStyle} />
               </LocalizationProvider>
             </Grid>
             <Grid item sm={1.8}>
               <label>Venue:</label>
-              <TextField disabled fullWidth sx={TextFieldStyle}/>
+              <TextField disabled fullWidth sx={TextFieldStyle} />
             </Grid>
             <Grid item sm={2}>
-              <Button onClick={() => handleOpenDialog('reschedule')} fullWidth sx={{bgcolor:'#247E38',marginTop:'24px', height: '30px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#34AC4F"}}}>SET</Button>
+              <Button
+                onClick={() => handleOpenDialog("reschedule")}
+                fullWidth
+                sx={{
+                  bgcolor: "#247E38",
+                  marginTop: "24px",
+                  height: "30px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": {bgcolor: "#34AC4F"},
+                }}>
+                SET
+              </Button>
             </Grid>
 
-            <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <Typography variant="body2" sx={{marginRight: '5px'}}>Transaction Code:</Typography>
-              <Typography variant="body2" sx={{fontWeight:'bold'}}>040124hash</Typography>
+            <Grid
+              item
+              sm={12}
+              sx={{
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}>
+              <Typography variant="body2" sx={{marginRight: "5px"}}>
+                Transaction Code:
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{fontWeight: "bold"}}></Typography>
             </Grid>
 
-            <Grid item sm={12} sx={{textAlign:'center', display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <Button onClick={() => handleOpenDialog('update')} sx={{bgcolor:'#CDAB52', height: '35px', width:'90px', fontWeight:'bold', color:'white',"&:hover":{bgcolor:"#F0CA67"}}}>UPDATE</Button>
-              <Button onClick={() => handleOpenDialog('cancel')} sx={{bgcolor:'#C34444',margin:'0px 0px 0px 5px', height: '35px', width:'90px', fontWeight:'bold', color:'white', "&:hover":{bgcolor:"#F05A5A"}}}>CANCEL</Button>
+            <Grid
+              item
+              sm={12}
+              sx={{
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}>
+              <Button
+                onClick={() => handleOpenDialog("update")}
+                sx={{
+                  bgcolor: "#CDAB52",
+                  height: "35px",
+                  width: "90px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": {bgcolor: "#F0CA67"},
+                }}>
+                UPDATE
+              </Button>
+              <Button
+                onClick={() => handleOpenDialog("cancel")}
+                sx={{
+                  bgcolor: "#C34444",
+                  margin: "0px 0px 0px 5px",
+                  height: "35px",
+                  width: "90px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": {bgcolor: "#F05A5A"},
+                }}>
+                CANCEL
+              </Button>
             </Grid>
           </Grid>
-          <ConfirmationDialog open={dialogOpen} onClose={handleCloseDialog} action={currentAction} onConfirm={handleConfirm} service={service} />
+          <ConfirmationDialog
+            open={dialogOpen}
+            onClose={handleCloseDialog}
+            action={currentAction}
+            onConfirm={handleConfirm}
+            service={service}
+          />
         </Box>
-        </Modal>
-        </>
-    )
-}
+      </Modal>
+    </>
+  );
+};
 
-export default WeddingApproved
+export default WeddingApproved;
