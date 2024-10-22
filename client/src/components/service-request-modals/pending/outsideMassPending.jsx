@@ -231,7 +231,7 @@ const OutsidePending = ({open, data, handleClose}) => {
             console.log("request success!");
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
-              activity: `Outside mass at ${formData.address}`,
+              activity: `Outside mass for ${formData.first_name}`,
               start_time: formData.preferred_time
                 ? formData.preferred_time
                 : data.preferred_time,
@@ -241,7 +241,7 @@ const OutsidePending = ({open, data, handleClose}) => {
             });
             console.log("priest sched success!");
             axios.post(`${config.API}/logs/create`, {
-              activity: `Approved Outside Mass at ${formData.address}`,
+              activity: `Approved Outside Mass at ${formData.first_name}`,
               user_id: 1,
               request_id: formData.requestID,
             });

@@ -69,6 +69,7 @@ const WakePending = ({open, data, handleClose}) => {
   const [errorOpen, setErrorOpen] = useState(false);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
+    requestID: "",
     first_name: "", // full name ni sa deceased
     address: "",
     contact_no: "",
@@ -104,12 +105,6 @@ const WakePending = ({open, data, handleClose}) => {
       });
     }
   }, [open, data]);
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0];
-  };
 
   const fetchService = async () => {
     try {
@@ -190,7 +185,7 @@ const WakePending = ({open, data, handleClose}) => {
             }
           );
           console.log(response);
-          if (response.status !== 200) {
+          if (Object.keys(response.data).length > 0 || response.data != "") {
             setError({
               message: response.data.message,
               details: response.data?.details,
@@ -227,7 +222,7 @@ const WakePending = ({open, data, handleClose}) => {
             });
             console.log("logs success!");
             // sendSMS(data.service_id, formData, "approve");
-            handleClose();
+            window.location.reload();
           }
         } catch (err) {
           console.log("error submitting to server", err);
@@ -412,6 +407,7 @@ const WakePending = ({open, data, handleClose}) => {
               <label>Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
+                  disablePast
                   fullWidth
                   sx={TextFieldStyle}
                   value={
@@ -431,8 +427,8 @@ const WakePending = ({open, data, handleClose}) => {
                   fullWidth
                   sx={TextFieldStyle}
                   value={
-                    formData.preferred_time
-                      ? dayjs(formData.preferred_time, "HH:mm:ss")
+                    data.preferred_time
+                      ? dayjs(data.preferred_time, "HH:mm:ss")
                       : null
                   }
                   onChange={(time) => handleTimeChange("preferred_time", time)}

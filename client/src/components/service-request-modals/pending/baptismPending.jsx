@@ -95,7 +95,7 @@ const BaptismPending = ({open, data, handleClose}) => {
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleDetailsChange = (e) => {
@@ -274,14 +274,14 @@ const BaptismPending = ({open, data, handleClose}) => {
                 activity: `Baptism for ${formData.first_name} ${formData.last_name}`,
                 start_time: formData.preferred_time,
                 end_time: endTime(formData.preferred_time, service.duration),
-                priest_id: formData.preferred_priest,
+                priest_id: formData.priest_id,
                 request_id: formData.requestID,
               });
               console.log("priest sched success!");
               axios.post(`${config.API}/logs/create`, {
                 activity: `Approved Baptism for ${formData.first_name} ${formData.last_name}`,
                 user_id: 1,
-                request_id: formData.requestID,
+                request_id: data.requestID,
               });
               console.log("logs success!");
               // sendSMS(data.service_id, formData, "approve");

@@ -5,9 +5,9 @@ const db = require("./db");
 const dateToday = new Date().toJSON().slice(0, 10);
 
 const createLog = (req, res) => {
-  const { activity, user_id, request_id } = req.body;
+  const {activity, user_id, request_id} = req.body;
   db.query(
-    `INSERT INTO logs (date, activity,user_id, request_id) VALUES (?, ?, ?,  ?)`,
+    `INSERT INTO logs (date, activity, user_id, request_id) VALUES (?, ?, ?,  ?)`,
     [dateToday, activity, user_id, request_id],
     (err, result) => {
       if (err) {
@@ -36,13 +36,13 @@ const retrieveAll = (req, res) => {
         details: err,
       });
     }
-    res.status(200).json({ result });
+    res.status(200).json({result});
   });
 };
 
 // with pagination
 const retrieveAllLogs = (req, res) => {
-  const { page, limit } = req.query;
+  const {page, limit} = req.query;
   const offset = Number(page - 1) * parseInt(limit);
 
   const query = `SELECT logs.logID, logs.activity, logs.date, logs.request_id, 
@@ -56,7 +56,7 @@ const retrieveAllLogs = (req, res) => {
       return res.status(500);
     } else {
       console.log(result);
-      res.status(200).json({ result });
+      res.status(200).json({result});
     }
   });
 };
@@ -70,7 +70,7 @@ const getCountLogs = (req, res) => {
       return res.status(500);
     }
     console.log(result[0].count);
-    res.status(200).json({ count: result[0].count });
+    res.status(200).json({count: result[0].count});
   });
 };
 

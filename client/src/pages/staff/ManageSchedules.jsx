@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import { Button, Typography, TextField, Divider } from "@mui/material";
+import {Button, Typography, TextField, Divider} from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,11 +15,14 @@ import dayjs from "dayjs";
 import axios from "axios";
 import util from "../../utils/DateTimeFormatter";
 import all from "../../components/SchedulesModal";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
+import {jwtDecode} from "jwt-decode";
+import priestModals from "../../components/ManagePriestsModal";
 
 const ManageSchedules = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [openPriestModal, setOpenPriestModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [priestList, setPriestList] = useState([]);
@@ -27,6 +30,8 @@ const ManageSchedules = () => {
   const [selectedDate, setSelectedDate] = useState(
     dayjs().format("YYYY-MM-DD")
   );
+  const token = localStorage.getItem("accessToken");
+  const decoded = jwtDecode(token);
 
   const fetchSchedules = async () => {
     try {
@@ -36,6 +41,10 @@ const ManageSchedules = () => {
     } catch (err) {
       console.error("error retrieving schedule", err);
     }
+  };
+
+  const handleOpenPriestModal = () => {
+    setOpenPriestModal(true);
   };
 
   useEffect(() => {
@@ -125,12 +134,11 @@ const ManageSchedules = () => {
 
   return (
     <>
-      <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+      <Box sx={{display: "flex", mx: {md: "30px"}}}>
         <NavStaff />
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
-        >
+          sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
           <Toolbar />
 
           <Box
@@ -139,27 +147,46 @@ const ManageSchedules = () => {
               justifyContent: "space-between",
               margin: "8px",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 fontSize: "1.25rem",
                 lineHeight: "1.75rem",
                 fontWeight: 600,
-              }}
-            >
+              }}>
               Priest Schedule
             </Typography>
-            <Button
-              variant="contained"
-              type="button"
-              onClick={openScheduleModal}
-              sx={{ backgroundColor: "#355173" }}
-            >
-              ADD ACTIVITY
-            </Button>
+            <span>
+              {decoded.role == "admin" && (
+                <Button
+                  onClick={() => handleOpenPriestModal()}
+                  variant="contained"
+                  type="button"
+                  sx={{
+                    backgroundColor: "#F9F9F9",
+                    color: "black",
+                    "&:hover": {
+                      backgroundColor: "white",
+                    },
+                  }}>
+                  Manage Priests
+                </Button>
+              )}
+              <Button
+                variant="contained"
+                type="button"
+                onClick={openScheduleModal}
+                sx={{backgroundColor: "#355173", marginLeft: 2}}>
+                ADD ACTIVITY
+              </Button>
+            </span>
           </Box>
 
+          {/* Manage Priests Modal for ADMINS */}
+          <priestModals.ManagePriestsModal
+            open={openPriestModal}
+            close={() => setOpenPriestModal(false)}
+          />
           {/* Add schedule modal */}
           <all.AddSchedulesModal open={openModal} close={openScheduleModal} />
           {/*Edit Sched Modal */}
@@ -172,21 +199,19 @@ const ManageSchedules = () => {
 
           <Divider />
 
-          <Box sx={{ p: 2 }}>
+          <Box sx={{p: 2}}>
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Typography
                 sx={{
                   fontWeight: "bold",
                   fontSize: "1.3em",
                   marginBottom: "1em",
-                }}
-              >
+                }}>
                 {util.formatDate(selectedDate)}
               </Typography>
               <TextField
@@ -198,14 +223,13 @@ const ManageSchedules = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                sx={{ my: 3, boxShadow: "1px 3px 1px #D9D9D9" }}
+                sx={{my: 3, boxShadow: "1px 3px 1px #D9D9D9"}}
               />
             </Box>
 
             <TableContainer
               component={Paper}
-              sx={{ maxHeight: 600, overflowY: "auto" }}
-            >
+              sx={{maxHeight: 600, overflowY: "auto"}}>
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
@@ -213,8 +237,7 @@ const ManageSchedules = () => {
                       width="20%"
                       sx={{
                         fontWeight: "bold",
-                      }}
-                    >
+                      }}>
                       Time
                     </TableCell>
                     {priestList.map((priest) => (
@@ -223,8 +246,7 @@ const ManageSchedules = () => {
                           sx={{
                             fontWeight: "bold",
                             textTransform: "uppercase",
-                          }}
-                        >
+                          }}>
                           {priest.first_name} {priest.last_name}
                         </Typography>
                       </TableCell>
@@ -254,18 +276,19 @@ const ManageSchedules = () => {
                               border: activity
                                 ? "none"
                                 : "1px solid rgba((232, 232, 232)",
-                            }}
-                          >
+                            }}>
                             {isStart ? (
                               <>
                                 {activity.activity}
-                                <FontAwesomeIcon
-                                  onClick={() =>
-                                    openEditScheduleModal(activity)
-                                  }
-                                  icon={faPenToSquare}
-                                  className="ml-2 cursor-pointer"
-                                />
+                                {activity.request_id == null && (
+                                  <FontAwesomeIcon
+                                    onClick={() =>
+                                      openEditScheduleModal(activity)
+                                    }
+                                    icon={faPenToSquare}
+                                    className="ml-2 cursor-pointer"
+                                  />
+                                )}
                               </>
                             ) : null}
                           </TableCell>
