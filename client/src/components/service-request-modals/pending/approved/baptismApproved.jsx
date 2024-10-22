@@ -8,6 +8,7 @@ import {
   Typography,
   IconButton,
   TextField,
+  Paper,
   Checkbox,
   FormControlLabel,
   MenuItem,
@@ -57,19 +58,59 @@ const TextFieldStyle = {
   "& .MuiInputBase-root": {height: "30px"},
 };
 
-const TextFieldStyleDis = {
-  "& .MuiInputBase-root": {height: "30px"},
-  bgcolor: "#D9D9D9",
+const endTime = (timeString, hoursToAdd) => {
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+  let newHours = hours + Math.floor(hoursToAdd);
+  let newMinutes = minutes + (hoursToAdd % 1) * 60;
+
+  newHours += Math.floor(newMinutes / 60);
+  newMinutes = newMinutes % 60;
+
+  return `${String(newHours).padStart(2, "0")}:${String(newMinutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(2, "0")}`;
 };
 
 const BaptismApproved = ({open, data, handleClose}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
-  const [service] = useState("baptism");
+  const [service, setService] = useState({});
   const [sponsors, setSponsors] = useState([]);
   const [details, setDetails] = useState({});
   const [priests, setPriests] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    birth_date: "",
+    birth_place: "",
+    father_name: "",
+    mother_name: "",
+    payment_method: "",
+    preferred_date: "",
+    preferred_time: "",
+    priest_id: "",
+    payment_status: "",
+    transaction_no: "",
+  });
+
+  const fetchService = async () => {
+    try {
+      const response = await axios.get(
+        `${config.API}/service/retrieveByParams`,
+        {
+          params: {
+            id: data.service_id,
+          },
+        }
+      );
+      console.log(response.data);
+      setService(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     if (open && data) {
@@ -142,6 +183,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
       }
     };
     fetchPriest();
+    fetchService();
     fetchSponsors(data.requestID);
     fetchBaptismDetails(data.requestID);
   }, [open, data]);
@@ -172,46 +214,44 @@ const BaptismApproved = ({open, data, handleClose}) => {
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH-mm-ss")});
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleDetailsChange = (e) => {
     setDetails({...details, [e.target.name]: e.target.value});
   };
 
-  {
-    /** for sameple if success, ari butang backend**/
-  }
   const handleConfirm = async (action) => {
     switch (action) {
-      case "approve":
-        alert("Approval action confirmed.");
-        break;
-      case "update":
-        const res = await axios.put(`${config.API}/request/update-bulk`, {
-          formData,
-          id: data.requestID,
-        });
-        if (res.status !== 200) {
-          console.log("error updating request");
-          setError({
-            message: res.data.message,
-            details: res.data?.details,
+      case "update": ////// UPDATE DETAILS
+        try {
+          const res = await axios.put(`${config.API}/request/update-bulk`, {
+            formData,
+            id: data.requestID,
           });
-        } else {
-          console.log("request updated!");
-          axios.post(`${config.API}/logs/create`, {
-            activity: `Updated Baptism Request - Transaction number: ${data.transaction_no}`,
-            user_id: 1,
-            request_id: data.requestID,
-          });
-          console.log("logs success!");
-          handleClose();
+
+          if (res.status !== 200) {
+            setError({
+              message: res.data.message,
+              details: res.data?.details,
+            });
+          } else {
+            console.log("request updated!");
+            await axios.post(`${config.API}/logs/create`, {
+              activity: `Updated Baptism Request - Transaction number: ${data.transaction_no}`,
+              user_id: 1,
+              request_id: data.requestID,
+            });
+            window.location.reload();
+          }
+        } catch (err) {
+          console.error("Error updating request", err);
         }
         break;
-      case "cancel":
+
+      case "cancel": ////// CANCEL
         try {
-          axios.put(`${config.API}/request/update`, null, {
+          await axios.put(`${config.API}/request/update`, null, {
             params: {
               col: "status",
               val: "cancelled",
@@ -220,31 +260,80 @@ const BaptismApproved = ({open, data, handleClose}) => {
           });
 
           console.log("request cancelled!");
-          axios
-            .delete(`${config.API}/priest/deleteSched`, {
+
+          await Promise.all([
+            axios.delete(`${config.API}/priest/deleteSched`, {
               params: {
                 col: "request_id",
                 val: data.requestID,
               },
-            })
-            .then(() => {
-              console.log("priest sched deleted!");
-              axios.post(`${config.API}/logs/create`, {
-                activity: `Cancelled Baptism Request - Transaction number: ${data.transaction_no}`,
-                user_id: 1,
-                request_id: data.requestID,
-              });
-              console.log("logs success!");
-            });
-          handleClose();
-          break;
+            }),
+            axios.post(`${config.API}/logs/create`, {
+              activity: `Cancelled Baptism Request - Transaction number: ${data.transaction_no}`,
+              user_id: 1,
+              request_id: data.requestID,
+            }),
+          ]);
         } catch (err) {
-          console.error("error updating request", err);
+          console.error("Error cancelling request", err);
         }
         break;
-      case "reschedule":
-        alert("Reschedule action confirmed.");
+
+      case "reschedule": ////// RESCHEDULE
+        try {
+          const response = await axios.get(
+            `${config.API}/priest/retrieve-schedule-by-params`,
+            {
+              params: {
+                priest: formData.priest_id,
+                date: formData.preferred_date,
+                start: formData.preferred_time,
+                end: endTime(formData.preferred_time, service.duration),
+              },
+            }
+          );
+
+          if (Object.keys(response.data).length > 0 || response.data !== "") {
+            setError({
+              message: response.data.message,
+              details: response.data?.details,
+            });
+            return;
+          }
+
+          const reschedule = {
+            preferred_date: formData.preferred_date,
+            preferred_time: formData.preferred_time,
+            priest_id: formData.priest_id,
+          };
+
+          await axios.put(`${config.API}/request/update-bulk`, {
+            formData: reschedule,
+            id: data.requestID,
+          });
+
+          await Promise.all([
+            axios.put(`${config.API}/priest/reschedule`, {
+              date: formData.preferred_date,
+              activity: `Baptism for ${formData.first_name} ${formData.last_name}`,
+              start_time: formData.preferred_time,
+              end_time: endTime(formData.preferred_time, service.duration),
+              priest_id: formData.priest_id,
+              request_id: data.requestID,
+            }),
+            axios.post(`${config.API}/logs/create`, {
+              activity: `Rescheduled Baptism for ${formData.first_name} ${formData.last_name}`,
+              user_id: 1,
+              request_id: data.requestID,
+            }),
+            // sendSMS(data.service_id, formData, "reschedule"),
+            //  window.location.reload(),
+          ]);
+        } catch (err) {
+          console.error("Error rescheduling request", err);
+        }
         break;
+
       default:
         break;
     }
@@ -397,7 +486,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
                           <Typography variant="subtitle1">Catholic?</Typography>
                         </Grid>
                       </Grid>
-                      <Box fullWidth sx={{height: "175px", overflowY: "auto"}}>
+                      <Box fullWidth sx={{height: "150px", overflowY: "auto"}}>
                         {" "}
                         {/* Ninong */}
                         <Grid container>
@@ -437,7 +526,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
                       </Box>
                     </Grid>
                     <Grid item sm={4}>
-                      <Box fullWidth sx={{height: "175px"}}>
+                      <Box fullWidth sx={{height: "40px"}}>
                         <Grid container>
                           <Grid item sm={12}>
                             <Typography
@@ -509,157 +598,105 @@ const BaptismApproved = ({open, data, handleClose}) => {
                   </Grid>
                 </Grid>
 
-                <Grid item sm={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}>
-                    <div
-                      style={{
-                        flex: 0.1,
-                        height: "1px",
-                        backgroundColor: "black",
-                      }}
-                    />
-                    <div>
-                      <p
-                        style={{
-                          width: "80px",
-                          textAlign: "center",
-                          fontWeight: "bold",
-                        }}>
-                        Assigned
-                      </p>
-                    </div>
-                    <div
-                      style={{flex: 1, height: "1px", backgroundColor: "black"}}
-                    />
-                  </div>
+                <Grid item xs={12}>
+                  <hr className="my-3" />
                 </Grid>
 
-                <Grid item sm={3}>
-                  <label>Priest:</label>
+                <Grid item xs={12} sm={4}>
+                  <label>Selected Priest:</label>
                   <TextField
-                    disabled
-                    fullWidth
-                    sx={TextFieldStyleDis}
-                    value={
-                      priests.find(
-                        (priest) => priest.priestID === formData.priest_id
-                      )?.first_name +
-                      " " +
-                      priests.find(
-                        (priest) => priest.priestID === formData.priest_id
-                      )?.last_name
-                    }
-                  />
+                    value={formData.priest_id}
+                    size="small"
+                    name="priest_id"
+                    sx={TextFieldStyle}
+                    onChange={handleChange}
+                    select
+                    fullWidth>
+                    {priests.map((priest) => (
+                      <MenuItem key={priest.priestID} value={priest.priestID}>
+                        {priest.first_name + " " + priest.last_name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
-                <Grid item sm={3}>
-                  <label>Date:</label>
-                  <TextField
-                    disabled
-                    fullWidth
-                    sx={TextFieldStyleDis}
-                    value={util.formatDate(formData.preferred_date)}
-                  />
-                </Grid>
-                <Grid item sm={3}>
-                  <label>Time:</label>
-                  <TextField
-                    disabled
-                    fullWidth
-                    sx={TextFieldStyleDis}
-                    value={formData.preferred_time}
-                  />
-                </Grid>
-                <Grid item sm={3}>
-                  <label>Venue:</label>
-                  <TextField disabled fullWidth sx={TextFieldStyleDis} />
-                </Grid>
-
-                <Grid item sm={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}>
-                    <div
-                      style={{
-                        flex: 0.1,
-                        height: "1px",
-                        backgroundColor: "black",
-                      }}
-                    />
-                    <div>
-                      <p
-                        style={{
-                          width: "95px",
-                          textAlign: "center",
-                          fontWeight: "bold",
-                        }}>
-                        Reschedule
-                      </p>
-                    </div>
-                    <div
-                      style={{flex: 1, height: "1px", backgroundColor: "black"}}
-                    />
-                  </div>
-                </Grid>
-
-                <Grid item sm={2.5}>
-                  <label>Priest:</label>
-                  <TextField fullWidth select sx={TextFieldStyle} />
-                </Grid>
-                <Grid item sm={3}>
-                  <label>Date:</label>
+                <Grid item xs={12} sm={3}>
+                  <label>Selected Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker fullWidth sx={TextFieldStyle} />
+                    <DatePicker
+                      disablePast
+                      fullWidth
+                      sx={TextFieldStyle}
+                      value={
+                        formData.preferred_date
+                          ? dayjs(formData.preferred_date)
+                          : null
+                      }
+                      onChange={(date) =>
+                        handleDateChange("preferred_date", date)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item sm={2.7}>
-                  <label>Time:</label>
+                <Grid item xs={12} sm={3}>
+                  <label>Selected Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <TimePicker fullWidth sx={TextFieldStyle} />
+                    <TimePicker
+                      fullWidth
+                      sx={TextFieldStyle}
+                      value={
+                        data.preferred_time
+                          ? dayjs(data.preferred_time, "HH:mm:ss")
+                          : null
+                      }
+                      onChange={(time) =>
+                        handleTimeChange("preferred_time", time)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item sm={1.8}>
-                  <label>Venue:</label>
-                  <TextField disabled fullWidth sx={TextFieldStyle} />
-                </Grid>
-                <Grid item sm={2}>
+                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
                   <Button
                     onClick={() => handleOpenDialog("reschedule")}
-                    fullWidth
                     sx={{
                       bgcolor: "#247E38",
                       marginTop: "24px",
                       height: "30px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#34AC4F"},
+                      "&:hover": {bgcolor: "#578A62"},
                     }}>
-                    SET
+                    Reschedule
                   </Button>
                 </Grid>
-
-                <Grid
-                  item
-                  sm={12}
-                  sx={{
-                    textAlign: "center",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                  }}>
-                  <Typography variant="body2" sx={{marginRight: "5px"}}>
-                    Transaction Code:
-                  </Typography>
-                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                <Grid item xs={6}>
+                  <label>Venue:</label>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    sx={TextFieldStyle}
+                    disabled
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <label>Transaction Number:</label>
+                  <Paper
+                    elevation={1}
+                    sx={{
+                      height: "30px",
+                      alignItems: "center",
+                      display: "flex",
+                      justifyContent: "center",
+                      backgroundColor: "#d1d1d1",
+                      fontWeight: "bold",
+                    }}>
                     {data.transaction_no}
-                  </Typography>
+                  </Paper>
                 </Grid>
 
                 <Grid
@@ -705,7 +742,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
               onClose={handleCloseDialog}
               action={currentAction}
               onConfirm={handleConfirm}
-              service={service}
+              service={"Baptism"}
             />
           </Box>
         ) : (

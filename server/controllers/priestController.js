@@ -168,29 +168,6 @@ const editSchedule = (req, res) => {
   );
 };
 
-// delete priests' sched
-// const deleteSchedule = (req, res) => {
-//   const {schedule_id} = req.params;
-
-//   db.query(
-//     `DELETE FROM priestschedule WHERE schedule_id = ?`,
-//     [schedule_id],
-//     (err, result) => {
-//       if (err) {
-//         console.error("error deleting schedule", err);
-//         return res.status(500).json({
-//           error: "server error",
-//           status: "500",
-//         });
-//       }
-//       if (result.affectedRows === 0) {
-//         return res.status(404).json({error: "priest sched not found"});
-//       }
-//       return res.status(200).json({message: "pruest sched deleted"});
-//     }
-//   );
-// };
-
 const deleteSchedule2 = (req, res) => {
   const {col, val} = req.query;
 
@@ -213,6 +190,42 @@ const deleteSchedule2 = (req, res) => {
   );
 };
 
+const reschedule = (req, res) => {
+  const {date, activity, start_time, end_time, priest_id, request_id} =
+    req.body;
+
+  // Step 1: Delete the old schedule by request_id
+  db.query(
+    `DELETE FROM priestschedule WHERE request_id = ?`,
+    [request_id],
+    (deleteErr, deleteResult) => {
+      if (deleteErr) {
+        console.error("Error deleting schedule:", deleteErr);
+        return db.rollback(() => {
+          res
+            .status(500)
+            .json({error: "Server error during schedule deletion"});
+        });
+      }
+      // Step 2: Insert the new schedule
+      db.query(
+        `INSERT INTO priestschedule (date, activity, start_time, end_time, priest_id, request_id) VALUES (?, ?, ?, ?, ?, ?)`,
+        [date, activity, start_time, end_time, priest_id, request_id],
+        (insertErr, insertResult) => {
+          if (insertErr) {
+            console.error("Error creating new schedule:", insertErr);
+          }
+
+          // Send success response
+          return res
+            .status(200)
+            .json({message: "Schedule rescheduled successfully"});
+        }
+      );
+    }
+  );
+};
+
 module.exports = {
   retrieveByParams,
   retrieveSchedules,
@@ -222,4 +235,5 @@ module.exports = {
   editPriest,
   editSchedule,
   deleteSchedule2,
+  reschedule,
 };

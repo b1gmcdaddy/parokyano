@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useState, useRef, useEffect} from "react";
 import NavStaff from "../../components/NavStaff";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,8 +10,8 @@ import {
   MenuItem,
   Container,
 } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileExport, faPrint } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faFileExport, faPrint} from "@fortawesome/free-solid-svg-icons";
 import StaffReport from "../../components/StaffReport";
 import ReactToPrint from "react-to-print";
 import StaffReportSpecific from "../../components/StaffReportSpecific";
@@ -36,7 +36,7 @@ const GenerateReports = () => {
   });
 
   const handleChange = (e) => {
-    setReportDetails({ ...reportDetails, [e.target.name]: e.target.value });
+    setReportDetails({...reportDetails, [e.target.name]: e.target.value});
   };
 
   useEffect(() => {
@@ -46,12 +46,11 @@ const GenerateReports = () => {
   const componentRef = useRef();
 
   return (
-    <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+    <Box sx={{display: "flex", mx: {md: "30px"}}}>
       <NavStaff />
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
-      >
+        sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
         <Toolbar />
         <Box
           sx={{
@@ -60,11 +59,9 @@ const GenerateReports = () => {
             marginTop: "8px",
             alignItems: "center",
             marginBottom: "1.5em",
-          }}
-        >
+          }}>
           <Typography
-            sx={{ fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600 }}
-          >
+            sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>
             Generate Report
           </Typography>
         </Box>
@@ -78,7 +75,7 @@ const GenerateReports = () => {
               variant="outlined"
               value={reportDetails.startDate}
               onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
+              InputLabelProps={{shrink: true}}
               fullWidth
               required
             />
@@ -92,7 +89,7 @@ const GenerateReports = () => {
               variant="outlined"
               value={reportDetails.endDate}
               onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
+              InputLabelProps={{shrink: true}}
               fullWidth
               required
             />
@@ -109,8 +106,7 @@ const GenerateReports = () => {
               value={reportDetails.category}
               size="small"
               fullWidth
-              required
-            >
+              required>
               {/* <MenuItem value="9999">All</MenuItem> */}
               <MenuItem value="5">Baptism - Appointment</MenuItem>
               <MenuItem value="6">Baptism - General</MenuItem>
@@ -125,21 +121,6 @@ const GenerateReports = () => {
               <MenuItem value="2">Certificate - Confirmation</MenuItem>
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={3}>
-            <Button
-              sx={{
-                backgroundColor: "#F5F5F5",
-                color: "#355173",
-                border: ".1px solid",
-                marginTop: { sm: "1.6em" },
-              }}
-              onClick={() => {
-                console.log("test");
-              }}
-            >
-              GENERATE
-            </Button>
-          </Grid>
         </Grid>
 
         <Box className="md:mt-14 xs:mt-14">
@@ -152,19 +133,18 @@ const GenerateReports = () => {
               color: "white",
               justifyContent: "space-between",
             }}
-            className="gap-2"
-          >
-            <Typography sx={{ width: "100%", color: "whitesmoke" }}>
+            className="gap-2">
+            <Typography sx={{width: "100%", color: "whitesmoke"}}>
               {reportDetails.startDate} &nbsp;-&nbsp; {reportDetails.endDate}
             </Typography>
-            <Typography>Export</Typography>
+            {/* <Typography>Export</Typography>
             <FontAwesomeIcon
               icon={faFileExport}
               className="text-white md:mr-5"
-            />
+            /> */}
             <ReactToPrint
               trigger={() => (
-                <Button sx={{ color: "white" }}>
+                <Button sx={{color: "white"}}>
                   Print
                   <FontAwesomeIcon
                     icon={faPrint}
@@ -182,9 +162,8 @@ const GenerateReports = () => {
               overflowY: "auto",
               backgroundColor: "#F5F5F5",
             }}
-            ref={componentRef}
-          >
-            <Container maxWidth="lg" sx={{ backgroundColor: "white" }}>
+            ref={componentRef}>
+            <Container maxWidth="lg" sx={{backgroundColor: "white"}}>
               <StaffReport
                 startDate={reportDetails.startDate}
                 endDate={reportDetails.endDate}
@@ -205,19 +184,18 @@ const GenerateReports = () => {
               color: "white",
               justifyContent: "space-between",
             }}
-            className="gap-2"
-          >
-            <Typography sx={{ width: "100%", color: "whitesmoke" }}>
+            className="gap-2">
+            <Typography sx={{width: "100%", color: "whitesmoke"}}>
               {reportDetails.startDate} &nbsp;-&nbsp; {reportDetails.endDate}
             </Typography>
-            <Typography>Export</Typography>
+            {/* <Typography>Export</Typography>
             <FontAwesomeIcon
               icon={faFileExport}
               className="text-white md:mr-5"
-            />
+            /> */}
             <ReactToPrint
               trigger={() => (
-                <Button sx={{ color: "white" }}>
+                <Button sx={{color: "white"}}>
                   Print
                   <FontAwesomeIcon
                     icon={faPrint}
@@ -235,9 +213,8 @@ const GenerateReports = () => {
               overflowY: "auto",
               backgroundColor: "#F5F5F5",
             }}
-            ref={componentRef}
-          >
-            <Container maxWidth="lg" sx={{ backgroundColor: "white" }}>
+            ref={componentRef}>
+            <Container maxWidth="lg" sx={{backgroundColor: "white"}}>
               <StaffReportSpecific
                 startDate={reportDetails.startDate}
                 endDate={reportDetails.endDate}

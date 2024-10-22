@@ -220,32 +220,35 @@ const BlessingApproved = ({open, data, handleClose}) => {
 
   const handleConfirm = async (action) => {
     switch (action) {
-      case "update": //// UPDATE
-        const res = await axios.put(`${config.API}/request/update-bulk`, {
-          formData,
-          id: data.requestID,
-        });
-        if (res.status !== 200) {
-          console.log("error updating request");
-          setError({
-            message: res.data.message,
-            details: res.data?.details,
+      case "update": ////// UPDATE DETAILS
+        try {
+          const res = await axios.put(`${config.API}/request/update-bulk`, {
+            formData,
+            id: data.requestID,
           });
-        } else {
-          console.log("request updated!");
-          axios.post(`${config.API}/logs/create`, {
-            activity: `Updated Blessing Request - Transaction number: ${data.transaction_no}`,
-            user_id: 1,
-            request_id: data.requestID,
-          });
-          console.log("logs success!");
-          // refetchData();
-          handleClose();
+
+          if (res.status !== 200) {
+            setError({
+              message: res.data.message,
+              details: res.data?.details,
+            });
+          } else {
+            console.log("request updated!");
+            await axios.post(`${config.API}/logs/create`, {
+              activity: `Updated Blessing Request - Transaction number: ${data.transaction_no}`,
+              user_id: 1,
+              request_id: data.requestID,
+            });
+            window.location.reload();
+          }
+        } catch (err) {
+          console.error("Error updating request", err);
         }
         break;
+
       case "cancel": ////// CANCEL
         try {
-          axios.put(`${config.API}/request/update`, null, {
+          await axios.put(`${config.API}/request/update`, null, {
             params: {
               col: "status",
               val: "cancelled",
@@ -254,29 +257,26 @@ const BlessingApproved = ({open, data, handleClose}) => {
           });
 
           console.log("request cancelled!");
-          axios
-            .delete(`${config.API}/priest/deleteSched`, {
+
+          await Promise.all([
+            axios.delete(`${config.API}/priest/deleteSched`, {
               params: {
                 col: "request_id",
                 val: data.requestID,
               },
-            })
-            .then(() => {
-              console.log("priest sched deleted!");
-              axios.post(`${config.API}/logs/create`, {
-                activity: `Cancelled Blessing Request - Transaction number: ${data.transaction_no}`,
-                user_id: 1,
-                request_id: data.requestID,
-              });
-              console.log("logs success!");
-            });
-          handleClose();
-          break;
+            }),
+            axios.post(`${config.API}/logs/create`, {
+              activity: `Cancelled Blessing Request - Transaction number: ${data.transaction_no}`,
+              user_id: 1,
+              request_id: data.requestID,
+            }),
+          ]);
         } catch (err) {
-          console.error("error updating request", err);
+          console.error("Error cancelling request", err);
         }
         break;
-      case "reschedule": /////////// RESCHEDULE ////////
+
+      case "reschedule": ////// RESCHEDULE
         try {
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
@@ -290,52 +290,47 @@ const BlessingApproved = ({open, data, handleClose}) => {
             }
           );
 
-          if (Object.keys(response.data).length > 0 || response.data != "") {
+          if (Object.keys(response.data).length > 0 || response.data !== "") {
             setError({
               message: response.data.message,
               details: response.data?.details,
             });
-          } else {
-            const reschedule = {
-              preferred_date: formData.preferred_date,
-              preferred_time: formData.preferred_time,
-              priest_id: formData.priest_id,
-            };
+            return;
+          }
 
-            axios.put(`${config.API}/request/update-bulk`, {
-              formData: reschedule,
-              id: data.requestID,
-            });
+          const reschedule = {
+            preferred_date: formData.preferred_date,
+            preferred_time: formData.preferred_time,
+            priest_id: formData.priest_id,
+          };
 
-            axios.delete(`${config.API}/priest/deleteSched`, {
-              params: {
-                col: "request_id",
-                val: data.requestID,
-              },
-            });
+          await axios.put(`${config.API}/request/update-bulk`, {
+            formData: reschedule,
+            id: data.requestID,
+          });
 
-            axios.post(`${config.API}/priest/createPriestSched`, {
+          await Promise.all([
+            axios.put(`${config.API}/priest/reschedule`, {
+              date: formData.preferred_date,
               activity: `Blessing for ${formData.first_name} at ${formData.address}`,
-              priest_id: formData.priest_id,
-              request_id: data.requestID,
               start_time: formData.preferred_time,
               end_time: endTime(formData.preferred_time, service.duration),
-              date: formData.preferred_date,
-            });
-
+              priest_id: formData.priest_id,
+              request_id: data.requestID,
+            }),
             axios.post(`${config.API}/logs/create`, {
               activity: `Rescheduled Blessing for ${formData.first_name} at ${formData.address}`,
               user_id: 1,
               request_id: data.requestID,
-            });
-
-            // sendSMS(data.service_id, formData, "reschedule");
-            // window.location.reload(); //replace with fetch soon
-          }
+            }),
+            // sendSMS(data.service_id, formData, "reschedule"),
+            window.location.reload(),
+          ]);
         } catch (err) {
-          console.log("error submitting to server", err);
+          console.error("Error rescheduling request", err);
         }
         break;
+
       default:
         break;
     }
