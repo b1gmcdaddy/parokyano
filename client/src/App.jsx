@@ -33,7 +33,7 @@ import ManageAccounts from "./pages/admin/ManageAccounts";
 import GenerateReports from "./pages/staff/GenerateReports";
 import ManageSchedules from "./pages/staff/ManageSchedules";
 import ManageTransactions from "./pages/staff/ManageTransactions";
-
+import ForgotPassword from "./pages/staff/ForgotPassword";
 import CertificateRequests from "./pages/staff/CertificateRequests";
 import Settings from "./pages/staff/Settings";
 import { StaffRoute, AdminRoute } from "./utils/LoginRedirect";
@@ -141,6 +141,14 @@ function App() {
           element={
             <StaffRoute>
               <Settings />
+            </StaffRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <StaffRoute>
+              <ForgotPassword />
             </StaffRoute>
           }
         />

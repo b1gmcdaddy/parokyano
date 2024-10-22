@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import NavStaff from "../../components/NavStaff";
@@ -45,17 +45,32 @@ const ManageIntentions = () => {
     }
   };
 
+  let status;
+  switch (activeTab) {
+    case 0:
+      status = "pending";
+      break;
+    case 1:
+      status = "approved";
+      break;
+    default:
+      status = "pending";
+      break;
+  }
+
   const handleSearch = async (inputValue, page) => {
     console.log(page);
-    const response = await axios.get(`${config.API}/request/search`, {
-      params: {
-        col: "requested_by",
-        val: inputValue,
-        status: "pending",
-        page: page + 1, // Use current page
-        limit: rowsPerPage, // Rows per page
-      },
-    });
+    const response = await axios.get(
+      `${config.API}/request/search-intentions`,
+      {
+        params: {
+          val: inputValue,
+          status: status,
+          page: page + 1, // Use current page
+          limit: rowsPerPage, // Rows per page
+        },
+      }
+    );
     if (response.status === 401) {
       navigate("/login");
       return;
@@ -189,7 +204,14 @@ const ManageIntentions = () => {
                       handlePageChange={handlePageChange}
                     />
                   )}
-                  {activeTab === 1 && <IntentionsApproved />}
+                  {activeTab === 1 && (
+                    <IntentionsApproved
+                      filter={filter}
+                      page={page}
+                      count={totalItems}
+                      handlePageChange={handlePageChange}
+                    />
+                  )}
                 </Box>
               </Grid>
             </Grid>

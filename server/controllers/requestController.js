@@ -386,7 +386,7 @@ const retrieveRequests = (req, res) => {
   const { status, page, limit } = req.query;
   const offset = (Number(page) - 1) * parseInt(limit);
 
-  const query = `SELECT r.*, s.name AS 'service_name' 
+  const query = `SELECT r.*, s.name AS 'service_name'
                  FROM request r, service s 
                  WHERE r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 
                  AND r.service_id = s.serviceID 
@@ -409,7 +409,7 @@ const retrieveCerts = (req, res) => {
   console.log(page, limit);
   const offset = Number(page - 1) * parseInt(limit);
   console.log(offset);
-  const query = `SELECT * FROM request WHERE (service_id=2 OR service_id=3 OR service_id=4) AND status=? ORDER BY date_requested DESC LIMIT ${limit} OFFSET ${offset}`;
+  const query = `SELECT * FROM request WHERE service_id IN (2, 3, 4) AND status=? ORDER BY date_requested DESC LIMIT ${limit} OFFSET ${offset}`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {
@@ -511,7 +511,7 @@ const getUpcomingEvents = (req, res) => {
 
 const getCountCerts = (req, res) => {
   const status = req.query.status;
-  const query = `SELECT COUNT(*) as count FROM request WHERE service_id = 2 OR service_id = 3 OR service_id = 4 AND status = ?`;
+  const query = `SELECT COUNT(*) as count FROM request WHERE (service_id = 2 OR service_id = 3 OR service_id = 4) AND status = ?`;
   db.query(query, [status], (err, result) => {
     if (err) {
       console.error("error retrieving requests", err);
@@ -653,29 +653,97 @@ const getRequestSummary = (req, res) => {
 
 const searchIntentions = (req, res) => {
   const { col, val, status, page, limit } = req.query;
-  const enhancedVal = val + "%";
+  const enhancedVal = "%" + val + "%";
   const offset = Number(page - 1) * parseInt(limit);
-  const query = `SELECT * FROM request WHERE ${col} LIKE ? AND service_id = 1 AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
-  const countQuery = `SELECT COUNT(*) as count FROM request WHERE ${col} LIKE ? AND service_id = 1 AND status = ?`;
+  const query = `SELECT * FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}') AND service_id = 1 AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const countQuery = `SELECT COUNT(*) as count FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}') AND service_id = 1 AND status = ?`;
 
-  db.query(
-    query,
-    [enhancedVal, status, parseInt(limit), offset],
-    (err, result) => {
+  db.query(query, [status, parseInt(limit), offset], (err, result) => {
+    if (err) {
+      console.error("error searching item", err);
+      return res.status(500);
+    }
+    db.query(countQuery, [status], (err, count) => {
       if (err) {
-        console.error("error searching item", err);
+        console.error("error counting items", err);
         return res.status(500);
       }
-      db.query(countQuery, [enhancedVal, status], (err, count) => {
-        if (err) {
-          console.error("error counting items", err);
-          return res.status(500);
-        }
-        console.log(count[0].count);
-        res.status(200).json({ result, count });
-      });
+      console.log(count[0].count);
+      console.log(result);
+      res.status(200).json({ result, count });
+    });
+  });
+};
+
+const searchRequests = (req, res) => {
+  const { col, val, status, page, limit } = req.query;
+  const enhancedVal = "%" + val + "%";
+  const offset = Number(page - 1) * parseInt(limit);
+  const query = `SELECT r.*, s.name AS 'service_name' FROM request r INNER JOIN service s ON r.service_id = s.serviceID WHERE (r.requested_by LIKE '${enhancedVal}' OR r.transaction_no LIKE '${enhancedVal}') AND r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 AND r.status = ? ORDER BY r.date_requested DESC LIMIT ? OFFSET ?`;
+  const countQuery = `SELECT COUNT(*) as count FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}') AND service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = ?`;
+
+  db.query(query, [status, parseInt(limit), offset], (err, result) => {
+    if (err) {
+      console.error("error searching item", err);
+      return res.status(500);
     }
-  );
+    db.query(countQuery, [status], (err, count) => {
+      if (err) {
+        console.error("error counting items", err);
+        return res.status(500);
+      }
+      console.log(count[0].count);
+      res.status(200).json({ result, count });
+    });
+  });
+};
+
+const searchCertificates = (req, res) => {
+  const { col, val, status, page, limit } = req.query;
+  const enhancedVal = "%" + val + "%";
+  const offset = Number(page - 1) * parseInt(limit);
+  const query = `SELECT * FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}' OR first_name LIKE '${enhancedVal}') AND service_id IN (2, 3, 4)  AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const countQuery = `SELECT COUNT(*) as count FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}'  OR first_name LIKE '${enhancedVal}') AND service_id IN (2, 3, 4) AND status = ?`;
+
+  console.log(query);
+  db.query(query, [status, parseInt(limit), offset], (err, result) => {
+    if (err) {
+      console.error("error searching item", err);
+      return res.status(500);
+    }
+    db.query(countQuery, [status], (err, count) => {
+      if (err) {
+        console.error("error counting items", err);
+        return res.status(500);
+      }
+      console.log("searches", count[0].count);
+      res.status(200).json({ result, count });
+    });
+  });
+};
+
+const searchTransactions = (req, res) => {
+  const { col, val, status, page, limit } = req.query;
+  const enhancedVal = "%" + val + "%";
+  const offset = Number(page - 1) * parseInt(limit);
+  const query = `SELECT * FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}' OR first_name LIKE '${enhancedVal}') AND status = 'approved' AND payment_status = 'paid' ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
+  const countQuery = `SELECT COUNT(*) as count FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}'  OR first_name LIKE '${enhancedVal}') AND status = 'approved' AND payment_status = 'paid'`;
+
+  console.log(query);
+  db.query(query, [parseInt(limit), offset], (err, result) => {
+    if (err) {
+      console.error("error searching item", err);
+      return res.status(500);
+    }
+    db.query(countQuery, (err, count) => {
+      if (err) {
+        console.error("error counting items", err);
+        return res.status(500);
+      }
+      console.log("searches", count[0].count);
+      res.status(200).json({ result, count });
+    });
+  });
 };
 
 // possible to refactor these to a single query
@@ -900,6 +968,9 @@ module.exports = {
   getCountRequestsDateFiltered,
   getCountCerts,
   searchIntentions,
+  searchRequests,
+  searchCertificates,
+  searchTransactions,
   searchCertRecords,
   updateByParams,
   updateBulk,

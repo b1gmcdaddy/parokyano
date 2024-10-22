@@ -20,9 +20,13 @@ import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
 import PrintCertificate from "../../../components/certificate-request-modals/PrintCertificate";
 
-const CertificateForClaiming = () => {
+const CertificateForClaiming = ({
+  filter,
+  page,
+  totalItems,
+  handlePageChange,
+}) => {
   const [tableData, setTableData] = useState([]);
-  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [modalType, setModalType] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -31,7 +35,6 @@ const CertificateForClaiming = () => {
     certificate_details: [""],
   });
   const rowsPerPage = 10;
-  const [totalItems, setTotalItems] = useState(0);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
 
   const schedule = (_date, _time) => {
@@ -47,7 +50,7 @@ const CertificateForClaiming = () => {
         params: {
           status: "approved",
           page: page + 1,
-          limit: rowsPerPage,
+          limit: 10,
         },
       });
       setTableData(res.data.result);
@@ -55,21 +58,6 @@ const CertificateForClaiming = () => {
       console.error("error retrieving pending reqs", err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchTotalItems = async () => {
-    try {
-      const response = await axios.get(`${config.API}/request/count-certs`, {
-        params: {
-          status: "pending",
-        },
-      });
-      setTotalItems(response.data.count);
-      console.log(totalItems);
-      console.log(totalPages);
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -88,16 +76,15 @@ const CertificateForClaiming = () => {
     setModalData(cert);
   };
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
-      setPage(newPage);
-    }
-  };
-
   useEffect(() => {
-    fetchCertificates();
-    fetchTotalItems();
-  }, [page]);
+    if (filter && filter?.length > 0) {
+      setTableData(filter);
+      console.log(filter);
+    } else {
+      fetchCertificates();
+    }
+    // fetchTotalItems();
+  }, [filter, page, totalItems]);
 
   return (
     <div style={{ margin: "0 auto" }}>
@@ -159,7 +146,7 @@ const CertificateForClaiming = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    REQUESTED BY
+                    NAME
                   </TableCell>
                   <TableCell
                     sx={{
@@ -238,7 +225,7 @@ const CertificateForClaiming = () => {
                           backgroundColor: "#e0e0e0",
                         }}
                       >
-                        {cert.father_name}
+                        {cert.first_name}
                       </TableCell>
                       <TableCell
                         sx={{

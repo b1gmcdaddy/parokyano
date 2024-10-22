@@ -13,38 +13,15 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import config from "../../config";
 
-const Login = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState("");
 
   const handleChange = (e) => {
-    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+    setEmail(e.target.value);
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(`${config.API}/auth/login`, loginData);
-
-      if (response) {
-        localStorage.setItem("accessToken", response.data.accessToken);
-        localStorage.setItem("refreshToken", response.data.refreshToken);
-        localStorage.setItem("user", JSON.stringify(response.data));
-        console.log(response.data);
-
-        if (response.data.role === "staff" || response.data.role === "admin") {
-          navigate("/dashboard", { replace: true });
-        }
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      setError("Invalid credentials or server issue.");
-    }
-  };
+  const handleSubmit = async (e) => {};
 
   return (
     <div>
@@ -93,16 +70,7 @@ const Login = () => {
               textAlign: "center",
             }}
           >
-            Gethsemane Parish Church
-          </Typography>
-          <Typography
-            sx={{
-              textAlign: "center",
-              marginBottom: { md: "1.55em" },
-              fontSize: { md: "14px", xs: "10px" },
-            }}
-          >
-            Please login to your account
+            Forgot Password
           </Typography>
           {error && <Alert severity="error">{error}</Alert>}{" "}
           {/* Display error if any */}
@@ -110,18 +78,11 @@ const Login = () => {
             <TextField
               label="Email"
               name="email"
+              placeholder="Enter your email"
               variant="outlined"
               fullWidth
               onChange={handleChange}
               sx={{ marginBottom: "12px " }}
-            />
-            <TextField
-              label="Password"
-              name="password"
-              type="password"
-              variant="outlined"
-              fullWidth
-              onChange={handleChange}
             />
             <Button
               variant="contained"
@@ -129,18 +90,11 @@ const Login = () => {
               sx={{ backgroundColor: "#355173", marginTop: "12px" }}
               type="submit"
             >
-              Login
+              Submit
             </Button>
           </form>
           <Typography sx={{ textAlign: "center", marginTop: "16px" }}>
-            <button
-              type="button"
-              onClick={() => {
-                navigate("/forgot-password");
-              }}
-            >
-              Forgot Password?
-            </button>
+            Switch to Login
           </Typography>
         </Paper>
       </Box>
@@ -148,4 +102,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

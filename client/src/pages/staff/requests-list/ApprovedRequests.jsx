@@ -28,15 +28,15 @@ import OutsideApproved from "../../../components/service-request-modals/pending/
 import WakeApproved from "../../../components/service-request-modals/pending/approved/wakeApproved";
 import WeddingApproved from "../../../components/service-request-modals/pending/approved/weddingApproved";
 
-const ApprovedRequests = () => {
+const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
   const [tableData, setTableData] = useState([]);
-  const [page, setPage] = useState(0);
-  const rowsPerPage = 10;
-  const [totalItems, setTotalItems] = useState(0);
-  const totalPages = Math.ceil(totalItems / rowsPerPage);
+
   const [modalData, setModalData] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const rowsPerPage = 10;
+
+  const totalPages = Math.ceil(totalItems / rowsPerPage);
 
   const fetchRequests = async () => {
     try {
@@ -44,7 +44,7 @@ const ApprovedRequests = () => {
         params: {
           status: "approved",
           page: page + 1,
-          limit: rowsPerPage,
+          limit: 10,
         },
       });
       setTableData(res.data.result);
@@ -54,31 +54,21 @@ const ApprovedRequests = () => {
     }
   };
 
-  const fetchTotalItems = async () => {
-    try {
-      const response = await axios.get(`${config.API}/request/count-request`, {
-        params: {
-          status: "approved",
-        },
-      });
-      setTotalItems(response.data.count);
-      console.log(totalItems);
-      console.log(totalPages);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
-      setPage(newPage);
-    }
-  };
+  // const handlePageChange = (newPage) => {
+  //   if (newPage >= 0 && newPage < totalPages) {
+  //     setPage(newPage);
+  //   }
+  // };
 
   useEffect(() => {
-    fetchRequests();
-    fetchTotalItems();
-  }, [page]);
+    if (filter && filter?.length > 0) {
+      setTableData(filter);
+      console.log(filter);
+    } else {
+      fetchRequests();
+    }
+    // fetchTotalItems();
+  }, [filter, page, totalItems]);
 
   const renderModal = () => {
     switch (modalType) {
@@ -262,7 +252,7 @@ const ApprovedRequests = () => {
                         backgroundColor: "#e0e0e0",
                       }}
                     >
-                      {req.service_name.length > 0
+                      {req?.service_name?.length > 0
                         ? req.service_name.substring(0, 20) + "..."
                         : req.service_name}
                     </TableCell>

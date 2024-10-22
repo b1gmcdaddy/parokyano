@@ -28,11 +28,9 @@ import OutsideCancelled from "../../../components/service-request-modals/pending
 import WakeCancelled from "../../../components/service-request-modals/pending/cancelled/wakeCancelled";
 import WeddingCancelled from "../../../components/service-request-modals/pending/cancelled/weddingCancelled";
 
-const CancelledRequests = () => {
+const CancelledRequests = ({ filter, page, totalItems, handlePageChange }) => {
   const [tableData, setTableData] = useState([]);
-  const [page, setPage] = useState(0);
   const rowsPerPage = 10;
-  const [totalItems, setTotalItems] = useState(0);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
   const [modalType, setModalType] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -54,31 +52,41 @@ const CancelledRequests = () => {
     }
   };
 
-  const fetchTotalItems = async () => {
-    try {
-      const response = await axios.get(`${config.API}/request/count-request`, {
-        params: {
-          status: "cancelled",
-        },
-      });
-      setTotalItems(response.data.count);
-      console.log(totalItems);
-      console.log(totalPages);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const fetchTotalItems = async () => {
+  //   try {
+  //     const response = await axios.get(`${config.API}/request/count-request`, {
+  //       params: {
+  //         status: "cancelled",
+  //       },
+  //     });
+  //     setTotalItems(response.data.count);
+  //     console.log(totalItems);
+  //     console.log(totalPages);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
-      setPage(newPage);
-    }
-  };
+  // const handlePageChange = (newPage) => {
+  //   if (newPage >= 0 && newPage < totalPages) {
+  //     setPage(newPage);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchRequests();
+  //   fetchTotalItems();
+  // }, [page]);
 
   useEffect(() => {
-    fetchRequests();
-    fetchTotalItems();
-  }, [page]);
+    if (filter && filter?.length > 0) {
+      setTableData(filter);
+      console.log(filter);
+    } else {
+      fetchRequests();
+    }
+    // fetchTotalItems();
+  }, [filter, page, totalItems]);
 
   const renderModal = () => {
     switch (modalType) {

@@ -22,11 +22,9 @@ import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
 import PrintIntentions from "./PrintIntentions";
 
-const IntentionsApproved = () => {
+const IntentionsApproved = ({ filter, page, count, handlePageChange }) => {
   const [tableData, setTableData] = useState([]);
-  // const [count, setCount] = useState(0);
   const [modaltype, setModalType] = useState(null);
-  const [page, setPage] = useState(0);
   const [modalData, setModalData] = useState({
     // initialized to avoid setting intention_details.map() as undefined
     intention_details: [""],
@@ -34,18 +32,8 @@ const IntentionsApproved = () => {
   const [loading, setLoading] = useState(true);
   const [openPrint, setOpenPrint] = useState(false);
   const rowsPerPage = 10;
-  const [totalItems, setTotalItems] = useState(0);
+  const [totalItems, setTotalItems] = useState(count);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
-
-  // const schedule = (_date, _time) => {
-  //   return (
-  //     util.formatTime(_time) + " ,  " + util.formatDate(_date.slice(0, 10))
-  //   );
-  // };
-
-  // const dateRequested = (_date) => {
-  //   return util.formatDate(_date.slice(0, 10));
-  // };
 
   const handleOpenPrintModal = () => {
     setOpenPrint(true);
@@ -96,9 +84,15 @@ const IntentionsApproved = () => {
   };
 
   useEffect(() => {
-    fetchIntentions();
-    fetchTotalItems();
-  }, [page]);
+    if (filter && filter.length > 0) {
+      setTableData(filter);
+      setTotalItems(count);
+    } else {
+      fetchIntentions();
+      fetchTotalItems();
+    }
+    // console.log(totalItems);
+  }, [page, totalItems, filter]);
 
   const openInfoModal = (row) => {
     setModalData(row);
@@ -108,12 +102,6 @@ const IntentionsApproved = () => {
 
   const closeInfoModal = () => {
     setModalType(null);
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
-      setPage(newPage);
-    }
   };
 
   return (

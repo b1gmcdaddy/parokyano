@@ -28,16 +28,13 @@ import WakePending from "../../../components/service-request-modals/pending/wake
 import BaptismPending from "../../../components/service-request-modals/pending/baptismPending";
 import WeddingPending from "../../../components/service-request-modals/pending/weddingPending";
 
-const PendingRequests = () => {
+const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
   const [tableData, setTableData] = useState([]);
-  const [page, setPage] = useState(0);
   const rowsPerPage = 10;
-  const [totalItems, setTotalItems] = useState(0);
   const totalPages = Math.ceil(totalItems / rowsPerPage);
   const [modalType, setModalType] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState([]);
-  const [selectedRequest, setSelectedRequest] = useState(null);
 
   const fetchRequests = async () => {
     try {
@@ -70,20 +67,26 @@ const PendingRequests = () => {
     }
   };
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
-      setPage(newPage);
+  // const handlePageChange = (newPage) => {
+  //   if (newPage >= 0 && newPage < totalPages) {
+  //     setPage(newPage);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchRequests();
+  //   fetchTotalItems();
+  // }, [page]);
+
+  useEffect(() => {
+    if (filter && filter?.length > 0) {
+      setTableData(filter);
+      console.log(filter);
+    } else {
+      fetchRequests();
     }
-  };
-
-  useEffect(() => {
-    fetchRequests();
-    fetchTotalItems();
-  }, [page]);
-
-  useEffect(() => {
-    console.log(modalData);
-  }, [modalData]);
+    // fetchTotalItems();
+  }, [filter, page, totalItems]);
 
   const renderModal = () => {
     switch (modalType) {

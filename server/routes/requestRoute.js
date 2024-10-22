@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {authenticateStaff} = require("../middleware/authMiddleware");
+const { authenticateStaff } = require("../middleware/authMiddleware");
 const {
   createRequestIntention,
   createRequestCertificate,
@@ -25,7 +25,10 @@ const {
   getCountRequestsDateFiltered,
   getCountCerts,
   searchIntentions,
+  searchRequests,
+  searchCertificates,
   searchCertRecords,
+  searchTransactions,
   updateByParams,
   updateBulk,
 } = require("../controllers/requestController");
@@ -52,8 +55,11 @@ router.get("/retrieve-certs", retrieveCerts);
 router.get("/count-certs", getCountCerts);
 router.get("/count-request", getCountRequests);
 router.get("/count-request-date", getCountRequestsDateFiltered);
-router.get("/search", searchIntentions);
+router.get("/search-intentions", searchIntentions);
+router.get("/search-requests", searchRequests);
+router.get("/search-certificates", searchCertificates);
 router.get("/search-records", searchCertRecords);
+router.get("/search-transactions", searchTransactions);
 router.get("/retrieve-multiple-byDate", retrieveMultipleDateFiltered);
 router.put("/update", updateByParams);
 router.put("/update-bulk", updateBulk);
