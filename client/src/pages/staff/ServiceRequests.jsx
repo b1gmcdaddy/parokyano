@@ -1,4 +1,4 @@
-import React, { useState, useEffect, act } from "react";
+import React, {useState, useEffect, act} from "react";
 import NavStaff from "../../components/NavStaff";
 import {
   Box,
@@ -49,18 +49,18 @@ const ServiceRequests = () => {
     setValue("");
   };
 
-  const fetchTotalItems = async () => {
-    try {
-      const response = await axios.get(`${config.API}/request/count-request`, {
-        params: {
-          status: status,
-        },
-      });
-      setTotalItems(response.data.count);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const fetchTotalItems = async () => {
+  //   try {
+  //     const response = await axios.get(`${config.API}/request/count-request`, {
+  //       params: {
+  //         status: status,
+  //       },
+  //     });
+  //     setTotalItems(response.data.count);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
@@ -73,34 +73,36 @@ const ServiceRequests = () => {
   };
 
   useEffect(() => {
-    fetchTotalItems();
-  }, [activeTab, status]);
+    // fetchTotalItems()
+    handleSearch(inputValue, page);
+  }, [activeTab, page, inputValue]);
 
   const handleSearch = async (inputValue, page) => {
-    const response = await axios.get(`${config.API}/request/search-requests`, {
-      params: {
-        val: inputValue,
-        status: status,
-        page: page + 1, // Use current page
-        limit: rowsPerPage, // Rows per page
-      },
-    });
-    if (response.status === 401) {
-      navigate("/login");
-      return;
+    try {
+      const response = await axios.get(
+        `${config.API}/request/search-requests`,
+        {
+          params: {
+            val: inputValue,
+            status: status,
+            page: page + 1,
+            limit: rowsPerPage,
+          },
+        }
+      );
+      setFilter(response.data.result);
+      setTotalItems(response.data.count);
+    } catch (error) {
+      console.error("Error fetching search results", error);
     }
-    setFilter(response.data.result);
-    setTotalItems(response.data.count[0].count);
-    console.log(totalItems);
   };
 
   return (
-    <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+    <Box sx={{display: "flex", mx: {md: "30px"}}}>
       <NavStaff />
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
-      >
+        sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
         <Toolbar />
         <Box
           sx={{
@@ -108,23 +110,20 @@ const ServiceRequests = () => {
             justifyContent: "space-between",
             marginTop: "8px",
             alignItems: "center",
-          }}
-        >
+          }}>
           <Typography
-            sx={{ fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600 }}
-          >
+            sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>
             Service Requests
           </Typography>
           <Button
             variant="contained"
             type="button"
-            sx={{ backgroundColor: "#355173" }}
-          >
+            sx={{backgroundColor: "#355173"}}>
             ADD REQUEST
           </Button>
         </Box>
 
-        <Box sx={{ width: "100%", marginTop: "20px" }}>
+        <Box sx={{width: "100%", marginTop: "20px"}}>
           <Grid container spacing={1}>
             <Grid item sm={4}>
               <Button
@@ -138,8 +137,7 @@ const ServiceRequests = () => {
                   fontWeight: "bold",
                   color: activeTab === 0 ? "white" : "black",
                 }}
-                onClick={() => handleTabChange(0)}
-              >
+                onClick={() => handleTabChange(0)}>
                 Approved Requests
               </Button>
             </Grid>
@@ -155,8 +153,7 @@ const ServiceRequests = () => {
                   fontWeight: "bold",
                   color: activeTab === 1 ? "white" : "black",
                 }}
-                onClick={() => handleTabChange(1)}
-              >
+                onClick={() => handleTabChange(1)}>
                 Pending Requests
               </Button>
             </Grid>
@@ -172,8 +169,7 @@ const ServiceRequests = () => {
                   fontWeight: "bold",
                   color: activeTab === 2 ? "white" : "black",
                 }}
-                onClick={() => handleTabChange(2)}
-              >
+                onClick={() => handleTabChange(2)}>
                 Cancelled Requests
               </Button>
             </Grid>
@@ -181,8 +177,7 @@ const ServiceRequests = () => {
             <Grid
               item
               sm={12}
-              sx={{ display: "flex", flexDirection: "row", gap: 1 }}
-            >
+              sx={{display: "flex", flexDirection: "row", gap: 1}}>
               <TextField
                 fullWidth
                 size="small"
@@ -195,7 +190,7 @@ const ServiceRequests = () => {
                 }}
                 onChange={handleChange}
               />
-              <Button
+              {/* <Button
                 fullWidth
                 variant="contained"
                 type="button"
@@ -208,14 +203,13 @@ const ServiceRequests = () => {
                   width: "100px",
                   borderRadius: "5px",
                   fontWeight: "bold",
-                }}
-              >
+                }}>
                 Search
-              </Button>
+              </Button> */}
             </Grid>
 
             <Grid item sm={12}>
-              <Box sx={{ p: 3 }}>
+              <Box sx={{p: 3}}>
                 {activeTab === 0 && (
                   <ApprovedRequests
                     filter={filter}

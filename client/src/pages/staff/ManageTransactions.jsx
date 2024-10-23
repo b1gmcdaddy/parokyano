@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import React from "react";
 import NavStaff from "../../components/NavStaff";
 import SearchIcon from "@mui/icons-material/Search";
@@ -42,6 +42,7 @@ const ManageTransactions = () => {
     setOpen(true);
     setModalData(row);
   };
+
   const closeModal = () => setOpen(false);
 
   const handleChange = (e) => {
@@ -66,11 +67,10 @@ const ManageTransactions = () => {
         }
       );
       setTableData(response.data.result);
-      console.log(response.data.result);
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false); // Set loading to false when fetching is done
+      setLoading(false);
     }
   };
 
@@ -85,49 +85,55 @@ const ManageTransactions = () => {
         },
       });
       setTotalItems(response.data.count);
-      console.log(totalItems);
-      console.log(totalPages);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleSearch = async (inputValue, page) => {
-    const response = await axios.get(
-      `${config.API}/request/search-transactions`,
-      {
-        params: {
-          val: inputValue,
-          page: page + 1, // Use current page
-          limit: rowsPerPage, // Rows per page
-        },
-      }
-    );
-    if (response.status === 401) {
-      navigate("/login");
+  const handleSearch = async (inputValue) => {
+    if (inputValue.trim() === "") {
+      setFilter([]);
+      setPage(0);
+      await fetchTransactions();
       return;
     }
-    setFilter(response.data.result);
-    setTotalItems(response.data.count[0].count);
-    console.log(totalItems);
+
+    try {
+      const response = await axios.get(
+        `${config.API}/request/search-transactions`,
+        {
+          params: {
+            val: inputValue,
+            page: 1,
+            limit: rowsPerPage,
+          },
+        }
+      );
+      setFilter(response.data.result);
+      setTotalItems(response.data.count);
+      setPage(0);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
-    if (filter && filter?.length > 0) {
+    if (filter.length > 0) {
       setTableData(filter);
-      handleSearch(inputValue, page);
-      console.log("filter");
     } else {
       fetchTransactions();
       fetchTotalItems();
     }
-  }, [page, totalItems]);
+  }, [page, filter]);
+
+  useEffect(() => {
+    handleSearch(inputValue);
+  }, [inputValue]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
       setPage(newPage);
     }
-    console.log(newPage);
   };
 
   return (
@@ -138,12 +144,11 @@ const ManageTransactions = () => {
         close={closeModal}
       />
 
-      <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+      <Box sx={{display: "flex", mx: {md: "30px"}}}>
         <NavStaff />
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
-        >
+          sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
           <Toolbar />
 
           <Box
@@ -151,26 +156,23 @@ const ManageTransactions = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 fontSize: "1.25rem",
                 lineHeight: "1.75rem",
                 fontWeight: 600,
-              }}
-            >
+              }}>
               List of Transactions
             </Typography>
           </Box>
 
-          <Box sx={{ width: "100%", marginTop: "20px" }}>
+          <Box sx={{width: "100%", marginTop: "20px"}}>
             <Grid container spacing={1}>
               <Grid
                 item
                 sm={12}
-                sx={{ display: "flex", flexDirection: "row", gap: 1 }}
-              >
+                sx={{display: "flex", flexDirection: "row", gap: 1}}>
                 <TextField
                   fullWidth
                   size="small"
@@ -183,44 +185,25 @@ const ManageTransactions = () => {
                   }}
                   onChange={handleChange}
                 />
-                <Button
-                  fullWidth
-                  variant="contained"
-                  type="button"
-                  onClick={() => {
-                    setPage(0);
-                    handleSearch(inputValue, 0);
-                  }}
-                  sx={{
-                    backgroundColor: "#355173",
-                    width: "100px",
-                    borderRadius: "5px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Search
-                </Button>
               </Grid>
 
               <Grid item sm={12}>
-                <div style={{ margin: "0 auto" }}>
+                <div style={{margin: "0 auto"}}>
                   <TableContainer
                     sx={{
                       display: "flex",
                       borderRadius: "16px",
                       overflowX: "auto",
                       border: "none",
-                    }}
-                  >
+                    }}>
                     <Table
                       stickyHeader
                       aria-label="custom table"
                       sx={{
                         borderCollapse: "separate",
                         borderSpacing: 0,
-                        sm: { minWidth: 650 },
-                      }}
-                    >
+                        sm: {minWidth: 650},
+                      }}>
                       <TableHead>
                         <TableRow>
                           <TableCell
@@ -229,8 +212,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             REQUESTED BY
                           </TableCell>
                           <TableCell
@@ -239,8 +221,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             AMOUNT
                           </TableCell>
                           <TableCell
@@ -249,8 +230,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             PAYMENT METHOD
                           </TableCell>
                           <TableCell
@@ -259,8 +239,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             DATE
                           </TableCell>
                           <TableCell
@@ -269,8 +248,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             CONTACT NO.
                           </TableCell>
                           <TableCell
@@ -279,8 +257,7 @@ const ManageTransactions = () => {
                               border: "none",
                               fontSize: "0.85rem",
                               fontWeight: "bold",
-                            }}
-                          >
+                            }}>
                             VIEW
                           </TableCell>
                         </TableRow>
@@ -295,8 +272,7 @@ const ManageTransactions = () => {
                                   padding: 0,
                                   backgroundColor: "#ffffff",
                                   border: "none",
-                                }}
-                              >
+                                }}>
                                 <Box
                                   sx={{
                                     height: "5px",
@@ -313,8 +289,7 @@ const ManageTransactions = () => {
                                 "& > *": {
                                   borderBottom: "none",
                                 },
-                              }}
-                            >
+                              }}>
                               <TableCell
                                 sx={{
                                   border: "none",
@@ -322,8 +297,7 @@ const ManageTransactions = () => {
                                   textAlign: "center",
                                   borderRadius: "15px 0 0 15px",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 {row.service_id == 5 || row.service_id == 6
                                   ? row.father_name
                                   : row.service_id == 7
@@ -336,8 +310,7 @@ const ManageTransactions = () => {
                                   padding: "16px",
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 {(() => {
                                   const amount = (() => {
                                     switch (row.service_id) {
@@ -367,8 +340,7 @@ const ManageTransactions = () => {
                                       style={{
                                         fontWeight: "bold",
                                         fontSize: "16px",
-                                      }}
-                                    >
+                                      }}>
                                       ₱{amount}
                                     </span>
                                   );
@@ -380,8 +352,7 @@ const ManageTransactions = () => {
                                   padding: "16px",
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 {row.payment_method == "cash"
                                   ? "Cash"
                                   : "Gcash"}
@@ -392,8 +363,7 @@ const ManageTransactions = () => {
                                   padding: "16px",
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 {util.formatDate(row.transaction_date)}
                               </TableCell>
                               <TableCell
@@ -402,8 +372,7 @@ const ManageTransactions = () => {
                                   padding: "16px",
                                   textAlign: "center",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 {row.contact_no}
                               </TableCell>
                               <TableCell
@@ -413,8 +382,7 @@ const ManageTransactions = () => {
                                   textAlign: "center",
                                   borderRadius: "0 15px 15px 0",
                                   backgroundColor: "#e0e0e0",
-                                }}
-                              >
+                                }}>
                                 <Button
                                   type="button"
                                   sx={{
@@ -425,8 +393,7 @@ const ManageTransactions = () => {
                                       backgroundColor: "#0036B1",
                                     },
                                   }}
-                                  onClick={() => openModal(row)}
-                                >
+                                  onClick={() => openModal(row)}>
                                   INFO
                                 </Button>
                               </TableCell>
@@ -442,8 +409,7 @@ const ManageTransactions = () => {
                       justifyContent: "center",
                       alignItems: "center",
                       marginTop: 2,
-                    }}
-                  >
+                    }}>
                     <IconButton
                       onClick={() => handlePageChange(page - 1)}
                       disabled={page === 0} // Disable on the first page
@@ -451,12 +417,11 @@ const ManageTransactions = () => {
                         backgroundColor: page === 0 ? "grey.300" : "black",
                         color: page === 0 ? "grey.600" : "white",
                         marginRight: "10px",
-                      }}
-                    >
+                      }}>
                       <KeyboardArrowLeft />
                     </IconButton>
 
-                    <Typography sx={{ margin: "0 10px", fontWeight: "bold" }}>
+                    <Typography sx={{margin: "0 10px", fontWeight: "bold"}}>
                       Page {page + 1} of {totalPages}
                     </Typography>
 
@@ -468,8 +433,7 @@ const ManageTransactions = () => {
                           page === totalPages - 1 ? "grey.300" : "black",
                         color: page === totalPages - 1 ? "grey.600" : "white",
                         marginLeft: "10px",
-                      }}
-                    >
+                      }}>
                       <KeyboardArrowRight />
                     </IconButton>
                   </Box>
