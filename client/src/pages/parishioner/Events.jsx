@@ -16,6 +16,7 @@ import Footer from "../../components/Footer";
 import { React, useEffect, useState } from "react";
 import config from "../../config";
 import axios from "axios";
+import util from "../../utils/DateTimeFormatter";
 
 const Events = () => {
   const [announcement, setAnnouncement] = useState([]);
@@ -47,7 +48,7 @@ const Events = () => {
             <Grid item key={index}>
               <AnnouncementCard
                 title={event.title}
-                date_announced={event.date_announced}
+                date_announced={util.formatDate(event.date_announced)}
                 description={event.description}
               />
             </Grid>
