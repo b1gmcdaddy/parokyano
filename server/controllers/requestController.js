@@ -674,49 +674,26 @@ const searchIntentions = (req, res) => {
 };
 
 const searchRequests = (req, res) => {
-  const {val, status, page, limit} = req.query;
-  const enhancedVal = `%${val}%`; // Enhanced value with '%' for SQL LIKE
-  const offset = (Number(page) - 1) * parseInt(limit); // Pagination offset
+  const {col, val, status, page, limit} = req.query;
+  const enhancedVal = "%" + val + "%";
+  const offset = Number(page - 1) * parseInt(limit);
+  const query = `SELECT r.*, s.name AS 'service_name' FROM request r INNER JOIN service s ON r.service_id = s.serviceID WHERE (r.requested_by LIKE '${enhancedVal}' OR r.transaction_no LIKE '${enhancedVal}') AND r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 AND r.status = ? ORDER BY r.date_requested DESC LIMIT ? OFFSET ?`;
+  const countQuery = `SELECT COUNT(*) as count FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}') AND service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = ?`;
 
-  const query = `SELECT r.*, s.name AS 'service_name' 
-                 FROM request r 
-                 INNER JOIN service s ON r.service_id = s.serviceID 
-                 WHERE (r.requested_by LIKE ? OR r.transaction_no LIKE ?) 
-                   AND r.service_id NOT IN (1, 2, 3, 4) 
-                   AND r.status = ? 
-                 ORDER BY r.date_requested DESC 
-                 LIMIT ? OFFSET ?`;
-
-  const countQuery = `SELECT COUNT(*) as count 
-                      FROM request 
-                      WHERE (requested_by LIKE ? OR transaction_no LIKE ?) 
-                        AND service_id NOT IN (1, 2, 3, 4) 
-                        AND status = ?`;
-
-  db.query(
-    query,
-    [enhancedVal, enhancedVal, status, parseInt(limit), offset],
-    (err, result) => {
-      if (err) {
-        console.error("Error searching item", err);
-        return res.status(500).json({error: "Error fetching data"});
-      }
-
-      db.query(
-        countQuery,
-        [enhancedVal, enhancedVal, status],
-        (err, countResult) => {
-          if (err) {
-            console.error("Error counting items", err);
-            return res.status(500).json({error: "Error fetching count"});
-          }
-
-          const totalCount = countResult[0].count;
-          res.status(200).json({result, count: totalCount});
-        }
-      );
+  db.query(query, [status, parseInt(limit), offset], (err, result) => {
+    if (err) {
+      console.error("error searching item", err);
+      return res.status(500);
     }
-  );
+    db.query(countQuery, [status], (err, count) => {
+      if (err) {
+        console.error("error counting items", err);
+        return res.status(500);
+      }
+      console.log(count[0].count);
+      res.status(200).json({result, count});
+    });
+  });
 };
 
 const searchCertificates = (req, res) => {

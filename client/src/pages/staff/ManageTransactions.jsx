@@ -110,7 +110,7 @@ const ManageTransactions = () => {
         }
       );
       setFilter(response.data.result);
-      setTotalItems(response.data.count);
+      // setTotalItems(response.data.count);
       setPage(0);
     } catch (err) {
       console.error(err);

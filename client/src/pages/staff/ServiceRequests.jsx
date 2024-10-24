@@ -22,7 +22,7 @@ const ServiceRequests = () => {
   const [page, setPage] = useState(0);
   const [filter, setFilter] = useState([]);
   const [inputValue, setValue] = useState("");
-  const rowsPerPage = 10;
+  const rowsPerPage = 10; // Items per page
 
   const totalPages = Math.ceil(totalItems / rowsPerPage);
 
@@ -49,22 +49,44 @@ const ServiceRequests = () => {
     setValue("");
   };
 
-  // const fetchTotalItems = async () => {
-  //   try {
-  //     const response = await axios.get(`${config.API}/request/count-request`, {
-  //       params: {
-  //         status: status,
-  //       },
-  //     });
-  //     setTotalItems(response.data.count);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
+  const fetchTotalItems = async () => {
+    try {
+      const response = await axios.get(`${config.API}/request/count-request`, {
+        params: {
+          status: status,
+        },
+      });
+      setTotalItems(response.data.count);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSearch = async (inputValue, currentPage) => {
+    try {
+      const response = await axios.get(
+        `${config.API}/request/search-requests`,
+        {
+          params: {
+            val: inputValue,
+            status: status,
+            page: currentPage + 1,
+            limit: rowsPerPage,
+          },
+        }
+      );
+
+      setFilter(response.data.result);
+      setTotalItems(response.data.count[0].count);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
       setPage(newPage);
+      handleSearch(inputValue, newPage);
     }
   };
 
@@ -73,29 +95,9 @@ const ServiceRequests = () => {
   };
 
   useEffect(() => {
-    // fetchTotalItems()
+    fetchTotalItems();
     handleSearch(inputValue, page);
-  }, [activeTab, page, inputValue]);
-
-  const handleSearch = async (inputValue, page) => {
-    try {
-      const response = await axios.get(
-        `${config.API}/request/search-requests`,
-        {
-          params: {
-            val: inputValue,
-            status: status,
-            page: page + 1,
-            limit: rowsPerPage,
-          },
-        }
-      );
-      setFilter(response.data.result);
-      setTotalItems(response.data.count);
-    } catch (error) {
-      console.error("Error fetching search results", error);
-    }
-  };
+  }, [activeTab, inputValue]);
 
   return (
     <Box sx={{display: "flex", mx: {md: "30px"}}}>
