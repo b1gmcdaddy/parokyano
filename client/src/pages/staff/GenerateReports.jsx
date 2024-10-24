@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, { useState, useRef, useEffect } from "react";
 import NavStaff from "../../components/NavStaff";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,47 +10,64 @@ import {
   MenuItem,
   Container,
 } from "@mui/material";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFileExport, faPrint} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPrint } from "@fortawesome/free-solid-svg-icons";
 import StaffReport from "../../components/StaffReport";
 import ReactToPrint from "react-to-print";
 import StaffReportSpecific from "../../components/StaffReportSpecific";
 
-const formatDate = (date) => date.toISOString().split("T")[0];
+const PrintStyle = {
+  border: "solid 1px",
+  backgroundColor: "#F5F5F5",
+};
+
+const NotPrintStyle = {
+  border: "solid 1px",
+  maxHeight: "700px",
+  overflowY: "auto",
+  backgroundColor: "#F5F5F5",
+};
 
 const GenerateReports = () => {
-  // const now = new Date();
-  //   const lastMonth =
-  // const currentMonth = formatDate(
-  //   new Date(now.getFullYear(), now.getMonth() + 1, 1)
-  // );
-
-  // const [lastMonth, setLastMonth] = useState(
-  //   formatDate(new Date(now.getFullYear(), now.getMonth(), 1))
-  // );
-
+  const [isPrinting, setIsPrinting] = useState(false);
   const [reportDetails, setReportDetails] = useState({
     startDate: "",
     endDate: "",
     category: "",
+    view: "general",
   });
 
   const handleChange = (e) => {
-    setReportDetails({...reportDetails, [e.target.name]: e.target.value});
+    setReportDetails({ ...reportDetails, [e.target.name]: e.target.value });
   };
 
   useEffect(() => {
     console.log(reportDetails);
   }, [reportDetails]);
 
+  const componentRef2 = useRef();
   const componentRef = useRef();
 
+  const handleBeforePrint = () => {
+    setIsPrinting(true);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 500);
+    });
+  };
+
+  const handleAfterPrint = () => {
+    setIsPrinting(false);
+  };
+
   return (
-    <Box sx={{display: "flex", mx: {md: "30px"}}}>
+    <Box sx={{ display: "flex", mx: { md: "30px" } }}>
       <NavStaff />
       <Box
         component="main"
-        sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
+      >
         <Toolbar />
         <Box
           sx={{
@@ -59,14 +76,16 @@ const GenerateReports = () => {
             marginTop: "8px",
             alignItems: "center",
             marginBottom: "1.5em",
-          }}>
+          }}
+        >
           <Typography
-            sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>
+            sx={{ fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600 }}
+          >
             Generate Report
           </Typography>
         </Box>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={6} sm={1.5}>
             <label>Start Date:</label>
             <TextField
               type="date"
@@ -75,12 +94,12 @@ const GenerateReports = () => {
               variant="outlined"
               value={reportDetails.startDate}
               onChange={handleChange}
-              InputLabelProps={{shrink: true}}
+              InputLabelProps={{ shrink: true }}
               fullWidth
               required
             />
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={6} sm={1.5}>
             <label>End Date:</label>
             <TextField
               type="date"
@@ -89,12 +108,12 @@ const GenerateReports = () => {
               variant="outlined"
               value={reportDetails.endDate}
               onChange={handleChange}
-              InputLabelProps={{shrink: true}}
+              InputLabelProps={{ shrink: true }}
               fullWidth
               required
             />
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={6} sm={3}>
             <label>Category: </label>
             <TextField
               select
@@ -106,8 +125,8 @@ const GenerateReports = () => {
               value={reportDetails.category}
               size="small"
               fullWidth
-              required>
-              {/* <MenuItem value="9999">All</MenuItem> */}
+              required
+            >
               <MenuItem value="5">Baptism - Appointment</MenuItem>
               <MenuItem value="6">Baptism - General</MenuItem>
               <MenuItem value="7">Wedding</MenuItem>
@@ -121,108 +140,121 @@ const GenerateReports = () => {
               <MenuItem value="2">Certificate - Confirmation</MenuItem>
             </TextField>
           </Grid>
+          <Grid item xs={6} sm={2}>
+            <label>View: </label>
+            <TextField
+              select
+              variant="outlined"
+              name="view"
+              onChange={(e) => {
+                handleChange(e);
+              }}
+              value={reportDetails.view}
+              size="small"
+              fullWidth
+              required
+            >
+              <MenuItem value="general">General</MenuItem>
+              <MenuItem value="detailed">Detailed</MenuItem>
+            </TextField>
+          </Grid>
         </Grid>
 
-        <Box className="md:mt-14 xs:mt-14">
-          <Box
-            sx={{
-              backgroundColor: "#355173",
-              padding: "12px",
-              display: "flex",
-              alignItems: "center",
-              color: "white",
-              justifyContent: "space-between",
-            }}
-            className="gap-2">
-            <Typography sx={{width: "100%", color: "whitesmoke"}}>
-              {reportDetails.startDate} &nbsp;-&nbsp; {reportDetails.endDate}
-            </Typography>
-            {/* <Typography>Export</Typography>
-            <FontAwesomeIcon
-              icon={faFileExport}
-              className="text-white md:mr-5"
-            /> */}
-            <ReactToPrint
-              trigger={() => (
-                <Button sx={{color: "white"}}>
-                  Print
-                  <FontAwesomeIcon
-                    icon={faPrint}
-                    className="text-white md:mr-5 md:ml-2"
-                  />
-                </Button>
-              )}
-              content={() => componentRef.current}
-            />
-          </Box>
-          <Box
-            sx={{
-              border: "solid 1px",
-              maxHeight: "700px",
-              overflowY: "auto",
-              backgroundColor: "#F5F5F5",
-            }}
-            ref={componentRef}>
-            <Container maxWidth="lg" sx={{backgroundColor: "white"}}>
-              <StaffReport
-                startDate={reportDetails.startDate}
-                endDate={reportDetails.endDate}
-                category={reportDetails.category}
+        {/* General View */}
+        {reportDetails.view === "general" ? (
+          <Box className="md:mt-14 xs:mt-14">
+            <Box
+              sx={{
+                backgroundColor: "#355173",
+                padding: "12px",
+                display: "flex",
+                alignItems: "center",
+                color: "white",
+                justifyContent: "space-between",
+              }}
+              className="gap-2"
+            >
+              <Typography sx={{ width: "100%", color: "whitesmoke" }}>
+                {reportDetails.startDate} &nbsp;-&nbsp; {reportDetails.endDate}
+              </Typography>
+              <ReactToPrint
+                trigger={() => (
+                  <Button sx={{ color: "white" }}>
+                    Print
+                    <FontAwesomeIcon
+                      icon={faPrint}
+                      className="text-white md:mr-5 md:ml-2"
+                    />
+                  </Button>
+                )}
+                content={() => componentRef2.current}
+                onBeforeGetContent={handleBeforePrint}
+                onAfterPrint={handleAfterPrint}
               />
-            </Container>
+            </Box>
+
+            <Box
+              sx={isPrinting ? PrintStyle : NotPrintStyle}
+              ref={componentRef2}
+            >
+              <Container maxWidth="lg" sx={{ backgroundColor: "white" }}>
+                <StaffReport
+                  startDate={reportDetails.startDate}
+                  endDate={reportDetails.endDate}
+                  category={reportDetails.category}
+                />
+              </Container>
+            </Box>
           </Box>
-        </Box>
+        ) : null}
 
         {/*-----------------for testing specific service category...--------------------*/}
-        <Box className="md:mt-14 xs:mt-14">
-          <Box
-            sx={{
-              backgroundColor: "#355173",
-              padding: "12px",
-              display: "flex",
-              alignItems: "center",
-              color: "white",
-              justifyContent: "space-between",
-            }}
-            className="gap-2">
-            <Typography sx={{width: "100%", color: "whitesmoke"}}>
-              {reportDetails.startDate} &nbsp;-&nbsp; {reportDetails.endDate}
-            </Typography>
-            {/* <Typography>Export</Typography>
-            <FontAwesomeIcon
-              icon={faFileExport}
-              className="text-white md:mr-5"
-            /> */}
-            <ReactToPrint
-              trigger={() => (
-                <Button sx={{color: "white"}}>
-                  Print
-                  <FontAwesomeIcon
-                    icon={faPrint}
-                    className="text-white md:mr-5 md:ml-2"
-                  />
-                </Button>
-              )}
-              content={() => componentRef.current}
-            />
-          </Box>
-          <Box
-            sx={{
-              border: "solid 1px",
-              maxHeight: "700px",
-              overflowY: "auto",
-              backgroundColor: "#F5F5F5",
-            }}
-            ref={componentRef}>
-            <Container maxWidth="lg" sx={{backgroundColor: "white"}}>
-              <StaffReportSpecific
-                startDate={reportDetails.startDate}
-                endDate={reportDetails.endDate}
-                category={reportDetails.category}
+        {reportDetails.view == "detailed" ? (
+          <Box className="md:mt-14 xs:mt-14">
+            <Box
+              sx={{
+                backgroundColor: "#355173",
+                padding: "12px",
+                display: "flex",
+                alignItems: "center",
+                color: "white",
+                justifyContent: "space-between",
+              }}
+              className="gap-2"
+            >
+              <Typography sx={{ width: "100%", color: "whitesmoke" }}>
+                {reportDetails.startDate} &nbsp;-&nbsp; {reportDetails.endDate}
+              </Typography>
+
+              <ReactToPrint
+                trigger={() => (
+                  <Button sx={{ color: "white" }}>
+                    Print
+                    <FontAwesomeIcon
+                      icon={faPrint}
+                      className="text-white md:mr-5 md:ml-2"
+                    />
+                  </Button>
+                )}
+                content={() => componentRef.current}
+                onBeforeGetContent={handleBeforePrint}
+                onAfterPrint={handleAfterPrint}
               />
-            </Container>
+            </Box>
+            <Box
+              sx={isPrinting ? PrintStyle : NotPrintStyle}
+              ref={componentRef}
+            >
+              <Container maxWidth="lg" sx={{ backgroundColor: "white" }}>
+                <StaffReportSpecific
+                  startDate={reportDetails.startDate}
+                  endDate={reportDetails.endDate}
+                  category={reportDetails.category}
+                />
+              </Container>
+            </Box>
           </Box>
-        </Box>
+        ) : null}
       </Box>
     </Box>
   );

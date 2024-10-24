@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import React from "react";
 import NavStaff from "../../components/NavStaff";
 import SearchIcon from "@mui/icons-material/Search";
@@ -58,6 +58,11 @@ const ManageIntentions = () => {
       break;
   }
 
+  useEffect(() => {
+    // fetchTotalItems();
+    handleSearch(inputValue, page);
+  }, [activeTab, page, inputValue]);
+
   const handleSearch = async (inputValue, page) => {
     console.log(page);
     const response = await axios.get(
@@ -85,12 +90,11 @@ const ManageIntentions = () => {
 
   return (
     <>
-      <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+      <Box sx={{display: "flex", mx: {md: "30px"}}}>
         <NavStaff />
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
-        >
+          sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
           <Toolbar />
 
           <Box
@@ -99,27 +103,24 @@ const ManageIntentions = () => {
               justifyContent: "space-between",
               marginTop: "8px",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 fontSize: "1.25rem",
                 lineHeight: "1.75rem",
                 fontWeight: 600,
-              }}
-            >
+              }}>
               Mass Intentions
             </Typography>
             <Button
               variant="contained"
               type="button"
-              sx={{ backgroundColor: "#355173" }}
-            >
+              sx={{backgroundColor: "#355173"}}>
               ADD INTENTIONS
             </Button>
           </Box>
 
-          <Box sx={{ width: "100%", marginTop: "20px" }}>
+          <Box sx={{width: "100%", marginTop: "20px"}}>
             <Grid container spacing={1}>
               <Grid item sm={6}>
                 <Button
@@ -133,8 +134,7 @@ const ManageIntentions = () => {
                     fontWeight: "bold",
                     color: activeTab === 0 ? "white" : "black",
                   }}
-                  onClick={() => handleTabChange(0)}
-                >
+                  onClick={() => handleTabChange(0)}>
                   Pending
                 </Button>
               </Grid>
@@ -150,8 +150,7 @@ const ManageIntentions = () => {
                     fontWeight: "bold",
                     color: activeTab === 1 ? "white" : "black",
                   }}
-                  onClick={() => handleTabChange(1)}
-                >
+                  onClick={() => handleTabChange(1)}>
                   Approved
                 </Button>
               </Grid>
@@ -159,8 +158,7 @@ const ManageIntentions = () => {
               <Grid
                 item
                 sm={12}
-                sx={{ display: "flex", flexDirection: "row", gap: 1 }}
-              >
+                sx={{display: "flex", flexDirection: "row", gap: 1}}>
                 <TextField
                   name="search"
                   fullWidth
@@ -175,7 +173,7 @@ const ManageIntentions = () => {
                     ),
                   }}
                 />
-                <Button
+                {/* <Button
                   fullWidth
                   variant="contained"
                   type="button"
@@ -191,11 +189,11 @@ const ManageIntentions = () => {
                   }}
                 >
                   Search
-                </Button>
+                </Button> */}
               </Grid>
 
               <Grid item sm={12}>
-                <Box sx={{ p: 2 }}>
+                <Box sx={{p: 2}}>
                   {activeTab === 0 && (
                     <IntentionsPending
                       filter={filter}

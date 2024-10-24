@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import React from "react";
 import axios from "axios";
 import config from "../../config";
@@ -124,8 +124,9 @@ const CertificateRequests = () => {
   };
 
   useEffect(() => {
-    fetchTotalItems();
-  }, [activeTab, status]);
+    // fetchTotalItems();
+    handleSearch(inputValue, page);
+  }, [activeTab, page, inputValue]);
 
   const renderCertModal = () => {
     switch (selectedCertType) {
@@ -157,12 +158,11 @@ const CertificateRequests = () => {
 
   return (
     <>
-      <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+      <Box sx={{display: "flex", mx: {md: "30px"}}}>
         <NavStaff />
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
-        >
+          sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
           <Toolbar />
 
           <Box
@@ -171,23 +171,20 @@ const CertificateRequests = () => {
               justifyContent: "space-between",
               marginTop: "8px",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 fontSize: "1.25rem",
                 lineHeight: "1.75rem",
                 fontWeight: 600,
-              }}
-            >
+              }}>
               Certificate Requests
             </Typography>
             <Button
               variant="contained"
               type="button"
               onClick={handleOpenSelection}
-              sx={{ backgroundColor: "#355173" }}
-            >
+              sx={{backgroundColor: "#355173"}}>
               ADD REQUEST
             </Button>
           </Box>
@@ -197,12 +194,10 @@ const CertificateRequests = () => {
             fullWidth
             onClose={handleCloseSelection}
             aria-labelledby="customized-dialog-title"
-            open={openSelectionModal}
-          >
+            open={openSelectionModal}>
             <DialogTitle
-              sx={{ mt: 4, p: 2, textAlign: "center", fontWeight: "bold" }}
-              id="customized-dialog-title"
-            >
+              sx={{mt: 4, p: 2, textAlign: "center", fontWeight: "bold"}}
+              id="customized-dialog-title">
               Add Certificate Request
             </DialogTitle>
             <IconButton
@@ -213,8 +208,7 @@ const CertificateRequests = () => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
             <DialogContent>
@@ -225,8 +219,7 @@ const CertificateRequests = () => {
                 <NativeSelect
                   defaultValue="Baptism"
                   value={selectedCertType}
-                  onChange={handleCertTypeSelection}
-                >
+                  onChange={handleCertTypeSelection}>
                   <option value="Baptism">Baptism</option>
                   <option value="Marriage">Marriage</option>
                   <option value="Confirmation">Confirmation</option>
@@ -234,11 +227,7 @@ const CertificateRequests = () => {
               </FormControl>
             </DialogContent>
             <DialogActions>
-              <Button
-                autoFocus
-                onClick={handleOpenAdd}
-                sx={{ color: "#355173" }}
-              >
+              <Button autoFocus onClick={handleOpenAdd} sx={{color: "#355173"}}>
                 CONFIRM
               </Button>
             </DialogActions>
@@ -246,7 +235,7 @@ const CertificateRequests = () => {
           {renderCertModal()}
           {/*-----END MANUALLY ADD CERTIFICATE REQUEST SELECTION MODAL-----*/}
 
-          <Box sx={{ width: "100%", marginTop: "20px" }}>
+          <Box sx={{width: "100%", marginTop: "20px"}}>
             <Grid container spacing={1}>
               <Grid item sm={6}>
                 <Button
@@ -260,8 +249,7 @@ const CertificateRequests = () => {
                     fontWeight: "bold",
                     color: activeTab === 0 ? "white" : "black",
                   }}
-                  onClick={() => handleTabChange(0)}
-                >
+                  onClick={() => handleTabChange(0)}>
                   Pending
                 </Button>
               </Grid>
@@ -277,8 +265,7 @@ const CertificateRequests = () => {
                     fontWeight: "bold",
                     color: activeTab === 1 ? "white" : "black",
                   }}
-                  onClick={() => handleTabChange(1)}
-                >
+                  onClick={() => handleTabChange(1)}>
                   For Claiming
                 </Button>
               </Grid>
@@ -286,8 +273,7 @@ const CertificateRequests = () => {
               <Grid
                 item
                 sm={12}
-                sx={{ display: "flex", flexDirection: "row", gap: 1 }}
-              >
+                sx={{display: "flex", flexDirection: "row", gap: 1}}>
                 <TextField
                   fullWidth
                   size="small"
@@ -300,7 +286,7 @@ const CertificateRequests = () => {
                   }}
                   onChange={handleChange}
                 />
-                <Button
+                {/* <Button
                   fullWidth
                   variant="contained"
                   type="button"
@@ -313,13 +299,12 @@ const CertificateRequests = () => {
                     width: "100px",
                     borderRadius: "5px",
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   Search
-                </Button>
+                </Button> */}
               </Grid>
               <Grid item sm={12}>
-                <Box sx={{ p: 3 }}>
+                <Box sx={{p: 3}}>
                   {activeTab === 0 && (
                     <CertificatesPending
                       filter={filter}
