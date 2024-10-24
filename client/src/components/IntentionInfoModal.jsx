@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -37,34 +37,60 @@ const formatDate = (rawDate) => {
   return formatted;
 };
 
-const SoulsInfoModal = ({open, data, close}) => {
+const fetchUser = async (id, setApprover) => {
+  try {
+    const response = await axios.get(`${config.API}/user/retrieve`, {
+      params: {
+        id: id,
+      },
+    });
+    console.log(response.data[0]);
+    if (response.status === 200) {
+      setApprover(response.data[0]);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const SoulsInfoModal = ({ open, data, close }) => {
   const details = JSON.parse(data.details);
+  const [approver, setApprover] = useState({});
   const schedule =
     formatTime(data.preferred_time) +
     " ,  " +
     formatDate(data.preferred_date.slice(0, 10));
 
   const updatePayment = (id, close) => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    console.log(currentUser.id);
     try {
-      axios.put(`${config.API}/request/approve-intention`, null, {
-        params: {
-          col: "payment_status",
-          val: "paid",
-          col2: "status",
-          val2: "approved",
-          col3: "requestID",
-          val3: id,
-          col4: null,
-          val4: null,
-        },
-      });
+      if (currentUser) {
+        axios.put(`${config.API}/request/approve-intention`, null, {
+          params: {
+            col: "payment_status",
+            val: "paid",
+            col2: "status",
+            val2: "approved",
+            col3: "user_id",
+            val3: currentUser.id,
+            col4: "requestID",
+            val4: id,
+          },
+        });
+      }
       alert("updated succesfully");
       // sendSMS(data.service_id, data, "approve");
+      window.location.reload;
       close();
     } catch (err) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    fetchUser(data.user_id, setApprover);
+  }, [open, data]);
 
   return (
     <Dialog
@@ -73,24 +99,27 @@ const SoulsInfoModal = ({open, data, close}) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
+      aria-describedby="alert-dialog-description"
+    >
       <DialogContent>
-        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}>
-            <Typography sx={{textAlign: "center", fontWeight: "bold"}}>
+            }}
+          >
+            <Typography sx={{ textAlign: "center", fontWeight: "bold" }}>
               Mass Intention - SOULS Information
             </Typography>
             <label>For the souls of: </label>
             <Grid
               container
               spacing={2}
-              sx={{height: "150px", overflowY: "auto"}}>
+              sx={{ height: "150px", overflowY: "auto" }}
+            >
               {details.map((soul, index) => (
                 <Grid item xs={12} sm={6} key={index}>
                   <TextField
@@ -98,19 +127,19 @@ const SoulsInfoModal = ({open, data, close}) => {
                     label={index + 1}
                     fullWidth
                     value={soul}
-                    inputProps={{readOnly: true}}
+                    inputProps={{ readOnly: true }}
                   />
                 </Grid>
               ))}
             </Grid>
             <Divider />
-            <Grid container spacing={2} sx={{marginTop: "10px"}}>
+            <Grid container spacing={2} sx={{ marginTop: "10px" }}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Offered by:"
                   value={data.requested_by}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -118,7 +147,7 @@ const SoulsInfoModal = ({open, data, close}) => {
                   label="Mass Schedule"
                   value={schedule}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -126,7 +155,7 @@ const SoulsInfoModal = ({open, data, close}) => {
                   label="Donation"
                   value={data.donation}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -134,28 +163,41 @@ const SoulsInfoModal = ({open, data, close}) => {
                   label="Payment Method"
                   value={data.payment_method}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
+              {data.payment_method === "gcash" && (
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    label="GCash Ref no."
+                    value={data.gcashRefNo}
+                    fullWidth
+                    inputProps={{ readOnly: true }}
+                  />
+                </Grid>
+              )}
             </Grid>
-            <Typography fontSize={"medium"} sx={{textAlign: "center"}}>
-              Transaction no: {data.transaction_no}
+            <Typography fontSize={"medium"} sx={{ textAlign: "center" }}>
+              Transaction no:{" "}
+              <span style={{ color: "red" }}>{data.transaction_no}</span>
             </Typography>
-            {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
-                Approved by: dummyDataStaffName
+            {approver && data.status === "approved" && (
+              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+                Approved by: {approver.first_name} {approver.last_name}
               </Typography>
             )}
             <DialogActions>
               <Grid
                 container
                 spacing={2}
-                sx={{justifyContent: "center", alignItems: "center"}}>
+                sx={{ justifyContent: "center", alignItems: "center" }}
+              >
                 {data.payment_status === "unpaid" && (
                   <Grid item xs={12} sm={6}>
                     <Button
                       variant="contained"
-                      onClick={() => updatePayment(data.requestID, close)}>
+                      onClick={() => updatePayment(data.requestID, close)}
+                    >
                       Mark as Paid
                     </Button>
                   </Grid>
@@ -174,8 +216,9 @@ const SoulsInfoModal = ({open, data, close}) => {
   );
 };
 
-const ThanksgivingInfoModal = ({open, data, close}) => {
+const ThanksgivingInfoModal = ({ open, data, close }) => {
   const details = JSON.parse(data.details);
+  const [approver, setApprover] = useState({});
 
   const schedule =
     formatTime(data.preferred_time) +
@@ -183,19 +226,23 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
     formatDate(data.preferred_date.slice(0, 10));
 
   const updatePayment = (id, close) => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    console.log(currentUser.id);
     try {
-      axios.put(`${config.API}/request/approve-intention`, null, {
-        params: {
-          col: "payment_status",
-          val: "paid",
-          col2: "status",
-          val2: "approved",
-          col3: "requestID",
-          val3: id,
-          col4: null,
-          val4: null,
-        },
-      });
+      if (currentUser) {
+        axios.put(`${config.API}/request/approve-intention`, null, {
+          params: {
+            col: "payment_status",
+            val: "paid",
+            col2: "status",
+            val2: "approved",
+            col3: "user_id",
+            val3: currentUser.id,
+            col4: "requestID",
+            val4: id,
+          },
+        });
+      }
       alert("updated succesfully");
       // sendSMS(data.service_id, formData, "approve");
       close();
@@ -204,6 +251,10 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
     }
   };
 
+  useEffect(() => {
+    fetchUser(data.user_id, setApprover);
+  }, [open, data]);
+
   return (
     <Dialog
       fullWidth
@@ -211,17 +262,19 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
+      aria-describedby="alert-dialog-description"
+    >
       <DialogContent>
-        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}>
-            <Typography sx={{textAlign: "center", fontWeight: "bold"}}>
+            }}
+          >
+            <Typography sx={{ textAlign: "center", fontWeight: "bold" }}>
               Mass Intention - THANKSGIVING Information
             </Typography>
             <label>Thanksgiving for: </label>
@@ -229,7 +282,8 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
             <Grid
               container
               spacing={1}
-              sx={{display: "flex", padding: "0px 10px", overflowY: "auto"}}>
+              sx={{ display: "flex", padding: "0px 10px", overflowY: "auto" }}
+            >
               {details.saint != null && (
                 <Grid item xs={12} sm={12}>
                   <TextField
@@ -238,7 +292,7 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
                     label="In Honor of Saints"
                     fullWidth
                     value={details.saint}
-                    inputProps={{readOnly: true}}
+                    inputProps={{ readOnly: true }}
                   />
                 </Grid>
               )}
@@ -250,7 +304,7 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
                     label="Wedding Anniversary of"
                     fullWidth
                     value={details.wedding}
-                    inputProps={{readOnly: true}}
+                    inputProps={{ readOnly: true }}
                   />
                 </Grid>
               )}
@@ -262,7 +316,7 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
                     label="For the success of"
                     fullWidth
                     value={details.success}
-                    inputProps={{readOnly: true}}
+                    inputProps={{ readOnly: true }}
                   />
                 </Grid>
               )}
@@ -274,7 +328,7 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
                     label="For the Birthday of"
                     fullWidth
                     value={details.birthday}
-                    inputProps={{readOnly: true}}
+                    inputProps={{ readOnly: true }}
                   />
                 </Grid>
               )}
@@ -286,7 +340,7 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
                     label="Others"
                     fullWidth
                     value={details.others}
-                    inputProps={{readOnly: true}}
+                    inputProps={{ readOnly: true }}
                   />
                 </Grid>
               )}
@@ -294,13 +348,13 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
 
             <Divider />
 
-            <Grid container spacing={2} sx={{marginTop: "10px"}}>
+            <Grid container spacing={2} sx={{ marginTop: "10px" }}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Offered by:"
                   value={data.requested_by}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -308,7 +362,7 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
                   label="Mass Schedule"
                   value={schedule}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -316,7 +370,7 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
                   label="Donation"
                   value={data.donation}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -324,29 +378,41 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
                   label="Payment Method"
                   value={data.payment_method}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
+              {data.payment_method === "gcash" && (
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    label="GCash Ref no."
+                    value={data.gcashRefNo}
+                    fullWidth
+                    inputProps={{ readOnly: true }}
+                  />
+                </Grid>
+              )}
             </Grid>
 
-            <Typography fontSize={"medium"} sx={{textAlign: "center"}}>
+            <Typography fontSize={"medium"} sx={{ textAlign: "center" }}>
               Transaction no: {data.transaction_no}
             </Typography>
-            {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
-                Approved by: dummyDataStaffName
+            {approver && data.status === "approved" && (
+              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+                Approved by: {approver.first_name} {approver.last_name}
               </Typography>
             )}
             <DialogActions>
               <Grid
                 container
                 spacing={2}
-                sx={{justifyContent: "center", alignItems: "center"}}>
+                sx={{ justifyContent: "center", alignItems: "center" }}
+              >
                 {data.payment_status === "unpaid" && (
                   <Grid item xs={12} sm={6}>
                     <Button
                       variant="contained"
-                      onClick={() => updatePayment(data.requestID, close)}>
+                      onClick={() => updatePayment(data.requestID, close)}
+                    >
                       Mark as Paid
                     </Button>
                   </Grid>
@@ -365,34 +431,44 @@ const ThanksgivingInfoModal = ({open, data, close}) => {
   );
 };
 
-const PetitionInfoModal = ({open, data, close}) => {
+const PetitionInfoModal = ({ open, data, close }) => {
   const details = JSON.parse(data.details);
+  const [approver, setApprover] = useState({});
   const schedule =
     formatTime(data.preferred_time) +
     " ,  " +
     formatDate(data.preferred_date.slice(0, 10));
 
   const updatePayment = (id, close) => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    console.log(currentUser.id);
     try {
-      axios.put(`${config.API}/request/approve-intention`, null, {
-        params: {
-          col: "payment_status",
-          val: "paid",
-          col2: "status",
-          val2: "approved",
-          col3: "requestID",
-          val3: id,
-          col4: null,
-          val4: null,
-        },
-      });
+      if (currentUser) {
+        axios.put(`${config.API}/request/approve-intention`, null, {
+          params: {
+            col: "payment_status",
+            val: "paid",
+            col2: "status",
+            val2: "approved",
+            col3: "user_id",
+            val3: currentUser.id,
+            col4: "requestID",
+            val4: id,
+          },
+        });
+      }
       alert("updated succesfully");
+      window.location.reload;
       // sendSMS(data.service_id, formData, "approve");
       close();
     } catch (err) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    fetchUser(data.user_id, setApprover);
+  }, [open, data]);
 
   return (
     <Dialog
@@ -401,17 +477,19 @@ const PetitionInfoModal = ({open, data, close}) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
+      aria-describedby="alert-dialog-description"
+    >
       <DialogContent>
-        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}>
-            <Typography sx={{textAlign: "center", fontWeight: "bold"}}>
+            }}
+          >
+            <Typography sx={{ textAlign: "center", fontWeight: "bold" }}>
               Mass Intention - THANKSGIVING Information
             </Typography>
             <label>Petition: </label>
@@ -419,27 +497,28 @@ const PetitionInfoModal = ({open, data, close}) => {
             <Grid
               container
               spacing={1}
-              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
+              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
+            >
               <Grid item xs={12} sm={12}>
                 <TextField
                   variant="outlined"
                   multiline
                   fullWidth
                   value={details}
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
             </Grid>
 
             <Divider />
 
-            <Grid container spacing={2} sx={{marginTop: "10px"}}>
+            <Grid container spacing={2} sx={{ marginTop: "10px" }}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Offered by:"
                   value={data.requested_by}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -447,7 +526,7 @@ const PetitionInfoModal = ({open, data, close}) => {
                   label="Mass Schedule"
                   value={schedule}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -455,7 +534,7 @@ const PetitionInfoModal = ({open, data, close}) => {
                   label="Donation"
                   value={"100"}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -463,28 +542,40 @@ const PetitionInfoModal = ({open, data, close}) => {
                   label="Payment Method"
                   value={data.payment_method}
                   fullWidth
-                  inputProps={{readOnly: true}}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
+              {data.payment_method === "gcash" && (
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    label="GCash Ref no."
+                    value={data.gcashRefNo}
+                    fullWidth
+                    inputProps={{ readOnly: true }}
+                  />
+                </Grid>
+              )}
             </Grid>
-            <Typography fontSize={"medium"} sx={{textAlign: "center"}}>
+            <Typography fontSize={"medium"} sx={{ textAlign: "center" }}>
               Transaction no: {data.transaction_no}
             </Typography>
-            {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
-                Approved by: dummyDataStaffName
+            {approver && data.status === "approved" && (
+              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+                Approved by: {approver.first_name} {approver.last_name}
               </Typography>
             )}
             <DialogActions>
               <Grid
                 container
                 spacing={2}
-                sx={{justifyContent: "center", alignItems: "center"}}>
+                sx={{ justifyContent: "center", alignItems: "center" }}
+              >
                 {data.payment_status === "unpaid" && (
                   <Grid item xs={12} sm={6}>
                     <Button
                       variant="contained"
-                      onClick={() => updatePayment(data.requestID, close)}>
+                      onClick={() => updatePayment(data.requestID, close)}
+                    >
                       Mark as Paid
                     </Button>
                   </Grid>

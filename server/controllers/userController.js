@@ -17,6 +17,20 @@ const retrieveAllUsers = (req, res) => {
   });
 };
 
+const retrieveByParams = (req, res) => {
+  const user = req.query.id;
+  db.query(`SELECT * FROM user WHERE userID = ?`, [user], (err, result) => {
+    if (err) {
+      console.error("error retrieving user from db", err);
+      return res.status(500).json({
+        error: "server error",
+        status: "500",
+      });
+    }
+    return res.status(200).json(result);
+  });
+};
+
 const dateToday = new Date().toJSON().slice(0, 10);
 
 const createUser = async (req, res) => {
@@ -99,6 +113,7 @@ const getUsersWithLatestActivity = (req, res) => {
 
 module.exports = {
   retrieveAllUsers,
+  retrieveByParams,
   createUser,
   editUser,
   getUsersWithLatestActivity,
