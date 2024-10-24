@@ -30,6 +30,7 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ValidateForm from "../../utils/Validators";
 import all from "../../components/PaymentModal";
+import GCashQR from "../../components/GCashQR";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -70,7 +71,7 @@ const Baptism = () => {
       isChurchMarried: 3,
       isCivilMarried: 0,
       isLiveIn: 0,
-      marriage_date: "",
+      marriage_date: null,
       marriage_place: "",
       liveIn_years: 0,
       birthCert: 0,
@@ -82,6 +83,7 @@ const Baptism = () => {
     preferred_time: "",
     priest_id: "",
     payment_method: "",
+    gcashRefNo: "",
     transaction_no: hash,
     service_id: id,
     sponsors: [
@@ -106,6 +108,10 @@ const Baptism = () => {
     console.log(priests);
     getPriests();
   }, []);
+
+  const openQR = () => {
+    setOpenGCash(true);
+  };
 
   // const handleCaptchaChange = (value) => {
   //   setCaptchaValue(value);
@@ -169,15 +175,9 @@ const Baptism = () => {
     fee: "800 PHP",
     requirements: null,
     message:
-      "Note: Kindly go to the parish office during office hours to pay. Please submit the requirement and pay within 2 days to avoid cancellation.",
-  };
-
-  const gcashModalInfo = {
-    transaction_no: formData.transaction_no,
-    fee: "800 PHP",
-    requirements: null,
-    message:
-      "Note: We will use your mobile number to communicate with you. Please submit the requirements to the office as soon as possible so that we can start processing your request.",
+      formData.payment_method === "cash"
+        ? "Note: Kindly go to the parish office during office hours to pay. Please submit the requirements and pay within 2 days to avoid cancellation."
+        : "Your request for baptism has been received. Make sure to provide all the requirements to the parish. You will receive a text once your payment has been verified! Thank you and God bless!",
   };
 
   const handleSubmit = async (e) => {
@@ -189,13 +189,9 @@ const Baptism = () => {
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
         await axios.post(`${config.API}/request/create-baptism`, formData);
-        if (formData.payment_method === "cash") {
-          setModalData(cashModalInfo);
-          setOpenCash(true);
-        } else if (formData.payment_method === "gcash") {
-          setModalData(gcashModalInfo);
-          setOpenGCash(true);
-        }
+
+        setModalData(cashModalInfo);
+        setOpenCash(true);
       } catch (error) {
         console.log(error);
       }
@@ -217,7 +213,11 @@ const Baptism = () => {
       </h1>
 
       <all.CashPaymentModal open={openCash} data={modalData} />
-      <all.GCashPaymentModal open={openGCash} data={modalData} />
+      <GCashQR
+        open={openGCash}
+        close={() => setOpenGCash(false)}
+        service={"baptism"}
+      />
 
       <Container maxWidth="md" sx={{marginBottom: "50px"}}>
         <form onSubmit={handleSubmit}>
@@ -411,6 +411,33 @@ const Baptism = () => {
               </TextField>
             </Grid>
 
+            {formData.payment_method == "gcash" ? (
+              <Grid item xs={12} sm={12}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}>
+                  <label>GCash Ref No:</label>
+                  <span
+                    onClick={openQR}
+                    className="cursor-pointer text-sm italic text-blue-800 hover:text-blue-400 hover:scale-105 duration-300">
+                    View QR Code
+                  </span>
+                </div>
+                <TextField
+                  name="gcashRefNo"
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  sx={inputstlying}
+                  inputProps={{maxLength: 11}}
+                />
+              </Grid>
+            ) : null}
+
             {/*-------------church married, etc? section---------------- */}
             <Grid item xs={5} sm={3}>
               <FormControl component="fieldset">
@@ -490,7 +517,7 @@ const Baptism = () => {
                 {formData.details.isCivilMarried === "0" && (
                   <Grid item xs={5} sm={3}>
                     <FormControl component="fieldset">
-                      <span style={{color: "red"}}>*</span>
+                      {/* <span style={{color: "red"}}>*</span> */}
                       <label>Live-in?</label>
                       <RadioGroup
                         row

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from "../../../assets/imageHeader.jpg";
 import Header from "../../../components/Header";
@@ -12,9 +12,9 @@ import {
   IconButton,
   FormHelperText,
 } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong, faMinus } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeftLong, faMinus} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
 import config from "../../../config";
@@ -22,8 +22,9 @@ import axios from "axios";
 import generateHash from "../../../utils/GenerateHash";
 import all from "../../../components/PaymentModal";
 import ValidateForm from "../../../utils/Validators";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import GCashQR from "../../../components/GCashQR";
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -40,7 +41,7 @@ const inputstlying = {
 
 const Souls = () => {
   const id = 1;
-  const [schedule, setSchedule] = useState({ slots: ["00:00:00"] });
+  const [schedule, setSchedule] = useState({slots: ["00:00:00"]});
   const dateToday = new Date().toJSON().slice(0, 10);
   const [captchaValue, setCaptchaValue] = useState(null);
   const [modalData, setModalData] = useState({});
@@ -57,11 +58,16 @@ const Souls = () => {
     mass_time: "",
     payment_method: "",
     donation_amount: "",
+    gcashRefNo: "",
     contact_no: "",
     type: "Souls",
     transaction_no: hash,
     service_id: id,
   });
+
+  const openQR = () => {
+    setOpenGCash(true);
+  };
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -83,29 +89,32 @@ const Souls = () => {
     fetchSchedule();
   }, [formData.mass_date]);
 
+  const paymentInfo = {
+    transaction_no: formData.transaction_no,
+    fee: formData.donation_amount,
+    requirements: null,
+    message:
+      formData.payment_method === "cash"
+        ? "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!"
+        : "Your request has been received. You will receive a text once your payment has been verified! Thank you and God bless!",
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let validate = ValidateForm(formData);
     setErrors(validate);
+
+    if (formData.payment_method == "gcash" && !formData.gcashRefNo) {
+      return;
+    }
+
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
-        console.log("success");
         await axios.post(`${config.API}/request/create-intention`, formData);
-        const paymentInfo = {
-          transaction_no: formData.transaction_no,
-          fee: formData.donation_amount,
-          requirements: null,
-          message:
-            "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!",
-        };
         setModalData(paymentInfo);
-        if (formData.payment_method === "cash") {
-          setOpenCash(true);
-        } else {
-          setOpenGCash(true);
-        }
+        setOpenCash(true);
       } catch (err) {
-        console.error("error submitting data", err);
+        console.error("error submitting the form", err);
       }
     }
   };
@@ -117,15 +126,15 @@ const Souls = () => {
       }
       return name;
     });
-    setFormData((prevState) => ({ ...prevState, intention_details: temp }));
+    setFormData((prevState) => ({...prevState, intention_details: temp}));
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData.mass_date);
   };
 
@@ -138,7 +147,7 @@ const Souls = () => {
 
   const removeSoul = (index) => {
     const temp = formData.intention_details.filter((_, i) => i !== index);
-    setFormData({ ...formData, intention_details: temp });
+    setFormData({...formData, intention_details: temp});
   };
 
   const handleCaptchaChange = (value) => {
@@ -153,8 +162,7 @@ const Souls = () => {
       <Header backgroundImage={imageHeader} title="MASS INTENTION - SOULS" />
       <Link
         to="/mass-intention-select"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center"
-      >
+        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <span className="xs:hidden md:flex">Return to Selection</span>
       </Link>
@@ -163,13 +171,13 @@ const Souls = () => {
       </h1>
 
       <all.CashPaymentModal open={openCash} data={modalData} />
-      <all.GCashPaymentModal open={openGCash} data={modalData} />
+      <GCashQR open={openGCash} close={() => setOpenGCash(false)} />
 
-      <Container maxWidth="md" sx={{ marginBottom: "50px" }}>
+      <Container maxWidth="md" sx={{marginBottom: "50px"}}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              <span style={{ color: "red" }}>*</span>
+              <span style={{color: "red"}}>*</span>
               <label>For the souls of:</label>
               {formData.intention_details.map((name, index) => (
                 <TextField
@@ -187,8 +195,7 @@ const Souls = () => {
                       <InputAdornment position="end">
                         <IconButton
                           color="secondary"
-                          onClick={() => removeSoul(index)}
-                        >
+                          onClick={() => removeSoul(index)}>
                           <FontAwesomeIcon
                             icon={faMinus}
                             className="text-sm text-red-700"
@@ -197,22 +204,21 @@ const Souls = () => {
                       </InputAdornment>
                     ),
                   }}
-                  style={{ marginBottom: "1rem" }}
+                  style={{marginBottom: "1rem"}}
                 />
               ))}
               <Button
                 type="button"
                 onClick={addMoreSouls}
                 variant="outlined"
-                sx={{ float: "right" }}
-              >
+                sx={{float: "right"}}>
                 {" "}
                 Add Soul
               </Button>
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <span style={{ color: "red" }}>*</span>
+              <span style={{color: "red"}}>*</span>
               <label>Offered by:</label>
               <TextField
                 fullWidth
@@ -225,11 +231,11 @@ const Souls = () => {
               />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <span style={{ color: "red" }}>*</span>
+              <span style={{color: "red"}}>*</span>
               <label>Mass Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  slotProps={{ textField: { fullWidth: true } }}
+                  slotProps={{textField: {fullWidth: true}}}
                   variant="outlined"
                   disablePast
                   size="small"
@@ -241,13 +247,13 @@ const Souls = () => {
                 />
               </LocalizationProvider>
               {errors.mass_date != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.mass_date}
                 </FormHelperText>
               )}
             </Grid>
             <Grid item xs={12} sm={4}>
-              <span style={{ color: "red" }}>*</span>
+              <span style={{color: "red"}}>*</span>
               <label>Time Slot:</label>
               <TextField
                 fullWidth
@@ -258,8 +264,7 @@ const Souls = () => {
                 name="mass_time"
                 onChange={handleChange}
                 value={formData.mass_time}
-                required
-              >
+                required>
                 {schedule.slots.map((time, index) => (
                   <MenuItem value={time} key={index}>
                     {time}
@@ -268,7 +273,7 @@ const Souls = () => {
               </TextField>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <span style={{ color: "red" }}>*</span>
+              <span style={{color: "red"}}>*</span>
               <label>Contact Number:</label>
               <TextField
                 fullWidth
@@ -277,17 +282,17 @@ const Souls = () => {
                 sx={inputstlying}
                 name="contact_no"
                 onChange={handleChange}
-                inputProps={{ maxLength: 11 }}
+                inputProps={{maxLength: 11}}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
             </Grid>
             <Grid item xs={12} sm={4}>
-              <span style={{ color: "red" }}>*</span>
+              <span style={{color: "red"}}>*</span>
               <label>Payment Method:</label>
               <TextField
                 fullWidth
@@ -298,8 +303,7 @@ const Souls = () => {
                 name="payment_method"
                 onChange={handleChange}
                 value={formData.payment_method}
-                required
-              >
+                required>
                 <MenuItem value="cash">Cash</MenuItem>
                 <MenuItem value="gcash">GCash</MenuItem>
               </TextField>
@@ -316,11 +320,38 @@ const Souls = () => {
                 required
               />
               {errors.amount != null && (
-                <FormHelperText sx={{ color: "red" }}>
+                <FormHelperText sx={{color: "red"}}>
                   {errors.amount}
                 </FormHelperText>
               )}
             </Grid>
+
+            {formData.payment_method == "gcash" ? (
+              <Grid item xs={12} sm={4}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}>
+                  <label>GCash Ref No:</label>
+                  <span
+                    onClick={openQR}
+                    className="cursor-pointer text-sm italic text-blue-800 hover:text-blue-400 hover:scale-105 duration-300">
+                    View QR Code
+                  </span>
+                </div>
+                <TextField
+                  name="gcashRefNo"
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  sx={inputstlying}
+                  inputProps={{maxLength: 11}}
+                />
+              </Grid>
+            ) : null}
           </Grid>
           <div className="mt-[4rem] flex justify-center">
             <ReCAPTCHA
@@ -334,8 +365,7 @@ const Souls = () => {
                 isCaptchaChecked ? "bg-[#355173]" : "bg-[#868686]"
               }`}
               disabled={!isCaptchaChecked}
-              type="submit"
-            >
+              type="submit">
               SUBMIT REQUEST
             </button>
           </div>
