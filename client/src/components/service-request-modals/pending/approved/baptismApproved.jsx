@@ -1,5 +1,5 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -20,8 +20,8 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useEffect, useState} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../../config";
@@ -55,7 +55,7 @@ const modalContentStyle = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -72,11 +72,13 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BaptismApproved = ({open, data, handleClose}) => {
+const BaptismApproved = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [sponsors, setSponsors] = useState([]);
+  const [approver, setApprover] = useState({});
+  const [available, setAvailable] = useState("");
   const [details, setDetails] = useState({});
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
@@ -168,6 +170,22 @@ const BaptismApproved = ({open, data, handleClose}) => {
     }
   };
 
+  const fetchUser = async (id, setApprover) => {
+    try {
+      const response = await axios.get(`${config.API}/user/retrieve`, {
+        params: {
+          id: id,
+        },
+      });
+      console.log(response.data[0]);
+      if (response.status === 200) {
+        setApprover(response.data[0]);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     const fetchPriest = async () => {
       try {
@@ -186,13 +204,36 @@ const BaptismApproved = ({open, data, handleClose}) => {
     fetchService();
     fetchSponsors(data.requestID);
     fetchBaptismDetails(data.requestID);
+    fetchUser(data.user_id, setApprover);
   }, [open, data]);
 
+  const fetchAvailability = async (date, start, end) => {
+    const avail = await axios.get(
+      `${config.API}/priest/retrieve-schedule-venue`,
+      {
+        params: {
+          date: date,
+          start: start,
+          end: end,
+        },
+      }
+    );
+    console.log(avail.data.message);
+    setAvailable(avail.data.message);
+  };
+
   useEffect(() => {
-    console.log(sponsors);
-    console.log(data);
-    console.log(details);
-  }, [data, details]);
+    fetchAvailability(
+      formData.preferred_date,
+      formData.preferred_time,
+      endTime(formData.preferred_time, service.duration)
+    );
+  }, [
+    formData.preferred_date,
+    formData.preferred_time,
+    formData.priest_id,
+    open,
+  ]);
 
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
@@ -204,21 +245,21 @@ const BaptismApproved = ({open, data, handleClose}) => {
   };
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   const handleDetailsChange = (e) => {
-    setDetails({...details, [e.target.name]: e.target.value});
+    setDetails({ ...details, [e.target.name]: e.target.value });
   };
 
   const handleConfirm = async (action) => {
@@ -344,7 +385,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
       <Modal open={open} onClose={handleClose}>
         {formData && sponsors && priests && details && formData ? (
           <Box sx={modalStyle}>
-            <Box sx={{position: "sticky", paddingBottom: "10px"}}>
+            <Box sx={{ position: "sticky", paddingBottom: "10px" }}>
               <Grid container justifyContent={"flex-end"}>
                 <Grid item>
                   <IconButton onClick={handleClose} size="small">
@@ -354,7 +395,8 @@ const BaptismApproved = ({open, data, handleClose}) => {
                 <Grid item sm={12}>
                   <Typography
                     variant="subtitle1"
-                    sx={{textAlign: "center", fontWeight: "bold"}}>
+                    sx={{ textAlign: "center", fontWeight: "bold" }}
+                  >
                     Baptism Request Information
                   </Typography>
                 </Grid>
@@ -425,7 +467,8 @@ const BaptismApproved = ({open, data, handleClose}) => {
                     name="gender"
                     select
                     onChange={handleDetailsChange}
-                    sx={TextFieldStyle}>
+                    sx={TextFieldStyle}
+                  >
                     <MenuItem value="male">Male</MenuItem>
                     <MenuItem value="female">Female</MenuItem>
                   </TextField>
@@ -486,7 +529,10 @@ const BaptismApproved = ({open, data, handleClose}) => {
                           <Typography variant="subtitle1">Catholic?</Typography>
                         </Grid>
                       </Grid>
-                      <Box fullWidth sx={{height: "150px", overflowY: "auto"}}>
+                      <Box
+                        fullWidth
+                        sx={{ height: "150px", overflowY: "auto" }}
+                      >
                         {" "}
                         {/* Ninong */}
                         <Grid container>
@@ -507,7 +553,8 @@ const BaptismApproved = ({open, data, handleClose}) => {
                                   row
                                   defaultValue={godparent.isCatholic}
                                   value={godparent.isCatholic}
-                                  sx={{marginTop: "-7px"}}>
+                                  sx={{ marginTop: "-7px" }}
+                                >
                                   <FormControlLabel
                                     value="1"
                                     control={<Radio />}
@@ -526,12 +573,13 @@ const BaptismApproved = ({open, data, handleClose}) => {
                       </Box>
                     </Grid>
                     <Grid item sm={4}>
-                      <Box fullWidth sx={{height: "40px"}}>
+                      <Box fullWidth sx={{ height: "40px" }}>
                         <Grid container>
                           <Grid item sm={12}>
                             <Typography
                               variant="subtitle1"
-                              sx={{fontWeight: "bold"}}>
+                              sx={{ fontWeight: "bold" }}
+                            >
                               Requirements:
                             </Typography>
                           </Grid>
@@ -539,7 +587,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
                             <FormControlLabel
                               control={<Checkbox />}
                               label={
-                                <Typography sx={{fontSize: "13px"}}>
+                                <Typography sx={{ fontSize: "13px" }}>
                                   Photocopy of Birth Certificate
                                 </Typography>
                               }
@@ -549,7 +597,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
                             <FormControlLabel
                               control={<Checkbox />}
                               label={
-                                <Typography sx={{fontSize: "13px"}}>
+                                <Typography sx={{ fontSize: "13px" }}>
                                   Photocopy of Parent - Marriage Certificate
                                 </Typography>
                               }
@@ -558,7 +606,8 @@ const BaptismApproved = ({open, data, handleClose}) => {
                           <Grid item sm={12}>
                             <Typography
                               variant="subtitle1"
-                              sx={{display: "inline-block"}}>
+                              sx={{ display: "inline-block" }}
+                            >
                               Payment:
                             </Typography>
                             <Typography
@@ -567,7 +616,8 @@ const BaptismApproved = ({open, data, handleClose}) => {
                                 fontWeight: "bold",
                                 display: "inline-block",
                                 marginLeft: "10px",
-                              }}>
+                              }}
+                            >
                               800
                             </Typography>
                           </Grid>
@@ -582,12 +632,14 @@ const BaptismApproved = ({open, data, handleClose}) => {
                             <TextField fullWidth select sx={TextFieldStyle}>
                               <MenuItem
                                 value={"Unpaid"}
-                                sx={{fontWeight: "bold", color: "#950000"}}>
+                                sx={{ fontWeight: "bold", color: "#950000" }}
+                              >
                                 Unpaid
                               </MenuItem>
                               <MenuItem
                                 value={"Paid"}
-                                sx={{fontWeight: "bold", color: "#247E38"}}>
+                                sx={{ fontWeight: "bold", color: "#247E38" }}
+                              >
                                 Paid
                               </MenuItem>
                             </TextField>
@@ -602,7 +654,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
                   <hr className="my-3" />
                 </Grid>
 
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={2.8}>
                   <label>Selected Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -611,7 +663,8 @@ const BaptismApproved = ({open, data, handleClose}) => {
                     sx={TextFieldStyle}
                     onChange={handleChange}
                     select
-                    fullWidth>
+                    fullWidth
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name + " " + priest.last_name}
@@ -619,7 +672,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2.3}>
                   <label>Selected Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -640,7 +693,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2.3}>
                   <label>Selected Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
@@ -660,7 +713,16 @@ const BaptismApproved = ({open, data, handleClose}) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
+                <Grid item xs={12} sm={2.2}>
+                  <label>Church:</label>
+                  <TextField
+                    value={available}
+                    sx={TextFieldStyle}
+                    size="small"
+                    name="priest_id"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
                   <Button
                     onClick={() => handleOpenDialog("reschedule")}
                     sx={{
@@ -669,8 +731,9 @@ const BaptismApproved = ({open, data, handleClose}) => {
                       height: "30px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#578A62"},
-                    }}>
+                      "&:hover": { bgcolor: "#578A62" },
+                    }}
+                  >
                     Reschedule
                   </Button>
                 </Grid>
@@ -694,7 +757,8 @@ const BaptismApproved = ({open, data, handleClose}) => {
                       justifyContent: "center",
                       backgroundColor: "#d1d1d1",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     {data.transaction_no}
                   </Paper>
                 </Grid>
@@ -707,7 +771,8 @@ const BaptismApproved = ({open, data, handleClose}) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}>
+                  }}
+                >
                   <Button
                     onClick={() => handleOpenDialog("update")}
                     sx={{
@@ -717,8 +782,9 @@ const BaptismApproved = ({open, data, handleClose}) => {
                       width: "90px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#F0CA67"},
-                    }}>
+                      "&:hover": { bgcolor: "#F0CA67" },
+                    }}
+                  >
                     UPDATE
                   </Button>
                   <Button
@@ -730,8 +796,9 @@ const BaptismApproved = ({open, data, handleClose}) => {
                       width: "90px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#F05A5A"},
-                    }}>
+                      "&:hover": { bgcolor: "#F05A5A" },
+                    }}
+                  >
                     CANCEL
                   </Button>
                 </Grid>
@@ -756,20 +823,20 @@ const BaptismApproved = ({open, data, handleClose}) => {
                 <Skeleton variant="rectangular" width="100%" height={40} />
               </Grid>
             ))}
-            <Grid item sm={12} sx={{mt: 2}}>
+            <Grid item sm={12} sx={{ mt: 2 }}>
               <Skeleton variant="rectangular" width="30%" height={40} />
             </Grid>
-            <Grid item sm={12} sx={{mt: 1}}>
+            <Grid item sm={12} sx={{ mt: 1 }}>
               <Skeleton variant="text" width="50%" height={30} />
               <Skeleton variant="rectangular" width="100%" height={150} />
             </Grid>
-            <Grid item sm={12} sx={{mt: 2}}>
+            <Grid item sm={12} sx={{ mt: 2 }}>
               <Skeleton variant="rectangular" width="30%" height={40} />
               <Skeleton
                 variant="rectangular"
                 width="30%"
                 height={40}
-                sx={{ml: 2}}
+                sx={{ ml: 2 }}
               />
             </Grid>
           </Grid>

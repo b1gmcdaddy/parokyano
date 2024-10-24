@@ -17,9 +17,9 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CloseIcon from "@mui/icons-material/Close";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import config from "../../../../config";
 import axios from "axios";
@@ -27,7 +27,7 @@ import Skeleton from "@mui/material/Skeleton";
 import sendSMS from "../../../../utils/smsService";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "40px"},
+  "& .MuiInputBase-root": { height: "40px" },
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -44,10 +44,12 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const FuneralMassModalApproved = ({open, data, handleClose}) => {
+const FuneralMassModalApproved = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
+  const [available, setAvailable] = useState("");
   const [service, setService] = useState({});
+  const [approver, setApprover] = useState({});
   const [priests, setPriests] = useState([]);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
@@ -81,6 +83,22 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
     }
   };
 
+  const fetchUser = async (id, setApprover) => {
+    try {
+      const response = await axios.get(`${config.API}/user/retrieve`, {
+        params: {
+          id: id,
+        },
+      });
+      console.log(response.data[0]);
+      if (response.status === 200) {
+        setApprover(response.data[0]);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     const fetchPriest = async () => {
       try {
@@ -97,15 +115,44 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
     };
     fetchPriest();
     fetchService();
+    fetchUser(data.user_id, setApprover);
   }, [open]);
 
+  const fetchAvailability = async (date, start, end) => {
+    const avail = await axios.get(
+      `${config.API}/priest/retrieve-schedule-venue`,
+      {
+        params: {
+          date: date,
+          start: start,
+          end: end,
+        },
+      }
+    );
+    console.log(avail.data.message);
+    setAvailable(avail.data.message);
+  };
+
+  useEffect(() => {
+    fetchAvailability(
+      formData.preferred_date,
+      formData.preferred_time,
+      endTime(formData.preferred_time, service.duration)
+    );
+  }, [
+    formData.preferred_date,
+    formData.preferred_time,
+    formData.priest_id,
+    open,
+  ]);
+
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   useEffect(() => {
@@ -137,8 +184,8 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
   };
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleConfirm = async (action) => {
@@ -268,7 +315,7 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -280,17 +327,18 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {formData && priests ? (
           <>
-            <DialogTitle sx={{m: 0, p: 2, textAlign: "center"}}>
+            <DialogTitle sx={{ m: 0, p: 2, textAlign: "center" }}>
               Funeral Mass Request Information
               <IconButton
                 aria-label="close"
                 onClick={handleClose}
-                sx={{position: "absolute", right: 8, top: 8}}>
+                sx={{ position: "absolute", right: 8, top: 8 }}
+              >
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
-              <Grid container spacing={2} sx={{padding: 3}}>
+              <Grid container spacing={2} sx={{ padding: 3 }}>
                 <Grid item xs={12} sm={12}>
                   <label>Name of Deceased:</label>
                   <TextField
@@ -336,7 +384,7 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                   <hr className="my-3" />
                 </Grid>
 
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <label>Selected Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -344,7 +392,8 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                     name="priest_id"
                     onChange={handleChange}
                     select
-                    fullWidth>
+                    fullWidth
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name + " " + priest.last_name}
@@ -352,7 +401,7 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2.5}>
                   <label>Selected Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -373,7 +422,7 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2.3}>
                   <label>Selected Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
@@ -393,7 +442,16 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
+                <Grid item xs={12} sm={2}>
+                  <label>Church:</label>
+                  <TextField
+                    value={available}
+                    size="small"
+                    name="priest_id"
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
                   <Button
                     onClick={() => handleOpenDialog("reschedule")}
                     sx={{
@@ -402,14 +460,20 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#578A62"},
-                    }}>
+                      "&:hover": { bgcolor: "#578A62" },
+                    }}
+                  >
                     Reschedule
                   </Button>
                 </Grid>
                 <Grid item xs={6}>
-                  <label>Venue:</label>
-                  <TextField fullWidth size="small" disabled />
+                  <label>Approved by:</label>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    disabled
+                    value={approver?.first_name + " " + approver?.last_name}
+                  />
                 </Grid>
                 <Grid item xs={6}>
                   <label>Transaction Number:</label>
@@ -422,7 +486,8 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                       justifyContent: "center",
                       backgroundColor: "#d1d1d1",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     {data.transaction_no}
                   </Paper>
                 </Grid>
@@ -437,7 +502,8 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                   marginTop: "-30px",
                   justifyContent: "center",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <Grid
                   item
                   xs={12}
@@ -446,7 +512,8 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}>
+                  }}
+                >
                   <Button
                     onClick={() => handleOpenDialog("update")}
                     sx={{
@@ -455,8 +522,9 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#A58228"},
-                    }}>
+                      "&:hover": { bgcolor: "#A58228" },
+                    }}
+                  >
                     UPDATE
                   </Button>
 
@@ -469,8 +537,9 @@ const FuneralMassModalApproved = ({open, data, handleClose}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#f44336"},
-                    }}>
+                      "&:hover": { bgcolor: "#f44336" },
+                    }}
+                  >
                     CANCEL
                   </Button>
                 </Grid>

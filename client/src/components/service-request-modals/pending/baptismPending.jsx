@@ -258,6 +258,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
     switch (action) {
       case "approve":
         console.log(formData);
+        const currentUser = JSON.parse(localStorage.getItem("user"));
         try {
           if (
             (formData.payment_status === "paid" && details.birthCert == 1,
@@ -296,8 +297,8 @@ const BaptismPending = ({ open, data, handleClose }) => {
                   val: "approved",
                   col2: "payment_status",
                   val2: "paid",
-                  col3: "preferred_date",
-                  val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                  col3: "user_id",
+                  val3: currentUser.id,
                   col4: "priest_id",
                   val4: formData.priest_id,
                   col5: "requestID",
@@ -349,7 +350,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
           console.log("request updated!");
           axios.post(`${config.API}/logs/create`, {
             activity: `Updated Pending Baptism Request`,
-            user_id: 1,
+            user_id: currentUser.id,
             request_id: data.requestID,
           });
           console.log("logs success!");

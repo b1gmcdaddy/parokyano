@@ -459,7 +459,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
               </div>
             </Grid>
 
-            <Grid item sm={3}>
+            <Grid item sm={3.2}>
               <label>Priest:</label>
               <TextField
                 value={formData.priest_id}
@@ -476,7 +476,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.7}>
               <label>Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -493,7 +493,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.5}>
               <label>Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
@@ -526,7 +526,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
               </Button>
             </Grid>
 
-            <Grid item sm={12}>
+            {/* <Grid item sm={12}>
               <div
                 style={{
                   display: "flex",
@@ -552,9 +552,9 @@ const BlessingPending = ({ open, data, handleClose }) => {
                   style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
-            </Grid>
+            </Grid> */}
 
-            <Grid item sm={3}>
+            {/* <Grid item sm={3}>
               <label>Priest:</label>
               <TextField disabled fullWidth sx={TextFieldStyleDis} />
             </Grid>
@@ -580,7 +580,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
               >
                 CLEAR
               </Button>
-            </Grid>
+            </Grid> */}
 
             <Grid
               item

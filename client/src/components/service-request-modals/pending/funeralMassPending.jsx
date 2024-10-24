@@ -209,6 +209,7 @@ const FuneralMassModalPending = ({ open, data, handleClose }) => {
       case "approve":
         console.log(formData);
         try {
+          const currentUser = JSON.parse(localStorage.getItem("user"));
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
             {
@@ -245,8 +246,8 @@ const FuneralMassModalPending = ({ open, data, handleClose }) => {
                 val: "approved",
                 col2: "payment_status",
                 val2: "paid",
-                col3: "preferred_date",
-                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                col3: "user_id",
+                val3: currentUser.id,
                 col4: "priest_id",
                 val4: formData.priest_id,
                 col5: "requestID",
@@ -298,7 +299,7 @@ const FuneralMassModalPending = ({ open, data, handleClose }) => {
 
             axios.post(`${config.API}/logs/create`, {
               activity: `Updated Funeral Mass Request - Transaction number: ${data.transaction_no}`,
-              user_id: 1,
+              user_id: currentUser.id,
               request_id: data.requestID,
             });
             console.log("logs success!");

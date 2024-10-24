@@ -174,6 +174,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
     switch (action) {
       case "approve":
         console.log(formData);
+        const currentUser = JSON.parse(localStorage.getItem("user"));
         try {
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
@@ -204,8 +205,8 @@ const AnointingPending = ({ open, data, handleClose }) => {
                 val: "approved",
                 col2: "payment_status",
                 val2: "paid",
-                col3: "preferred_date",
-                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                col3: "user_id",
+                val3: currentUser.id,
                 col4: "priest_id",
                 val4: formData.priest_id,
                 col5: "requestID",
@@ -227,7 +228,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
 
             axios.post(`${config.API}/logs/create`, {
               activity: `Approved Anointing for ${formData.first_name} at ${formData.address}`,
-              user_id: 1,
+              user_id: currentUser.id,
               request_id: formData.requestID,
             });
             console.log("logs success!");
@@ -445,7 +446,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               </div>
             </Grid>
 
-            <Grid item sm={3}>
+            <Grid item sm={3.3}>
               <label>Priest:</label>
               <TextField
                 value={formData.priest_id}
@@ -462,7 +463,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.5}>
               <label>Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -479,7 +480,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.5}>
               <label>Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
@@ -512,7 +513,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               </Button>
             </Grid>
 
-            <Grid item sm={12}>
+            {/* <Grid item sm={12}>
               <div
                 style={{
                   display: "flex",
@@ -566,7 +567,7 @@ const AnointingPending = ({ open, data, handleClose }) => {
               >
                 CLEAR
               </Button>
-            </Grid>
+            </Grid> */}
 
             <Grid
               item

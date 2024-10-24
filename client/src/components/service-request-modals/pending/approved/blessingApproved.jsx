@@ -1,5 +1,5 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -19,8 +19,8 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useEffect, useState} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import util from "../../../../utils/DateTimeFormatter";
 import axios from "axios";
@@ -56,7 +56,7 @@ const modalContentStyle = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -73,11 +73,12 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BlessingApproved = ({open, data, handleClose}) => {
+const BlessingApproved = ({ open, data, handleClose }) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
+  const [approver, setApprover] = useState({});
   const [service, setService] = useState({});
   const [priests, setPriests] = useState([]);
   const [error, setError] = useState({});
@@ -115,34 +116,21 @@ const BlessingApproved = ({open, data, handleClose}) => {
     }
   }, [open, data]);
 
-  // const refetchData = async () => {
-  //   try {
-  //     const response = await axios.get(`${config.API}/request/retrieve`, {
-  //       params: {
-  //         col: "requestID",
-  //         val: data.requestID,
-  //       },
-  //     });
-  //     setFormData({
-  //       type: response.data.type,
-  //       first_name: response.data.first_name,
-  //       address: response.data.address,
-  //       requested_by: response.data.requested_by,
-  //       contact_no: response.data.contact_no,
-  //       preferred_date: dayjs(response.data.preferred_date).format(
-  //         "YYYY-MM-DD"
-  //       ),
-  //       preferred_time: response.data.preferred_time,
-  //       priest_id: response.data.priest_id,
-  //       isParishioner: response.data.isParishioner,
-  //       transaction_no: response.data.transaction_no,
-  //       payment_status: response.data.payment_status,
-  //       service_id: response.data.service_id,
-  //     });
-  //   } catch (err) {
-  //     console.error("error retrieving request", err);
-  //   }
-  // };
+  const fetchUser = async (id, setApprover) => {
+    try {
+      const response = await axios.get(`${config.API}/user/retrieve`, {
+        params: {
+          id: id,
+        },
+      });
+      console.log(response.data[0]);
+      if (response.status === 200) {
+        setApprover(response.data[0]);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const fetchService = async () => {
     try {
@@ -177,6 +165,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
     };
     fetchService();
     fetchPriest();
+    fetchUser(data.user_id, setApprover);
   }, [open]);
 
   useEffect(() => {
@@ -204,18 +193,18 @@ const BlessingApproved = ({open, data, handleClose}) => {
   };
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const isOtherSelected = radioValue === "others";
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   const handleConfirm = async (action) => {
@@ -345,7 +334,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -357,7 +346,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
       <Modal open={open} onClose={handleClose}>
         {formData && priests && formData ? (
           <Box sx={modalStyle}>
-            <Box sx={{position: "sticky", paddingBottom: "10px"}}>
+            <Box sx={{ position: "sticky", paddingBottom: "10px" }}>
               <Grid container justifyContent={"flex-end"}>
                 <Grid item>
                   <IconButton onClick={handleClose} size="small">
@@ -367,7 +356,8 @@ const BlessingApproved = ({open, data, handleClose}) => {
                 <Grid item sm={12}>
                   <Typography
                     variant="subtitle1"
-                    sx={{textAlign: "center", fontWeight: "bold"}}>
+                    sx={{ textAlign: "center", fontWeight: "bold" }}
+                  >
                     Blessing Request Information
                   </Typography>
                 </Grid>
@@ -385,10 +375,11 @@ const BlessingApproved = ({open, data, handleClose}) => {
                     name="type"
                     onChange={(e) => {
                       handleRadioChange(e);
-                      setFormData({...formData, type: e.target.value});
+                      setFormData({ ...formData, type: e.target.value });
                     }}
-                    sx={{marginTop: "-5px"}}
-                    value={formData.type}>
+                    sx={{ marginTop: "-5px" }}
+                    value={formData.type}
+                  >
                     <FormControlLabel
                       value="House Blessing"
                       control={<Radio size="small" />}
@@ -410,7 +401,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
                       name="otherValue"
                       onChange={handleOtherChange}
                       sx={{
-                        "& .MuiInputBase-root": {height: "30px"},
+                        "& .MuiInputBase-root": { height: "30px" },
                         opacity: isOtherSelected ? 1 : 0.4,
                         marginTop: "5px",
                       }}
@@ -481,7 +472,8 @@ const BlessingApproved = ({open, data, handleClose}) => {
                     name="priest_id"
                     onChange={handleChange}
                     select
-                    fullWidth>
+                    fullWidth
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name + " " + priest.last_name}
@@ -530,7 +522,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
+                <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
                   <Button
                     onClick={() => handleOpenDialog("reschedule")}
                     sx={{
@@ -539,14 +531,20 @@ const BlessingApproved = ({open, data, handleClose}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#578A62"},
-                    }}>
+                      "&:hover": { bgcolor: "#578A62" },
+                    }}
+                  >
                     Reschedule
                   </Button>
                 </Grid>
                 <Grid item xs={6}>
-                  <label>Venue:</label>
-                  <TextField fullWidth size="small" disabled />
+                  <label>Approved by:</label>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    disabled
+                    value={approver?.first_name + " " + approver?.last_name}
+                  />
                 </Grid>
                 <Grid item xs={6}>
                   <label>Transaction Number:</label>
@@ -559,7 +557,8 @@ const BlessingApproved = ({open, data, handleClose}) => {
                       justifyContent: "center",
                       backgroundColor: "#d1d1d1",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     {data.transaction_no}
                   </Paper>
                 </Grid>
@@ -572,7 +571,8 @@ const BlessingApproved = ({open, data, handleClose}) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}>
+                  }}
+                >
                   <Button
                     onClick={() => handleOpenDialog("update")}
                     sx={{
@@ -582,8 +582,9 @@ const BlessingApproved = ({open, data, handleClose}) => {
                       width: "90px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#F0CA67"},
-                    }}>
+                      "&:hover": { bgcolor: "#F0CA67" },
+                    }}
+                  >
                     UPDATE
                   </Button>
                   <Button
@@ -595,8 +596,9 @@ const BlessingApproved = ({open, data, handleClose}) => {
                       width: "90px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#F05A5A"},
-                    }}>
+                      "&:hover": { bgcolor: "#F05A5A" },
+                    }}
+                  >
                     CANCEL
                   </Button>
                 </Grid>
@@ -621,20 +623,20 @@ const BlessingApproved = ({open, data, handleClose}) => {
                 <Skeleton variant="rectangular" width="100%" height={40} />
               </Grid>
             ))}
-            <Grid item sm={12} sx={{mt: 2}}>
+            <Grid item sm={12} sx={{ mt: 2 }}>
               <Skeleton variant="rectangular" width="30%" height={40} />
             </Grid>
-            <Grid item sm={12} sx={{mt: 1}}>
+            <Grid item sm={12} sx={{ mt: 1 }}>
               <Skeleton variant="text" width="50%" height={30} />
               <Skeleton variant="rectangular" width="100%" height={150} />
             </Grid>
-            <Grid item sm={12} sx={{mt: 2}}>
+            <Grid item sm={12} sx={{ mt: 2 }}>
               <Skeleton variant="rectangular" width="30%" height={40} />
               <Skeleton
                 variant="rectangular"
                 width="30%"
                 height={40}
-                sx={{ml: 2}}
+                sx={{ ml: 2 }}
               />
             </Grid>
           </Grid>

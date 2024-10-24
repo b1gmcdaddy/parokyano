@@ -173,6 +173,7 @@ const WakePending = ({ open, data, handleClose }) => {
       case "approve":
         console.log(formData);
         try {
+          const currentUser = JSON.parse(localStorage.getItem("user"));
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
             {
@@ -201,8 +202,8 @@ const WakePending = ({ open, data, handleClose }) => {
                 val: "approved",
                 col2: "payment_status",
                 val2: "paid",
-                col3: "preferred_date",
-                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                col3: "user_id",
+                val3: currentUser.id,
                 col4: "priest_id",
                 val4: formData.priest_id,
                 col5: "requestID",
@@ -221,7 +222,7 @@ const WakePending = ({ open, data, handleClose }) => {
             console.log("priest sched success!");
             axios.post(`${config.API}/logs/create`, {
               activity: `Approved Wake Request for ${formData.first_name}`,
-              user_id: 1,
+              user_id: currentUser.id,
               request_id: formData.requestID,
             });
             console.log("logs success!");
@@ -394,7 +395,7 @@ const WakePending = ({ open, data, handleClose }) => {
               </div>
             </Grid>
 
-            <Grid item sm={2.5}>
+            <Grid item sm={3.3}>
               <label>Priest:</label>
               <TextField
                 value={formData.priest_id}
@@ -411,7 +412,7 @@ const WakePending = ({ open, data, handleClose }) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.5}>
               <label>Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -428,7 +429,7 @@ const WakePending = ({ open, data, handleClose }) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item sm={2.7}>
+            <Grid item sm={2.5}>
               <label>Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
@@ -461,7 +462,7 @@ const WakePending = ({ open, data, handleClose }) => {
               </Button>
             </Grid>
 
-            <Grid item sm={12}>
+            {/* <Grid item sm={12}>
               <div
                 style={{
                   display: "flex",
@@ -519,7 +520,7 @@ const WakePending = ({ open, data, handleClose }) => {
               >
                 CLEAR
               </Button>
-            </Grid>
+            </Grid> */}
 
             <Grid
               item
