@@ -1,5 +1,5 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -21,9 +21,9 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
-import {Skeleton} from "@mui/material";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState, useEffect} from "react";
+import { Skeleton } from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../config";
@@ -43,6 +43,7 @@ const style = {
   px: 4,
   py: 3,
   maxHeight: "97vh",
+  width: "100%",
   overflowY: "auto",
   scrollbarWidth: "none",
   "&::-webkit-scrollbar": {
@@ -51,15 +52,16 @@ const style = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
 };
 
 const TextFieldStyleDis = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
   bgcolor: "#D9D9D9",
 };
 
 const endTime = (timeString, hoursToAdd) => {
+  console.log(timeString, hoursToAdd);
   const [hours, minutes, seconds] = timeString.split(":").map(Number);
   let newHours = hours + Math.floor(hoursToAdd);
   let newMinutes = minutes + (hoursToAdd % 1) * 60;
@@ -73,33 +75,35 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BaptismPending = ({open, data, handleClose}) => {
+const BaptismPending = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
-  const [service, setService] = useState({});
+  const [service, setService] = useState(null);
   const [error, setError] = useState(null);
   const [errorOpen, setErrorOpen] = useState(false);
+  const [available, setAvailable] = useState("");
   const [sponsors, setSponsors] = useState([]);
   const [details, setDetails] = useState({});
   const [priests, setPriests] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   const handleDetailsChange = (e) => {
-    setDetails({...details, [e.target.name]: e.target.value});
+    setDetails({ ...details, [e.target.name]: e.target.value });
   };
 
   const handleOpenDialog = (action) => {
@@ -117,7 +121,6 @@ const BaptismPending = ({open, data, handleClose}) => {
           },
         }
       );
-      console.log(response.data);
       setService(response.data);
     } catch (err) {
       console.error(err);
@@ -145,6 +148,7 @@ const BaptismPending = ({open, data, handleClose}) => {
           reqID: id,
         },
       });
+      console.log(response.data);
       setDetails({
         birthCert: response.data.result[0].birthCert,
         parent_marriageCert: response.data.result[0].parent_marriageCert,
@@ -159,57 +163,89 @@ const BaptismPending = ({open, data, handleClose}) => {
     }
   };
 
-  useEffect(() => {
-    const fetchPriest = async () => {
-      try {
-        const response = await axios.get(`${config.API}/priest/retrieve`, {
-          params: {
-            col: "status",
-            val: "active",
-          },
-        });
-        setPriests(response.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchPriest();
-    fetchService();
-    fetchSponsors(data.requestID);
-    fetchBaptismDetails(data.requestID);
-  }, [open, data]);
+  const fetchPriest = async () => {
+    try {
+      const response = await axios.get(`${config.API}/priest/retrieve`, {
+        params: {
+          col: "status",
+          val: "active",
+        },
+      });
+      setPriests(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // useEffect(() => {
+
+  // }, [open, data]);
 
   useEffect(() => {
+    setIsLoading(true);
     if (open && data) {
-      setFormData({
-        // requestID: data.requestID,
-        first_name: data.first_name || "",
-        middle_name: data.middle_name || "",
-        last_name: data.last_name || "",
-        birth_date: dayjs(data.birth_date).format("YYYY-MM-DD"),
-        birth_place: data.birth_place || "",
-        // gender: details?.gender || "",
-        father_name: data.father_name || "",
-        // father_age: details?.father_age || "",
-        mother_name: data.mother_name || "",
-        // mother_age: details?.mother_age || "",
-        payment_method: data.payment_method || "",
-        preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
-        preferred_time: data.preferred_time || "",
-        priest_id: data.priest_id || "",
-        payment_status: data.payment_status || "",
-        transaction_no: data.transaction_no || "",
-        // birthCert: details?.birthCert,
-        // parent_marriageCert: details?.parent_marriageCert,
+      new Promise((resolve) => {
+        setFormData({
+          // requestID: data.requestID,
+          first_name: data.first_name || "",
+          middle_name: data.middle_name || "",
+          last_name: data.last_name || "",
+          birth_date: dayjs(data.birth_date).format("YYYY-MM-DD"),
+          birth_place: data.birth_place || "",
+          // gender: details?.gender || "",
+          father_name: data.father_name || "",
+          // father_age: details?.father_age || "",
+          mother_name: data.mother_name || "",
+          // mother_age: details?.mother_age || "",
+          payment_method: data.payment_method || "",
+          preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
+          preferred_time: data.preferred_time || "",
+          priest_id: data.priest_id || "",
+          payment_status: data.payment_status || "",
+          transaction_no: data.transaction_no || "",
+          gcashRefNo: data.gcashRefNo || "",
+        });
+        fetchPriest();
+        fetchService();
+        fetchSponsors(data.requestID);
+        fetchBaptismDetails(data.requestID);
+        resolve();
       });
     }
-  }, [open, data, details]);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, "500");
+  }, [open, data]);
+
+  const fetchAvailability = async (date, start, end) => {
+    const avail = await axios.get(
+      `${config.API}/priest/retrieve-schedule-venue`,
+      {
+        params: {
+          date: date,
+          start: start,
+          end: end,
+        },
+      }
+    );
+    console.log(avail.data.message);
+    setAvailable(avail.data.message);
+  };
 
   useEffect(() => {
-    console.log(details);
-    console.log(data);
-    console.log(sponsors);
-  }, [details, data, sponsors]);
+    if (formData && service)
+      fetchAvailability(
+        formData.preferred_date,
+        formData.preferred_time,
+        endTime(formData.preferred_time, service.duration)
+      );
+  }, [
+    formData?.preferred_date,
+    formData?.preferred_time,
+    formData?.priest_id,
+    service,
+    open,
+  ]);
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
@@ -286,6 +322,7 @@ const BaptismPending = ({open, data, handleClose}) => {
               console.log("logs success!");
               // sendSMS(data.service_id, formData, "approve");
               handleClose();
+              window.location.reload();
             }
           } else {
             setError({
@@ -299,11 +336,11 @@ const BaptismPending = ({open, data, handleClose}) => {
         }
         break;
       case "update":
-        const res = await axios.put(`${config.API}/request/update-bulk`, {
+        const response = await axios.put(`${config.API}/request/update-bulk`, {
           formData,
           id: data.requestID,
         });
-        if (Object.keys(response.data).length > 0 || response.data != "") {
+        if (response.status !== 200) {
           setError({
             message: response.data.message,
             details: response.data?.details,
@@ -317,6 +354,7 @@ const BaptismPending = ({open, data, handleClose}) => {
           });
           console.log("logs success!");
           handleClose();
+          window.location.reload();
         }
         break;
       case "cancel":
@@ -345,7 +383,9 @@ const BaptismPending = ({open, data, handleClose}) => {
                 request_id: data.requestID,
               });
               console.log("logs success!");
+              window.location.reload();
             });
+
           handleClose();
           break;
         } catch (err) {
@@ -366,7 +406,7 @@ const BaptismPending = ({open, data, handleClose}) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -377,7 +417,7 @@ const BaptismPending = ({open, data, handleClose}) => {
 
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          {formData && details && sponsors && priests && formData ? (
+          {!isLoading ? (
             <>
               <Grid container justifyContent={"flex-end"}>
                 <Grid item>
@@ -390,7 +430,8 @@ const BaptismPending = ({open, data, handleClose}) => {
                 <Grid item sm={12}>
                   <Typography
                     variant="subtitle1"
-                    sx={{textAlign: "center", fontWeight: "bold"}}>
+                    sx={{ textAlign: "center", fontWeight: "bold" }}
+                  >
                     Baptism Request Information
                   </Typography>
                 </Grid>
@@ -464,7 +505,8 @@ const BaptismPending = ({open, data, handleClose}) => {
                     name="gender"
                     select
                     onChange={handleDetailsChange}
-                    sx={TextFieldStyle}>
+                    sx={TextFieldStyle}
+                  >
                     <MenuItem value="male">Male</MenuItem>
                     <MenuItem value="female">Female</MenuItem>
                   </TextField>
@@ -527,7 +569,10 @@ const BaptismPending = ({open, data, handleClose}) => {
                           <Typography variant="subtitle1">Catholic?</Typography>
                         </Grid>
                       </Grid>
-                      <Box fullWidth sx={{height: "175px", overflowY: "auto"}}>
+                      <Box
+                        fullWidth
+                        sx={{ height: "175px", overflowY: "auto" }}
+                      >
                         {" "}
                         {/* Ninong */}
                         <Grid container>
@@ -549,8 +594,9 @@ const BaptismPending = ({open, data, handleClose}) => {
                                   <RadioGroup
                                     row
                                     defaultValue={godparent.isCatholic}
-                                    sx={{marginTop: "-7px"}}
-                                    value={godparent.isCatholic}>
+                                    sx={{ marginTop: "-7px" }}
+                                    value={godparent.isCatholic}
+                                  >
                                     <FormControlLabel
                                       value="1"
                                       control={<Radio />}
@@ -569,12 +615,13 @@ const BaptismPending = ({open, data, handleClose}) => {
                       </Box>
                     </Grid>
                     <Grid item sm={4}>
-                      <Box fullWidth sx={{height: "175px"}}>
+                      <Box fullWidth sx={{ height: "175px" }}>
                         <Grid container>
                           <Grid item sm={12}>
                             <Typography
                               variant="subtitle1"
-                              sx={{fontWeight: "bold"}}>
+                              sx={{ fontWeight: "bold" }}
+                            >
                               Requirements:
                             </Typography>
                           </Grid>
@@ -595,7 +642,7 @@ const BaptismPending = ({open, data, handleClose}) => {
                                 />
                               }
                               label={
-                                <Typography sx={{fontSize: "13px"}}>
+                                <Typography sx={{ fontSize: "13px" }}>
                                   Photocopy of Birth Certificate
                                 </Typography>
                               }
@@ -619,7 +666,7 @@ const BaptismPending = ({open, data, handleClose}) => {
                                 />
                               }
                               label={
-                                <Typography sx={{fontSize: "13px"}}>
+                                <Typography sx={{ fontSize: "13px" }}>
                                   Photocopy of Parent - Marriage Certificate
                                 </Typography>
                               }
@@ -628,7 +675,8 @@ const BaptismPending = ({open, data, handleClose}) => {
                           <Grid item sm={12}>
                             <Typography
                               variant="subtitle1"
-                              sx={{display: "inline-block"}}>
+                              sx={{ display: "inline-block" }}
+                            >
                               Payment:
                             </Typography>
                             <Typography
@@ -637,7 +685,8 @@ const BaptismPending = ({open, data, handleClose}) => {
                                 fontWeight: "bold",
                                 display: "inline-block",
                                 marginLeft: "10px",
-                              }}>
+                              }}
+                            >
                               800
                             </Typography>
                           </Grid>
@@ -648,7 +697,8 @@ const BaptismPending = ({open, data, handleClose}) => {
                               onChange={handleChange}
                               value={formData.payment_method}
                               sx={TextFieldStyle}
-                              select>
+                              select
+                            >
                               <MenuItem value="cash">Cash</MenuItem>
                               <MenuItem value="gcash">Gcash</MenuItem>
                             </TextField>
@@ -660,11 +710,24 @@ const BaptismPending = ({open, data, handleClose}) => {
                               onChange={handleChange}
                               fullWidth
                               select
-                              sx={TextFieldStyle}>
+                              sx={TextFieldStyle}
+                            >
                               <MenuItem value="unpaid">unpaid</MenuItem>
                               <MenuItem value="paid">paid</MenuItem>
                             </TextField>
                           </Grid>
+                          {formData && formData.payment_method === "gcash" && (
+                            <Grid item sm={12} sx={{ mt: 1 }}>
+                              <TextField
+                                value={`gcash ref no. ${formData.gcashRefNo}`}
+                                name="gcashRefNo"
+                                onChange={handleChange}
+                                fullWidth
+                                readonly
+                                sx={TextFieldStyleDis}
+                              />
+                            </Grid>
+                          )}
                         </Grid>
                       </Box>
                     </Grid>
@@ -677,7 +740,8 @@ const BaptismPending = ({open, data, handleClose}) => {
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
-                    }}>
+                    }}
+                  >
                     <div
                       style={{
                         flex: 0.1,
@@ -691,7 +755,8 @@ const BaptismPending = ({open, data, handleClose}) => {
                           width: "80px",
                           textAlign: "center",
                           fontWeight: "bold",
-                        }}>
+                        }}
+                      >
                         Preferred
                       </p>
                     </div>
@@ -705,7 +770,7 @@ const BaptismPending = ({open, data, handleClose}) => {
                   </div>
                 </Grid>
 
-                <Grid item sm={2.5}>
+                <Grid item sm={2.7}>
                   <label>Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -713,7 +778,8 @@ const BaptismPending = ({open, data, handleClose}) => {
                     name="priest_id"
                     select
                     onChange={handleChange}
-                    sx={TextFieldStyle}>
+                    sx={TextFieldStyle}
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name + " " + priest.last_name}
@@ -722,7 +788,7 @@ const BaptismPending = ({open, data, handleClose}) => {
                   </TextField>
                 </Grid>
 
-                <Grid item sm={3}>
+                <Grid item sm={2.4}>
                   <label>Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -744,7 +810,7 @@ const BaptismPending = ({open, data, handleClose}) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item sm={2.7}>
+                <Grid item sm={2.2}>
                   <label>Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
@@ -767,8 +833,17 @@ const BaptismPending = ({open, data, handleClose}) => {
                   </LocalizationProvider>
                 </Grid>
                 <Grid item sm={1.8}>
-                  <label>Venue:</label>
-                  <TextField disabled fullWidth sx={TextFieldStyle} />
+                  <label>Church:</label>
+                  <TextField
+                    fullWidth
+                    sx={{
+                      "& .MuiInputBase-root": { height: "30px" },
+                      bgcolor:
+                        available === "Available" ? "#AFE1AF" : "#d67373",
+                    }}
+                    value={available}
+                    readonly
+                  />
                 </Grid>
                 <Grid item sm={2}>
                   <Button
@@ -780,74 +855,11 @@ const BaptismPending = ({open, data, handleClose}) => {
                       height: "30px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#4C74A5"},
-                    }}>
+                      "&:hover": { bgcolor: "#4C74A5" },
+                    }}
+                    disabled={available === "Unavailable"}
+                  >
                     Assign
-                  </Button>
-                </Grid>
-
-                <Grid item sm={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}>
-                    <div
-                      style={{
-                        flex: 0.1,
-                        height: "1px",
-                        backgroundColor: "black",
-                      }}
-                    />
-                    <div>
-                      <p
-                        style={{
-                          width: "80px",
-                          textAlign: "center",
-                          fontWeight: "bold",
-                        }}>
-                        Assigned
-                      </p>
-                    </div>
-                    <div
-                      style={{
-                        flex: 1,
-                        height: "1px",
-                        backgroundColor: "black",
-                      }}
-                    />
-                  </div>
-                </Grid>
-
-                <Grid item sm={2.5}>
-                  <label>Priest:</label>
-                  <TextField disabled fullWidth sx={TextFieldStyleDis} />
-                </Grid>
-                <Grid item sm={3}>
-                  <label>Date:</label>
-                  <TextField disabled fullWidth sx={TextFieldStyleDis} />
-                </Grid>
-                <Grid item sm={2.7}>
-                  <label>Time:</label>
-                  <TextField disabled fullWidth sx={TextFieldStyleDis} />
-                </Grid>
-                <Grid item sm={1.8}>
-                  <label>Venue:</label>
-                  <TextField disabled fullWidth sx={TextFieldStyleDis} />
-                </Grid>
-                <Grid item sm={2}>
-                  <Button
-                    fullWidth
-                    sx={{
-                      bgcolor: "#BBB6B6",
-                      marginTop: "24px",
-                      height: "30px",
-                      fontWeight: "bold",
-                      color: "#355173",
-                      "&:hover": {bgcolor: "#D3CECE"},
-                    }}>
-                    CLEAR
                   </Button>
                 </Grid>
 
@@ -859,11 +871,12 @@ const BaptismPending = ({open, data, handleClose}) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}>
-                  <Typography variant="body2" sx={{marginRight: "5px"}}>
+                  }}
+                >
+                  <Typography variant="body2" sx={{ marginRight: "5px" }}>
                     Transaction Code:
                   </Typography>
-                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     {formData.transaction_no}
                   </Typography>
                 </Grid>
@@ -876,7 +889,8 @@ const BaptismPending = ({open, data, handleClose}) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}>
+                  }}
+                >
                   <Button
                     onClick={() => handleOpenDialog("update")}
                     sx={{
@@ -886,8 +900,10 @@ const BaptismPending = ({open, data, handleClose}) => {
                       width: "90px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#F0CA67"},
-                    }}>
+                      "&:hover": { bgcolor: "#F0CA67" },
+                    }}
+                    disabled={available === "Unavailable"}
+                  >
                     UPDATE
                   </Button>
                   <Button
@@ -899,8 +915,9 @@ const BaptismPending = ({open, data, handleClose}) => {
                       width: "90px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#F05A5A"},
-                    }}>
+                      "&:hover": { bgcolor: "#F05A5A" },
+                    }}
+                  >
                     CANCEL
                   </Button>
                 </Grid>
@@ -924,20 +941,20 @@ const BaptismPending = ({open, data, handleClose}) => {
                   <Skeleton variant="rectangular" width="100%" height={40} />
                 </Grid>
               ))}
-              <Grid item sm={12} sx={{mt: 2}}>
+              <Grid item sm={12} sx={{ mt: 2 }}>
                 <Skeleton variant="rectangular" width="30%" height={40} />
               </Grid>
-              <Grid item sm={12} sx={{mt: 1}}>
+              <Grid item sm={12} sx={{ mt: 1 }}>
                 <Skeleton variant="text" width="50%" height={30} />
                 <Skeleton variant="rectangular" width="100%" height={150} />
               </Grid>
-              <Grid item sm={12} sx={{mt: 2}}>
+              <Grid item sm={12} sx={{ mt: 2 }}>
                 <Skeleton variant="rectangular" width="30%" height={40} />
                 <Skeleton
                   variant="rectangular"
                   width="30%"
                   height={40}
-                  sx={{ml: 2}}
+                  sx={{ ml: 2 }}
                 />
               </Grid>
             </Grid>

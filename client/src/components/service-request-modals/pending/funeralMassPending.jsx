@@ -1,5 +1,5 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -16,8 +16,8 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState, useEffect} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
 import axios from "axios";
@@ -39,11 +39,11 @@ const style = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
 };
 
 const TextFieldStyleDis = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
   bgcolor: "#D9D9D9",
 };
 
@@ -61,12 +61,14 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const FuneralMassModalPending = ({open, data, handleClose}) => {
+const FuneralMassModalPending = ({ open, data, handleClose }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
   const [errorOpen, setErrorOpen] = useState(false);
+  const [available, setAvailable] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
     first_name: "", // in the case of outside mass, this is the field for the celebration/celebrator
@@ -83,36 +85,16 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
     type: "",
   });
 
-  useEffect(() => {
-    if (open && data) {
-      setFormData({
-        requestID: data.requestID,
-        first_name: data.first_name, // in the case of outside mass, this is the field for the celebration/celebrator
-        address: null,
-        contact_no: data.contact_no,
-        requested_by: data.requested_by, // this is the field for the contact person's name
-        relationship: data.relationship,
-        preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
-        preferred_time: data.preferred_time,
-        priest_id: data.priest_id, // value is the  priest id
-        isParishioner: data.isParishioner,
-        transaction_no: data.transaction_no,
-        service_id: data.service_id,
-        type: null,
-      });
-    }
-  }, [open, data]);
-
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
     setDialogOpen(true);
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0];
-  };
+  // const formatDate = (dateString) => {
+  //   if (!dateString) return "";
+  //   const date = new Date(dateString);
+  //   return date.toISOString().split("T")[0];
+  // };
 
   const fetchService = async () => {
     try {
@@ -131,41 +113,93 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
     }
   };
 
+  const fetchPriest = async () => {
+    try {
+      const response = await axios.get(`${config.API}/priest/retrieve`, {
+        params: {
+          col: "status",
+          val: "active",
+        },
+      });
+      setPriests(response.data);
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    const fetchPriest = async () => {
-      try {
-        const response = await axios.get(`${config.API}/priest/retrieve`, {
-          params: {
-            col: "status",
-            val: "active",
-          },
+    setIsLoading(true);
+    if (open && data) {
+      new Promise((resolve) => {
+        setFormData({
+          requestID: data.requestID,
+          first_name: data.first_name, // in the case of outside mass, this is the field for the celebration/celebrator
+          address: null,
+          contact_no: data.contact_no,
+          requested_by: data.requested_by, // this is the field for the contact person's name
+          relationship: data.relationship,
+          preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
+          preferred_time: data.preferred_time,
+          priest_id: data.priest_id, // value is the  priest id
+          isParishioner: data.isParishioner,
+          transaction_no: data.transaction_no,
+          service_id: data.service_id,
+          type: null,
         });
-        setPriests(response.data);
-        console.log(response.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchPriest();
-    fetchService();
-  }, []);
+        fetchPriest();
+        fetchService();
+        resolve();
+      });
+    }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, "500");
+  }, [open, data]);
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
-    console.log(formData.preferred_date);
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
+
+  const fetchAvailability = async (date, start, end) => {
+    const avail = await axios.get(
+      `${config.API}/priest/retrieve-schedule-venue`,
+      {
+        params: {
+          date: date,
+          start: start,
+          end: end,
+        },
+      }
+    );
+    console.log(avail.data.message);
+    setAvailable(avail.data.message);
+  };
+
+  useEffect(() => {
+    fetchAvailability(
+      formData.preferred_date,
+      formData.preferred_time,
+      endTime(formData.preferred_time, service.duration)
+    );
+  }, [
+    formData.preferred_date,
+    formData.preferred_time,
+    formData.priest_id,
+    open,
+  ]);
 
   {
     /** for sameple if success, ari butang backend**/
@@ -192,7 +226,19 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
               message: response.data.message,
               details: response.data?.details,
             });
+            return;
           } else {
+            if (available === "Unavailable") {
+              setError({
+                message: available,
+                details: "Church is unavailable",
+              });
+              return;
+            }
+            axios.put(`${config.API}/request/update-bulk`, {
+              formData,
+              id: data.requestID,
+            });
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
@@ -208,7 +254,6 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
               },
             });
             console.log("request success!");
-
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Funeral mass for ${formData.first_name}`,
@@ -224,9 +269,10 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
               request_id: formData.requestID,
             });
             console.log("logs success!");
-            // sendSMS(data.service_id, formData, "approve");
+            sendSMS(data.service_id, formData, "approve");
             handleClose();
           }
+          window.location.reload();
         } catch (err) {
           setError({
             message: err.response.data.message,
@@ -236,28 +282,32 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
         }
         break;
       case "update": // UPDATE PENDING REQUEST
-        const res = await axios.put(`${config.API}/request/update-bulk`, {
-          formData,
-          id: data.requestID,
-        });
-        if (res.status !== 200) {
-          console.log("error updating request");
-          setError({
-            message: res.data.message,
-            details: res.data?.details,
+        try {
+          const res = await axios.put(`${config.API}/request/update-bulk`, {
+            formData,
+            id: data.requestID,
           });
-        } else {
-          console.log("request updated!");
+          if (res.status !== 200) {
+            console.log("error updating request");
+            setError({
+              message: res.data.message,
+              details: res.data?.details,
+            });
+          } else {
+            console.log("request updated!");
 
-          axios.post(`${config.API}/logs/create`, {
-            activity: `Updated Funeral Mass Request - Transaction number: ${data.transaction_no}`,
-            user_id: 1,
-            request_id: data.requestID,
-          });
-          console.log("logs success!");
-          // refetchData();
+            axios.post(`${config.API}/logs/create`, {
+              activity: `Updated Funeral Mass Request - Transaction number: ${data.transaction_no}`,
+              user_id: 1,
+              request_id: data.requestID,
+            });
+            console.log("logs success!");
+            // refetchData();
+          }
+          window.location.reload();
+        } catch (err) {
+          console.error(err);
         }
-        window.location.reload();
         break;
       case "cancel": // CANCEL PENDING REQUEST
         await axios.put(`${config.API}/request/update`, null, {
@@ -291,7 +341,7 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -313,7 +363,8 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
+                sx={{ textAlign: "center", fontWeight: "bold" }}
+              >
                 Funeral Mass Request Information
               </Typography>
             </Grid>
@@ -375,9 +426,10 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
                 />
                 <div>
                   <p
@@ -385,17 +437,18 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                       width: "80px",
                       textAlign: "center",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     Preferred
                   </p>
                 </div>
                 <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
+                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
                 />
               </div>
             </Grid>
 
-            <Grid item sm={2.5}>
+            <Grid item sm={2.7}>
               <label>Priest:</label>
               <TextField
                 value={formData.priest_id}
@@ -403,7 +456,8 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                 onChange={handleChange}
                 select
                 fullWidth
-                sx={TextFieldStyle}>
+                sx={TextFieldStyle}
+              >
                 {priests.map((priest) => (
                   <MenuItem key={priest.priestID} value={priest.priestID}>
                     {priest.first_name + " " + priest.last_name}
@@ -411,7 +465,7 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.5}>
               <label>Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -427,7 +481,7 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item sm={2.7}>
+            <Grid item sm={2.2}>
               <label>Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
@@ -443,6 +497,18 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                 />
               </LocalizationProvider>
             </Grid>
+            <Grid item sm={1.8}>
+              <label>Church:</label>
+              <TextField
+                fullWidth
+                sx={{
+                  "& .MuiInputBase-root": { height: "30px" },
+                  bgcolor: available === "Available" ? "#AFE1AF" : "#d67373",
+                }}
+                value={available}
+                readonly
+              />
+            </Grid>
             <Grid item sm={2}>
               <Button
                 onClick={() => handleOpenDialog("approve")}
@@ -453,66 +519,11 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#4C74A5"},
-                }}>
+                  "&:hover": { bgcolor: "#4C74A5" },
+                }}
+                disabled={available === "Unavailable"}
+              >
                 Assign
-              </Button>
-            </Grid>
-
-            <Grid item sm={12}>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}>
-                <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
-                />
-                <div>
-                  <p
-                    style={{
-                      width: "80px",
-                      textAlign: "center",
-                      fontWeight: "bold",
-                    }}>
-                    Assigned
-                  </p>
-                </div>
-                <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
-                />
-              </div>
-            </Grid>
-
-            <Grid item sm={2.5}>
-              <label>Priest:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis} />
-            </Grid>
-            <Grid item sm={3}>
-              <label>Date:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis} />
-            </Grid>
-            <Grid item sm={2.7}>
-              <label>Time:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis} />
-            </Grid>
-            <Grid item sm={1.8}>
-              <label>Venue:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis} />
-            </Grid>
-            <Grid item sm={2}>
-              <Button
-                fullWidth
-                sx={{
-                  bgcolor: "#BBB6B6",
-                  marginTop: "24px",
-                  height: "30px",
-                  fontWeight: "bold",
-                  color: "#355173",
-                  "&:hover": {bgcolor: "#D3CECE"},
-                }}>
-                CLEAR
               </Button>
             </Grid>
 
@@ -524,11 +535,12 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
-              <Typography variant="body2" sx={{marginRight: "5px"}}>
+              }}
+            >
+              <Typography variant="body2" sx={{ marginRight: "5px" }}>
                 Transaction Code:
               </Typography>
-              <Typography variant="body2" sx={{fontWeight: "bold"}}>
+              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                 {formData.transaction_no}
               </Typography>
             </Grid>
@@ -541,7 +553,8 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -551,8 +564,10 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F0CA67"},
-                }}>
+                  "&:hover": { bgcolor: "#F0CA67" },
+                }}
+                disabled={available === "Unavailable"}
+              >
                 UPDATE
               </Button>
               <Button
@@ -564,8 +579,9 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F05A5A"},
-                }}>
+                  "&:hover": { bgcolor: "#F05A5A" },
+                }}
+              >
                 CANCEL
               </Button>
             </Grid>

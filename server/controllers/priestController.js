@@ -6,7 +6,7 @@ dayjs.extend(customParseFormat);
 
 // get priests
 const retrieveByParams = (req, res) => {
-  const {col, val} = req.query;
+  const { col, val } = req.query;
 
   db.query(`SELECT * FROM priest where ?? = ?`, [col, val], (err, result) => {
     if (err) {
@@ -35,8 +35,8 @@ const retrieveSchedules = (req, res) => {
 };
 
 const retrieveScheduleByParams = (req, res) => {
-  const {priest, date, start, end} = req.query;
-  console.log("sched: ", req.query);
+  const { priest, date, start, end } = req.query;
+
   db.query(
     `SELECT s.*, p.first_name, p.last_name 
   FROM priestschedule s 
@@ -58,7 +58,7 @@ const retrieveScheduleByParams = (req, res) => {
         });
       }
       if (result.length > 0) {
-        console.log(result[0]);
+        console.log("priest sched found!", result[0]);
         let startTimeFormatted = dayjs(result[0].start_time, "HH:mm:ss").format(
           "hh:mm A"
         );
@@ -69,7 +69,7 @@ const retrieveScheduleByParams = (req, res) => {
 
         const message = `${priestName} has a scheduled service from ${startTimeFormatted} to ${endTimeFormatted}`;
         const details = "Service: " + result[0].activity;
-        return res.status(409).send({message, details});
+        return res.status(409).send({ message, details });
       } else {
         return res.status(200).send();
       }
@@ -77,10 +77,59 @@ const retrieveScheduleByParams = (req, res) => {
   );
 };
 
+const retrieveScheduleVenue = (req, res) => {
+  const { date, start, end } = req.query;
+
+  const query = `
+    SELECT s.*
+    FROM priestschedule s
+    JOIN request r ON r.requestID = s.request_id
+    WHERE r.service_id IN (5, 6, 7, 11)
+      AND s.date = ?
+      AND (
+        (s.start_time < ? AND s.end_time > ?) OR
+        (s.start_time >= ? AND s.start_time < ?) OR
+        (s.end_time > ? AND s.end_time <= ?)
+      )
+  `;
+
+  const params = [
+    date.substring(0, 10), // Ensures the date format matches
+    start,
+    end, // Checking overlap scenario 1
+    start,
+    end, // Checking overlap scenario 2
+    start,
+    end, // Checking overlap scenario 3
+  ];
+
+  db.query(query, params, (err, result) => {
+    if (err) {
+      console.error("error retrieving from scheds db", err);
+      return res.status(500).json({
+        error: "server error",
+        status: "500",
+      });
+    }
+    if (result.length > 0) {
+      console.log("venue sched found!", result[0]);
+      return res.status(200).send({ message: `Unavailable` });
+    } else {
+      return res.status(200).send({ message: "Available" });
+    }
+  });
+};
+
 // create priest
 const createPriest = (req, res) => {
-  const {first_name, last_name, contact_no, year_started, year_ended, status} =
-    req.body;
+  const {
+    first_name,
+    last_name,
+    contact_no,
+    year_started,
+    year_ended,
+    status,
+  } = req.body;
 
   db.query(
     `INSERT INTO priest (first_name, last_name, contact_no, year_started, year_ended, status) VALUES (?, ?, ?, ?, ?, ?)`,
@@ -97,7 +146,7 @@ const createPriest = (req, res) => {
 
 // create priest schedule
 const createSchedule = (req, res) => {
-  const {date, activity, start_time, end_time, priest_id, request_id} =
+  const { date, activity, start_time, end_time, priest_id, request_id } =
     req.body;
 
   db.query(
@@ -115,8 +164,14 @@ const createSchedule = (req, res) => {
 
 // edit priest
 const editPriest = (req, res) => {
-  const {first_name, last_name, contact_no, year_started, year_ended, status} =
-    req.body;
+  const {
+    first_name,
+    last_name,
+    contact_no,
+    year_started,
+    year_ended,
+    status,
+  } = req.body;
   const priestID = req.params.priestID;
 
   db.query(
@@ -142,7 +197,7 @@ const editPriest = (req, res) => {
 
 // edit priests' sched
 const editSchedule = (req, res) => {
-  const {date, activity, start_time, end_time, priest_id} = req.body;
+  const { date, activity, start_time, end_time, priest_id } = req.body;
   const scheduleID = req.params.scheduleID;
 
   db.query(
@@ -158,18 +213,18 @@ const editSchedule = (req, res) => {
       }
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({message: "Schedule not found"});
+        return res.status(404).json({ message: "Schedule not found" });
       }
 
       return res
         .status(200)
-        .json({message: "Priest schedule updated successfully."});
+        .json({ message: "Priest schedule updated successfully." });
     }
   );
 };
 
 const deleteSchedule2 = (req, res) => {
-  const {col, val} = req.query;
+  const { col, val } = req.query;
 
   db.query(
     `DELETE FROM priestschedule WHERE ${col} = ?`,
@@ -183,15 +238,15 @@ const deleteSchedule2 = (req, res) => {
         });
       }
       if (result.affectedRows === 0) {
-        return res.status(404).json({error: "priest sched not found"});
+        return res.status(404).json({ error: "priest sched not found" });
       }
-      return res.status(200).json({message: "pruest sched deleted"});
+      return res.status(200).json({ message: "pruest sched deleted" });
     }
   );
 };
 
 const reschedule = (req, res) => {
-  const {date, activity, start_time, end_time, priest_id, request_id} =
+  const { date, activity, start_time, end_time, priest_id, request_id } =
     req.body;
 
   // Step 1: Delete the old schedule by request_id
@@ -204,7 +259,7 @@ const reschedule = (req, res) => {
         return db.rollback(() => {
           res
             .status(500)
-            .json({error: "Server error during schedule deletion"});
+            .json({ error: "Server error during schedule deletion" });
         });
       }
       // Step 2: Insert the new schedule
@@ -219,7 +274,7 @@ const reschedule = (req, res) => {
           // Send success response
           return res
             .status(200)
-            .json({message: "Schedule rescheduled successfully"});
+            .json({ message: "Schedule rescheduled successfully" });
         }
       );
     }
@@ -230,6 +285,7 @@ module.exports = {
   retrieveByParams,
   retrieveSchedules,
   retrieveScheduleByParams,
+  retrieveScheduleVenue,
   createPriest,
   createSchedule,
   editPriest,
