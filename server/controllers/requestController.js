@@ -817,7 +817,6 @@ const approveDynamic = (req, res) => {
   }
 };
 
-// dynamic version..
 const searchCertRecords = (req, res) => {
   const {
     first_name,
@@ -830,77 +829,86 @@ const searchCertRecords = (req, res) => {
   } = req.query;
 
   const serviceId = req.query.service_id;
+  let query = "";
+  const queryParams = [];
 
-  let query = `SELECT r.* FROM request r WHERE r.service_id = ? AND r.status = ?`;
-  const queryParams = [serviceId, status];
+  if (parseInt(serviceId) === 14) {
+    // for confirmation records
+    query = `
+      SELECT c.* 
+      FROM confirmation c 
+      WHERE c.child_name LIKE ? 
+      OR c.father_name LIKE ? 
+      OR c.mother_name LIKE ?`;
 
-  switch (parseInt(serviceId)) {
-    case 5: // baptismal
-      if (
-        first_name ||
-        last_name ||
-        contact_no ||
-        mother_name ||
-        father_name ||
-        birth_place
-      ) {
-        query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
-        queryParams.push(
-          `%${first_name || ""}%`,
-          `%${last_name || ""}%`,
-          `%${contact_no || ""}%`,
-          `%${mother_name || ""}%`,
-          `%${father_name || ""}%`,
-          `%${birth_place || ""}%`
-        );
-      }
-      break;
+    queryParams.push(
+      `%${first_name || ""}%`,
+      `%${father_name || ""}%`,
+      `%${mother_name || ""}%`
+    );
+  } else {
+    query = `SELECT r.* FROM request r WHERE r.service_id = ? AND r.status = ?`;
+    queryParams.push(serviceId, status);
 
-    case 7: // for wedding
-      if (first_name || last_name || contact_no) {
-        query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ?)`;
-        queryParams.push(
-          `%${first_name || ""}%`,
-          `%${last_name || ""}%`,
-          `%${contact_no || ""}%`
-        );
-      }
-      break;
+    switch (parseInt(serviceId)) {
+      case 5: // Baptismal
+        if (
+          first_name ||
+          last_name ||
+          contact_no ||
+          mother_name ||
+          father_name ||
+          birth_place
+        ) {
+          query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
+          queryParams.push(
+            `%${first_name || ""}%`,
+            `%${last_name || ""}%`,
+            `%${contact_no || ""}%`,
+            `%${mother_name || ""}%`,
+            `%${father_name || ""}%`,
+            `%${birth_place || ""}%`
+          );
+        }
+        break;
 
-    //for confirmation
-    // case 3: // Service 3 requires birth_place
-    //   if (birth_place) {
-    //     query += ` AND r.birth_place LIKE ?`;
-    //     queryParams.push(`%${birth_place || ""}%`);
-    //   }
-    //   break;
+      case 7: // Wedding
+        if (first_name || last_name || contact_no) {
+          query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ?)`;
+          queryParams.push(
+            `%${first_name || ""}%`,
+            `%${last_name || ""}%`,
+            `%${contact_no || ""}%`
+          );
+        }
+        break;
 
-    default: // Default case to handle other service_ids
-      if (
-        first_name ||
-        last_name ||
-        contact_no ||
-        mother_name ||
-        father_name ||
-        birth_place
-      ) {
-        query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
-        queryParams.push(
-          `%${first_name || ""}%`,
-          `%${last_name || ""}%`,
-          `%${contact_no || ""}%`,
-          `%${mother_name || ""}%`,
-          `%${father_name || ""}%`,
-          `%${birth_place || ""}%`
-        );
-      }
-      break;
+      default: // Other service_ids
+        if (
+          first_name ||
+          last_name ||
+          contact_no ||
+          mother_name ||
+          father_name ||
+          birth_place
+        ) {
+          query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
+          queryParams.push(
+            `%${first_name || ""}%`,
+            `%${last_name || ""}%`,
+            `%${contact_no || ""}%`,
+            `%${mother_name || ""}%`,
+            `%${father_name || ""}%`,
+            `%${birth_place || ""}%`
+          );
+        }
+        break;
+    }
   }
-
   db.query(query, queryParams, (err, result) => {
     if (err) {
-      console.error("error retrieving matching records", err);
-      return res.status(500).json({error: "error retrieving matching records"});
+      console.error("Error retrieving matching records", err);
+      return res.status(500).json({error: "Error retrieving matching records"});
     }
     res.status(200).json({result});
   });

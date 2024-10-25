@@ -21,11 +21,25 @@ import sendSMS from "../../utils/smsService";
 
 const SearchCertRecords = ({open, data, close}) => {
   const [certType, setCertType] = useState(null);
+  const [confirmationData, setConfirmationData] = useState([]);
+  const [confirmationID, setConfirmationID] = useState(null);
   const [records, setRecords] = useState([]);
   const [openCompareModal, setOpenCompareModal] = useState(false);
   const [recordData, setRecordData] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
+
+  // const fetchConfirmation = async (confID) => {
+  //   try {
+  //     const response = await axios.get(`${config.API}/confirmation/retrieve`, {
+  //       params: {confID},
+  //     });
+  //     setConfirmationData(response.data.result);
+  //   } catch (err) {
+  //     console.error("Error fetching confirmation data", err);
+  //     setError("Failed to retrieve confirmation record");
+  //   }
+  // };
 
   useEffect(() => {
     const searchRecords = async () => {
@@ -33,23 +47,33 @@ const SearchCertRecords = ({open, data, close}) => {
         const res = await axios.get(`${config.API}/request/search-records`, {
           params: {
             service_id:
-              data.service_id === 3 ? 5 : data.service_id === 4 ? 7 : null,
+              data.service_id === 3
+                ? 5
+                : data.service_id === 4
+                ? 7
+                : data.service_id === 2
+                ? 14
+                : null,
             first_name: data.first_name || "",
             last_name: data.last_name || "",
             contact_no: data.contact_no || "",
             mother_name: data.mother_name || "",
             father_name: data.father_name || "",
             birth_place: data.birth_place || "",
-            status: "pending", //pending for testing purposes (change to 'finished' later)..
+            status: "pending",
           },
         });
         setRecords(res.data.result);
+
         console.log(res.data.result);
       } catch (err) {
-        console.error("error retrieving matching records", err);
+        console.error("Error retrieving matching records", err);
       }
     };
-    searchRecords();
+    if (data.service_id) {
+      searchRecords();
+    }
+
     console.log(data);
   }, [open, data]);
 
