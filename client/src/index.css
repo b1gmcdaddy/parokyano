@@ -15,5 +15,24 @@
   color: white;
 }
 
+@font-face {
+  font-family: 'Dharma Gothic';
+  src: url('../src/assets/fonts/DharmaGothicC-Heavy.woff2') format('woff2')
+}
+
+@font-face {
+  font-family: 'Palatino';
+  src: url('../src/assets/fonts/PalatinoNova-Regular.woff2') format('woff2')
+}
+
+@font-face {
+  font-family: 'Artegra';
+  src: url('../src/assets/fonts/ArtegraSans-ExtraBold.woff2') format('woff2')
+}
+
+@font-face {
+  font-family: 'Cursiva';
+  src: url('../src/assets/fonts/monotype-corsiva-italic.woff2') format('woff2')
+}
 
   
