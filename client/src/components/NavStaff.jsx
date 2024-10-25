@@ -197,7 +197,15 @@ const NavStaff = (props) => {
           ))}
       </List>
 
-      <Box justifyContent="center" sx={{ position: "fixed", bottom: "1em" }}>
+      <Box
+        justifyContent="center"
+        sx={{
+          position: "flex",
+          paddingTop: "20px",
+          bottom: "1em",
+          backgroundColor: "rgb(15 23 42)",
+        }}
+      >
         <List>
           <ListItem
             sx={{

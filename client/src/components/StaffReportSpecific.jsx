@@ -29,6 +29,33 @@ const StaffReportSpecific = ({ startDate, endDate, category }) => {
   const [cancelled, setCancelled] = useState(null);
   const [pending, setPending] = useState(null);
 
+  let serviceType =
+    category == 1
+      ? "Mass Intention"
+      : category == 2
+      ? "Confirmation Certificate"
+      : category == 3
+      ? "Baptismal Certificate"
+      : category == 4
+      ? "Marriage Certificate"
+      : category == 5 || category == 6
+      ? "Baptism"
+      : category == 7
+      ? "Wedding"
+      : category == 9
+      ? "Wake Mass"
+      : category == 10
+      ? "Outside Mass"
+      : category == 11
+      ? "Funeral Mass"
+      : category == 12
+      ? "Anointing"
+      : category == 13
+      ? "Blessing"
+      : "";
+
+  console.log(serviceType);
+
   const getSummaryReport = async () => {
     console.log("clicked!");
     try {
@@ -90,7 +117,7 @@ const StaffReportSpecific = ({ startDate, endDate, category }) => {
                     textAlign: "center",
                   }}
                 >
-                  {category}
+                  {serviceType}
                 </TableCell>
               </TableRow>
             </TableHead>

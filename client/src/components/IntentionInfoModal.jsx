@@ -81,7 +81,7 @@ const SoulsInfoModal = ({ open, data, close }) => {
       }
       alert("updated succesfully");
       // sendSMS(data.service_id, data, "approve");
-      window.location.reload;
+      window.location.reload();
       close();
     } catch (err) {
       console.error(err);
@@ -458,7 +458,7 @@ const PetitionInfoModal = ({ open, data, close }) => {
         });
       }
       alert("updated succesfully");
-      window.location.reload;
+      window.location.reload();
       // sendSMS(data.service_id, formData, "approve");
       close();
     } catch (err) {
