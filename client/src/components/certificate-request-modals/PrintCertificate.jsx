@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Button,
-  TextField,
   Box,
   Container,
   Dialog,
   DialogContent,
   Grid,
-  Select,
-  MenuItem,
   Typography,
   DialogActions,
 } from "@mui/material";
@@ -19,34 +16,145 @@ import { faPhone } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import config from "../../config";
 import ReactToPrint from "react-to-print";
-import dayjs from "dayjs";
 import logo from "../../assets/logoCert.png"
 import confirmationSaint from "../../assets/confirmationSaint.jpg"
-
-const godparents = [
-  "Clyde Joseph Noob",
-  "Carl Dave Barrera",
-  "Jolony Tangpuz",
-  "Carl Joseph Noob",
-  "Clyde Joseph Noob",
-  "Carl Dave Barrera",
-  "Jolony Tangpuz",
-  "Carl Joseph Noob",
-];
-
-const sponsors = [
-  "Clyde Joseph Noob",
-  "Carl Dave Barrera",
-  "Jolony Tangpuz",
-  "Carl Joseph Noob",
-  "Clyde Joseph Noob",
-  "Carl Dave Barrera",
-  "Jolony Tangpuz",
-  "Carl Joseph Noob",
-];
+import util from "../../utils/DateTimeFormatter"
 
 const PrintCertificate = ({ open, data, close }) => {
+  const [sponsors, setSponsors] = useState([]);
+  const [priests, setPriests] = useState([]);
+  const dateToday = new Date().toJSON().slice(0, 10);
   const componentRef = useRef();
+  const [CertData, setCertData] = useState({
+    full_name: "",
+    birth_day: "",
+    birth_month: "",
+    birth_year: "",
+    birth_place: "",
+    preffered_day: "",
+    preffered_month: "",
+    preffered_year: "",
+    data_issue: "",
+    father_name: "",
+    mother_name: "",
+    book_no: "",
+    line_no: "",
+    page_no: "",
+    OR_no: "",
+    purpose: "",
+    transaction_no: "",
+    service_id: "",
+    priest_id: "",
+    request_id: "",
+  });
+
+  useEffect(() => {
+    if (open && data) {
+      setCertData({
+        full_name: data.first_name + " " + data.middle_name + " " + data.last_name,
+        birth_day: "",
+        birth_month: "",
+        birth_year: "",
+        preffered_day: "",
+        preffered_month: "",
+        preffered_year: "",
+        birth_place: data.birth_place,
+        data_issue: formatDate(dateToday),
+        father_name: data.father_name,
+        mother_name: data.mother_name,
+        book_no: data.details.book_no,
+        line_no: data.details.line_no,
+        page_no: data.details.page_no,
+        OR_no: data.details.OR_no,
+        purpose: data.purpose,
+        transaction_no: data.transaction_no,
+        service_id: data.service_id,
+        priest_id: data.priest_id,
+        request_id: data.requestID,
+      });
+    }
+    BirthDayFormatter(data.birth_date);
+    BaptismDayFormatter(data.preferred_date)
+    console.log(data);
+  }, [open, data]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
+  const BirthDayFormatter = (dateString) => {
+    const date = new Date(dateString);
+
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const day = date.getUTCDate();
+    const month = monthNames[date.getUTCMonth()]; 
+    const year = date.getUTCFullYear();
+  
+    setCertData((prevData) => ({
+      ...prevData,
+      birth_day: day,
+      birth_month: month,
+      birth_year: year,
+    }));
+  };
+
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPriest();
+    fetchSponsors(CertData.request_id);
+  }, [open, data]);
+
+  const fetchSponsors = async (id) => {
+    try {
+      const response = await axios.get(`${config.API}/sponsor/retrieve`, {
+        params: {
+          reqID: id,
+        },
+      });
+      setSponsors(response.data.result);
+      return;
+    } catch (err) {
+      console.error("error retrieving sponsors", err);
+    }
+  };
+
+  const BaptismDayFormatter = (dateString) => {
+    const date = new Date(dateString);
+
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const day = date.getUTCDate();
+    const month = monthNames[date.getUTCMonth()]; 
+    const year = date.getUTCFullYear();
+  
+    setCertData((prevData) => ({
+      ...prevData,
+      preffered_day: day,
+      preffered_month: month,
+      preffered_year: year,
+    }));
+  };
 
 const renderCertificateContainer = () => {
     switch (data.service_id) {
@@ -111,13 +219,13 @@ const renderCertificateContainer = () => {
                 <Typography sx={{fontSize: '18px', lineHeight: '1', letterSpacing: 1, fontWeight: 'bold', textAlign: 'center'}}>This is to certify that</Typography>
               </Grid>
               <Grid item sm={12} sx={{marginTop: '10px'}}>
-                <Typography sx={{fontSize: '20px', lineHeight: '1', letterSpacing: 1, fontWeight: 'bold', textAlign: 'center', textDecoration: "underline"}}>Carl Dave Barrera</Typography>
+                <Typography sx={{fontSize: '20px', lineHeight: '1', letterSpacing: 1, fontWeight: 'bold', textAlign: 'center', textDecoration: "underline"}}>{CertData.full_name}</Typography>
               </Grid>
 
               <Grid item sm={12} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1,fontWeight: 'regular', textAlign: 'justify'}}>
-                  Son/daughter of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>Richar Barrera</span> and <span style={{textDecoration: "underline", fontWeight: 'bold'}}>Serina Barrera</span> was, CONFIRMED on 
-                  the <span style={{textDecoration: "underline", fontWeight: 'bold'}}>27</span> day of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>March</span> in the year of our Lord <span style={{textDecoration: "underline", fontWeight: 'bold'}}>2013</span> <span style={{fontStyle: 'italic'}}>according to the Rites of the 
+                  Son/daughter of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.father_name}</span> and <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.mother_name}</span> was, CONFIRMED on 
+                  the <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.preffered_day}</span> day of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.preffered_month}</span> in the year of our Lord <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.preffered_year}</span> <span style={{fontStyle: 'italic'}}>according to the Rites of the 
                   <span style={{fontWeight: 'bold'}}>Holy Roman Catholic Church.</span></span> 
                 </Typography>
               </Grid>
@@ -125,7 +233,15 @@ const renderCertificateContainer = () => {
               <Grid item sm={12} sx={{marginTop: '10px'}}>
                 <Box sx={{marginLeft: '40px'}}>
                   <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1,fontWeight: 'regular', textAlign: 'justify'}}>
-                    Minister: <span style={{fontWeight: 'bold'}}>Father Peter</span>
+                    Minister: <span style={{fontWeight: 'bold'}}>{
+                      priests.find(
+                        (priest) => priest.priestID === CertData.priest_id
+                      )?.first_name +
+                      " " +
+                      priests.find(
+                        (priest) => priest.priestID === CertData.priest_id
+                      )?.last_name
+                    }</span>
                   </Typography>
                   <Box sx={{display: 'flex', alignItems: 'flex-start' }}>
                     <Typography
@@ -141,7 +257,7 @@ const renderCertificateContainer = () => {
                       Sponsors:
                     </Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                      {godparents.map((godparent, index) => (
+                      {sponsors.map((sponsor, index) => (
                         <Typography
                           key={index}
                           sx={{
@@ -153,7 +269,7 @@ const renderCertificateContainer = () => {
                             marginRight: '10px',
                           }}
                         >
-                          {godparent},
+                          {sponsor.name},
                         </Typography>
                       ))}
                     </Box>
@@ -163,22 +279,22 @@ const renderCertificateContainer = () => {
 
               <Grid item sm={12} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  CONFIRMATION Registry Bk. No: 12 Page No. 14 Line No. 34
+                  CONFIRMATION Registry Bk. No: {CertData.book_no} Page No. {CertData.page_no} Line No. {CertData.line_no}
                 </Typography>
               </Grid>
               <Grid item sm={12} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  Date of issue: <span style={{textDecoration: 'underline'}}>October 27, 2024</span>
+                  Date of issue: <span style={{textDecoration: 'underline'}}>{util.formatDate(CertData.data_issue)}</span>
                 </Typography>
               </Grid>
               <Grid item sm={6} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  O.R No. <span style={{textDecoration: 'underline'}}>Ambot unsa ni</span>
+                  O.R No. <span style={{textDecoration: 'underline'}}>{CertData.OR_no}</span>
                 </Typography>
               </Grid>
               <Grid item sm={6} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  Purpose: <span style={{textDecoration: 'underline'}}>Marriage</span>
+                  Purpose: <span style={{textDecoration: 'underline'}}>{CertData.purpose}</span>
                 </Typography>
               </Grid>
             </Grid>
@@ -232,23 +348,31 @@ const renderCertificateContainer = () => {
                 <Typography sx={{fontSize: '25px', lineHeight: '1', letterSpacing: 0, fontWeight: 'bold', textAlign: 'center'}}>This is to certify that</Typography>
               </Grid>
               <Grid item sm={12} sx={{marginTop: '10px'}}>
-                <Typography sx={{fontSize: '30px', lineHeight: '1', letterSpacing: 1, fontWeight: 'bold', textAlign: 'center', textDecoration: "underline"}}>Carl Dave Barrera</Typography>
+                <Typography sx={{fontSize: '30px', lineHeight: '1', letterSpacing: 1, fontWeight: 'bold', textAlign: 'center', textDecoration: "underline"}}>{CertData.full_name}</Typography>
               </Grid>
 
               <Grid item sm={12} sx={{marginTop: '20px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1,fontWeight: 'regular', textAlign: 'justify'}}>
-                  born in <span style={{textDecoration: "underline", fontWeight: 'bold'}}>Mandaue City</span> on the <span style={{textDecoration: "underline", fontWeight: 'bold'}}>28</span> day 
-                  of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>December</span> year of our Lord <span style={{textDecoration: "underline", fontWeight: 'bold'}}>2001</span>
-                  . Legitimate child of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>Richard Barrera</span> and <span style={{textDecoration: "underline", fontWeight: 'bold'}}>Serina Barrera</span> was solemnly 
-                  baptized on the <span style={{textDecoration: "underline", fontWeight: 'bold'}}>27</span> day of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>April</span> in the year of our 
-                  Lord <span style={{textDecoration: "underline", fontWeight: 'bold'}}>2002</span>, according to the Rites of the Holy Roman Catholic Church.
+                  born in <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.birth_place}</span> on the <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.birth_day}</span> day 
+                  of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.birth_month}</span> year of our Lord <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.birth_year}</span>
+                  . Legitimate child of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.father_name}</span> and <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.mother_name}</span> was solemnly 
+                  baptized on the <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.preffered_day}</span> day of <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.preffered_month}</span> in the year of our 
+                  Lord <span style={{textDecoration: "underline", fontWeight: 'bold'}}>{CertData.preffered_year}</span>, according to the Rites of the Holy Roman Catholic Church.
                 </Typography>
               </Grid>
 
               <Grid item sm={12} sx={{marginTop: '10px'}}>
                 <Box sx={{marginLeft: '40px'}}>
                   <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1,fontWeight: 'regular', textAlign: 'justify'}}>
-                    Minister of Baptism: <span style={{fontWeight: 'bold'}}>Father Peter</span>
+                    Minister of Baptism: <span style={{fontWeight: 'bold'}}>{
+                      priests.find(
+                        (priest) => priest.priestID === CertData.priest_id
+                      )?.first_name +
+                      " " +
+                      priests.find(
+                        (priest) => priest.priestID === CertData.priest_id
+                      )?.last_name
+                    }</span>
                   </Typography>
                   <Box sx={{display: 'flex', alignItems: 'flex-start' }}>
                     <Typography
@@ -276,7 +400,7 @@ const renderCertificateContainer = () => {
                             marginRight: '10px',
                           }}
                         >
-                          {sponsor},
+                          {sponsor.name},
                         </Typography>
                       ))}
                     </Box>
@@ -286,34 +410,34 @@ const renderCertificateContainer = () => {
 
               <Grid item sm={6} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  Registry Bk. No: <span style={{textDecoration: 'underline'}}>10</span>
+                  Registry Bk. No: <span style={{textDecoration: 'underline'}}>{CertData.book_no}</span>
                 </Typography>
               </Grid>
               <Grid item sm={6} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  Date of issue: <span style={{textDecoration: 'underline'}}>October 25, 2024</span>
-                </Typography>
-              </Grid>
-
-              <Grid item sm={6} sx={{marginTop: '10px'}}>
-                <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  Page No. <span style={{textDecoration: 'underline'}}>12</span>
-                </Typography>
-              </Grid>
-              <Grid item sm={6} sx={{marginTop: '10px'}}>
-                <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  Line No. <span style={{textDecoration: 'underline'}}>8</span>
+                  Date of issue: <span style={{textDecoration: 'underline'}}>{util.formatDate(CertData.data_issue)}</span>
                 </Typography>
               </Grid>
 
               <Grid item sm={6} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  O.R No. <span style={{textDecoration: 'underline'}}>Ambot unsa ni</span>
+                  Page No. <span style={{textDecoration: 'underline'}}>{CertData.page_no}</span>
                 </Typography>
               </Grid>
               <Grid item sm={6} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  Purpose: <span style={{textDecoration: 'underline'}}>Marriage</span>
+                  Line No. <span style={{textDecoration: 'underline'}}>{CertData.line_no}</span>
+                </Typography>
+              </Grid>
+
+              <Grid item sm={6} sx={{marginTop: '10px'}}>
+                <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
+                  O.R No. <span style={{textDecoration: 'underline'}}>{CertData.OR_no}</span>
+                </Typography>
+              </Grid>
+              <Grid item sm={6} sx={{marginTop: '10px'}}>
+                <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
+                  Purpose: <span style={{textDecoration: 'underline'}}>{CertData.purpose}</span>
                 </Typography>
               </Grid>
             </Grid>
