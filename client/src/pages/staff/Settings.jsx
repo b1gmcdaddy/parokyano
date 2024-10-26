@@ -16,9 +16,7 @@ import {
   TableHead,
   Divider,
   Modal,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
+  MenuItem
 } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
@@ -35,10 +33,6 @@ import util from "../../utils/DateTimeFormatter";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers";
-import generateHash from "../../utils/GenerateHash";
-import all from "../../components/PaymentModal";
-import ValidateForm from "../../utils/Validators";
-import { DefaultCopyField } from "@eisberg-labs/mui-copy-field";
 
 const modalStyle = {
   position: "absolute",
@@ -110,33 +104,43 @@ const Settings = () => {
   const [open, setOpen] = useState(false);
   const [transacNoModal, setOpenTransac] = useState(false);
   const handleOpen = () => setOpen(true);
-  const id = 2;
-  const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
-  const [serviceInfo, setServiceInfo] = useState({});
   const [errors, setErrors] = useState({});
+  const [priests, setPriests] = useState([]);
 
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
     last_name: "",
-    birth_date: null,
-    birth_place: "",
-    contact_no: "",
     father_name: "",
     mother_name: "",
-    spouse_name: null,
-    preferred_date: null,
+    officiating_priest: "",
+    confirmation_date: "",
     archive_info: {
       book_no: "",
       page_no: "",
       line_no: "",
+      sponsor: ""
     },
-    service_id: id,
-    transaction_no: hash,
-    date_requested: dateToday,
-    purpose: "",
   });
+
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+        console.log(response.data); 
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchPriest();
+  }, []);
 
   const handleClose = (event, reason) => {
     if (reason === "backdropClick") {
@@ -226,26 +230,6 @@ const Settings = () => {
   };
 
   //Confirmation Modal
-  useEffect(() => {
-    const fetchServiceInfo = async () => {
-      try {
-        const response = await axios.get(
-          `${config.API}/service/retrieveByParams`,
-          {
-            params: {
-              id: id,
-            },
-          }
-        );
-        setServiceInfo(response.data);
-        console.log(response.data);
-      } catch (err) {
-        console.error("error retrieving service info from server", err);
-      }
-    };
-    fetchServiceInfo();
-  }, []);
-
   // event handlers
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -268,22 +252,12 @@ const Settings = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const validate = ValidateForm(formData);
-    setErrors(validate);
-    console.log(validate);
     console.log(formData);
-    if (Object.keys(validate).length == 0 && validate.constructor == Object) {
-      try {
-        axios.post(`${config.API}/request/create-certificate`, formData);
-        //axios.post(`${config.API}/logs/create`, {
-        //  activity: `Added a Confirmation Certificate Request - Transaction number: ${formData.transaction_no}`,
-        //  user_id: 1,
-        //  request_id: formData.requestID,
-        //});
-        setOpenTransac(true);
-      } catch (err) {
-        console.error("error submitting data", err);
-      }
+    try {
+      axios.post(`${config.API}/confirmation/add-record`, formData);
+      setOpenTransac(true);
+    } catch (err) {
+      console.error("error submitting data", err);
     }
   };
 
@@ -327,7 +301,7 @@ const Settings = () => {
                       "&:hover": { bgcolor: "#4C74A5" },
                     }}
                   >
-                    ADD CONFIRMATION REQUEST
+                    ADD CONFIRMATION RECORD
                   </Button>
                   <Button
                     onClick={() => handleChangeView("changePassword")}
@@ -649,7 +623,7 @@ const Settings = () => {
                       variant="subtitle1"
                       sx={{ textAlign: "center", fontWeight: "bold" }}
                     >
-                      Manual Confirmation Certificate Request
+                      Manual Confirmation Record
                     </Typography>
                   </Grid>
                 </Grid>
@@ -692,18 +666,7 @@ const Settings = () => {
                       />
                     </Grid>
 
-                    <Grid item sm={4}>
-                      <label>Place of Birth:</label>
-                      <TextField
-                        name="birth_place"
-                        onChange={handleChange}
-                        autoComplete="off"
-                        required
-                        fullWidth
-                        sx={TextFieldStyleModal}
-                      />
-                    </Grid>
-                    <Grid item sm={4}>
+                    <Grid item sm={6}>
                       <label>Father's Name:</label>
                       <TextField
                         name="father_name"
@@ -714,7 +677,7 @@ const Settings = () => {
                         sx={TextFieldStyleModal}
                       />
                     </Grid>
-                    <Grid item sm={4}>
+                    <Grid item sm={6}>
                       <label>Mother's Maiden Name:</label>
                       <TextField
                         name="mother_name"
@@ -735,9 +698,9 @@ const Settings = () => {
                           size="small"
                           disableFuture
                           sx={TextFieldStyleModal}
-                          name="preferred_date"
+                          name="confirmation_date"
                           onChange={(date) =>
-                            handleDateChange("preferred_date", date)
+                            handleDateChange("confirmation_date", date)
                           }
                           renderInput={(params) => (
                             <TextField {...params} required />
@@ -746,10 +709,10 @@ const Settings = () => {
                       </LocalizationProvider>
                     </Grid>
                     <Grid item sm={6}>
-                      <label>Contact Number:</label>
+                      <label>Sponsor:</label>
                       <TextField
-                        name="contact_no"
-                        onChange={handleChange}
+                        name="sponsor"
+                        onChange={handleArchive}
                         autoComplete="off"
                         required
                         fullWidth
@@ -758,57 +721,21 @@ const Settings = () => {
                     </Grid>
 
                     <Grid item sm={12}>
-                      <label>Purpose:</label>
-                    </Grid>
-                    <Grid item sm={12}>
-                      <RadioGroup
-                        row
-                        name="purpose"
-                        sx={{ marginTop: "-5px" }}
+                      <label>Minister:</label>
+                      <TextField
+                        value={formData.officiating_priest}
+                        name="officiating_priest"
                         onChange={handleChange}
-                        required
+                        select
+                        fullWidth
+                        sx={TextFieldStyleModal}
                       >
-                        <FormControlLabel
-                          value="marriage"
-                          control={<Radio size="small" />}
-                          label="Marriage"
-                        />
-                        <FormControlLabel
-                          value="passport"
-                          control={<Radio size="small" />}
-                          label="Passport"
-                        />
-                        <FormControlLabel
-                          value="school"
-                          control={<Radio size="small" />}
-                          label="School"
-                        />
-                        <FormControlLabel
-                          value="late registration"
-                          control={<Radio size="small" />}
-                          label="Late Registration"
-                        />
-                        <FormControlLabel
-                          value="sss"
-                          control={<Radio size="small" />}
-                          label="SSS"
-                        />
-                        <FormControlLabel
-                          value="others"
-                          control={<Radio size="small" />}
-                          label="Others:"
-                        />
-                        <TextField
-                          disabled={
-                            formData.purpose === "others" ? false : true
-                          }
-                          sx={{
-                            "& .MuiInputBase-root": { height: "30px" },
-                            opacity: formData.purpose === "others" ? 1 : 0.4,
-                            marginTop: "5px",
-                          }}
-                        />
-                      </RadioGroup>
+                        {priests.map((priest) => (
+                          <MenuItem key={priest.priestID} value={priest.first_name + " " + priest.last_name}>
+                            {priest.first_name + " " + priest.last_name}
+                          </MenuItem>
+                        ))}
+                      </TextField>
                     </Grid>
 
                     <Grid item sm={12}>
@@ -826,17 +753,6 @@ const Settings = () => {
                             backgroundColor: "black",
                           }}
                         />
-                        <div>
-                          <p
-                            style={{
-                              width: "80px",
-                              textAlign: "center",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Optional
-                          </p>
-                        </div>
                         <div
                           style={{
                             flex: 1,
@@ -937,28 +853,13 @@ const Settings = () => {
                             variant="subtitle1"
                             sx={{ textAlign: "center", fontWeight: "bold" }}
                           >
-                            Transaction Number
+                            Record Has Been Added
                           </Typography>
                         </Grid>
                       </Grid>
                     </Box>
                     <Grid container spacing={2}>
                       <Grid item sm={12}>
-                        <DefaultCopyField
-                          fullWidth
-                          disabled
-                          value={formData.transaction_no}
-                          sx={inputstyling}
-                        />
-                      </Grid>
-                      <Grid item sm={12}>
-                        <Typography
-                          variant="subtitle1"
-                          sx={{ textAlign: "center", color: "#950000" }}
-                        >
-                          Save the transaction number above to track the status
-                          of this request.
-                        </Typography>
                       </Grid>
                     </Grid>
                   </Box>
