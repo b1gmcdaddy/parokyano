@@ -277,7 +277,11 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
                       textAlign: "center",
                       backgroundColor: "#e0e0e0",
                     }}>
-                    {util.formatDate(req.preferred_date)}
+                    {req.preferred_date
+                      ? util.formatDate(req.preferred_date)
+                      : req.interview_date
+                      ? util.formatDate(req.interview_date)
+                      : "TBA"}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -289,7 +293,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
                     {req.service_id == 5 || req.service_id == 6
                       ? req.father_name
                       : req.service_id == 7
-                      ? req.first_name
+                      ? req.first_name + " " + req.last_name
                       : req.requested_by}
                   </TableCell>
                   <TableCell

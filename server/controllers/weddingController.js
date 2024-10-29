@@ -3,7 +3,7 @@ const express = require("express");
 const db = require("./db");
 
 const retrieveByParams = (req, res) => {
-  const { reqID } = req.query;
+  const {reqID} = req.query;
 
   db.query(
     `SELECT * FROM wedding WHERE request_id = ?`,
@@ -24,6 +24,7 @@ const retrieveByParams = (req, res) => {
   );
 };
 
+// for th ACTUAL WEDDING MODAl
 const updateWeddingDetails = (req, res) => {
   const requestID = req.params.requestID;
   const {
@@ -85,16 +86,18 @@ const updateWeddingDetails = (req, res) => {
       requestID,
     ]);
 
-    res.json({ message: "Request and wedding details updated successfully." });
+    res.json({message: "Request and wedding details updated successfully."});
   } catch (error) {
     console.error("Error updating request and wedding:", error);
-    res.status(500).json({ message: "Internal server error." });
+    res.status(500).json({message: "Internal server error."});
   }
 };
 
+// for wedding requirments modal..
 const updateRequirements = (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
   const {
+    type,
     groom_baptismCert,
     groom_confirmationCert,
     groom_birthCert,
@@ -105,22 +108,84 @@ const updateRequirements = (req, res) => {
     isPrenuptial,
     isPreCana,
     isMarriageLicense,
+    isMarriageBann,
+    isCENOMAR,
+    isCEDULA,
+    isJointAffidavit,
+    isCivilContract,
+    isDeathCert,
   } = req.body;
 
-  const isComplete =
-    groom_baptismCert === 1 &&
-    groom_confirmationCert === 1 &&
-    groom_birthCert === 1 &&
-    spouse_baptismCert === 1 &&
-    spouse_confirmationCert === 1 &&
-    spouse_birthCert === 1 &&
-    isParishPermit === 1 &&
-    isPrenuptial === 1 &&
-    isPreCana === 1 &&
-    isMarriageLicense === 1
-      ? 1
-      : 0;
+  let isComplete = 0;
 
+  if (type == "Civilly Married") {
+    isComplete =
+      groom_baptismCert === 1 &&
+      groom_confirmationCert === 1 &&
+      groom_birthCert === 1 &&
+      spouse_baptismCert === 1 &&
+      spouse_confirmationCert === 1 &&
+      spouse_birthCert === 1 &&
+      isParishPermit === 1 &&
+      isPrenuptial === 1 &&
+      isPreCana === 1 &&
+      isMarriageBann === 1 &&
+      isCivilContract === 1
+        ? 1
+        : 0;
+  } else if (type == "Live-in for under 4 years") {
+    isComplete =
+      groom_baptismCert === 1 &&
+      groom_confirmationCert === 1 &&
+      groom_birthCert === 1 &&
+      spouse_baptismCert === 1 &&
+      spouse_confirmationCert === 1 &&
+      spouse_birthCert === 1 &&
+      isParishPermit === 1 &&
+      isPrenuptial === 1 &&
+      isPreCana === 1 &&
+      isMarriageLicense === 1 &&
+      isMarriageBann === 1 &&
+      isCENOMAR === 1 &&
+      isCEDULA === 1
+        ? 1
+        : 0;
+  } else if (type == "Live-in for more than 4 years") {
+    isComplete =
+      groom_baptismCert === 1 &&
+      groom_confirmationCert === 1 &&
+      groom_birthCert === 1 &&
+      spouse_baptismCert === 1 &&
+      spouse_confirmationCert === 1 &&
+      spouse_birthCert === 1 &&
+      isParishPermit === 1 &&
+      isPrenuptial === 1 &&
+      isPreCana === 1 &&
+      isJointAffidavit === 1 &&
+      isMarriageBann === 1 &&
+      isCENOMAR === 1 &&
+      isCEDULA === 1
+        ? 1
+        : 0;
+  } else {
+    isComplete =
+      groom_baptismCert === 1 &&
+      groom_confirmationCert === 1 &&
+      groom_birthCert === 1 &&
+      spouse_baptismCert === 1 &&
+      spouse_confirmationCert === 1 &&
+      spouse_birthCert === 1 &&
+      isParishPermit === 1 &&
+      isPrenuptial === 1 &&
+      isPreCana === 1 &&
+      isMarriageLicense === 1 &&
+      isMarriageBann === 1 &&
+      isCENOMAR === 1 &&
+      isDeathCert === 1 &&
+      isCEDULA === 1
+        ? 1
+        : 0;
+  }
   try {
     const [result] = db.query(
       `UPDATE wedding SET 
@@ -134,6 +199,12 @@ const updateRequirements = (req, res) => {
         isPrenuptial = ?, 
         isPreCana = ?, 
         isMarriageLicense = ?, 
+        isMarriageBann = ?,
+        isCENOMAR = ?,
+        isCEDULA = ?,
+        isJointAffidavit = ?,
+        isCivilContract = ?,
+        isDeathCert = ?,
         isComplete = ?
       WHERE wedding_id = ?`,
       [
@@ -147,6 +218,12 @@ const updateRequirements = (req, res) => {
         isPrenuptial,
         isPreCana,
         isMarriageLicense,
+        isMarriageBann,
+        isCENOMAR,
+        isCEDULA,
+        isJointAffidavit,
+        isCivilContract,
+        isDeathCert,
         isComplete,
         id,
       ]
@@ -154,7 +231,7 @@ const updateRequirements = (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Wedding requirements updated successfully." });
+      .json({message: "Wedding requirements updated successfully."});
   } catch (error) {
     // console.error("Error updating wedding requirements:", error);
     // return res.status(500).json({error: "Internal server error."});

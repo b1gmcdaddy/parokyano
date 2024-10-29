@@ -1,5 +1,5 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   Modal,
   Box,
@@ -28,8 +28,8 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState, useEffect } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useState, useEffect} from "react";
 import React from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import util from "../../../../utils/DateTimeFormatter";
@@ -77,7 +77,7 @@ const boxModal = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px", bgcolor: "white" },
+  "& .MuiInputBase-root": {height: "30px", bgcolor: "white"},
 };
 
 const tabStyle = {
@@ -103,7 +103,7 @@ const endTime = (timeString, hoursToAdd) => {
 const fetchWeddingDetails = async (id) => {
   try {
     const response = await axios.get(`${config.API}/wedding/retrieve`, {
-      params: { reqID: id },
+      params: {reqID: id},
     });
 
     return response.data?.result[0];
@@ -113,13 +113,10 @@ const fetchWeddingDetails = async (id) => {
   }
 };
 
-function RequirementsModal({ id, onClose }) {
+function RequirementsModal({id, type, onClose}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [tabValue, setTabValue] = useState(0);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentAction, setCurrentAction] = useState("");
-  const [service] = useState("wedding");
   const [selectedWeddingId, setSelectedWeddingId] = useState(null);
   const [requirements, setRequirements] = useState({
     groom_baptismCert: 0,
@@ -132,6 +129,12 @@ function RequirementsModal({ id, onClose }) {
     isPrenuptial: 0,
     isPreCana: 0,
     isMarriageLicense: 0,
+    isMarriageBann: 0,
+    isCENOMAR: 0,
+    isCEDULA: 0,
+    isJointAffidavit: 0,
+    isCivilContract: 0,
+    isDeathCert: 0,
   });
 
   useEffect(() => {
@@ -149,6 +152,12 @@ function RequirementsModal({ id, onClose }) {
           isPrenuptial: req.isPrenuptial ?? 0,
           isPreCana: req.isPreCana ?? 0,
           isMarriageLicense: req.isMarriageLicense ?? 0,
+          isMarriageBann: req.isMarriageBann ?? 0,
+          isCENOMAR: req.isCENOMAR ?? 0,
+          isCEDULA: req.isCEDULA ?? 0,
+          isJointAffidavit: req.isJointAffidavit ?? 0,
+          isCivilContract: req.isCivilContract ?? 0,
+          isDeathCert: req.isDeathCert ?? 0,
         });
         setSelectedWeddingId(req.wedding_id);
       }
@@ -157,6 +166,59 @@ function RequirementsModal({ id, onClose }) {
       fetchAndSetRequirements();
     }
   }, [open, id]);
+
+  const dynamicRequirements = [
+    {
+      type: "Civilly Married",
+      requirements: [
+        {name: "Civil Marriage Contract", field: "isCivilContract"},
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
+      ],
+    },
+    {
+      type: "Live-in for under 4 years",
+      requirements: [
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Marriage License", field: "isMarriageLicense"},
+        {name: "CENOMAR", field: "isCENOMAR"},
+        {name: "CEDULA", field: "isCEDULA"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
+      ],
+    },
+    {
+      type: "Live-in for more than 4 years",
+      requirements: [
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Joint Affidavit of Cohabitation", field: "isJointAffidavit"},
+        {name: "CENOMAR", field: "isCENOMAR"},
+        {name: "CEDULA", field: "isCEDULA"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
+      ],
+    },
+    {
+      type: "Widow",
+      requirements: [
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Marriage License", field: "isMarriageLicense"},
+        {name: "CENOMAR", field: "isCENOMAR"},
+        {name: "CEDULA", field: "isCEDULA"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
+        {name: "Partner's Death Certificate", field: "isDeathCert"},
+      ],
+    },
+  ];
+
+  const selectedRequirements =
+    dynamicRequirements.find((req) => req.type === type)?.requirements || [];
 
   const handleClose = () => {
     setOpen(false);
@@ -171,15 +233,19 @@ function RequirementsModal({ id, onClose }) {
 
   const updateRequirements = () => {
     try {
+      const reqs = {
+        ...requirements,
+        type,
+      };
+
       axios.put(
         `${config.API}/wedding/requirements/${selectedWeddingId}`,
-        requirements
+        reqs
       );
-      alert("success update requirements");
+      alert("Successfully Updated Requirements!");
       fetchWeddingDetails(id);
     } catch (error) {
-      // console.error(error);
-      alert("failed to update requirements");
+      alert("FAILED to Update Requirements...");
       fetchWeddingDetails(id);
     }
     console.log(selectedWeddingId);
@@ -195,9 +261,8 @@ function RequirementsModal({ id, onClose }) {
           fontSize: "11px",
           marginLeft: "5px",
           color: "white",
-          "&:hover": { bgcolor: "#4C74A5" },
-        }}
-      >
+          "&:hover": {bgcolor: "#4C74A5"},
+        }}>
         Requirements
       </Button>
       <Modal open={open} onClose={handleClose}>
@@ -213,8 +278,7 @@ function RequirementsModal({ id, onClose }) {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Requirements Information
               </Typography>
             </Grid>
@@ -224,8 +288,7 @@ function RequirementsModal({ id, onClose }) {
                 variant="fullWidth"
                 value={tabValue}
                 onChange={handleTabChange}
-                sx={{ borderRadius: "10px 10px 0px 0px" }}
-              >
+                sx={{borderRadius: "10px 10px 0px 0px"}}>
                 <Tab label="Groom" sx={tabStyle} />
                 <Tab label="Bride" sx={tabStyle} />
               </Tabs>
@@ -235,8 +298,7 @@ function RequirementsModal({ id, onClose }) {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "0px 0px 5px 5px",
-                }}
-              >
+                }}>
                 <Grid container justifyContent={"center"}>
                   <Box>
                     {tabValue === 0 && (
@@ -255,7 +317,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -275,7 +337,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -299,7 +361,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -323,7 +385,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -345,7 +407,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -369,7 +431,7 @@ function RequirementsModal({ id, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -382,101 +444,45 @@ function RequirementsModal({ id, onClose }) {
               </Box>
             </Grid>
 
-            <Grid item sm={12} sx={{ marginTop: "5px" }}>
+            <Grid item sm={12} sx={{marginTop: "5px"}}>
               <div
-                style={{ flex: 0.1, height: "1.8px", backgroundColor: "black" }}
+                style={{flex: 0.1, height: "1.8px", backgroundColor: "black"}}
               />
             </Grid>
 
             <Box>
-              <Grid item sm={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={requirements.isMarriageLicense === 1}
-                      onChange={(e) =>
-                        setRequirements((prev) => ({
-                          ...prev,
-                          isMarriageLicense: e.target.checked ? 1 : 0,
-                        }))
-                      }
-                    />
-                  }
-                  label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Marriage License
-                    </Typography>
-                  }
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={requirements.isParishPermit === 1}
-                      onChange={(e) =>
-                        setRequirements((prev) => ({
-                          ...prev,
-                          isParishPermit: e.target.checked ? 1 : 0,
-                        }))
-                      }
-                    />
-                  }
-                  label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Parish Permit
-                    </Typography>
-                  }
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={requirements.isPrenuptial === 1}
-                      onChange={(e) =>
-                        setRequirements((prev) => ({
-                          ...prev,
-                          isPrenuptial: e.target.checked ? 1 : 0,
-                        }))
-                      }
-                    />
-                  }
-                  label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Prenuptial Agreement
-                    </Typography>
-                  }
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={requirements.isPreCana === 1}
-                      onChange={(e) =>
-                        setRequirements((prev) => ({
-                          ...prev,
-                          isPreCana: e.target.checked ? 1 : 0,
-                        }))
-                      }
-                    />
-                  }
-                  label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Pre-Cana Certificate
-                    </Typography>
-                  }
-                />
-              </Grid>
+              {/* Static groom and spouse certificates (these are common for all types) */}
+
+              {/* Render dynamic requirements based on the wedding type */}
+              {selectedRequirements.map((req) => (
+                <Grid item sm={12} key={req.field}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={requirements[req.field] === 1}
+                        onChange={(e) =>
+                          setRequirements((prev) => ({
+                            ...prev,
+                            [req.field]: e.target.checked ? 1 : 0,
+                          }))
+                        }
+                      />
+                    }
+                    label={
+                      <Typography sx={{fontSize: "15px"}}>
+                        {req.name}
+                      </Typography>
+                    }
+                  />
+                </Grid>
+              ))}
             </Box>
 
-            <Grid item sm={12} sx={{ marginTop: "10px", textAlign: "center" }}>
+            <Grid item sm={12} sx={{marginTop: "10px", textAlign: "center"}}>
               <Button
                 onClick={updateRequirements}
                 variant="contained"
-                sx={{ bgcolor: "#355173" }}
-              >
+                sx={{bgcolor: "#355173"}}>
                 Save
               </Button>
             </Grid>
@@ -487,7 +493,7 @@ function RequirementsModal({ id, onClose }) {
   );
 }
 
-function SponsorsModal({ id }) {
+function SponsorsModal({id}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -519,8 +525,8 @@ function SponsorsModal({ id }) {
   }, []);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewSponsor((prev) => ({ ...prev, [name]: value }));
+    const {name, value} = e.target;
+    setNewSponsor((prev) => ({...prev, [name]: value}));
   };
 
   const handleAddSponsor = async () => {
@@ -536,7 +542,7 @@ function SponsorsModal({ id }) {
         ...newSponsor,
       };
       fetchSponsors();
-      setNewSponsor({ name: "", age: "", isMarried: "", isCatholic: "" });
+      setNewSponsor({name: "", age: "", isMarried: "", isCatholic: ""});
     } catch (err) {
       console.error("Error adding sponsor", err);
     }
@@ -571,9 +577,8 @@ function SponsorsModal({ id }) {
           fontSize: "11px",
           marginLeft: "5px",
           color: "white",
-          "&:hover": { bgcolor: "#4C74A5" },
-        }}
-      >
+          "&:hover": {bgcolor: "#4C74A5"},
+        }}>
         Sponsors
       </Button>
       <Modal open={open}>
@@ -589,8 +594,7 @@ function SponsorsModal({ id }) {
             <Grid item sm={12}>
               <Typography
                 variant="h6"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Sponsors Information
               </Typography>
             </Grid>
@@ -622,8 +626,7 @@ function SponsorsModal({ id }) {
                 name="isMarried"
                 onChange={handleInputChange}
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="1">Married</MenuItem>
                 <MenuItem value="0">Not Married</MenuItem>
               </TextField>
@@ -636,13 +639,12 @@ function SponsorsModal({ id }) {
                 value={newSponsor.isCatholic}
                 onChange={handleInputChange}
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="1">Yes</MenuItem>
                 <MenuItem value="0">No</MenuItem>
               </TextField>
             </Grid>
-            <Grid item sm={12} sx={{ textAlign: "center" }}>
+            <Grid item sm={12} sx={{textAlign: "center"}}>
               <Button
                 onClick={handleAddSponsor}
                 sx={{
@@ -651,16 +653,15 @@ function SponsorsModal({ id }) {
                   width: "150px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#4C74A5" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#4C74A5"},
+                }}>
                 Add Sponsor
               </Button>
             </Grid>
 
             <Grid item sm={12}>
               <TableContainer component={Paper}>
-                <Table sx={{ tableLayout: "fixed" }}>
+                <Table sx={{tableLayout: "fixed"}}>
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">Full Name</TableCell>
@@ -669,8 +670,7 @@ function SponsorsModal({ id }) {
                       <TableCell align="center">Catholic?</TableCell>
                       <TableCell
                         align="center"
-                        sx={{ width: "50px" }}
-                      ></TableCell>
+                        sx={{width: "50px"}}></TableCell>
                     </TableRow>
                   </TableHead>
                 </Table>
@@ -684,9 +684,8 @@ function SponsorsModal({ id }) {
                   "&::-webkit-scrollbar": {
                     display: "none",
                   },
-                }}
-              >
-                <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+                }}>
+                <Table sx={{tableLayout: "fixed", width: "100%"}}>
                   <TableBody>
                     {sponsors.map((sponsor) => (
                       <TableRow key={sponsor.sponsorID}>
@@ -700,11 +699,10 @@ function SponsorsModal({ id }) {
                         <TableCell align="center">
                           {sponsor.isCatholic == 1 ? "Yes" : "No"}
                         </TableCell>
-                        <TableCell align="center" sx={{ width: "50px" }}>
+                        <TableCell align="center" sx={{width: "50px"}}>
                           <IconButton
                             size="small"
-                            onClick={() => handleDeleteSponsor(sponsor)}
-                          >
+                            onClick={() => handleDeleteSponsor(sponsor)}>
                             <FontAwesomeIcon icon={faXmark} />
                           </IconButton>
                         </TableCell>
@@ -721,7 +719,7 @@ function SponsorsModal({ id }) {
   );
 }
 
-const WeddingApproved = ({ open, data, handleClose }) => {
+const WeddingApproved = ({open, data, handleClose}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completeRequirements, setCompleteRequirements] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
@@ -855,16 +853,16 @@ const WeddingApproved = ({ open, data, handleClose }) => {
 
   // START FORM HANDLERS AND CONTROLS
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleOpenDialog = (action) => {
@@ -1058,7 +1056,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -1080,8 +1078,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Request Information
               </Typography>
             </Grid>
@@ -1093,14 +1090,12 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "5px",
-                }}
-              >
+                }}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       Groom:
                     </Typography>
                   </Grid>
@@ -1145,14 +1140,12 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "5px",
-                }}
-              >
+                }}>
                 <Grid container spacing={1}>
                   <Grid item sm={12}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
+                      sx={{fontWeight: "bold", fontSize: "14px"}}>
                       Bride:
                     </Typography>
                   </Grid>
@@ -1202,8 +1195,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                 value={formData.relationship}
                 fullWidth
                 select
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                 <MenuItem value="Live-in for under 4 years">
                   Live-in for under 4 years
@@ -1222,8 +1214,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                 value={formData?.payment_status}
                 select
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="unpaid">Unpaid</MenuItem>
                 <MenuItem value="paid">Paid</MenuItem>
               </TextField>
@@ -1232,8 +1223,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
             <Grid item sm={12} textAlign={"center"}>
               <Typography
                 variant="subtitle1"
-                sx={{ display: "inline-block", fontSize: "14px" }}
-              >
+                sx={{display: "inline-block", fontSize: "14px"}}>
                 Requirements:
               </Typography>
               <Typography
@@ -1242,13 +1232,19 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
-                  color: completeRequirements == 1 ? "green" : "red",
-                }}
-              >
-                {completeRequirements == 1 ? "Complete" : "Incomplete"}
+                  color:
+                    completeRequirements == 1 &&
+                    formData.payment_status == "paid"
+                      ? "green"
+                      : "red",
+                }}>
+                {completeRequirements == 1 && formData.payment_status == "paid"
+                  ? "Complete"
+                  : "Incomplete"}
               </Typography>
               <RequirementsModal
                 id={data.requestID}
+                type={data.relationship}
                 onClose={handleCloseRequirementsDialog}
               />
               <Typography
@@ -1257,8 +1253,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
-                }}
-              >
+                }}>
                 Sponsors:
               </Typography>
 
@@ -1278,8 +1273,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                 sx={TextFieldStyle}
                 onChange={handleChange}
                 select
-                fullWidth
-              >
+                fullWidth>
                 {priests.map((priest) => (
                   <MenuItem key={priest.priestID} value={priest.priestID}>
                     {priest.first_name + " " + priest.last_name}
@@ -1320,7 +1314,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
+            <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
               <Button
                 onClick={() => handleOpenDialog("reschedule")}
                 sx={{
@@ -1329,9 +1323,8 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                   height: "30px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#578A62" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#578A62"},
+                }}>
                 Reschedule
               </Button>
             </Grid>
@@ -1355,8 +1348,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                   justifyContent: "center",
                   backgroundColor: "#d1d1d1",
                   fontWeight: "bold",
-                }}
-              >
+                }}>
                 {data.transaction_no}
               </Paper>
             </Grid>
@@ -1370,8 +1362,7 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                 flexDirection: "row",
                 justifyContent: "center",
                 marginTop: 3,
-              }}
-            >
+              }}>
               <Button
                 onClick={() => handleOpenDialog("update")}
                 sx={{
@@ -1380,9 +1371,8 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F0CA67" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F0CA67"},
+                }}>
                 UPDATE
               </Button>
               <Button
@@ -1394,9 +1384,8 @@ const WeddingApproved = ({ open, data, handleClose }) => {
                   width: "90px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#F05A5A" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#F05A5A"},
+                }}>
                 CANCEL
               </Button>
             </Grid>
