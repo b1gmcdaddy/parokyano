@@ -720,6 +720,7 @@ function SponsorsModal({id}) {
 }
 
 const WeddingApproved = ({open, data, handleClose}) => {
+  const [available, setAvailable] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completeRequirements, setCompleteRequirements] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
@@ -814,6 +815,34 @@ const WeddingApproved = ({open, data, handleClose}) => {
     }
   }, [open, data]);
 
+  const fetchAvailability = async (date, start, end) => {
+    const avail = await axios.get(
+      `${config.API}/priest/retrieve-schedule-venue`,
+      {
+        params: {
+          date: date,
+          start: start,
+          end: end,
+        },
+      }
+    );
+    console.log(avail.data.message);
+    setAvailable(avail.data.message);
+  };
+
+  useEffect(() => {
+    fetchAvailability(
+      formData.preferred_date,
+      formData.preferred_time,
+      endTime(formData.preferred_time, service.duration)
+    );
+  }, [
+    formData.preferred_date,
+    formData.preferred_time,
+    formData.priest_id,
+    open,
+  ]);
+
   const fetchService = async () => {
     try {
       const response = await axios.get(
@@ -879,69 +908,6 @@ const WeddingApproved = ({open, data, handleClose}) => {
   };
   // END FORM HANDLERS AND CONTROLS
 
-  // START APPROVE WEDDING METHOD
-  const handleApproveWedding = async () => {
-    try {
-      const res = await axios.get(`${config.API}/priest/retrieve-schedule`);
-      const schedules = res.data;
-
-      let hasConflict = false;
-
-      for (var i = 0; i < schedules.length; i++) {
-        if (
-          dayjs(schedules[i].date).format("YYYY-MM-DD") ===
-            formData.preferred_date &&
-          schedules[i].start_time === formData.preferred_time &&
-          schedules[i].priest_id === formData.priest_id
-        ) {
-          hasConflict = true;
-          break;
-        }
-      }
-
-      if (hasConflict) {
-        alert("Conflict found: The priest is already scheduled at this time.");
-        return;
-      } else {
-        axios.put(`${config.API}/request/approve-service`, null, {
-          params: {
-            col: "status",
-            val: "approved",
-            col2: "payment_status",
-            val2: "paid",
-            col3: "preferred_date",
-            val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
-            col4: "preferred_time",
-            val4: formData.preferred_time,
-            col5: "requestID",
-            val5: formData.requestID,
-          },
-        });
-
-        axios.post(`${config.API}/priest/createPriestSched`, {
-          date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
-          activity: `Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
-          start_time: formData.preferred_time,
-          end_time: endTime(formData.preferred_time, service.duration),
-          priest_id: formData.priest_id,
-          request_id: formData.requestID,
-        });
-
-        axios.post(`${config.API}/logs/create`, {
-          activity: `Approved Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
-          user_id: 1,
-          request_id: formData.requestID,
-        });
-        // sendSMS(data.service_id, formData, "approve");
-        alert("Wedding Approved!");
-        window.location.reload();
-      }
-    } catch (err) {
-      console.log("error submitting to server", err);
-    }
-  };
-  // END APPROVE WEDDING METHOD
-
   const handleConfirm = async (action) => {
     switch (action) {
       case "update": // UPDATE PENDING REQUEST
@@ -1001,7 +967,7 @@ const WeddingApproved = ({open, data, handleClose}) => {
             }
           );
 
-          if (Object.keys(response.data).length > 0 || response.data !== "") {
+          if (Object.keys(response.data).length > 0 || response.data != "") {
             setError({
               message: response.data.message,
               details: response.data?.details,
@@ -1065,7 +1031,7 @@ const WeddingApproved = ({open, data, handleClose}) => {
         />
       )}
 
-      <Modal open={open} onClose={() => handleClose}>
+      <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Grid container justifyContent={"flex-end"} sx>
             <Grid item>
@@ -1247,7 +1213,7 @@ const WeddingApproved = ({open, data, handleClose}) => {
                 type={data.relationship}
                 onClose={handleCloseRequirementsDialog}
               />
-              <Typography
+              {/* <Typography
                 variant="subtitle1"
                 sx={{
                   display: "inline-block",
@@ -1255,7 +1221,7 @@ const WeddingApproved = ({open, data, handleClose}) => {
                   fontSize: "14px",
                 }}>
                 Sponsors:
-              </Typography>
+              </Typography> */}
 
               <SponsorsModal id={data.requestID} />
             </Grid>
@@ -1314,6 +1280,7 @@ const WeddingApproved = ({open, data, handleClose}) => {
                 />
               </LocalizationProvider>
             </Grid>
+
             <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
               <Button
                 onClick={() => handleOpenDialog("reschedule")}
@@ -1328,10 +1295,15 @@ const WeddingApproved = ({open, data, handleClose}) => {
                 Reschedule
               </Button>
             </Grid>
+            {/* <Grid item sm={4}>
+              <label>Church:</label>
+              <TextField value={available} size="small" fullWidth />
+            </Grid> */}
             <Grid item xs={6}>
               <label>Approved by:</label>
               <TextField
                 fullWidth
+                sx={TextFieldStyle}
                 size="small"
                 disabled
                 value={approver?.first_name + " " + approver?.last_name}
@@ -1344,12 +1316,11 @@ const WeddingApproved = ({open, data, handleClose}) => {
                 sx={{
                   height: "30px",
                   alignItems: "center",
-                  display: "flex",
-                  justifyContent: "center",
+
                   backgroundColor: "#d1d1d1",
                   fontWeight: "bold",
                 }}>
-                {data.transaction_no}
+                <p>{data.transaction_no}</p>
               </Paper>
             </Grid>
 
