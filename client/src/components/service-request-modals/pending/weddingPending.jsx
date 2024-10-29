@@ -32,7 +32,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState, useEffect } from "react";
 import React from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
-import util from "../../../utils/DateTimeFormatter";
 import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
@@ -113,13 +112,10 @@ const fetchWeddingDetails = async (id) => {
   }
 };
 
-function RequirementsModal({ id, onClose }) {
+function RequirementsModal({ id, type, onClose }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [tabValue, setTabValue] = useState(0);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentAction, setCurrentAction] = useState("");
-  const [service] = useState("wedding");
   const [selectedWeddingId, setSelectedWeddingId] = useState(null);
   const [requirements, setRequirements] = useState({
     groom_baptismCert: 0,
@@ -132,6 +128,12 @@ function RequirementsModal({ id, onClose }) {
     isPrenuptial: 0,
     isPreCana: 0,
     isMarriageLicense: 0,
+    isMarriageBann: 0,
+    isCENOMAR: 0,
+    isCEDULA: 0,
+    isJointAffidavit: 0,
+    isCivilContract: 0,
+    isDeathCert: 0,
   });
 
   useEffect(() => {
@@ -149,6 +151,12 @@ function RequirementsModal({ id, onClose }) {
           isPrenuptial: req.isPrenuptial ?? 0,
           isPreCana: req.isPreCana ?? 0,
           isMarriageLicense: req.isMarriageLicense ?? 0,
+          isMarriageBann: req.isMarriageBann ?? 0,
+          isCENOMAR: req.isCENOMAR ?? 0,
+          isCEDULA: req.isCEDULA ?? 0,
+          isJointAffidavit: req.isJointAffidavit ?? 0,
+          isCivilContract: req.isCivilContract ?? 0,
+          isDeathCert: req.isDeathCert ?? 0,
         });
         setSelectedWeddingId(req.wedding_id);
       }
@@ -157,6 +165,59 @@ function RequirementsModal({ id, onClose }) {
       fetchAndSetRequirements();
     }
   }, [open, id]);
+
+  const dynamicRequirements = [
+    {
+      type: "Civilly Married",
+      requirements: [
+        { name: "Civil Marriage Contract", field: "isCivilContract" },
+        { name: "Parish Permit", field: "isParishPermit" },
+        { name: "Prenuptial Agreement", field: "isPrenuptial" },
+        { name: "Pre-Cana Certificate", field: "isPreCana" },
+        { name: "Marriage Bann", field: "isMarriageBann" },
+      ],
+    },
+    {
+      type: "Live-in for under 4 years",
+      requirements: [
+        { name: "Parish Permit", field: "isParishPermit" },
+        { name: "Prenuptial Agreement", field: "isPrenuptial" },
+        { name: "Pre-Cana Certificate", field: "isPreCana" },
+        { name: "Marriage License", field: "isMarriageLicense" },
+        { name: "CENOMAR", field: "isCENOMAR" },
+        { name: "CEDULA", field: "isCEDULA" },
+        { name: "Marriage Bann", field: "isMarriageBann" },
+      ],
+    },
+    {
+      type: "Live-in for more than 4 years",
+      requirements: [
+        { name: "Parish Permit", field: "isParishPermit" },
+        { name: "Prenuptial Agreement", field: "isPrenuptial" },
+        { name: "Pre-Cana Certificate", field: "isPreCana" },
+        { name: "Joint Affidavit of Cohabitation", field: "isJointAffidavit" },
+        { name: "CENOMAR", field: "isCENOMAR" },
+        { name: "CEDULA", field: "isCEDULA" },
+        { name: "Marriage Bann", field: "isMarriageBann" },
+      ],
+    },
+    {
+      type: "Widow",
+      requirements: [
+        { name: "Parish Permit", field: "isParishPermit" },
+        { name: "Prenuptial Agreement", field: "isPrenuptial" },
+        { name: "Pre-Cana Certificate", field: "isPreCana" },
+        { name: "Marriage License", field: "isMarriageLicense" },
+        { name: "CENOMAR", field: "isCENOMAR" },
+        { name: "CEDULA", field: "isCEDULA" },
+        { name: "Marriage Bann", field: "isMarriageBann" },
+        { name: "Partner's Death Certificate", field: "isDeathCert" },
+      ],
+    },
+  ];
+
+  const selectedRequirements =
+    dynamicRequirements.find((req) => req.type === type)?.requirements || [];
 
   const handleClose = () => {
     setOpen(false);
@@ -171,15 +232,19 @@ function RequirementsModal({ id, onClose }) {
 
   const updateRequirements = () => {
     try {
+      const reqs = {
+        ...requirements,
+        type,
+      };
+
       axios.put(
         `${config.API}/wedding/requirements/${selectedWeddingId}`,
-        requirements
+        reqs
       );
-      alert("success update requirements");
+      alert("Successfully Updated Requirements!");
       fetchWeddingDetails(id);
     } catch (error) {
-      // console.error(error);
-      alert("failed to update requirements");
+      alert("FAILED to Update Requirements...");
       fetchWeddingDetails(id);
     }
     console.log(selectedWeddingId);
@@ -389,86 +454,31 @@ function RequirementsModal({ id, onClose }) {
             </Grid>
 
             <Box>
-              <Grid item sm={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={requirements.isMarriageLicense === 1}
-                      onChange={(e) =>
-                        setRequirements((prev) => ({
-                          ...prev,
-                          isMarriageLicense: e.target.checked ? 1 : 0,
-                        }))
-                      }
-                    />
-                  }
-                  label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Marriage License
-                    </Typography>
-                  }
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={requirements.isParishPermit === 1}
-                      onChange={(e) =>
-                        setRequirements((prev) => ({
-                          ...prev,
-                          isParishPermit: e.target.checked ? 1 : 0,
-                        }))
-                      }
-                    />
-                  }
-                  label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Parish Permit
-                    </Typography>
-                  }
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={requirements.isPrenuptial === 1}
-                      onChange={(e) =>
-                        setRequirements((prev) => ({
-                          ...prev,
-                          isPrenuptial: e.target.checked ? 1 : 0,
-                        }))
-                      }
-                    />
-                  }
-                  label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Prenuptial Agreement
-                    </Typography>
-                  }
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={requirements.isPreCana === 1}
-                      onChange={(e) =>
-                        setRequirements((prev) => ({
-                          ...prev,
-                          isPreCana: e.target.checked ? 1 : 0,
-                        }))
-                      }
-                    />
-                  }
-                  label={
-                    <Typography sx={{ fontSize: "15px" }}>
-                      Pre-Cana Certificate
-                    </Typography>
-                  }
-                />
-              </Grid>
+              {/* Static groom and spouse certificates (these are common for all types) */}
+
+              {/* Render dynamic requirements based on the wedding type */}
+              {selectedRequirements.map((req) => (
+                <Grid item sm={12} key={req.field}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={requirements[req.field] === 1}
+                        onChange={(e) =>
+                          setRequirements((prev) => ({
+                            ...prev,
+                            [req.field]: e.target.checked ? 1 : 0,
+                          }))
+                        }
+                      />
+                    }
+                    label={
+                      <Typography sx={{ fontSize: "15px" }}>
+                        {req.name}
+                      </Typography>
+                    }
+                  />
+                </Grid>
+              ))}
             </Box>
 
             <Grid item sm={12} sx={{ marginTop: "10px", textAlign: "center" }}>
@@ -895,26 +905,24 @@ const WeddingPending = ({ open, data, handleClose }) => {
   // START SET INTERVIEW METHOD
   const handleSetInterview = async () => {
     try {
-      const res = await axios.get(`${config.API}/priest/retrieve-schedule`);
-      const schedules = res.data;
-
-      let hasConflict = false;
-
-      for (var i = 0; i < schedules.length; i++) {
-        if (
-          dayjs(schedules[i].date).format("YYYY-MM-DD") ===
-            formData.interview_date &&
-          schedules[i].start_time === formData.interview_time &&
-          schedules[i].priest_id === formData.priest_id
-        ) {
-          hasConflict = true;
-          break;
+      const currentUser = JSON.parse(localStorage.getItem("user"));
+      const response = await axios.get(
+        `${config.API}/priest/retrieve-schedule-by-params`,
+        {
+          params: {
+            priest: formData.priest_id,
+            date: formData.interview_date,
+            start: formData.interview_time,
+            end: endTime(formData.interview_time, service.duration),
+          },
         }
-      }
-
-      if (hasConflict) {
-        alert("Conflict found: The priest is already scheduled at this time.");
-        return;
+      );
+      console.log(response);
+      if (Object.keys(response.data).length > 0 || response.data != "") {
+        setError({
+          message: response.data.message,
+          details: response.data?.details,
+        });
       } else {
         axios.put(`${config.API}/request/approve-dynamic`, null, {
           params: {
@@ -940,7 +948,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
 
         axios.post(`${config.API}/logs/create`, {
           activity: `Set Marriage Interview Schedule for ${formData.first_name}`,
-          user_id: 1,
+          user_id: currentUser.id,
           request_id: formData.requestID,
         });
         // sendSMS(data.service_id, formData, "approve-wed-interview");
@@ -950,73 +958,12 @@ const WeddingPending = ({ open, data, handleClose }) => {
       }
     } catch (err) {
       console.error(err);
-      alert("ERROR Setting Interview");
+      alert(
+        "Priest has another activity scheduled on that date and time.\nPlease select another date and time."
+      );
     }
   };
   // END SET INTERVIEW METHOD
-
-  // START APPROVE WEDDING METHOD
-  const handleApproveWedding = async () => {
-    try {
-      const res = await axios.get(`${config.API}/priest/retrieve-schedule`);
-      const schedules = res.data;
-
-      let hasConflict = false;
-
-      for (var i = 0; i < schedules.length; i++) {
-        if (
-          dayjs(schedules[i].date).format("YYYY-MM-DD") ===
-            formData.preferred_date &&
-          schedules[i].start_time === formData.preferred_time &&
-          schedules[i].priest_id === formData.priest_id
-        ) {
-          hasConflict = true;
-          break;
-        }
-      }
-
-      if (hasConflict) {
-        alert("Conflict found: The priest is already scheduled at this time.");
-        return;
-      } else {
-        axios.put(`${config.API}/request/approve-service`, null, {
-          params: {
-            col: "status",
-            val: "approved",
-            col2: "payment_status",
-            val2: "paid",
-            col3: "preferred_date",
-            val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
-            col4: "preferred_time",
-            val4: formData.preferred_time,
-            col5: "requestID",
-            val5: formData.requestID,
-          },
-        });
-
-        axios.post(`${config.API}/priest/createPriestSched`, {
-          date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
-          activity: `Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
-          start_time: formData.preferred_time,
-          end_time: endTime(formData.preferred_time, service.duration),
-          priest_id: formData.priest_id,
-          request_id: formData.requestID,
-        });
-
-        axios.post(`${config.API}/logs/create`, {
-          activity: `Approved Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
-          user_id: 1,
-          request_id: formData.requestID,
-        });
-        // sendSMS(data.service_id, formData, "approve");
-        alert("Wedding Approved!");
-        window.location.reload();
-      }
-    } catch (err) {
-      console.log("error submitting to server", err);
-    }
-  };
-  // END APPROVE WEDDING METHOD
 
   const handleConfirm = async (action) => {
     switch (action) {
@@ -1062,6 +1009,62 @@ const WeddingPending = ({ open, data, handleClose }) => {
         });
         window.location.reload();
         break;
+      case "approve": ///////////// APPROVE WEDDING ///////////
+        try {
+          const currentUser = JSON.parse(localStorage.getItem("user"));
+          const response = await axios.get(
+            `${config.API}/priest/retrieve-schedule-by-params`,
+            {
+              params: {
+                priest: formData.priest_id,
+                date: formData.preferred_date,
+                start: formData.preferred_time,
+                end: endTime(formData.preferred_time, service.duration),
+              },
+            }
+          );
+          console.log(response);
+          if (Object.keys(response.data).length > 0 || response.data != "") {
+            setError({
+              message: response.data.message,
+              details: response.data?.details,
+            });
+          } else {
+            axios.put(`${config.API}/request/approve-service`, null, {
+              params: {
+                col: "status",
+                val: "approved",
+                col2: "payment_status",
+                val2: "paid",
+                col3: "preferred_date",
+                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                col4: "preferred_time",
+                val4: formData.preferred_time,
+                col5: "requestID",
+                val5: formData.requestID,
+              },
+            });
+
+            axios.post(`${config.API}/priest/createPriestSched`, {
+              date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+              activity: `Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
+              start_time: formData.preferred_time,
+              end_time: endTime(formData.preferred_time, service.duration),
+              priest_id: formData.priest_id,
+              request_id: formData.requestID,
+            });
+
+            axios.post(`${config.API}/logs/create`, {
+              activity: `Approved Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
+              user_id: currentUser.id,
+              request_id: formData.requestID,
+            });
+            // sendSMS(data.service_id, formData, "approve");
+            window.location.reload();
+          }
+        } catch (err) {
+          console.log("error submitting to server", err);
+        }
       default:
         break;
     }
@@ -1085,7 +1088,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
         />
       )}
 
-      <Modal open={open} onClose={() => handleClose}>
+      <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Grid container justifyContent={"flex-end"}>
             <Grid item>
@@ -1263,13 +1266,20 @@ const WeddingPending = ({ open, data, handleClose }) => {
                   display: "inline-block",
                   marginLeft: "5px",
                   fontSize: "14px",
-                  color: completeRequirements == 1 ? "green" : "red",
+                  color:
+                    completeRequirements == 1 &&
+                    formData.payment_status == "paid"
+                      ? "green"
+                      : "red",
                 }}
               >
-                {completeRequirements == 1 ? "Complete" : "Incomplete"}
+                {completeRequirements == 1 && formData.payment_status == "paid"
+                  ? "Complete"
+                  : "Incomplete"}
               </Typography>
               <RequirementsModal
                 id={data.requestID}
+                type={data.relationship}
                 onClose={handleCloseRequirementsDialog}
               />
               <Typography
@@ -1463,7 +1473,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
                         <Grid item sm={12}>
                           <Button
                             fullWidth
-                            onClick={handleApproveWedding}
+                            onClick={() => handleOpenDialog("approve")}
                             sx={{
                               bgcolor: "#BBB6B6",
                               marginTop: "5px",
