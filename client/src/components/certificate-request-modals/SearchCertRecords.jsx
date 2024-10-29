@@ -199,7 +199,9 @@ const SearchCertRecords = ({open, data, close}) => {
                         marginBottom: "8px",
                       }}>
                       <Typography>
-                        {rec.first_name} {rec.last_name}
+                        {data.service_id == 3 || data.service_id == 4
+                          ? rec.first_name + rec.last_name
+                          : rec.father_name}
                       </Typography>
 
                       {/* Container for buttons */}
