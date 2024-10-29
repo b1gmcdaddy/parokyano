@@ -204,6 +204,8 @@ const BaptismPending = ({ open, data, handleClose }) => {
           payment_status: data.payment_status || "",
           transaction_no: data.transaction_no || "",
           gcashRefNo: data.gcashRefNo || "",
+          donation: data.donation || "",
+          service_id: data.service_id || "",
         });
         fetchPriest();
         fetchService();
@@ -397,6 +399,32 @@ const BaptismPending = ({ open, data, handleClose }) => {
         break;
     }
   };
+
+  useEffect(() => {
+    console.log(dayjs(formData?.preferred_time, "HH:mm:ss").hour());
+    if (
+      dayjs(formData?.preferred_date).get("day") == 0 &&
+      dayjs(formData?.preferred_time, "HH:mm:ss").hour() == 6
+    ) {
+      setFormData((prevState) => ({
+        ...prevState,
+        donation: 800.0,
+      }));
+      setFormData((prevState) => ({
+        ...prevState,
+        service_id: 6,
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        donation: 1600.0,
+      }));
+      setFormData((prevState) => ({
+        ...prevState,
+        service_id: 5,
+      }));
+    }
+  }, [formData?.preferred_date, formData?.preferred_time]);
 
   return (
     <>
@@ -688,7 +716,7 @@ const BaptismPending = ({ open, data, handleClose }) => {
                                 marginLeft: "10px",
                               }}
                             >
-                              800
+                              ₱{parseFloat(formData.donation).toFixed(2)}
                             </Typography>
                           </Grid>
                           <Grid item sm={6}>
@@ -718,16 +746,28 @@ const BaptismPending = ({ open, data, handleClose }) => {
                             </TextField>
                           </Grid>
                           {formData && formData.payment_method === "gcash" && (
-                            <Grid item sm={12} sx={{ mt: 1 }}>
-                              <TextField
-                                value={`gcash ref no. ${formData.gcashRefNo}`}
-                                name="gcashRefNo"
-                                onChange={handleChange}
-                                fullWidth
-                                readonly
-                                sx={TextFieldStyleDis}
-                              />
-                            </Grid>
+                            <>
+                              <Grid item sm={6} sx={{ mt: 1 }}>
+                                <Typography
+                                  sx={{
+                                    display: "inline-block",
+                                    fontSize: "12px",
+                                  }}
+                                >
+                                  GCash Reference No:
+                                </Typography>
+                              </Grid>
+                              <Grid item sm={6} sx={{ mt: 1 }}>
+                                <TextField
+                                  value={`gcash ref no. ${formData.gcashRefNo}`}
+                                  name="gcashRefNo"
+                                  onChange={handleChange}
+                                  fullWidth
+                                  sx={TextFieldStyle}
+                                  required
+                                />
+                              </Grid>
+                            </>
                           )}
                         </Grid>
                       </Box>
