@@ -18,6 +18,16 @@ import config from "../../config";
 import axios from "axios";
 import util from "../../utils/DateTimeFormatter";
 
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
+
 const Events = () => {
   const [announcement, setAnnouncement] = useState([]);
 
@@ -36,7 +46,7 @@ const Events = () => {
   }, []);
 
   return (
-    <>
+    <Box sx={containerStyle}>
       <NavParishioner />
       <Header
         title="Gethsemane Parish Pastoral Center"
@@ -55,7 +65,7 @@ const Events = () => {
           ))}
       </Grid>
       <Footer />
-    </>
+    </Box>
   );
 };
 

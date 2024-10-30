@@ -11,6 +11,7 @@ import {
   Radio,
   MenuItem,
   FormHelperText,
+  Box
 } from "@mui/material";
 import Footer from "../../components/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,6 +31,15 @@ import {
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ValidateForm from "../../utils/Validators";
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -137,13 +147,13 @@ const Anointing = () => {
     <>
       <NavParishioner />
       <Header backgroundImage={imageHeader} title="ANNOINTING OF THE SICK" />
-      <Link
-        to="/"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center"
-      >
-        <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
-        <p className="xs:hidden md:flex">Return to Home</p>
+      <div className="max-w-[1440px] mt-6">
+      <Link to='/' className="mt-8 md:mb-10 items-center">
+          <FontAwesomeIcon icon={faArrowLeftLong}  className="ml-8 md:mr-2"/>
+          <p className="hidden md:inline">Return to Home</p>
       </Link>
+      </div>
+
       <h1 align="center" className="font-bold text-md font-[Arial] mb-8">
         Please input the following
       </h1>

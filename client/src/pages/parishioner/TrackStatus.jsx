@@ -3,11 +3,20 @@ import { useNavigate } from "react-router-dom";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from '../../assets/imageHeader.jpg';
 import Footer from '../../components/Footer';
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import ReCAPTCHA from "react-google-recaptcha"
 import { Link } from "react-router-dom";
 import axios from 'axios'
 import config from '../../config'
+
+const pageContainerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const containerStyle = {
   backgroundImage: `url(${imageHeader})`,
@@ -55,7 +64,7 @@ const TrackStatus = () => {
     }
 
   return (
-    <>
+    <Box sx={pageContainerStyle}>
     <NavParishioner />
         <div style={containerStyle}>
             <div style={overlayStyle} className="absolute top-56 w-full p-14 text-center z-0 ">
@@ -87,7 +96,7 @@ const TrackStatus = () => {
             </div>
         </div>
     <Footer />
-    </>
+    </Box>
   );
 }
 

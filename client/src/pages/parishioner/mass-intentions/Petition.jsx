@@ -9,6 +9,7 @@ import {
   TextField,
   MenuItem,
   FormHelperText,
+  Box,
 } from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
@@ -22,6 +23,15 @@ import ValidateForm from "../../../utils/Validators";
 import {LocalizationProvider, DatePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import GCashQR from "../../../components/GCashQR";
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -138,12 +148,12 @@ const Petition = () => {
   const isDateSelected = formData.mass_date !== "";
 
   return (
-    <>
+    <Box sx={containerStyle}>
       <NavParishioner />
       <Header backgroundImage={imageHeader} title="MASS INTENTION - PETITION" />
       <Link
         to="/mass-intention-select"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
+        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center">
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <span className="xs:hidden md:flex">Return to Selection</span>
       </Link>
@@ -336,7 +346,7 @@ const Petition = () => {
         </form>
       </Container>
       <Footer />
-    </>
+    </Box>
   );
 };
 

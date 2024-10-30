@@ -10,6 +10,8 @@ import Footer from '../../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
+import { Box } from "@mui/material";
+
 
 const sampleFAQs = [
     {title: "Title 1", content: "faq number 1 ni..."},
@@ -19,16 +21,24 @@ const sampleFAQs = [
     {title: "Title 5", content: "faq number 5 ni..."},
 ]
 
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const FAQ = () => {
   return (
-    <>
+    <Box sx={containerStyle}>
             <NavParishioner />
             <Header  
                 backgroundImage={imageHeader}
                 title="Frequently Asked Questions"
             />
-            <div className="max-w-[1440px] mt-6 mx-auto">
+            <div className="max-w-[1440px] mt-6">
             <Link to='/' className="mt-8 md:mb-10 items-center">
                 <FontAwesomeIcon icon={faArrowLeftLong}  className="ml-8 md:mr-2"/>
               <p className="hidden md:inline">Return to Home</p>
@@ -50,11 +60,11 @@ const FAQ = () => {
                 </div>
             </div>
 
-            <div className="mt-6 max-w-[1040px] mx-auto ">
+            <div className="mt-6 max-w-[1040px] mx-auto w-full">
                 <div className="mb-20">
                     {sampleFAQs.map((faq, index) => (
                         <div key={index}>
-                        <Accordion className="py-3 rounded-full mb-5" >
+                        <Accordion className="py-3 rounded-full mb-5">
                           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1-content" id="panel1-header"
                           className="font-bold text-lg">
                             {faq.title}
@@ -69,7 +79,7 @@ const FAQ = () => {
             </div>
             <Footer />
    
-        </>
+        </Box>
   )
 }
 

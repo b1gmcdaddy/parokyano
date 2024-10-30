@@ -11,6 +11,7 @@ import {
   Radio,
   MenuItem,
   FormHelperText,
+  Box
 } from "@mui/material";
 import Footer from "../../../components/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,6 +30,15 @@ import {
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ValidateForm from "../../../utils/Validators";
 import dayjs from "dayjs";
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -143,12 +153,12 @@ const OutsideMass = () => {
   const isOtherSelected = radioValue === "others";
 
   return (
-    <>
+    <Box sx={containerStyle}>
       <NavParishioner />
       <Header backgroundImage={imageHeader} title="OUTSIDE MASS" />
       <Link
         to="/mass-selection"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center"
+        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center"
       >
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <p className="xs:hidden md:flex">Return to mass selection</p>
@@ -410,7 +420,7 @@ const OutsideMass = () => {
         </form>
       </Container>
       <Footer />
-    </>
+    </Box>
   );
 };
 

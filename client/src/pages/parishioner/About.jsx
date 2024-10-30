@@ -24,11 +24,21 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Box,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
 import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded";
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const About = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -68,7 +78,7 @@ const About = () => {
   };
 
   return (
-    <>
+    <Box sx={containerStyle}>
       <NavParishioner />
       <Header
         backgroundImage={imageHeader}
@@ -110,7 +120,7 @@ const About = () => {
         </Grid>
       </Container>
 
-      <div className="relative max-w-[1240px] m-auto mt-14">
+      <div className="relative max-w-[1240px] m-auto mt-14 w-full">
         <div
           style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
           className=" h-[320px] rounded-md bg-center bg-cover duration-500"
@@ -213,7 +223,7 @@ const About = () => {
         close={() => setOpenModal(false)}
       />
       <Footer />
-    </>
+    </Box>
   );
 };
 
