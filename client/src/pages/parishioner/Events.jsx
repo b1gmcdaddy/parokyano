@@ -52,7 +52,7 @@ const Events = () => {
         title="Gethsemane Parish Pastoral Center"
         backgroundImage={imageHeader}
       />
-      <Grid spacing={2} container justifyContent={"center"} sx={{ margin: 5 }}>
+      <Grid spacing={2} container justifyContent={"center"} sx={{ marginBottom: '15px' }}>
         {announcement != null &&
           announcement.map((event, index) => (
             <Grid item key={index}>

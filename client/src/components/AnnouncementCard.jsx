@@ -15,7 +15,7 @@ const AnnouncementCard = ({ title, date_announced, description}) => {
         <>
             <Grid container justifyContent={"center"}>
                 <Grid item>
-                    <Card sx={{ width: 800 }}>
+                    <Card sx={{ width: '80vw' }}>
                         <CardContent>
                             <Typography variant="h5" component="div">
                                 {title}
