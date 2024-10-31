@@ -1,8 +1,10 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CloseIcon from "@mui/icons-material/Close";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import {
-  Modal,
-  Box,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
   Button,
   Grid,
   Typography,
@@ -18,8 +20,8 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState, useEffect } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useState, useEffect} from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import util from "../../../utils/DateTimeFormatter";
 import dayjs from "dayjs";
@@ -28,26 +30,8 @@ import config from "../../../config";
 import Snackbar from "@mui/material/Snackbar";
 import sendSMS from "../../../utils/smsService";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "md",
-  bgcolor: "white",
-  borderRadius: "10px",
-  boxShadow: 3,
-  px: 4,
-  py: 3,
-};
-
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px" },
-};
-
-const TextFieldStyleDis = {
-  "& .MuiInputBase-root": { height: "30px" },
-  bgcolor: "#D9D9D9",
+  "& .MuiInputBase-root": {height: "40px"},
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -64,7 +48,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BlessingPending = ({ open, data, handleClose }) => {
+const BlessingPending = ({open, data, handleClose}) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -149,16 +133,16 @@ const BlessingPending = ({ open, data, handleClose }) => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleCloseDialog = () => {
@@ -166,8 +150,8 @@ const BlessingPending = ({ open, data, handleClose }) => {
   };
 
   const handleRadioChange = (e) => {
-    const { value } = e.target;
-    setFormData((prevData) => ({ ...prevData, type: value }));
+    const {value} = e.target;
+    setFormData((prevData) => ({...prevData, type: value}));
     setRadioValue(value);
     if (e.target.value !== "others") {
       setOtherValue("");
@@ -310,7 +294,7 @@ const BlessingPending = ({ open, data, handleClose }) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -319,336 +303,256 @@ const BlessingPending = ({ open, data, handleClose }) => {
         />
       )}
 
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <Grid container justifyContent={"flex-end"}>
-            <Grid item>
-              <IconButton onClick={handleClose} size="small">
-                <FontAwesomeIcon icon={faXmark} />
+      <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+        {formData && priests ? (
+          <>
+            <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
+              <b>Blessing Request Information</b>
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{position: "absolute", right: 8, top: 8}}>
+                <CloseIcon />
               </IconButton>
-            </Grid>
-          </Grid>
-          <Grid container justifyContent={"center"} spacing={2}>
-            <Grid item sm={12}>
-              <Typography
-                variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
-                Blessing Request Information
-              </Typography>
-            </Grid>
+            </DialogTitle>
+            <DialogContent>
+              <Grid container spacing={2} sx={{padding: 3}}>
+                <Grid item sm={12}>
+                  <RadioGroup
+                    row
+                    name="type"
+                    sx={{marginTop: "-5px"}}
+                    value={formData.type}
+                    onChange={handleRadioChange}>
+                    <FormControlLabel
+                      value="House Blessing"
+                      control={<Radio size="small" />}
+                      label="House"
+                    />
+                    <FormControlLabel
+                      value="Company Blessing"
+                      control={<Radio size="small" />}
+                      label="Company"
+                    />
+                    <FormControlLabel
+                      value="others"
+                      control={<Radio size="small" />}
+                      label="Others:"
+                    />
+                    <TextField
+                      disabled={isOtherSelected ? false : true}
+                      value={otherValue}
+                      size="small"
+                      onChange={handleOtherChange}
+                      sx={{
+                        opacity: isOtherSelected ? 1 : 0.4,
+                        marginLeft: "10px",
+                      }}
+                    />
+                  </RadioGroup>
+                </Grid>
 
-            <Grid item sm={1}>
-              <label>Type:</label>
-            </Grid>
-            <Grid item sm={11}>
-              <RadioGroup
-                row
-                name="type"
-                sx={{ marginTop: "-5px" }}
-                value={formData.type}
-                onChange={handleRadioChange}
-              >
-                <FormControlLabel
-                  value="House Blessing"
-                  control={<Radio size="small" />}
-                  label="House"
-                />
-                <FormControlLabel
-                  value="Company Blessing"
-                  control={<Radio size="small" />}
-                  label="Company"
-                />
-                <FormControlLabel
-                  value="others"
-                  control={<Radio size="small" />}
-                  label="Others:"
-                />
-                <TextField
-                  disabled={isOtherSelected ? false : true}
-                  value={otherValue}
-                  onChange={handleOtherChange}
+                <Grid item sm={8}>
+                  <label>Name:</label>
+                  <TextField
+                    fullWidth
+                    name="first_name"
+                    onChange={handleChange}
+                    size="small"
+                    value={formData.first_name}></TextField>
+                </Grid>
+
+                <Grid item sm={4}>
+                  <label>Requested by:</label>
+                  <TextField
+                    fullWidth
+                    name="requested_by"
+                    onChange={handleChange}
+                    size="small"
+                    value={formData.requested_by}
+                    readonly
+                  />
+                </Grid>
+
+                <Grid item sm={8}>
+                  <label>Address:</label>
+                  <TextField
+                    fullWidth
+                    name="address"
+                    onChange={handleChange}
+                    size="small"
+                    value={formData.address}
+                    readonly
+                  />
+                </Grid>
+
+                <Grid item sm={4}>
+                  <label>Contact no:</label>
+                  <TextField
+                    fullWidth
+                    name="contact_no"
+                    onChange={handleChange}
+                    size="small"
+                    value={formData.contact_no}
+                    readonly
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <hr className="my-3" />
+                </Grid>
+
+                <Grid item sm={4}>
+                  <label>Priest:</label>
+                  <TextField
+                    value={formData.priest_id}
+                    name="priest_id"
+                    onChange={handleChange}
+                    select
+                    fullWidth
+                    size="small">
+                    {priests.map((priest) => (
+                      <MenuItem key={priest.priestID} value={priest.priestID}>
+                        {priest.first_name + " " + priest.last_name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item sm={3}>
+                  <label>Date:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      fullWidth
+                      disablePast
+                      sx={TextFieldStyle}
+                      value={
+                        formData.preferred_date
+                          ? dayjs(formData.preferred_date)
+                          : null
+                      }
+                      onChange={(date) =>
+                        handleDateChange("preferred_date", date)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item sm={3}>
+                  <label>Time:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimePicker
+                      fullWidth
+                      sx={TextFieldStyle}
+                      value={
+                        formData.preferred_time
+                          ? dayjs(formData.preferred_time, "HH:mm:ss")
+                          : null
+                      }
+                      onChange={(time) =>
+                        handleTimeChange("preferred_time", time)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item sm={2}>
+                  <Button
+                    fullWidth
+                    onClick={() => handleOpenDialog("approve")}
+                    sx={{
+                      backgroundColor: "#355173",
+                      marginTop: "24px",
+                      gap: 1,
+                      height: "40px",
+                      fontWeight: "bold",
+                      color: "white",
+                      "&:hover": {bgcolor: "#4C74A5"},
+                    }}>
+                    <EventAvailableIcon sx={{fontSize: "1.3em"}} />
+                    Assign
+                  </Button>
+                </Grid>
+
+                <Grid
+                  item
+                  sm={12}
                   sx={{
-                    "& .MuiInputBase-root": { height: "30px" },
-                    opacity: isOtherSelected ? 1 : 0.4,
-                    marginTop: "5px",
-                  }}
-                />
-              </RadioGroup>
-            </Grid>
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}>
+                  <Typography variant="body2" sx={{marginRight: "5px"}}>
+                    Transaction Code:
+                  </Typography>
+                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                    {formData.transaction_no}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </DialogContent>
 
-            <Grid item sm={1.3}>
-              <label>Name:</label>
-            </Grid>
-            <Grid item sm={10.7}>
-              <TextField
-                fullWidth
-                name="first_name"
-                onChange={handleChange}
-                sx={TextFieldStyle}
-                value={formData.first_name}
-              ></TextField>
-            </Grid>
-
-            <Grid item sm={1.3}>
-              <label>Address:</label>
-            </Grid>
-            <Grid item sm={10.7}>
-              <TextField
-                fullWidth
-                name="address"
-                onChange={handleChange}
-                sx={TextFieldStyle}
-                value={formData.address}
-                readonly
-              />
-            </Grid>
-
-            <Grid item sm={2.2}>
-              <label>Requested by:</label>
-            </Grid>
-            <Grid item sm={3.7}>
-              <TextField
-                fullWidth
-                name="requested_by"
-                onChange={handleChange}
-                sx={TextFieldStyle}
-                value={formData.requested_by}
-                readonly
-              />
-            </Grid>
-            <Grid item sm={1.9}>
-              <label>Contact no:</label>
-            </Grid>
-            <Grid item sm={4.2}>
-              <TextField
-                fullWidth
-                name="contact_no"
-                onChange={handleChange}
-                sx={TextFieldStyle}
-                value={formData.contact_no}
-                readonly
-              />
-            </Grid>
-
-            <Grid item sm={12}>
-              <div
-                style={{
+            <DialogActions>
+              <Grid
+                container
+                sx={{
                   display: "flex",
-                  flexDirection: "row",
+                  justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
-                <div
-                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
-                />
-                <div>
-                  <p
-                    style={{
-                      width: "80px",
-                      textAlign: "center",
+                }}>
+                <Grid
+                  item
+                  sm={12}
+                  sx={{
+                    display: "flex",
+                    margin: "-40px 0 10px 0",
+                    justifyContent: "center",
+                    gap: "20px",
+                  }}>
+                  <Button
+                    onClick={() => handleOpenDialog("update")}
+                    sx={{
+                      bgcolor: "#CDAB52",
+                      marginTop: "24px",
+                      height: "40px",
                       fontWeight: "bold",
-                    }}
-                  >
-                    Preferred
-                  </p>
-                </div>
-                <div
-                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
-                />
-              </div>
-            </Grid>
-
-            <Grid item sm={3.2}>
-              <label>Priest:</label>
-              <TextField
-                value={formData.priest_id}
-                name="priest_id"
-                onChange={handleChange}
-                select
-                fullWidth
-                sx={TextFieldStyle}
-              >
-                {priests.map((priest) => (
-                  <MenuItem key={priest.priestID} value={priest.priestID}>
-                    {priest.first_name + " " + priest.last_name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item sm={2.7}>
-              <label>Date:</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  fullWidth
-                  disablePast
-                  sx={TextFieldStyle}
-                  value={
-                    formData.preferred_date
-                      ? dayjs(formData.preferred_date)
-                      : null
-                  }
-                  onChange={(date) => handleDateChange("preferred_date", date)}
-                  renderInput={(params) => <TextField {...params} required />}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item sm={2.5}>
-              <label>Time:</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker
-                  fullWidth
-                  sx={TextFieldStyle}
-                  value={
-                    formData.preferred_time
-                      ? dayjs(formData.preferred_time, "HH:mm:ss")
-                      : null
-                  }
-                  onChange={(time) => handleTimeChange("preferred_time", time)}
-                  renderInput={(params) => <TextField {...params} required />}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item sm={2}>
-              <Button
-                fullWidth
-                onClick={() => handleOpenDialog("approve")}
-                sx={{
-                  backgroundColor: "#355173",
-                  marginTop: "24px",
-                  height: "30px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": { bgcolor: "#4C74A5" },
-                }}
-              >
-                Assign
-              </Button>
-            </Grid>
-
-            {/* <Grid item sm={12}>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <div
-                  style={{ flex: 0.1, height: "1px", backgroundColor: "black" }}
-                />
-                <div>
-                  <p
-                    style={{
-                      width: "80px",
-                      textAlign: "center",
+                      color: "white",
+                      "&:hover": {bgcolor: "#A58228"},
+                    }}>
+                    UPDATE
+                  </Button>
+                  <Button
+                    onClick={() => handleOpenDialog("cancel")}
+                    sx={{
+                      bgcolor: "#C34444",
+                      marginTop: "24px",
+                      height: "40px",
                       fontWeight: "bold",
-                    }}
-                  >
-                    Assigned
-                  </p>
-                </div>
-                <div
-                  style={{ flex: 1, height: "1px", backgroundColor: "black" }}
-                />
-              </div>
-            </Grid> */}
+                      color: "white",
+                      "&:hover": {bgcolor: "#f44336"},
+                    }}>
+                    CANCEL
+                  </Button>
+                </Grid>
+              </Grid>
+            </DialogActions>
+          </>
+        ) : (
+          <Skeleton variant="rectangular" height={400} />
+        )}
+      </Dialog>
 
-            {/* <Grid item sm={3}>
-              <label>Priest:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis} />
-            </Grid>
-            <Grid item sm={3}>
-              <label>Date:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis} />
-            </Grid>
-            <Grid item sm={3}>
-              <label>Time:</label>
-              <TextField disabled fullWidth sx={TextFieldStyleDis} />
-            </Grid>
-            <Grid item sm={2}>
-              <Button
-                fullWidth
-                sx={{
-                  bgcolor: "#BBB6B6",
-                  marginTop: "24px",
-                  height: "30px",
-                  fontWeight: "bold",
-                  color: "#355173",
-                  "&:hover": { bgcolor: "#D3CECE" },
-                }}
-              >
-                CLEAR
-              </Button>
-            </Grid> */}
-
-            <Grid
-              item
-              sm={12}
-              sx={{
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ marginRight: "5px" }}>
-                Transaction Code:
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                {formData.transaction_no}
-              </Typography>
-            </Grid>
-
-            <Grid
-              item
-              sm={12}
-              sx={{
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <Button
-                onClick={() => handleOpenDialog("update")}
-                sx={{
-                  bgcolor: "#CDAB52",
-                  marginTop: "14px",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": { bgcolor: "#F0CA67" },
-                }}
-              >
-                UPDATE
-              </Button>
-              <Button
-                onClick={() => handleOpenDialog("cancel")}
-                sx={{
-                  bgcolor: "#C34444",
-                  margin: "14px 0px 0px 5px",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": { bgcolor: "#F05A5A" },
-                }}
-              >
-                CANCEL
-              </Button>
-            </Grid>
-          </Grid>
-          <ConfirmationDialog
-            open={dialogOpen}
-            onClose={handleCloseDialog}
-            action={currentAction}
-            onConfirm={handleConfirm}
-            service={"blessing"}
-          />
-        </Box>
-      </Modal>
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        action={currentAction}
+        onConfirm={handleConfirm}
+        service={"blessing"}
+      />
     </>
   );
 };

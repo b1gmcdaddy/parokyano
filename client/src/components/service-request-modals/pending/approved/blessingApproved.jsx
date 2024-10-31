@@ -1,11 +1,11 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CloseIcon from "@mui/icons-material/Close";
 import {
-  Modal,
-  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Button,
   Grid,
-  Typography,
   IconButton,
   TextField,
   RadioGroup,
@@ -19,8 +19,8 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useEffect, useState } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useEffect, useState} from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import util from "../../../../utils/DateTimeFormatter";
 import axios from "axios";
@@ -29,34 +29,8 @@ import dayjs from "dayjs";
 import Snackbar from "@mui/material/Snackbar";
 import sendSMS from "../../../../utils/smsService";
 
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "md",
-  bgcolor: "white",
-  borderRadius: "10px",
-  boxShadow: 3,
-  px: 4,
-  py: 2,
-  maxHeight: "97vh",
-  overflow: "hidden",
-  display: "flex",
-  flexDirection: "column",
-};
-
-const modalContentStyle = {
-  overflowY: "auto",
-  flexGrow: 1,
-  scrollbarWidth: "none",
-  "&::-webkit-scrollbar": {
-    display: "none",
-  },
-};
-
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px" },
+  "& .MuiInputBase-root": {height: "40px"},
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -73,7 +47,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BlessingApproved = ({ open, data, handleClose }) => {
+const BlessingApproved = ({open, data, handleClose}) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -193,18 +167,18 @@ const BlessingApproved = ({ open, data, handleClose }) => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const isOtherSelected = radioValue === "others";
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleConfirm = async (action) => {
@@ -334,7 +308,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -343,43 +317,27 @@ const BlessingApproved = ({ open, data, handleClose }) => {
         />
       )}
 
-      <Modal open={open} onClose={handleClose}>
-        {formData && priests && formData ? (
-          <Box sx={modalStyle}>
-            <Box sx={{ position: "sticky", paddingBottom: "10px" }}>
-              <Grid container justifyContent={"flex-end"}>
-                <Grid item>
-                  <IconButton onClick={handleClose} size="small">
-                    <FontAwesomeIcon icon={faXmark} />
-                  </IconButton>
-                </Grid>
+      <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+        {formData && priests ? (
+          <>
+            <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
+              <b>Blessing Request Information</b>
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{position: "absolute", right: 8, top: 8}}>
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              <Grid container spacing={2} sx={{padding: 3}}>
                 <Grid item sm={12}>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ textAlign: "center", fontWeight: "bold" }}
-                  >
-                    Blessing Request Information
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-
-            <Box sx={modalContentStyle}>
-              <Grid container justifyContent={"center"} spacing={2}>
-                <Grid item sm={1}>
-                  <label>Type:</label>
-                </Grid>
-                <Grid item sm={11}>
                   <RadioGroup
                     row
                     name="type"
-                    onChange={(e) => {
-                      handleRadioChange(e);
-                      setFormData({ ...formData, type: e.target.value });
-                    }}
-                    sx={{ marginTop: "-5px" }}
+                    sx={{marginTop: "-5px"}}
                     value={formData.type}
-                  >
+                    onChange={handleRadioChange}>
                     <FormControlLabel
                       value="House Blessing"
                       control={<Radio size="small" />}
@@ -396,67 +354,61 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       label="Others:"
                     />
                     <TextField
-                      disabled={!isOtherSelected} // Simplify condition
+                      disabled={isOtherSelected ? false : true}
                       value={otherValue}
-                      name="otherValue"
+                      size="small"
                       onChange={handleOtherChange}
                       sx={{
-                        "& .MuiInputBase-root": { height: "30px" },
                         opacity: isOtherSelected ? 1 : 0.4,
-                        marginTop: "5px",
+                        marginLeft: "10px",
                       }}
                     />
                   </RadioGroup>
                 </Grid>
 
-                <Grid item sm={1.3}>
+                <Grid item sm={8}>
                   <label>Name:</label>
-                </Grid>
-                <Grid item sm={10.7}>
                   <TextField
+                    fullWidth
                     name="first_name"
-                    fullWidth
-                    sx={TextFieldStyle}
-                    value={formData.first_name}
                     onChange={handleChange}
-                  />
+                    size="small"
+                    value={formData.first_name}></TextField>
                 </Grid>
 
-                <Grid item sm={1.3}>
-                  <label>Address:</label>
-                </Grid>
-                <Grid item sm={10.7}>
-                  <TextField
-                    name="address"
-                    fullWidth
-                    sx={TextFieldStyle}
-                    value={formData.address}
-                    onChange={handleChange}
-                  />
-                </Grid>
-
-                <Grid item sm={2.2}>
+                <Grid item sm={4}>
                   <label>Requested by:</label>
-                </Grid>
-                <Grid item sm={3.7}>
                   <TextField
-                    name="requested_by"
                     fullWidth
-                    sx={TextFieldStyle}
-                    value={formData.requested_by}
+                    name="requested_by"
                     onChange={handleChange}
+                    size="small"
+                    value={formData.requested_by}
+                    readonly
                   />
                 </Grid>
-                <Grid item sm={1.9}>
-                  <label>Contact no:</label>
-                </Grid>
-                <Grid item sm={4.2}>
+
+                <Grid item sm={8}>
+                  <label>Address:</label>
                   <TextField
-                    name="contact_no"
                     fullWidth
-                    sx={TextFieldStyle}
-                    value={formData.contact_no}
+                    name="address"
                     onChange={handleChange}
+                    size="small"
+                    value={formData.address}
+                    readonly
+                  />
+                </Grid>
+
+                <Grid item sm={4}>
+                  <label>Contact no:</label>
+                  <TextField
+                    fullWidth
+                    name="contact_no"
+                    onChange={handleChange}
+                    size="small"
+                    value={formData.contact_no}
+                    readonly
                   />
                 </Grid>
 
@@ -472,8 +424,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                     name="priest_id"
                     onChange={handleChange}
                     select
-                    fullWidth
-                  >
+                    fullWidth>
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name + " " + priest.last_name}
@@ -522,7 +473,7 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
+                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
                   <Button
                     onClick={() => handleOpenDialog("reschedule")}
                     sx={{
@@ -531,9 +482,8 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#578A62" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#578A62"},
+                    }}>
                     Reschedule
                   </Button>
                 </Grid>
@@ -557,91 +507,70 @@ const BlessingApproved = ({ open, data, handleClose }) => {
                       justifyContent: "center",
                       backgroundColor: "#d1d1d1",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     {data.transaction_no}
                   </Paper>
                 </Grid>
+              </Grid>
+            </DialogContent>
 
+            <DialogActions>
+              <Grid
+                container
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}>
                 <Grid
                   item
                   sm={12}
                   sx={{
-                    textAlign: "center",
                     display: "flex",
-                    flexDirection: "row",
+                    margin: "-40px 0 10px 0",
                     justifyContent: "center",
-                  }}
-                >
+                    gap: "20px",
+                  }}>
                   <Button
                     onClick={() => handleOpenDialog("update")}
                     sx={{
                       bgcolor: "#CDAB52",
-                      marginTop: "14px",
-                      height: "35px",
-                      width: "90px",
+                      marginTop: "24px",
+                      height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#F0CA67" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#A58228"},
+                    }}>
                     UPDATE
                   </Button>
                   <Button
                     onClick={() => handleOpenDialog("cancel")}
                     sx={{
                       bgcolor: "#C34444",
-                      margin: "14px 0px 0px 5px",
-                      height: "35px",
-                      width: "90px",
+                      marginTop: "24px",
+                      height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#F05A5A" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#f44336"},
+                    }}>
                     CANCEL
                   </Button>
                 </Grid>
               </Grid>
-            </Box>
-            <ConfirmationDialog
-              open={dialogOpen}
-              onClose={handleCloseDialog}
-              action={currentAction}
-              onConfirm={handleConfirm}
-              service={"blessing"}
-            />
-          </Box>
+            </DialogActions>
+          </>
         ) : (
-          // Skeleton loading effect for the entire form
-          <Grid container spacing={2}>
-            <Grid item sm={12}>
-              <Skeleton variant="text" width="80%" height={30} />
-            </Grid>
-            {[...Array(9)].map((_, index) => (
-              <Grid item sm={4} key={index}>
-                <Skeleton variant="rectangular" width="100%" height={40} />
-              </Grid>
-            ))}
-            <Grid item sm={12} sx={{ mt: 2 }}>
-              <Skeleton variant="rectangular" width="30%" height={40} />
-            </Grid>
-            <Grid item sm={12} sx={{ mt: 1 }}>
-              <Skeleton variant="text" width="50%" height={30} />
-              <Skeleton variant="rectangular" width="100%" height={150} />
-            </Grid>
-            <Grid item sm={12} sx={{ mt: 2 }}>
-              <Skeleton variant="rectangular" width="30%" height={40} />
-              <Skeleton
-                variant="rectangular"
-                width="30%"
-                height={40}
-                sx={{ ml: 2 }}
-              />
-            </Grid>
-          </Grid>
+          <Skeleton variant="rectangular" height={400} />
         )}
-      </Modal>
+      </Dialog>
+
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        action={currentAction}
+        onConfirm={handleConfirm}
+        service={"blessing"}
+      />
     </>
   );
 };
