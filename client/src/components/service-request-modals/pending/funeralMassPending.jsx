@@ -1,6 +1,10 @@
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import CloseIcon from "@mui/icons-material/Close";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import {
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
   Modal,
   Box,
   Button,
@@ -25,26 +29,8 @@ import config from "../../../config";
 import dayjs from "dayjs";
 import sendSMS from "../../../utils/smsService";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "md",
-  bgcolor: "white",
-  borderRadius: "10px",
-  boxShadow: 3,
-  px: 4,
-  py: 3,
-};
-
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
-};
-
-const TextFieldStyleDis = {
-  "& .MuiInputBase-root": {height: "30px"},
-  bgcolor: "#D9D9D9",
+  "& .MuiInputBase-root": {height: "40px"},
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -351,242 +337,233 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
         />
       )}
 
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <Grid container justifyContent={"flex-end"}>
-            <Grid item>
-              <IconButton onClick={handleClose} size="small">
-                <FontAwesomeIcon icon={faXmark} />
+      <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+        {formData && priests ? (
+          <>
+            <DialogTitle sx={{m: 0, p: 2, textAlign: "center"}}>
+              <b>Funeral Mass Request Information</b>
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{position: "absolute", right: 8, top: 8}}>
+                <CloseIcon />
               </IconButton>
-            </Grid>
-          </Grid>
-          <Grid container justifyContent={"center"} spacing={2}>
-            <Grid item sm={12}>
-              <Typography
-                variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
-                Funeral Mass Request Information
-              </Typography>
-            </Grid>
-            <Grid item sm={4}>
-              <label>Name of the deceased:</label>
-            </Grid>
-            <Grid item sm={8}>
-              <TextField
-                fullWidth
-                name="first_name"
-                onChange={handleChange}
-                sx={TextFieldStyle}
-                value={formData.first_name}
-              />
-            </Grid>
+            </DialogTitle>
+            <DialogContent>
+              <Grid container spacing={2} sx={{padding: 3}}>
+                <Grid item xs={12} sm={6}>
+                  <label>Name of Deceased:</label>
+                  <TextField
+                    fullWidth
+                    name="first_name"
+                    size="small"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Contact Number: </label>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    name="contact_no"
+                    value={formData.contact_no}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Requested by:</label>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    name="requested_by"
+                    value={formData.requested_by}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Relationship to the Deceased:</label>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    name="relationship"
+                    value={formData.relationship}
+                    onChange={handleChange}
+                  />
+                </Grid>
 
-            <Grid item sm={4}>
-              <label>Requested by:</label>
-            </Grid>
-            <Grid item sm={8}>
-              <TextField
-                fullWidth
-                name="requested_by"
-                onChange={handleChange}
-                sx={TextFieldStyle}
-                value={formData.requested_by}
-              />
-            </Grid>
+                <Grid item xs={12}>
+                  <hr className="my-3" />
+                </Grid>
 
-            <Grid item sm={4.3}>
-              <label>Relationship to the deceased:</label>
-            </Grid>
-            <Grid item sm={7.7}>
-              <TextField
-                fullWidth
-                name="relationship"
-                onChange={handleChange}
-                sx={TextFieldStyle}
-                value={formData.relationship}
-              />
-            </Grid>
+                <Grid item sm={2.7}>
+                  <label>Priest:</label>
+                  <TextField
+                    value={formData.priest_id}
+                    name="priest_id"
+                    onChange={handleChange}
+                    select
+                    fullWidth
+                    size="small">
+                    {priests.map((priest) => (
+                      <MenuItem key={priest.priestID} value={priest.priestID}>
+                        {priest.first_name + " " + priest.last_name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item sm={2.7}>
+                  <label>Date:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      fullWidth
+                      sx={TextFieldStyle}
+                      value={
+                        formData.preferred_date
+                          ? dayjs(formData.preferred_date)
+                          : null
+                      }
+                      onChange={(date) =>
+                        handleDateChange("preferred_date", date)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item sm={2.5}>
+                  <label>Time:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimePicker
+                      fullWidth
+                      sx={TextFieldStyle}
+                      value={
+                        formData.preferred_time
+                          ? dayjs(formData.preferred_time, "HH:mm:ss")
+                          : null
+                      }
+                      onChange={(time) =>
+                        handleTimeChange("preferred_time", time)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item sm={2}>
+                  <label>Church:</label>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    sx={{
+                      bgcolor:
+                        available === "Available" ? "#AFE1AF" : "#d67373",
+                    }}
+                    value={available}
+                    readonly
+                  />
+                </Grid>
+                <Grid item sm={2}>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleOpenDialog("approve")}
+                    fullWidth
+                    sx={{
+                      backgroundColor: "#355173",
+                      marginTop: "24px",
+                      gap: 1,
+                      height: "40px",
+                      fontWeight: "bold",
+                      color: "white",
+                      "&:hover": {bgcolor: "#4C74A5"},
+                    }}
+                    disabled={available === "Unavailable"}>
+                    <EventAvailableIcon sx={{fontSize: "1.3em"}} />
+                    Assign
+                  </Button>
+                </Grid>
 
-            <Grid item sm={4}>
-              <label>Contact Number:</label>
-            </Grid>
-            <Grid item sm={8}>
-              <TextField
-                fullWidth
-                onChange={handleChange}
-                name="contact_no"
-                sx={TextFieldStyle}
-                value={formData.contact_no}
-              />
-            </Grid>
+                <Grid
+                  item
+                  sm={12}
+                  sx={{
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}>
+                  <Typography variant="body2" sx={{marginRight: "5px"}}>
+                    Transaction Code:
+                  </Typography>
+                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                    {formData.transaction_no}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </DialogContent>
 
-            <Grid item sm={12}>
-              <div
-                style={{
+            <DialogActions>
+              <Grid
+                container
+                sx={{
                   display: "flex",
-                  flexDirection: "row",
+                  justifyContent: "center",
                   alignItems: "center",
                 }}>
-                <div
-                  style={{flex: 0.1, height: "1px", backgroundColor: "black"}}
-                />
-                <div>
-                  <p
-                    style={{
-                      width: "80px",
-                      textAlign: "center",
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    display: "flex",
+                    margin: "-40px 0 10px 0",
+                    justifyContent: "center",
+                    gap: "20px",
+                  }}>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleOpenDialog("update")}
+                    sx={{
+                      bgcolor: "#CDAB52",
+                      marginTop: "24px",
+                      height: "40px",
                       fontWeight: "bold",
+                      color: "white",
+                      "&:hover": {bgcolor: "#A58228"},
                     }}>
-                    Preferred
-                  </p>
-                </div>
-                <div
-                  style={{flex: 1, height: "1px", backgroundColor: "black"}}
-                />
-              </div>
-            </Grid>
+                    UPDATE
+                  </Button>
 
-            <Grid item sm={2.7}>
-              <label>Priest:</label>
-              <TextField
-                value={formData.priest_id}
-                name="priest_id"
-                onChange={handleChange}
-                select
-                fullWidth
-                sx={TextFieldStyle}>
-                {priests.map((priest) => (
-                  <MenuItem key={priest.priestID} value={priest.priestID}>
-                    {priest.first_name + " " + priest.last_name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item sm={2.5}>
-              <label>Date:</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  fullWidth
-                  sx={TextFieldStyle}
-                  value={
-                    formData.preferred_date
-                      ? dayjs(formData.preferred_date)
-                      : null
-                  }
-                  onChange={(date) => handleDateChange("preferred_date", date)}
-                  renderInput={(params) => <TextField {...params} required />}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item sm={2.2}>
-              <label>Time:</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker
-                  fullWidth
-                  sx={TextFieldStyle}
-                  value={
-                    formData.preferred_time
-                      ? dayjs(formData.preferred_time, "HH:mm:ss")
-                      : null
-                  }
-                  onChange={(time) => handleTimeChange("preferred_time", time)}
-                  renderInput={(params) => <TextField {...params} required />}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid item sm={1.8}>
-              <label>Church:</label>
-              <TextField
-                fullWidth
-                sx={{
-                  "& .MuiInputBase-root": {height: "30px"},
-                  bgcolor: available === "Available" ? "#AFE1AF" : "#d67373",
-                }}
-                value={available}
-                readonly
-              />
-            </Grid>
-            <Grid item sm={2}>
-              <Button
-                onClick={() => handleOpenDialog("approve")}
-                fullWidth
-                sx={{
-                  backgroundColor: "#355173",
-                  marginTop: "24px",
-                  height: "30px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": {bgcolor: "#4C74A5"},
-                }}
-                disabled={available === "Unavailable"}>
-                Assign
-              </Button>
-            </Grid>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleOpenDialog("cancel")}
+                    sx={{
+                      bgcolor: "#C34444",
+                      marginTop: "24px",
+                      height: "40px",
+                      fontWeight: "bold",
+                      color: "white",
+                      "&:hover": {bgcolor: "#f44336"},
+                    }}>
+                    CANCEL
+                  </Button>
+                </Grid>
+              </Grid>
+            </DialogActions>
+          </>
+        ) : (
+          <Skeleton variant="rectangular" height={400} />
+        )}
+      </Dialog>
 
-            <Grid
-              item
-              sm={12}
-              sx={{
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}>
-              <Typography variant="body2" sx={{marginRight: "5px"}}>
-                Transaction Code:
-              </Typography>
-              <Typography variant="body2" sx={{fontWeight: "bold"}}>
-                {formData.transaction_no}
-              </Typography>
-            </Grid>
-
-            <Grid
-              item
-              sm={12}
-              sx={{
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}>
-              <Button
-                onClick={() => handleOpenDialog("update")}
-                sx={{
-                  bgcolor: "#CDAB52",
-                  marginTop: "14px",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": {bgcolor: "#F0CA67"},
-                }}
-                disabled={available === "Unavailable"}>
-                UPDATE
-              </Button>
-              <Button
-                onClick={() => handleOpenDialog("cancel")}
-                sx={{
-                  bgcolor: "#C34444",
-                  margin: "14px 0px 0px 5px",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": {bgcolor: "#F05A5A"},
-                }}>
-                CANCEL
-              </Button>
-            </Grid>
-          </Grid>
-          <ConfirmationDialog
-            open={dialogOpen}
-            onClose={handleCloseDialog}
-            action={currentAction}
-            onConfirm={handleConfirm}
-            service={"funeral mass"}
-          />
-        </Box>
-      </Modal>
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        action={currentAction}
+        onConfirm={handleConfirm}
+        service={"Funeral Mass"}
+      />
     </>
   );
 };

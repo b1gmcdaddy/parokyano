@@ -19,7 +19,7 @@ import {
 import dayjs from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import CloseIcon from "@mui/icons-material/Close";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+
 import {useEffect, useState} from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import config from "../../../../config";
@@ -450,6 +450,7 @@ const AnointingApproved = ({open, data, handleClose}) => {
                 </Grid>
                 <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("reschedule")}
                     sx={{
                       bgcolor: "#247E38",
@@ -507,6 +508,7 @@ const AnointingApproved = ({open, data, handleClose}) => {
                     gap: "20px",
                   }}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("update")}
                     sx={{
                       bgcolor: "#CDAB52",

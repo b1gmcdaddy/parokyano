@@ -17,9 +17,9 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import config from "../../../../config";
 import axios from "axios";
@@ -27,7 +27,7 @@ import Skeleton from "@mui/material/Skeleton";
 import sendSMS from "../../../../utils/smsService";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "40px" },
+  "& .MuiInputBase-root": {height: "40px"},
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -44,7 +44,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const FuneralMassModalApproved = ({ open, data, handleClose }) => {
+const FuneralMassModalApproved = ({open, data, handleClose}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [available, setAvailable] = useState("");
@@ -147,12 +147,12 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
   ]);
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   useEffect(() => {
@@ -184,8 +184,8 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const handleConfirm = async (action) => {
@@ -315,7 +315,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -327,19 +327,18 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {formData && priests ? (
           <>
-            <DialogTitle sx={{ m: 0, p: 2, textAlign: "center" }}>
-              Funeral Mass Request Information
+            <DialogTitle sx={{m: 0, p: 2, textAlign: "center"}}>
+              <b>Funeral Mass Request Information</b>
               <IconButton
                 aria-label="close"
                 onClick={handleClose}
-                sx={{ position: "absolute", right: 8, top: 8 }}
-              >
+                sx={{position: "absolute", right: 8, top: 8}}>
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
-              <Grid container spacing={2} sx={{ padding: 3 }}>
-                <Grid item xs={12} sm={12}>
+              <Grid container spacing={2} sx={{padding: 3}}>
+                <Grid item xs={12} sm={6}>
                   <label>Name of Deceased:</label>
                   <TextField
                     fullWidth
@@ -349,7 +348,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <label>Contact Number: </label>
                   <TextField
                     fullWidth
@@ -359,7 +358,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <label>Requested by:</label>
                   <TextField
                     fullWidth
@@ -369,7 +368,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <label>Relationship to the Deceased:</label>
                   <TextField
                     fullWidth
@@ -392,8 +391,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                     name="priest_id"
                     onChange={handleChange}
                     select
-                    fullWidth
-                  >
+                    fullWidth>
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name + " " + priest.last_name}
@@ -451,8 +449,9 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
+                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("reschedule")}
                     sx={{
                       bgcolor: "#247E38",
@@ -460,9 +459,8 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#578A62" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#578A62"},
+                    }}>
                     Reschedule
                   </Button>
                 </Grid>
@@ -486,8 +484,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                       justifyContent: "center",
                       backgroundColor: "#d1d1d1",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     {data.transaction_no}
                   </Paper>
                 </Grid>
@@ -499,22 +496,20 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                 container
                 sx={{
                   display: "flex",
-                  marginTop: "-30px",
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
-                  sm={12}
                   sx={{
                     display: "flex",
+                    margin: "-40px 0 10px 0",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
+                  }}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("update")}
                     sx={{
                       bgcolor: "#CDAB52",
@@ -522,9 +517,8 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#A58228" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#A58228"},
+                    }}>
                     UPDATE
                   </Button>
 
@@ -537,9 +531,8 @@ const FuneralMassModalApproved = ({ open, data, handleClose }) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#f44336" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#f44336"},
+                    }}>
                     CANCEL
                   </Button>
                 </Grid>

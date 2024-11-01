@@ -439,6 +439,7 @@ const AnointingPending = ({open, data, handleClose}) => {
                   <Button
                     onClick={() => handleOpenDialog("approve")}
                     fullWidth
+                    variant="contained"
                     sx={{
                       backgroundColor: "#355173",
                       marginTop: "24px",

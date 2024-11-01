@@ -475,6 +475,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
                 </Grid>
                 <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("reschedule")}
                     sx={{
                       bgcolor: "#247E38",
@@ -532,6 +533,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
                     gap: "20px",
                   }}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("update")}
                     sx={{
                       bgcolor: "#CDAB52",
@@ -544,6 +546,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
                     UPDATE
                   </Button>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("cancel")}
                     sx={{
                       bgcolor: "#C34444",
