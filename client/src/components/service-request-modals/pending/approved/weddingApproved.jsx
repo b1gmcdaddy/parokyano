@@ -1,5 +1,4 @@
 import CloseIcon from "@mui/icons-material/Close";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
@@ -26,6 +25,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Skeleton,
 } from "@mui/material";
 import {
   DatePicker,
@@ -715,6 +715,7 @@ const WeddingApproved = ({open, data, handleClose}) => {
   const [error, setError] = useState(null);
   const [errorOpen, setErrorOpen] = useState(false);
   const [priests, setPriests] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     requestID: "",
     first_name: "",
@@ -772,6 +773,7 @@ const WeddingApproved = ({open, data, handleClose}) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (open && data) {
       setFormData({
         requestID: data.requestID,
@@ -799,6 +801,9 @@ const WeddingApproved = ({open, data, handleClose}) => {
       fetchWeddingData();
       fetchUser(data.user_id, setApprover);
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, "500");
   }, [open, data]);
 
   const fetchAvailability = async (date, start, end) => {
@@ -1018,7 +1023,7 @@ const WeddingApproved = ({open, data, handleClose}) => {
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
-        {formData && priests ? (
+        {!isLoading ? (
           <>
             <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
               <b>Wedding Request Information</b>
@@ -1324,7 +1329,33 @@ const WeddingApproved = ({open, data, handleClose}) => {
             </DialogActions>
           </>
         ) : (
-          <Skeleton variant="rectangular" height={400} />
+          // Skeleton loading effect for the entire form
+          <Grid container spacing={2} sx={{padding: 6}}>
+            <Grid item sm={12}>
+              <Skeleton variant="text" width="80%" height={30} />
+            </Grid>
+            {[...Array(9)].map((_, index) => (
+              <Grid item sm={4} key={index}>
+                <Skeleton variant="rectangular" width="100%" height={40} />
+              </Grid>
+            ))}
+            <Grid item sm={12} sx={{mt: 2}}>
+              <Skeleton variant="rectangular" width="30%" height={40} />
+            </Grid>
+            <Grid item sm={12} sx={{mt: 1}}>
+              <Skeleton variant="text" width="50%" height={30} />
+              <Skeleton variant="rectangular" width="100%" height={150} />
+            </Grid>
+            <Grid item sm={12} sx={{mt: 2}}>
+              <Skeleton variant="rectangular" width="30%" height={40} />
+              <Skeleton
+                variant="rectangular"
+                width="30%"
+                height={40}
+                sx={{ml: 2}}
+              />
+            </Grid>
+          </Grid>
         )}
       </Dialog>
 

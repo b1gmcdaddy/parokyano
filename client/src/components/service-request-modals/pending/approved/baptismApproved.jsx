@@ -1,7 +1,10 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Modal,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  DialogTitle,
   Box,
   Button,
   Grid,
@@ -20,42 +23,16 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useEffect, useState } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useEffect, useState} from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../../config";
 import dayjs from "dayjs";
-import util from "../../../../utils/DateTimeFormatter";
-
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "md",
-  bgcolor: "white",
-  borderRadius: "10px",
-  boxShadow: 3,
-  px: 4,
-  py: 2,
-  maxHeight: "97vh",
-  overflow: "hidden",
-  display: "flex",
-  flexDirection: "column",
-};
-
-const modalContentStyle = {
-  overflowY: "auto",
-  flexGrow: 1,
-  scrollbarWidth: "none",
-  "&::-webkit-scrollbar": {
-    display: "none",
-  },
-};
+import {Skeleton} from "@mui/material";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px" },
+  "& .MuiInputBase-root": {height: "30px"},
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -72,13 +49,15 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BaptismApproved = ({ open, data, handleClose }) => {
+const BaptismApproved = ({open, data, handleClose}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [sponsors, setSponsors] = useState([]);
+  const [error, setError] = useState(null);
   const [approver, setApprover] = useState({});
   const [available, setAvailable] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [details, setDetails] = useState({});
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
@@ -115,6 +94,7 @@ const BaptismApproved = ({ open, data, handleClose }) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (open && data) {
       setFormData({
         first_name: data.first_name || "",
@@ -132,6 +112,9 @@ const BaptismApproved = ({ open, data, handleClose }) => {
         transaction_no: data.transaction_no || "",
       });
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, "500");
   }, [open, data]);
 
   const fetchSponsors = async (id) => {
@@ -245,21 +228,21 @@ const BaptismApproved = ({ open, data, handleClose }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleDetailsChange = (e) => {
-    setDetails({ ...details, [e.target.name]: e.target.value });
+    setDetails({...details, [e.target.name]: e.target.value});
   };
 
   const handleConfirm = async (action) => {
@@ -382,60 +365,74 @@ const BaptismApproved = ({ open, data, handleClose }) => {
 
   return (
     <>
-      <Modal open={open} onClose={handleClose}>
-        {formData && sponsors && priests && details && formData ? (
-          <Box sx={modalStyle}>
-            <Box sx={{ position: "sticky", paddingBottom: "10px" }}>
-              <Grid container justifyContent={"flex-end"}>
-                <Grid item>
-                  <IconButton onClick={handleClose} size="small">
-                    <FontAwesomeIcon icon={faXmark} />
-                  </IconButton>
-                </Grid>
-                <Grid item sm={12}>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ textAlign: "center", fontWeight: "bold" }}
-                  >
-                    Baptism Request Information
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
+      {error && (
+        <Snackbar
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}
+          message={
+            <>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
+                {error.message}
+              </span>
+              <p>{error.details}</p>
+            </>
+          }
+        />
+      )}
 
-            <Box sx={modalContentStyle}>
-              <Grid container justifyContent={"center"} spacing={0.8}>
+      <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+        {!isLoading ? (
+          <>
+            <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
+              <b>Baptism Request Information</b>
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{position: "absolute", right: 8, top: 8}}>
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              <Grid container spacing={1} sx={{padding: 4}}>
                 <Grid item sm={4}>
                   <label>First name of child:</label>
                   <TextField
-                    fullWidth
-                    sx={TextFieldStyle}
                     value={formData.first_name}
+                    fullWidth
+                    name="first_name"
+                    onChange={handleChange}
+                    sx={TextFieldStyle}
                   />
                 </Grid>
                 <Grid item sm={4}>
                   <label>Middle name of child:</label>
                   <TextField
+                    name="middle_name"
+                    onChange={handleChange}
+                    value={formData.middle_name}
                     fullWidth
                     sx={TextFieldStyle}
-                    value={formData.middle_name}
                   />
                 </Grid>
                 <Grid item sm={4}>
                   <label>Last name of child:</label>
                   <TextField
+                    name="last_name"
+                    onChange={handleChange}
+                    value={formData.last_name}
                     fullWidth
                     sx={TextFieldStyle}
-                    value={formData.last_name}
                   />
                 </Grid>
 
                 <Grid item sm={4}>
-                  <label>Date of birth:</label>
+                  <label>Date of Birth:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       name="birth_date"
                       fullWidth
+                      type="date"
                       sx={TextFieldStyle}
                       value={
                         formData.birth_date ? dayjs(formData.birth_date) : null
@@ -452,13 +449,14 @@ const BaptismApproved = ({ open, data, handleClose }) => {
                 <Grid item sm={4}>
                   <label>Place of brith:</label>
                   <TextField
+                    name="birth_place"
+                    onChange={handleChange}
+                    value={formData.birth_place}
                     fullWidth
                     sx={TextFieldStyle}
-                    name="birth_place"
-                    value={formData.birth_place}
-                    onChange={handleChange}
                   />
                 </Grid>
+
                 <Grid item sm={4}>
                   <label>Gender:</label>
                   <TextField
@@ -467,137 +465,173 @@ const BaptismApproved = ({ open, data, handleClose }) => {
                     name="gender"
                     select
                     onChange={handleDetailsChange}
-                    sx={TextFieldStyle}
-                  >
+                    sx={TextFieldStyle}>
                     <MenuItem value="male">Male</MenuItem>
                     <MenuItem value="female">Female</MenuItem>
                   </TextField>
                 </Grid>
 
-                <Grid item sm={9}>
+                <Grid item sm={8}>
                   <label>Father's complete name:</label>
                   <TextField
+                    name="father_name"
+                    onChange={handleChange}
+                    value={formData.father_name}
                     fullWidth
                     sx={TextFieldStyle}
-                    name="father_name"
-                    value={formData.father_name}
-                    onChange={handleChange}
                   />
                 </Grid>
-                <Grid item sm={3}>
+                <Grid item sm={4}>
                   <label>Age:</label>
                   <TextField
+                    value={details?.father_age}
+                    name="father_age"
+                    onChange={handleDetailsChange}
+                    type="number"
                     fullWidth
                     sx={TextFieldStyle}
-                    name="father_age"
-                    value={details.father_age}
-                    onChange={handleChange}
                   />
                 </Grid>
 
-                <Grid item sm={9}>
+                <Grid item sm={8}>
                   <label>Mother's complete name:</label>
                   <TextField
+                    value={formData.mother_name}
+                    name="mother_name"
+                    onChange={handleChange}
                     fullWidth
                     sx={TextFieldStyle}
-                    name="mother_name"
-                    value={formData.mother_name}
-                    onChange={handleDetailsChange}
                   />
                 </Grid>
-                <Grid item sm={3}>
+                <Grid item sm={4}>
                   <label>Age:</label>
                   <TextField
+                    value={details?.mother_age}
+                    name="mother_age"
+                    onChange={handleDetailsChange}
+                    type="number"
                     fullWidth
                     sx={TextFieldStyle}
-                    name="mother_age"
-                    value={details.mother_age}
-                    onChange={handleDetailsChange}
                   />
                 </Grid>
 
-                <Grid item sm={12}>
+                <Grid item sm={12} sx={{marginY: 2}}>
                   <Grid container spacing={2}>
                     <Grid item sm={8}>
                       <Grid container>
                         <Grid item sm={8}>
                           <Typography variant="subtitle1">
-                            Godparents:
+                            <b>Godparents:</b>
                           </Typography>
                         </Grid>
                         <Grid item sm={4}>
-                          <Typography variant="subtitle1">Catholic?</Typography>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{fontWeight: "bold"}}>
+                            Catholic?
+                          </Typography>
                         </Grid>
                       </Grid>
                       <Box
                         fullWidth
-                        sx={{ height: "150px", overflowY: "auto" }}
-                      >
-                        {" "}
+                        sx={{
+                          height:
+                            formData.payment_method == "cash"
+                              ? "90px"
+                              : "200px",
+                          overflowY: "auto",
+                        }}>
                         {/* Ninong */}
                         <Grid container>
-                          {sponsors.map((godparent, index) => (
-                            <Grid container spacing={2} key={index}>
-                              <Grid item sm={0.7}>
-                                <p>{index + 1}.</p>
-                              </Grid>
-                              <Grid item sm={6.3}>
-                                <TextField
-                                  fullWidth
-                                  value={godparent.name}
-                                  sx={TextFieldStyle}
-                                />
-                              </Grid>
-                              <Grid item sm={5}>
-                                <RadioGroup
-                                  row
-                                  defaultValue={godparent.isCatholic}
-                                  value={godparent.isCatholic}
-                                  sx={{ marginTop: "-7px" }}
-                                >
-                                  <FormControlLabel
-                                    value="1"
-                                    control={<Radio />}
-                                    label="Yes"
+                          {sponsors &&
+                            sponsors.map((godparent, index) => (
+                              <Grid container spacing={2} key={index}>
+                                <Grid item sm={0.5}>
+                                  <p>{index + 1}.</p>
+                                </Grid>
+                                <Grid item sm={7}>
+                                  <TextField
+                                    fullWidth
+                                    value={godparent.name}
+                                    sx={TextFieldStyle}
+                                    name="godparent"
                                   />
-                                  <FormControlLabel
-                                    value="0"
-                                    control={<Radio />}
-                                    label="No"
-                                  />
-                                </RadioGroup>
+                                </Grid>
+                                <Grid item sm={4.5}>
+                                  <RadioGroup
+                                    row
+                                    defaultValue={godparent.isCatholic}
+                                    sx={{marginTop: "-7px"}}
+                                    value={godparent.isCatholic}>
+                                    <FormControlLabel
+                                      value="1"
+                                      control={<Radio />}
+                                      label="Yes"
+                                    />
+                                    <FormControlLabel
+                                      value="0"
+                                      control={<Radio />}
+                                      label="No"
+                                    />
+                                  </RadioGroup>
+                                </Grid>
                               </Grid>
-                            </Grid>
-                          ))}
+                            ))}
                         </Grid>
                       </Box>
                     </Grid>
                     <Grid item sm={4}>
-                      <Box fullWidth sx={{ height: "40px" }}>
+                      <Box fullWidth>
                         <Grid container>
                           <Grid item sm={12}>
                             <Typography
                               variant="subtitle1"
-                              sx={{ fontWeight: "bold" }}
-                            >
+                              sx={{fontWeight: "bold"}}>
                               Requirements:
                             </Typography>
                           </Grid>
                           <Grid item sm={12}>
                             <FormControlLabel
-                              control={<Checkbox />}
+                              control={
+                                <Checkbox
+                                  name="birthCert"
+                                  checked={details?.birthCert === 1}
+                                  onChange={(e) =>
+                                    handleDetailsChange({
+                                      target: {
+                                        name: e.target.name,
+                                        value: e.target.checked ? 1 : 0,
+                                      },
+                                    })
+                                  }
+                                />
+                              }
                               label={
-                                <Typography sx={{ fontSize: "13px" }}>
+                                <Typography sx={{fontSize: "13px"}}>
                                   Photocopy of Birth Certificate
                                 </Typography>
                               }
                             />
                           </Grid>
+
                           <Grid item sm={12}>
                             <FormControlLabel
-                              control={<Checkbox />}
+                              control={
+                                <Checkbox
+                                  name="parent_marriageCert"
+                                  checked={details?.parent_marriageCert === 1}
+                                  onChange={(e) =>
+                                    handleDetailsChange({
+                                      target: {
+                                        name: e.target.name,
+                                        value: e.target.checked ? 1 : 0,
+                                      },
+                                    })
+                                  }
+                                />
+                              }
                               label={
-                                <Typography sx={{ fontSize: "13px" }}>
+                                <Typography sx={{fontSize: "13px"}}>
                                   Photocopy of Parent - Marriage Certificate
                                 </Typography>
                               }
@@ -606,8 +640,7 @@ const BaptismApproved = ({ open, data, handleClose }) => {
                           <Grid item sm={12}>
                             <Typography
                               variant="subtitle1"
-                              sx={{ display: "inline-block" }}
-                            >
+                              sx={{display: "inline-block"}}>
                               Payment:
                             </Typography>
                             <Typography
@@ -616,55 +649,70 @@ const BaptismApproved = ({ open, data, handleClose }) => {
                                 fontWeight: "bold",
                                 display: "inline-block",
                                 marginLeft: "10px",
-                              }}
-                            >
-                              800
+                              }}>
+                              ₱{parseFloat(formData.donation).toFixed(2)}
                             </Typography>
                           </Grid>
                           <Grid item sm={6}>
                             <TextField
                               fullWidth
-                              value={"cash"}
+                              name="payment_method"
+                              onChange={handleChange}
+                              value={formData.payment_method}
                               sx={TextFieldStyle}
-                            />
-                          </Grid>
-                          <Grid item sm={6}>
-                            <TextField fullWidth select sx={TextFieldStyle}>
-                              <MenuItem
-                                value={"Unpaid"}
-                                sx={{ fontWeight: "bold", color: "#950000" }}
-                              >
-                                Unpaid
-                              </MenuItem>
-                              <MenuItem
-                                value={"Paid"}
-                                sx={{ fontWeight: "bold", color: "#247E38" }}
-                              >
-                                Paid
-                              </MenuItem>
+                              select>
+                              <MenuItem value="cash">Cash</MenuItem>
+                              <MenuItem value="gcash">Gcash</MenuItem>
                             </TextField>
                           </Grid>
+                          <Grid item sm={6}>
+                            <TextField
+                              value={formData.payment_status}
+                              name="payment_status"
+                              onChange={handleChange}
+                              fullWidth
+                              select
+                              sx={TextFieldStyle}>
+                              <MenuItem value="unpaid">unpaid</MenuItem>
+                              <MenuItem value="paid">paid</MenuItem>
+                            </TextField>
+                          </Grid>
+                          {formData && formData.payment_method === "gcash" && (
+                            <>
+                              <Grid item sm={12} sx={{mt: 1}}>
+                                <Typography variant="subtitle1">
+                                  GCash Reference No:
+                                </Typography>
+                                <TextField
+                                  value={`gcash ref no. ${formData.gcashRefNo}`}
+                                  name="gcashRefNo"
+                                  onChange={handleChange}
+                                  fullWidth
+                                  sx={TextFieldStyle}
+                                  required
+                                />
+                              </Grid>
+                            </>
+                          )}
                         </Grid>
                       </Box>
                     </Grid>
                   </Grid>
                 </Grid>
 
-                <Grid item xs={12}>
-                  <hr className="my-3" />
+                <Grid item sm={12}>
+                  <hr className="my-1" />
                 </Grid>
 
-                <Grid item xs={12} sm={2.8}>
-                  <label>Selected Priest:</label>
+                <Grid item sm={4}>
+                  <label>Priest:</label>
                   <TextField
                     value={formData.priest_id}
-                    size="small"
-                    name="priest_id"
-                    sx={TextFieldStyle}
-                    onChange={handleChange}
-                    select
                     fullWidth
-                  >
+                    name="priest_id"
+                    select
+                    onChange={handleChange}
+                    sx={TextFieldStyle}>
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name + " " + priest.last_name}
@@ -672,13 +720,14 @@ const BaptismApproved = ({ open, data, handleClose }) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={2.3}>
-                  <label>Selected Date:</label>
+
+                <Grid item sm={3}>
+                  <label>Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      disablePast
+                      type="date"
                       fullWidth
-                      sx={TextFieldStyle}
+                      name="preferred_date"
                       value={
                         formData.preferred_date
                           ? dayjs(formData.preferred_date)
@@ -690,18 +739,20 @@ const BaptismApproved = ({ open, data, handleClose }) => {
                       renderInput={(params) => (
                         <TextField {...params} required />
                       )}
+                      sx={TextFieldStyle}
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2.3}>
-                  <label>Selected Time:</label>
+                <Grid item sm={3}>
+                  <label>Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
+                      type="time"
                       fullWidth
-                      sx={TextFieldStyle}
+                      name="preferred_time"
                       value={
-                        data.preferred_time
-                          ? dayjs(data.preferred_time, "HH:mm:ss")
+                        formData.preferred_time
+                          ? dayjs(formData.preferred_time, "HH:mm:ss")
                           : null
                       }
                       onChange={(time) =>
@@ -710,57 +761,37 @@ const BaptismApproved = ({ open, data, handleClose }) => {
                       renderInput={(params) => (
                         <TextField {...params} required />
                       )}
+                      sx={TextFieldStyle}
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2.2}>
-                  <label>Church:</label>
-                  <TextField
-                    value={available}
-                    sx={TextFieldStyle}
-                    size="small"
-                    name="priest_id"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
+                <Grid item sm={2}>
+                  {available === "Available" ? (
+                    <span className="font-bold text-green-700 text-xs">
+                      Church is Available
+                    </span>
+                  ) : available === "Unavailable" ? (
+                    <span className="font-bold text-red-500 text-xs">
+                      Church Unavailable
+                    </span>
+                  ) : (
+                    <span>&nbsp;</span>
+                  )}
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("reschedule")}
+                    fullWidth
                     sx={{
                       bgcolor: "#247E38",
-                      marginTop: "24px",
+                      gap: 1,
                       height: "30px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#578A62" },
+                      "&:hover": {bgcolor: "#578A62"},
                     }}
-                  >
+                    disabled={available === "Unavailable"}>
                     Reschedule
                   </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <label>Venue:</label>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    sx={TextFieldStyle}
-                    disabled
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <label>Transaction Number:</label>
-                  <Paper
-                    elevation={1}
-                    sx={{
-                      height: "30px",
-                      alignItems: "center",
-                      display: "flex",
-                      justifyContent: "center",
-                      backgroundColor: "#d1d1d1",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {data.transaction_no}
-                  </Paper>
                 </Grid>
 
                 <Grid
@@ -771,50 +802,68 @@ const BaptismApproved = ({ open, data, handleClose }) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}
-                >
+                  }}>
+                  <Typography variant="body2" sx={{marginRight: "5px"}}>
+                    Transaction Code:
+                  </Typography>
+                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                    {formData.transaction_no}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </DialogContent>
+
+            <DialogActions>
+              <Grid
+                container
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    display: "flex",
+                    margin: "-40px 0 10px 0",
+                    justifyContent: "center",
+                    gap: "20px",
+                  }}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("update")}
                     sx={{
                       bgcolor: "#CDAB52",
-                      marginTop: "14px",
-                      height: "35px",
-                      width: "90px",
+                      marginTop: "24px",
+                      height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#F0CA67" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#A58228"},
+                    }}>
                     UPDATE
                   </Button>
+
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("cancel")}
                     sx={{
                       bgcolor: "#C34444",
-                      margin: "14px 0px 0px 5px",
-                      height: "35px",
-                      width: "90px",
+                      marginTop: "24px",
+                      height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#F05A5A" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#f44336"},
+                    }}>
                     CANCEL
                   </Button>
                 </Grid>
               </Grid>
-            </Box>
-            <ConfirmationDialog
-              open={dialogOpen}
-              onClose={handleCloseDialog}
-              action={currentAction}
-              onConfirm={handleConfirm}
-              service={"Baptism"}
-            />
-          </Box>
+            </DialogActions>
+          </>
         ) : (
           // Skeleton loading effect for the entire form
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{padding: 4}}>
             <Grid item sm={12}>
               <Skeleton variant="text" width="80%" height={30} />
             </Grid>
@@ -823,25 +872,32 @@ const BaptismApproved = ({ open, data, handleClose }) => {
                 <Skeleton variant="rectangular" width="100%" height={40} />
               </Grid>
             ))}
-            <Grid item sm={12} sx={{ mt: 2 }}>
+            <Grid item sm={12} sx={{mt: 2}}>
               <Skeleton variant="rectangular" width="30%" height={40} />
             </Grid>
-            <Grid item sm={12} sx={{ mt: 1 }}>
+            <Grid item sm={12} sx={{mt: 1}}>
               <Skeleton variant="text" width="50%" height={30} />
               <Skeleton variant="rectangular" width="100%" height={150} />
             </Grid>
-            <Grid item sm={12} sx={{ mt: 2 }}>
+            <Grid item sm={12} sx={{mt: 2}}>
               <Skeleton variant="rectangular" width="30%" height={40} />
               <Skeleton
                 variant="rectangular"
                 width="30%"
                 height={40}
-                sx={{ ml: 2 }}
+                sx={{ml: 2}}
               />
             </Grid>
           </Grid>
         )}
-      </Modal>
+      </Dialog>
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        action={currentAction}
+        onConfirm={handleConfirm}
+        service={"baptism"}
+      />
     </>
   );
 };

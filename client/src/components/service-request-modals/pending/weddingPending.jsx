@@ -26,12 +26,14 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Skeleton,
 } from "@mui/material";
 import {
   DatePicker,
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
+
 import Snackbar from "@mui/material/Snackbar";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {useState, useEffect} from "react";
@@ -714,6 +716,7 @@ const WeddingPending = ({open, data, handleClose}) => {
   const [error, setError] = useState(null);
   const [errorOpen, setErrorOpen] = useState(false);
   const [priests, setPriests] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     requestID: "",
     first_name: "",
@@ -756,6 +759,7 @@ const WeddingPending = ({open, data, handleClose}) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (open && data) {
       setFormData({
         requestID: data.requestID,
@@ -784,6 +788,9 @@ const WeddingPending = ({open, data, handleClose}) => {
       });
       fetchWeddingData();
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, "500");
   }, [open, data]);
 
   useEffect(() => {
@@ -1094,7 +1101,7 @@ const WeddingPending = ({open, data, handleClose}) => {
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
-        {formData && priests ? (
+        {!isLoading ? (
           <>
             <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
               <b>Wedding Request Information</b>
@@ -1486,7 +1493,33 @@ const WeddingPending = ({open, data, handleClose}) => {
             </DialogActions>
           </>
         ) : (
-          <Skeleton variant="rectangular" height={400} />
+          // Skeleton loading effect for the entire form
+          <Grid container spacing={2} sx={{padding: 8}}>
+            <Grid item sm={12}>
+              <Skeleton variant="text" width="80%" height={30} />
+            </Grid>
+            {[...Array(9)].map((_, index) => (
+              <Grid item sm={4} key={index}>
+                <Skeleton variant="rectangular" width="100%" height={40} />
+              </Grid>
+            ))}
+            <Grid item sm={12} sx={{mt: 2}}>
+              <Skeleton variant="rectangular" width="30%" height={40} />
+            </Grid>
+            <Grid item sm={12} sx={{mt: 1}}>
+              <Skeleton variant="text" width="50%" height={30} />
+              <Skeleton variant="rectangular" width="100%" height={150} />
+            </Grid>
+            <Grid item sm={12} sx={{mt: 2}}>
+              <Skeleton variant="rectangular" width="30%" height={40} />
+              <Skeleton
+                variant="rectangular"
+                width="30%"
+                height={40}
+                sx={{ml: 2}}
+              />
+            </Grid>
+          </Grid>
         )}
       </Dialog>
 
