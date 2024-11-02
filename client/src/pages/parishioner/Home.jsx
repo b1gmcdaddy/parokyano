@@ -9,11 +9,20 @@ import anointing from "../../assets/anointing.jpg";
 import wedding from "../../assets/wedding.jpg";
 import blessing from "../../assets/blessing.jpg";
 import Header from "../../components/Header";
-import {Grid} from "@mui/material";
+import {Box, Grid} from "@mui/material";
 import Footer from "../../components/Footer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCross, faQuestion} from "@fortawesome/free-solid-svg-icons";
 import RequestNotice from "../../components/RequestNotice";
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const Home = () => {
   const [open, setOpen] = useState(false);
@@ -46,7 +55,7 @@ const Home = () => {
   };
 
   return (
-    <>
+    <Box sx={containerStyle}>
       <NavParishioner />
       <Header
         backgroundImage={imageHeader}
@@ -187,7 +196,7 @@ const Home = () => {
         </div>
       </div>
       <Footer />
-    </>
+    </Box>
   );
 };
 

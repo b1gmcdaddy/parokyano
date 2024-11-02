@@ -15,6 +15,7 @@ import {
   Button,
   Divider,
   FormHelperText,
+  Box
 } from "@mui/material";
 import {DatePicker} from "@mui/x-date-pickers";
 import Header from "../../../components/Header";
@@ -25,6 +26,15 @@ import config from "../../../config";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import ValidateForm from "../../../utils/Validators";
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -132,7 +142,7 @@ const CertificateConfirmation = () => {
   };
 
   return (
-    <>
+    <Box sx={containerStyle}>
       <NavParishioner />
       <Header
         backgroundImage={imageHeader}
@@ -141,7 +151,7 @@ const CertificateConfirmation = () => {
 
       <Link
         to="/certificates"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center">
+        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center">
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <p className="xs:hidden md:flex">Return to Selection</p>
       </Link>
@@ -389,7 +399,7 @@ const CertificateConfirmation = () => {
         </form>
       </Container>
       <Footer />
-    </>
+    </Box>
   );
 };
 

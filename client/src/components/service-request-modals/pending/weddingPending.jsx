@@ -1,6 +1,12 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CloseIcon from "@mui/icons-material/Close";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
   Modal,
   Box,
   Button,
@@ -20,41 +26,23 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Menu,
+  Skeleton,
 } from "@mui/material";
 import {
   DatePicker,
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
+
 import Snackbar from "@mui/material/Snackbar";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState, useEffect } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useState, useEffect} from "react";
 import React from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
 import sendSMS from "../../../utils/smsService";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "md",
-  bgcolor: "white",
-  borderRadius: "10px",
-  boxShadow: 3,
-  px: 4,
-  py: 3,
-  maxHeight: "97vh",
-  overflowY: "auto",
-  scrollbarWidth: "none",
-  "&::-webkit-scrollbar": {
-    display: "none",
-  },
-};
 
 const boxModal = {
   position: "absolute",
@@ -76,7 +64,7 @@ const boxModal = {
 };
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "30px", bgcolor: "white" },
+  "& .MuiInputBase-root": {height: "40px", bgcolor: "white"},
 };
 
 const tabStyle = {
@@ -102,7 +90,7 @@ const endTime = (timeString, hoursToAdd) => {
 const fetchWeddingDetails = async (id) => {
   try {
     const response = await axios.get(`${config.API}/wedding/retrieve`, {
-      params: { reqID: id },
+      params: {reqID: id},
     });
 
     return response.data?.result[0];
@@ -112,7 +100,7 @@ const fetchWeddingDetails = async (id) => {
   }
 };
 
-function RequirementsModal({ id, type, onClose }) {
+function RequirementsModal({id, type, onClose}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [tabValue, setTabValue] = useState(0);
@@ -170,48 +158,48 @@ function RequirementsModal({ id, type, onClose }) {
     {
       type: "Civilly Married",
       requirements: [
-        { name: "Civil Marriage Contract", field: "isCivilContract" },
-        { name: "Parish Permit", field: "isParishPermit" },
-        { name: "Prenuptial Agreement", field: "isPrenuptial" },
-        { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Marriage Bann", field: "isMarriageBann" },
+        {name: "Civil Marriage Contract", field: "isCivilContract"},
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
       ],
     },
     {
       type: "Live-in for under 4 years",
       requirements: [
-        { name: "Parish Permit", field: "isParishPermit" },
-        { name: "Prenuptial Agreement", field: "isPrenuptial" },
-        { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Marriage License", field: "isMarriageLicense" },
-        { name: "CENOMAR", field: "isCENOMAR" },
-        { name: "CEDULA", field: "isCEDULA" },
-        { name: "Marriage Bann", field: "isMarriageBann" },
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Marriage License", field: "isMarriageLicense"},
+        {name: "CENOMAR", field: "isCENOMAR"},
+        {name: "CEDULA", field: "isCEDULA"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
       ],
     },
     {
       type: "Live-in for more than 4 years",
       requirements: [
-        { name: "Parish Permit", field: "isParishPermit" },
-        { name: "Prenuptial Agreement", field: "isPrenuptial" },
-        { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Joint Affidavit of Cohabitation", field: "isJointAffidavit" },
-        { name: "CENOMAR", field: "isCENOMAR" },
-        { name: "CEDULA", field: "isCEDULA" },
-        { name: "Marriage Bann", field: "isMarriageBann" },
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Joint Affidavit of Cohabitation", field: "isJointAffidavit"},
+        {name: "CENOMAR", field: "isCENOMAR"},
+        {name: "CEDULA", field: "isCEDULA"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
       ],
     },
     {
       type: "Widow",
       requirements: [
-        { name: "Parish Permit", field: "isParishPermit" },
-        { name: "Prenuptial Agreement", field: "isPrenuptial" },
-        { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Marriage License", field: "isMarriageLicense" },
-        { name: "CENOMAR", field: "isCENOMAR" },
-        { name: "CEDULA", field: "isCEDULA" },
-        { name: "Marriage Bann", field: "isMarriageBann" },
-        { name: "Partner's Death Certificate", field: "isDeathCert" },
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Marriage License", field: "isMarriageLicense"},
+        {name: "CENOMAR", field: "isCENOMAR"},
+        {name: "CEDULA", field: "isCEDULA"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
+        {name: "Partner's Death Certificate", field: "isDeathCert"},
       ],
     },
   ];
@@ -254,15 +242,14 @@ function RequirementsModal({ id, type, onClose }) {
     <React.Fragment>
       <Button
         onClick={handleOpen}
+        variant="contained"
         sx={{
-          backgroundColor: "#355173",
-          height: "25px",
-          fontSize: "11px",
-          marginLeft: "5px",
-          color: "white",
-          "&:hover": { bgcolor: "#4C74A5" },
-        }}
-      >
+          backgroundColor: "white",
+          height: "30px",
+          color: "#355173",
+          fontSize: 12,
+          "&:hover": {bgcolor: "#E5E4E2"},
+        }}>
         Requirements
       </Button>
       <Modal open={open} onClose={handleClose}>
@@ -278,8 +265,7 @@ function RequirementsModal({ id, type, onClose }) {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Requirements Information
               </Typography>
             </Grid>
@@ -289,8 +275,7 @@ function RequirementsModal({ id, type, onClose }) {
                 variant="fullWidth"
                 value={tabValue}
                 onChange={handleTabChange}
-                sx={{ borderRadius: "10px 10px 0px 0px" }}
-              >
+                sx={{borderRadius: "10px 10px 0px 0px"}}>
                 <Tab label="Groom" sx={tabStyle} />
                 <Tab label="Bride" sx={tabStyle} />
               </Tabs>
@@ -300,8 +285,7 @@ function RequirementsModal({ id, type, onClose }) {
                   bgcolor: "#D9D9D9",
                   padding: "10px",
                   borderRadius: "0px 0px 5px 5px",
-                }}
-              >
+                }}>
                 <Grid container justifyContent={"center"}>
                   <Box>
                     {tabValue === 0 && (
@@ -320,7 +304,7 @@ function RequirementsModal({ id, type, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -340,7 +324,7 @@ function RequirementsModal({ id, type, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -364,7 +348,7 @@ function RequirementsModal({ id, type, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -388,7 +372,7 @@ function RequirementsModal({ id, type, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Birth Certificate
                               </Typography>
                             }
@@ -410,7 +394,7 @@ function RequirementsModal({ id, type, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Baptismal Certificate
                               </Typography>
                             }
@@ -434,7 +418,7 @@ function RequirementsModal({ id, type, onClose }) {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "15px"}}>
                                 Confirmation Certificate
                               </Typography>
                             }
@@ -447,9 +431,9 @@ function RequirementsModal({ id, type, onClose }) {
               </Box>
             </Grid>
 
-            <Grid item sm={12} sx={{ marginTop: "5px" }}>
+            <Grid item sm={12} sx={{marginTop: "5px"}}>
               <div
-                style={{ flex: 0.1, height: "1.8px", backgroundColor: "black" }}
+                style={{flex: 0.1, height: "1.8px", backgroundColor: "black"}}
               />
             </Grid>
 
@@ -472,7 +456,7 @@ function RequirementsModal({ id, type, onClose }) {
                       />
                     }
                     label={
-                      <Typography sx={{ fontSize: "15px" }}>
+                      <Typography sx={{fontSize: "15px"}}>
                         {req.name}
                       </Typography>
                     }
@@ -481,12 +465,11 @@ function RequirementsModal({ id, type, onClose }) {
               ))}
             </Box>
 
-            <Grid item sm={12} sx={{ marginTop: "10px", textAlign: "center" }}>
+            <Grid item sm={12} sx={{marginTop: "10px", textAlign: "center"}}>
               <Button
                 onClick={updateRequirements}
                 variant="contained"
-                sx={{ bgcolor: "#355173" }}
-              >
+                sx={{bgcolor: "#355173"}}>
                 Save
               </Button>
             </Grid>
@@ -497,7 +480,7 @@ function RequirementsModal({ id, type, onClose }) {
   );
 }
 
-function SponsorsModal({ id }) {
+function SponsorsModal({id}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -529,8 +512,8 @@ function SponsorsModal({ id }) {
   }, []);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewSponsor((prev) => ({ ...prev, [name]: value }));
+    const {name, value} = e.target;
+    setNewSponsor((prev) => ({...prev, [name]: value}));
   };
 
   const handleAddSponsor = async () => {
@@ -546,7 +529,7 @@ function SponsorsModal({ id }) {
         ...newSponsor,
       };
       fetchSponsors();
-      setNewSponsor({ name: "", age: "", isMarried: "", isCatholic: "" });
+      setNewSponsor({name: "", age: "", isMarried: "", isCatholic: ""});
     } catch (err) {
       console.error("Error adding sponsor", err);
     }
@@ -575,15 +558,15 @@ function SponsorsModal({ id }) {
     <React.Fragment>
       <Button
         onClick={handleOpen}
+        variant="contained"
         sx={{
-          backgroundColor: "#355173",
-          height: "25px",
-          fontSize: "11px",
-          marginLeft: "5px",
-          color: "white",
-          "&:hover": { bgcolor: "#4C74A5" },
-        }}
-      >
+          backgroundColor: "white",
+          height: "30px",
+          marginLeft: 1,
+          fontSize: 12,
+          color: "#355173",
+          "&:hover": {bgcolor: "#E5E4E2"},
+        }}>
         Sponsors
       </Button>
       <Modal open={open}>
@@ -599,8 +582,7 @@ function SponsorsModal({ id }) {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
+                sx={{textAlign: "center", fontWeight: "bold"}}>
                 Wedding Sponsors Information
               </Typography>
             </Grid>
@@ -632,8 +614,7 @@ function SponsorsModal({ id }) {
                 name="isMarried"
                 onChange={handleInputChange}
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="1">Married</MenuItem>
                 <MenuItem value="0">Not Married</MenuItem>
               </TextField>
@@ -646,13 +627,12 @@ function SponsorsModal({ id }) {
                 value={newSponsor.isCatholic}
                 onChange={handleInputChange}
                 fullWidth
-                sx={TextFieldStyle}
-              >
+                sx={TextFieldStyle}>
                 <MenuItem value="1">Yes</MenuItem>
                 <MenuItem value="0">No</MenuItem>
               </TextField>
             </Grid>
-            <Grid item sm={12} sx={{ textAlign: "center" }}>
+            <Grid item sm={12} sx={{textAlign: "center"}}>
               <Button
                 onClick={handleAddSponsor}
                 sx={{
@@ -661,16 +641,15 @@ function SponsorsModal({ id }) {
                   width: "150px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": { bgcolor: "#4C74A5" },
-                }}
-              >
+                  "&:hover": {bgcolor: "#4C74A5"},
+                }}>
                 Add Sponsor
               </Button>
             </Grid>
 
             <Grid item sm={12}>
               <TableContainer component={Paper}>
-                <Table sx={{ tableLayout: "fixed" }}>
+                <Table sx={{tableLayout: "fixed"}}>
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">Full Name</TableCell>
@@ -679,8 +658,7 @@ function SponsorsModal({ id }) {
                       <TableCell align="center">Catholic?</TableCell>
                       <TableCell
                         align="center"
-                        sx={{ width: "50px" }}
-                      ></TableCell>
+                        sx={{width: "50px"}}></TableCell>
                     </TableRow>
                   </TableHead>
                 </Table>
@@ -694,9 +672,8 @@ function SponsorsModal({ id }) {
                   "&::-webkit-scrollbar": {
                     display: "none",
                   },
-                }}
-              >
-                <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+                }}>
+                <Table sx={{tableLayout: "fixed", width: "100%"}}>
                   <TableBody>
                     {sponsors.map((sponsor) => (
                       <TableRow key={sponsor.sponsorID}>
@@ -710,11 +687,10 @@ function SponsorsModal({ id }) {
                         <TableCell align="center">
                           {sponsor.isCatholic == 1 ? "Yes" : "No"}
                         </TableCell>
-                        <TableCell align="center" sx={{ width: "50px" }}>
+                        <TableCell align="center" sx={{width: "50px"}}>
                           <IconButton
                             size="small"
-                            onClick={() => handleDeleteSponsor(sponsor)}
-                          >
+                            onClick={() => handleDeleteSponsor(sponsor)}>
                             <FontAwesomeIcon icon={faXmark} />
                           </IconButton>
                         </TableCell>
@@ -731,14 +707,15 @@ function SponsorsModal({ id }) {
   );
 }
 
-const WeddingPending = ({ open, data, handleClose }) => {
+const WeddingPending = ({open, data, handleClose}) => {
+  const [available, setAvailable] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completeRequirements, setCompleteRequirements] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
-  const [errorOpen, setErrorOpen] = useState(false);
   const [priests, setPriests] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     requestID: "",
     first_name: "",
@@ -781,6 +758,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (open && data) {
       setFormData({
         requestID: data.requestID,
@@ -809,6 +787,9 @@ const WeddingPending = ({ open, data, handleClose }) => {
       });
       fetchWeddingData();
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, "500");
   }, [open, data]);
 
   useEffect(() => {
@@ -821,18 +802,10 @@ const WeddingPending = ({ open, data, handleClose }) => {
         ...prevState,
         donation: 800.0,
       }));
-      setFormData((prevState) => ({
-        ...prevState,
-        service_id: 6,
-      }));
     } else {
       setFormData((prevState) => ({
         ...prevState,
         donation: 1600.0,
-      }));
-      setFormData((prevState) => ({
-        ...prevState,
-        service_id: 5,
       }));
     }
   }, [formData?.preferred_date, formData?.preferred_time]);
@@ -853,6 +826,36 @@ const WeddingPending = ({ open, data, handleClose }) => {
       console.error(err);
     }
   };
+
+  const fetchAvailability = async (date, start, end) => {
+    const avail = await axios.get(
+      `${config.API}/priest/retrieve-schedule-venue`,
+      {
+        params: {
+          date: date,
+          start: start,
+          end: end,
+        },
+      }
+    );
+    console.log(avail.data.message);
+    setAvailable(avail.data.message);
+  };
+
+  useEffect(() => {
+    if (formData.preferred_date && formData.preferred_time) {
+      fetchAvailability(
+        formData.preferred_date,
+        formData.preferred_time,
+        endTime(formData.preferred_time, service.duration)
+      );
+    }
+  }, [
+    formData.preferred_date,
+    formData.preferred_time,
+    formData.priest_id,
+    open,
+  ]);
 
   useEffect(() => {
     const fetchPriest = async () => {
@@ -876,16 +879,16 @@ const WeddingPending = ({ open, data, handleClose }) => {
 
   // START FORM HANDLERS AND CONTROLS
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleOpenDialog = (action) => {
@@ -957,10 +960,10 @@ const WeddingPending = ({ open, data, handleClose }) => {
         window.location.reload();
       }
     } catch (err) {
-      console.error(err);
-      alert(
-        "Priest has another activity scheduled on that date and time.\nPlease select another date and time."
-      );
+      setError({
+        message: err.response.data.message,
+        details: err.response.data.details,
+      });
     }
   };
   // END SET INTERVIEW METHOD
@@ -1029,7 +1032,15 @@ const WeddingPending = ({ open, data, handleClose }) => {
               message: response.data.message,
               details: response.data?.details,
             });
+            return;
           } else {
+            if (available === "Unavailable") {
+              setError({
+                message: available,
+                details: "Church is unavailable",
+              });
+              return;
+            }
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
@@ -1063,7 +1074,10 @@ const WeddingPending = ({ open, data, handleClose }) => {
             window.location.reload();
           }
         } catch (err) {
-          console.log("error submitting to server", err);
+          setError({
+            message: err.response.data.message,
+            details: err.response.data.details,
+          });
         }
       default:
         break;
@@ -1079,7 +1093,7 @@ const WeddingPending = ({ open, data, handleClose }) => {
           onClose={() => setError(null)}
           message={
             <>
-              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
+              <span style={{fontWeight: "bold", fontSize: "18px"}}>
                 {error.message}
               </span>
               <p>{error.details}</p>
@@ -1088,477 +1102,436 @@ const WeddingPending = ({ open, data, handleClose }) => {
         />
       )}
 
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <Grid container justifyContent={"flex-end"}>
-            <Grid item>
-              <IconButton onClick={handleClose} size="small">
-                <FontAwesomeIcon icon={faXmark} />
+      <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
+        {!isLoading ? (
+          <>
+            <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
+              <b>Wedding Request Information</b>
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{position: "absolute", right: 8, top: 8}}>
+                <CloseIcon />
               </IconButton>
-            </Grid>
-          </Grid>
-          <Grid container justifyContent={"center"} spacing={2}>
-            <Grid item sm={12}>
-              <Typography
-                variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
-              >
-                Wedding Request Information
-              </Typography>
-            </Grid>
-
-            <Grid item sm={12}>
-              <Box
-                fullWidth
-                sx={{
-                  bgcolor: "#D9D9D9",
-                  padding: "10px",
-                  borderRadius: "5px",
-                }}
-              >
-                <Grid container spacing={1}>
-                  <Grid item sm={12}>
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
-                      Groom:
-                    </Typography>
-                  </Grid>
-                  <Grid item sm={4}>
-                    <label>First Name:</label>
-                    <TextField
-                      fullWidth
-                      name="first_name"
-                      onChange={handleChange}
-                      value={formData?.first_name}
-                      sx={TextFieldStyle}
-                    />
-                  </Grid>
-                  <Grid item sm={4}>
-                    <label>Middle Name:</label>
-                    <TextField
-                      fullWidth
-                      name="middle_name"
-                      onChange={handleChange}
-                      value={formData?.middle_name}
-                      sx={TextFieldStyle}
-                    />
-                  </Grid>
-                  <Grid item sm={4}>
-                    <label>Last Name:</label>
-                    <TextField
-                      fullWidth
-                      name="last_name"
-                      onChange={handleChange}
-                      value={formData?.last_name || ""}
-                      sx={TextFieldStyle}
-                    />
-                  </Grid>
+            </DialogTitle>
+            <DialogContent>
+              <Grid container spacing={2} sx={{padding: 3}}>
+                <Grid item xs={12} sm={4}>
+                  <label>Groom's First Name:</label>
+                  <TextField
+                    fullWidth
+                    name="first_name"
+                    onChange={handleChange}
+                    value={formData?.first_name}
+                    sx={TextFieldStyle}
+                  />
                 </Grid>
-              </Box>
-            </Grid>
-
-            <Grid item sm={12}>
-              <Box
-                fullWidth
-                sx={{
-                  bgcolor: "#D9D9D9",
-                  padding: "10px",
-                  borderRadius: "5px",
-                }}
-              >
-                <Grid container spacing={1}>
-                  <Grid item sm={12}>
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
-                      Bride:
-                    </Typography>
-                  </Grid>
-                  <Grid item sm={4}>
-                    <label>First Name:</label>
-                    <TextField
-                      fullWidth
-                      value={formData?.spouse_firstName}
-                      sx={TextFieldStyle}
-                    />
-                  </Grid>
-                  <Grid item sm={4}>
-                    <label>Middle Name:</label>
-                    <TextField
-                      fullWidth
-                      value={formData?.spouse_middleName}
-                      sx={TextFieldStyle}
-                    />
-                  </Grid>
-                  <Grid item sm={4}>
-                    <label>Last Name:</label>
-                    <TextField
-                      fullWidth
-                      value={formData?.spouse_lastName}
-                      sx={TextFieldStyle}
-                    />
-                  </Grid>
+                <Grid item sm={4}>
+                  <label>Groom's Middle Name:</label>
+                  <TextField
+                    fullWidth
+                    name="middle_name"
+                    onChange={handleChange}
+                    value={formData?.middle_name}
+                    sx={TextFieldStyle}
+                  />
                 </Grid>
-              </Box>
-            </Grid>
+                <Grid item sm={4}>
+                  <label>Groom's Last Name:</label>
+                  <TextField
+                    fullWidth
+                    name="last_name"
+                    onChange={handleChange}
+                    value={formData?.last_name || ""}
+                    sx={TextFieldStyle}
+                  />
+                </Grid>
 
-            <Grid item sm={4}>
-              <label>Contact No:</label>
-              <TextField
-                fullWidth
-                name="contact_no"
-                onChange={handleChange}
-                value={formData?.contact_no}
-                sx={TextFieldStyle}
+                <Grid item sm={4}>
+                  <label>Bride's First Name:</label>
+                  <TextField
+                    fullWidth
+                    value={formData?.spouse_firstName}
+                    sx={TextFieldStyle}
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Bride's Middle Name:</label>
+                  <TextField
+                    fullWidth
+                    value={formData?.spouse_middleName}
+                    sx={TextFieldStyle}
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Bride's Last Name:</label>
+                  <TextField
+                    fullWidth
+                    value={formData?.spouse_lastName}
+                    sx={TextFieldStyle}
+                  />
+                </Grid>
+
+                <Grid item sm={4}>
+                  <label>Contact No:</label>
+                  <TextField
+                    fullWidth
+                    name="contact_no"
+                    onChange={handleChange}
+                    value={formData?.contact_no}
+                    sx={TextFieldStyle}
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <label>Status:</label>
+                  <TextField
+                    name="relationship"
+                    onChange={handleChange}
+                    value={formData.relationship}
+                    fullWidth
+                    select
+                    sx={TextFieldStyle}>
+                    <MenuItem value="Civilly Married">Civilly Married</MenuItem>
+                    <MenuItem value="Live-in for under 4 years">
+                      Live-in for under 4 years
+                    </MenuItem>
+                    <MenuItem value="Live-in for more than 4 years">
+                      Live-in for more than 4 years
+                    </MenuItem>
+                    <MenuItem value="Widow">Widow</MenuItem>
+                  </TextField>
+                </Grid>
+                <Grid item sm={4}>
+                  <label>
+                    Payment:
+                    <strong>₱{parseFloat(formData.donation).toFixed(2)}</strong>
+                  </label>
+                  <TextField
+                    name="payment_status"
+                    onChange={handleChange}
+                    value={formData?.payment_status}
+                    select
+                    fullWidth
+                    sx={TextFieldStyle}>
+                    <MenuItem value="unpaid">Unpaid</MenuItem>
+                    <MenuItem value="paid">Paid</MenuItem>
+                  </TextField>
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                  <Typography sx={{display: "inline-block"}}>
+                    Requirements:
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      display: "inline-block",
+                      marginLeft: "5px",
+                      marginBottom: 1,
+                      fontSize: "14px",
+                      color:
+                        completeRequirements == 1 &&
+                        formData.payment_status == "paid"
+                          ? "green"
+                          : "red",
+                    }}>
+                    {completeRequirements == 1 &&
+                    formData.payment_status == "paid" ? (
+                      <span className="font-bold">COMPLETE</span>
+                    ) : (
+                      <span className="font-bold">INCOMPLETE</span>
+                    )}
+                  </Typography>
+
+                  <RequirementsModal
+                    id={data.requestID}
+                    type={data.relationship}
+                    onClose={handleCloseRequirementsDialog}
+                  />
+                  <SponsorsModal id={data.requestID} />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <hr className="my-1" />
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                  <label>Interview Priest:</label>
+                  <TextField
+                    select
+                    fullWidth
+                    disabled={completeRequirements !== 1}
+                    name="priest_id"
+                    sx={TextFieldStyle}
+                    value={formData.priest_id}
+                    onChange={handleChange}>
+                    {priests.map((priest) => (
+                      <MenuItem key={priest.id} value={priest.priestID}>
+                        {`${priest.first_name} ${priest.last_name}`}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <label>Interview Date:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      fullWidth
+                      disabled={completeRequirements !== 1}
+                      name="interview_date"
+                      sx={TextFieldStyle}
+                      value={
+                        formData.interview_date
+                          ? dayjs(formData.interview_date)
+                          : null
+                      }
+                      onChange={(date) =>
+                        handleDateChange("interview_date", date)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                  <label>Interview Time:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimePicker
+                      fullWidth
+                      name="interview_time"
+                      disabled={completeRequirements !== 1}
+                      sx={TextFieldStyle}
+                      value={
+                        formData.interview_time
+                          ? dayjs(formData.interview_time, "HH:mm:ss")
+                          : null
+                      }
+                      onChange={(time) =>
+                        handleTimeChange("interview_time", time)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={handleSetInterview}
+                    sx={{
+                      backgroundColor: "#355173",
+                      marginTop: "24px",
+                      height: "40px",
+                      color: "white",
+                      "&:hover": {bgcolor: "#4C74A5"},
+                    }}>
+                    Assign INTERVIEW
+                  </Button>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <hr className="my-1" />
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                  <label>Wedding Priest:</label>
+                  <TextField
+                    select
+                    fullWidth
+                    disabled={completeRequirements !== 1}
+                    sx={TextFieldStyle}
+                    value={formData.priest_id}
+                    onChange={handleChange}>
+                    {priests.map((priest) => (
+                      <MenuItem key={priest.id} value={priest.priestID}>
+                        {`${priest.first_name} ${priest.last_name}`}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <label>Wedding Date:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      fullWidth
+                      disabled={completeRequirements !== 1}
+                      name="preferred_date"
+                      sx={TextFieldStyle}
+                      value={
+                        formData.preferred_date
+                          ? dayjs(formData.preferred_date)
+                          : null
+                      }
+                      onChange={(date) =>
+                        handleDateChange("preferred_date", date)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                  <label>Wedding Time:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimePicker
+                      fullWidth
+                      name="preferred_time"
+                      disabled={completeRequirements !== 1}
+                      sx={TextFieldStyle}
+                      value={
+                        formData.preferred_time
+                          ? dayjs(formData.preferred_time, "HH:mm:ss")
+                          : null
+                      }
+                      onChange={(time) =>
+                        handleTimeChange("preferred_time", time)
+                      }
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                  {available === "Available" ? (
+                    <span className="font-bold text-green-700 text-sm">
+                      Church is Available
+                    </span>
+                  ) : available === "Unavailable" ? (
+                    <span className="font-bold text-red-500 text-sm">
+                      Church is Unavailable
+                    </span>
+                  ) : (
+                    <span>&nbsp;</span>
+                  )}
+                  <Button
+                    fullWidth
+                    disabled={!available || available == "Unavailable"}
+                    variant="contained"
+                    onClick={() => handleOpenDialog("approve")}
+                    sx={{
+                      bgcolor: "#d1d1d1",
+                      height: "40px",
+                      fontWeight: "bold",
+                      color: "#355173",
+                      "&:hover": {bgcolor: "#f9f9f9"},
+                    }}>
+                    CONFIRM WEDDING
+                  </Button>
+                </Grid>
+
+                <Grid
+                  item
+                  sm={12}
+                  sx={{
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}>
+                  <Typography variant="body2" sx={{marginRight: "5px"}}>
+                    Transaction Code:
+                  </Typography>
+                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                    {formData.transaction_no}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </DialogContent>
+
+            <DialogActions>
+              <Grid
+                container
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    display: "flex",
+                    margin: "-40px 0 10px 0",
+                    justifyContent: "center",
+                    gap: "20px",
+                  }}>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleOpenDialog("update")}
+                    sx={{
+                      bgcolor: "#CDAB52",
+                      marginTop: "24px",
+                      height: "40px",
+                      fontWeight: "bold",
+                      color: "white",
+                      "&:hover": {bgcolor: "#A58228"},
+                    }}>
+                    UPDATE
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    onClick={() => handleOpenDialog("cancel")}
+                    sx={{
+                      bgcolor: "#C34444",
+                      marginTop: "24px",
+                      height: "40px",
+                      fontWeight: "bold",
+                      color: "white",
+                      "&:hover": {bgcolor: "#f44336"},
+                    }}>
+                    CANCEL
+                  </Button>
+                </Grid>
+              </Grid>
+            </DialogActions>
+          </>
+        ) : (
+          // Skeleton loading effect for the entire form
+          <Grid container spacing={2} sx={{padding: 8}}>
+            <Grid item sm={12}>
+              <Skeleton variant="text" width="80%" height={30} />
+            </Grid>
+            {[...Array(9)].map((_, index) => (
+              <Grid item sm={4} key={index}>
+                <Skeleton variant="rectangular" width="100%" height={40} />
+              </Grid>
+            ))}
+            <Grid item sm={12} sx={{mt: 2}}>
+              <Skeleton variant="rectangular" width="30%" height={40} />
+            </Grid>
+            <Grid item sm={12} sx={{mt: 1}}>
+              <Skeleton variant="text" width="50%" height={30} />
+              <Skeleton variant="rectangular" width="100%" height={150} />
+            </Grid>
+            <Grid item sm={12} sx={{mt: 2}}>
+              <Skeleton variant="rectangular" width="30%" height={40} />
+              <Skeleton
+                variant="rectangular"
+                width="30%"
+                height={40}
+                sx={{ml: 2}}
               />
             </Grid>
-            <Grid item sm={4}>
-              <label>Status:</label>
-              <TextField
-                name="relationship"
-                onChange={handleChange}
-                value={formData.relationship}
-                fullWidth
-                select
-                sx={TextFieldStyle}
-              >
-                <MenuItem value="Civilly Married">Civilly Married</MenuItem>
-                <MenuItem value="Live-in for under 4 years">
-                  Live-in for under 4 years
-                </MenuItem>
-                <MenuItem value="Live-in for more than 4 years">
-                  Live-in for more than 4 years
-                </MenuItem>
-                <MenuItem value="Widow">Widow</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item sm={4}>
-              <label>
-                Payment:{" "}
-                <strong>₱{parseFloat(formData.donation).toFixed(2)}</strong>
-              </label>
-              <TextField
-                name="payment_status"
-                onChange={handleChange}
-                value={formData?.payment_status}
-                select
-                fullWidth
-                sx={TextFieldStyle}
-              >
-                <MenuItem value="unpaid">Unpaid</MenuItem>
-                <MenuItem value="paid">Paid</MenuItem>
-              </TextField>
-            </Grid>
-
-            <Grid item sm={12} textAlign={"center"}>
-              <Typography
-                variant="subtitle1"
-                sx={{ display: "inline-block", fontSize: "14px" }}
-              >
-                Requirements:
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  display: "inline-block",
-                  marginLeft: "5px",
-                  fontSize: "14px",
-                  color:
-                    completeRequirements == 1 &&
-                    formData.payment_status == "paid"
-                      ? "green"
-                      : "red",
-                }}
-              >
-                {completeRequirements == 1 && formData.payment_status == "paid"
-                  ? "Complete"
-                  : "Incomplete"}
-              </Typography>
-              <RequirementsModal
-                id={data.requestID}
-                type={data.relationship}
-                onClose={handleCloseRequirementsDialog}
-              />
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  display: "inline-block",
-                  marginLeft: "5px",
-                  fontSize: "14px",
-                }}
-              >
-                Sponsors:
-              </Typography>
-
-              <SponsorsModal id={data.requestID} />
-            </Grid>
-
-            <Grid item sm={12}>
-              <Box
-                fullWidth
-                sx={{
-                  bgcolor: "#D9D9D9",
-                  padding: "10px",
-                  borderRadius: "5px",
-                }}
-              >
-                <Grid container spacing={1}>
-                  <Grid item sm={6}>
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
-                      INTERVIEW
-                    </Typography>
-                  </Grid>
-                  <Grid item sm={6}>
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ fontWeight: "bold", fontSize: "14px" }}
-                    >
-                      WEDDING
-                    </Typography>
-                  </Grid>
-                  <Grid item sm={6}>
-                    <Box fullWidth>
-                      <Grid container>
-                        <Grid item sm={12}>
-                          <label>Priest:</label>
-                          <TextField
-                            select
-                            fullWidth
-                            disabled={completeRequirements !== 1}
-                            name="priest_id"
-                            sx={TextFieldStyle}
-                            value={formData.priest_id}
-                            onChange={handleChange}
-                          >
-                            {priests.map((priest) => (
-                              <MenuItem key={priest.id} value={priest.priestID}>
-                                {`${priest.first_name} ${priest.last_name}`}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        </Grid>
-                        <Grid item sm={6}>
-                          <label>Date:</label>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                              fullWidth
-                              disabled={completeRequirements !== 1}
-                              name="interview_date"
-                              sx={TextFieldStyle}
-                              value={
-                                formData.interview_date
-                                  ? dayjs(formData.interview_date)
-                                  : null
-                              }
-                              onChange={(date) =>
-                                handleDateChange("interview_date", date)
-                              }
-                              renderInput={(params) => (
-                                <TextField {...params} required />
-                              )}
-                            />
-                          </LocalizationProvider>
-                        </Grid>
-                        <Grid item sm={6}>
-                          <label>Time:</label>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <TimePicker
-                              fullWidth
-                              name="interview_time"
-                              disabled={completeRequirements !== 1}
-                              sx={TextFieldStyle}
-                              value={
-                                formData.interview_time
-                                  ? dayjs(formData.interview_time, "HH:mm:ss")
-                                  : null
-                              }
-                              onChange={(time) =>
-                                handleTimeChange("interview_time", time)
-                              }
-                              renderInput={(params) => (
-                                <TextField {...params} required />
-                              )}
-                            />
-                          </LocalizationProvider>
-                        </Grid>
-                        <Grid item sm={12}>
-                          <Button
-                            fullWidth
-                            onClick={handleSetInterview}
-                            sx={{
-                              backgroundColor: "#355173",
-                              marginTop: "5px",
-                              height: "30px",
-                              fontWeight: "bold",
-                              color: "white",
-                              "&:hover": { bgcolor: "#4C74A5" },
-                            }}
-                          >
-                            Assign INTERVIEW
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </Grid>
-                  <Grid item sm={6}>
-                    <Box fullWidth>
-                      <Grid container>
-                        <Grid item sm={12}>
-                          <label>Priest:</label>
-                          <TextField
-                            select
-                            fullWidth
-                            disabled={completeRequirements !== 1}
-                            sx={TextFieldStyle}
-                            value={formData.priest_id}
-                            onChange={handleChange}
-                          >
-                            {priests.map((priest) => (
-                              <MenuItem key={priest.id} value={priest.priestID}>
-                                {`${priest.first_name} ${priest.last_name}`}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        </Grid>
-                        <Grid item sm={6}>
-                          <label>Date:</label>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                              fullWidth
-                              disabled={completeRequirements !== 1}
-                              name="preferred_date"
-                              sx={TextFieldStyle}
-                              value={
-                                formData.preferred_date
-                                  ? dayjs(formData.preferred_date)
-                                  : null
-                              }
-                              onChange={(date) =>
-                                handleDateChange("preferred_date", date)
-                              }
-                              renderInput={(params) => (
-                                <TextField {...params} required />
-                              )}
-                            />
-                          </LocalizationProvider>
-                        </Grid>
-                        <Grid item sm={6}>
-                          <label>Time:</label>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <TimePicker
-                              fullWidth
-                              name="preferred_time"
-                              disabled={completeRequirements !== 1}
-                              sx={TextFieldStyle}
-                              value={
-                                formData.preferred_time
-                                  ? dayjs(formData.preferred_time, "HH:mm:ss")
-                                  : null
-                              }
-                              onChange={(time) =>
-                                handleTimeChange("preferred_time", time)
-                              }
-                              renderInput={(params) => (
-                                <TextField {...params} required />
-                              )}
-                            />
-                          </LocalizationProvider>
-                        </Grid>
-                        <Grid item sm={12}>
-                          <Button
-                            fullWidth
-                            onClick={() => handleOpenDialog("approve")}
-                            sx={{
-                              bgcolor: "#BBB6B6",
-                              marginTop: "5px",
-                              height: "30px",
-                              fontWeight: "bold",
-                              color: "#355173",
-                              "&:hover": { bgcolor: "#D3CECE" },
-                            }}
-                          >
-                            CONFIRM WEDDING
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Grid>
-
-            <Grid
-              item
-              sm={12}
-              sx={{
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ marginRight: "5px" }}>
-                Transaction Code:
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                {formData.transaction_no}
-              </Typography>
-            </Grid>
-
-            <Grid
-              item
-              sm={12}
-              sx={{
-                textAlign: "center",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <Button
-                onClick={() => handleOpenDialog("update")}
-                sx={{
-                  bgcolor: "#CDAB52",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": { bgcolor: "#F0CA67" },
-                }}
-              >
-                UPDATE
-              </Button>
-              <Button
-                onClick={() => handleOpenDialog("cancel")}
-                sx={{
-                  bgcolor: "#C34444",
-                  margin: "0px 0px 0px 5px",
-                  height: "35px",
-                  width: "90px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": { bgcolor: "#F05A5A" },
-                }}
-              >
-                CANCEL
-              </Button>
-            </Grid>
           </Grid>
-          <ConfirmationDialog
-            onConfirm={handleConfirm}
-            open={dialogOpen}
-            onClose={handleCloseDialog}
-            action={currentAction}
-            service={"wedding"}
-          />
-        </Box>
-      </Modal>
+        )}
+      </Dialog>
+
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        action={currentAction}
+        onConfirm={handleConfirm}
+        service={"Wedding"}
+      />
     </>
   );
 };

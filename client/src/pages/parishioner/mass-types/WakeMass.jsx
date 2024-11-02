@@ -11,6 +11,7 @@ import {
   Radio,
   MenuItem,
   FormHelperText,
+  Box
 } from "@mui/material";
 import {
   LocalizationProvider,
@@ -29,6 +30,15 @@ import config from "../../../config";
 import axios from "axios";
 import dayjs from "dayjs";
 import ValidateForm from "../../../utils/Validators";
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -130,12 +140,12 @@ const WakeMass = () => {
   const isCaptchaChecked = captchaValue !== null;
 
   return (
-    <>
+    <Box sx={containerStyle}>
       <NavParishioner />
       <Header backgroundImage={imageHeader} title="WAKE MASS" />
       <Link
         to="/mass-selection"
-        className="max-w-[1440px] mx-auto mt-8 md:mb-6 md:flex items-center"
+        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center"
       >
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <p className="xs:hidden md:flex">Return to mass selection</p>
@@ -344,7 +354,7 @@ const WakeMass = () => {
         </form>
       </Container>
       <Footer />
-    </>
+    </Box>
   );
 };
 

@@ -199,12 +199,15 @@ const SearchCertRecords = ({open, data, close}) => {
                         marginBottom: "8px",
                       }}>
                       <Typography>
-                        {rec.first_name} {rec.last_name}
+                        {data.service_id == 3 || data.service_id == 4
+                          ? rec.first_name + rec.last_name
+                          : rec.father_name}
                       </Typography>
 
                       {/* Container for buttons */}
                       <Box sx={{display: "flex", gap: 1}}>
                         <Button
+                          variant="contained"
                           sx={{
                             backgroundColor: "#355173",
                             color: "white",
@@ -238,6 +241,7 @@ const SearchCertRecords = ({open, data, close}) => {
                   sm={12}
                   sx={{display: "flex", justifyContent: "center"}}>
                   <Button
+                    variant="contained"
                     size="small"
                     onClick={() => handleOpenDialog("cancel")}
                     sx={{

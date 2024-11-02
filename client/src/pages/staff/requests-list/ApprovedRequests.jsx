@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import {
-  Paper,
   Box,
   Table,
   TableBody,
@@ -8,7 +7,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TablePagination,
   Button,
   IconButton,
   Typography,
@@ -35,7 +33,6 @@ const ApprovedRequests = ({filter, page, totalItems, handlePageChange}) => {
   const [modalType, setModalType] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const rowsPerPage = 10;
-
   const totalPages = Math.ceil(totalItems / rowsPerPage);
 
   const fetchRequests = async () => {
@@ -261,7 +258,9 @@ const ApprovedRequests = ({filter, page, totalItems, handlePageChange}) => {
                         textAlign: "center",
                         backgroundColor: "#e0e0e0",
                       }}>
-                      assigned priest
+                      {req.priest_id == 1
+                        ? "Fr. Priest Test A"
+                        : "Fr. Priest Test B"}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -294,6 +293,7 @@ const ApprovedRequests = ({filter, page, totalItems, handlePageChange}) => {
                         backgroundColor: "#e0e0e0",
                       }}>
                       <Button
+                        variant="contained"
                         type="button"
                         sx={{
                           backgroundColor: "#355173",
@@ -312,11 +312,15 @@ const ApprovedRequests = ({filter, page, totalItems, handlePageChange}) => {
                         INFO
                       </Button>
                       <Button
+                        variant="contained"
                         type="button"
                         sx={{
                           backgroundColor: "#C34444",
                           color: "white",
                           borderRadius: "10px",
+                          "&:hover": {
+                            backgroundColor: "#880808",
+                          },
                         }}
                         onClick={() => {
                           try {

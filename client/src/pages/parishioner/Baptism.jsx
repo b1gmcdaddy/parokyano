@@ -17,6 +17,7 @@ import {
   RadioGroup,
   Button,
   FormHelperText,
+  Box
 } from "@mui/material";
 import axios from "axios";
 import config from "../../config";
@@ -31,6 +32,15 @@ import dayjs from "dayjs";
 import ValidateForm from "../../utils/Validators";
 import all from "../../components/PaymentModal";
 import GCashQR from "../../components/GCashQR";
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -218,10 +228,10 @@ const Baptism = () => {
   };
 
   return (
-    <>
+    <Box sx={containerStyle}>
       <NavParishioner />
       <Header backgroundImage={imageHeader} title="Request for Baptism" />
-      <div className="max-w-[1440px] mt-6 mx-auto">
+      <div className="max-w-[1440px] mt-6">
         <Link to="/" className="mt-8 md:mb-10 items-center">
           <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
           <p className="hidden md:inline">Return to Home</p>
@@ -712,7 +722,7 @@ const Baptism = () => {
       </Container>
 
       <Footer />
-    </>
+    </Box>
   );
 };
 

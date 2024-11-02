@@ -16,6 +16,7 @@ import {
   Radio,
   Container,
   FormHelperText,
+  Box,
 } from "@mui/material";
 import { React, useEffect, useState } from "react";
 import generateHash from "../../utils/GenerateHash";
@@ -23,6 +24,15 @@ import config from "../../config";
 import axios from "axios";
 import NoPaymentModal from "../../components/NoPaymentModal";
 import ValidateForm from "../../utils/Validators";
+
+const containerStyle = {
+  margin: '0px',
+  padding: '0px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  minWidth: '100%',
+}
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -132,11 +142,11 @@ const Wedding = () => {
   }, [open]);
 
   return (
-    <>
+    <Box sx={containerStyle}>
       <NavParishioner />
       <Header backgroundImage={imageHeader} title="Wedding" />
 
-      <div className="max-w-[1440px] mt-6 mx-auto">
+      <div className="max-w-[1440px] mt-6">
         <Link to="/" className="mt-8 md:mb-10 items-center">
           <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
           <p className="hidden md:inline">Return to Home</p>
@@ -444,7 +454,7 @@ const Wedding = () => {
       </Container>
 
       <Footer />
-    </>
+    </Box>
   );
 };
 
