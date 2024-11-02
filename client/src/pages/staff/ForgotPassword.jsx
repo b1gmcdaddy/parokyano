@@ -12,16 +12,43 @@ import logo from "../../assets/logo.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import config from "../../config";
+import emailjs from "@emailjs/browser";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     setEmail(e.target.value);
   };
-  const handleSubmit = async (e) => {};
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const resetToken = Math.random().toString(36).substring(2, 15); // Example token generation
+    const resetLink = `${window.location.origin}/reset-password/${resetToken}`;
+
+    const templateParams = {
+      to_name: "User", // Customize as needed
+      reset_link: resetLink,
+    };
+
+    try {
+      await emailjs.send(
+        "service_o2izpe4",
+        "template_6undcon",
+        templateParams,
+        "kJTNEAcM6BA0TgUcJ"
+      );
+
+      alert("Password reset email sent! Check your inbox.");
+    } catch (err) {
+      console.error("Error sending email:", err);
+      setError("Failed to send email. Please try again later.");
+    }
+  };
 
   return (
     <div>
@@ -92,6 +119,7 @@ const ForgotPassword = () => {
             >
               Submit
             </Button>
+            {message && <p>{message}</p>}
           </form>
           <Typography sx={{ textAlign: "center", marginTop: "16px" }}>
             Switch to Login

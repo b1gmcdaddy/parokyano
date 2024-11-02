@@ -144,14 +144,7 @@ function App() {
             </StaffRoute>
           }
         />
-        <Route
-          path="/forgot-password"
-          element={
-            <StaffRoute>
-              <ForgotPassword />
-            </StaffRoute>
-          }
-        />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/*  -----------ADMIN-----------  */}
         <Route
