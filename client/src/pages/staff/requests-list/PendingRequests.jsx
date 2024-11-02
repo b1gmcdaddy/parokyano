@@ -324,6 +324,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
                     }}>
                     <Button
                       type="button"
+                      variant="contained"
                       sx={{
                         backgroundColor: "#355173",
                         color: "white",
@@ -343,10 +344,14 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
                     </Button>
                     <Button
                       type="button"
+                      variant="contained"
                       sx={{
                         backgroundColor: "#C34444",
                         color: "white",
                         borderRadius: "10px",
+                        "&:hover": {
+                          backgroundColor: "#880808",
+                        },
                       }}
                       onClick={() => {
                         try {

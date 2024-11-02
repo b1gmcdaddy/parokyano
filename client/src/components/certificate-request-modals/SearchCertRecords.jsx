@@ -207,6 +207,7 @@ const SearchCertRecords = ({open, data, close}) => {
                       {/* Container for buttons */}
                       <Box sx={{display: "flex", gap: 1}}>
                         <Button
+                          variant="contained"
                           sx={{
                             backgroundColor: "#355173",
                             color: "white",
@@ -240,6 +241,7 @@ const SearchCertRecords = ({open, data, close}) => {
                   sm={12}
                   sx={{display: "flex", justifyContent: "center"}}>
                   <Button
+                    variant="contained"
                     size="small"
                     onClick={() => handleOpenDialog("cancel")}
                     sx={{

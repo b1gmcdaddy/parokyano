@@ -14,7 +14,7 @@ const ConfirmationDialog = ({open, onClose, action, onConfirm, service}) => {
     switch (action) {
       case "approve":
         return {
-          title: "Approved",
+          title: "Approve",
           message: "All requirements are satisfied. Approve this",
           service: service,
         };
@@ -72,7 +72,7 @@ const ConfirmationDialog = ({open, onClose, action, onConfirm, service}) => {
         onClose={onClose}
         sx={{
           "& .MuiDialog-paper": {
-            borderRadius: "16px",
+            borderRadius: "4px",
             boxShadow: "0px 4px 20px black",
           },
         }}>
@@ -84,11 +84,14 @@ const ConfirmationDialog = ({open, onClose, action, onConfirm, service}) => {
               </IconButton>
             </Grid>
           </Grid>
-          <Grid container justifyContent={"center"} spacing={2}>
+          <Grid container justifyContent={"center"} spacing={1}>
             <Grid item sm={12}>
               <Typography
-                variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: "1.2em",
+                }}>
                 {title} Request Confirmation
               </Typography>
             </Grid>
@@ -105,31 +108,32 @@ const ConfirmationDialog = ({open, onClose, action, onConfirm, service}) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
+                marginTop: 2,
               }}>
               <Button
+                variant="contained"
                 onClick={() => handleConfirm()}
                 sx={{
                   bgcolor: "#44C360",
-                  height: "30px",
-                  width: "90px",
+
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#58FF7D"},
+                  "&:hover": {bgcolor: "#355E3B"},
                 }}>
-                YES
+                yes
               </Button>
               <Button
+                variant="contained"
                 onClick={onClose}
                 sx={{
                   bgcolor: "#C34444",
-                  margin: "0px 0px 0px 5px",
-                  height: "30px",
-                  width: "90px",
+                  margin: "0px 0px 0px 8px",
+
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#F05A5A"},
+                  "&:hover": {bgcolor: "#880808"},
                 }}>
-                NO
+                No
               </Button>
             </Grid>
           </Grid>

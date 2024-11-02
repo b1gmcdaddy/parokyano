@@ -477,6 +477,7 @@ const CompareRecords = ({open, close, certData, recordData}) => {
               gap: "20px",
             }}>
             <Button
+              variant="contained"
               onClick={() => handleOpenDialog("approve")}
               sx={{
                 backgroundColor: "#44C360",
@@ -488,11 +489,15 @@ const CompareRecords = ({open, close, certData, recordData}) => {
               Confirm
             </Button>
             <Button
+              variant="contained"
               onClick={close}
               sx={{
                 backgroundColor: "#d9d9d9",
                 color: "black",
                 paddingX: "12px",
+                "&:hover": {
+                  backgroundColor: "#dddddd",
+                },
               }}>
               Close
             </Button>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
   Button,
   TextField,
@@ -17,7 +17,7 @@ import axios from "axios";
 import config from "../../config";
 import ConfirmationDialog from "../ConfirmationModal";
 
-const BaptismCertInfoModal = ({ open, data, close }) => {
+const BaptismCertInfoModal = ({open, data, close}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
@@ -66,8 +66,8 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const formatDate = (dateString) => {
@@ -107,25 +107,22 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Baptismal Certificate Request Information
             </Typography>
             <IconButton
@@ -136,16 +133,14 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
             <Grid
               container
               spacing={2}
-              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
-            >
+              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
               <Grid item xs={12} sm={4}>
                 <label>First Name: </label>
                 <TextField
@@ -257,8 +252,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   name="purpose"
                   onChange={handleChange}
                   value={formData.purpose}
-                  select
-                >
+                  select>
                   <MenuItem value="marriage">Marriage</MenuItem>
                   <MenuItem value="passport">Passport</MenuItem>
                   <MenuItem value="school">School</MenuItem>
@@ -273,12 +267,11 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
 
             <Typography
               fontSize={"medium"}
-              sx={{ textAlign: "center", marginTop: "12px" }}
-            >
+              sx={{textAlign: "center", marginTop: "12px"}}>
               Transaction no: <b>{data.transaction_no}</b>
             </Typography>
             {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
                 Approved by: dummyDataStaffName
               </Typography>
             )}
@@ -290,8 +283,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -300,9 +292,9 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
+                  }}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("update")}
                     sx={{
                       backgroundColor: "#CDAB52",
@@ -310,18 +302,20 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#B89545",
                       },
-                    }}
-                  >
+                    }}>
                     Update
                   </Button>
                   <Button
+                    variant="contained"
                     onClick={close}
                     sx={{
                       backgroundColor: "#d9d9d9",
                       color: "black",
                       paddingX: "12px",
-                    }}
-                  >
+                      "&:hover": {
+                        backgroundColor: "#dddddd",
+                      },
+                    }}>
                     Close
                   </Button>
                 </Grid>
@@ -341,7 +335,7 @@ const BaptismCertInfoModal = ({ open, data, close }) => {
   );
 };
 
-const ConfirmationCertInfoModal = ({ open, data, close }) => {
+const ConfirmationCertInfoModal = ({open, data, close}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
@@ -390,8 +384,8 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const formatDate = (dateString) => {
@@ -431,25 +425,22 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Confirmation Certificate Request Information
             </Typography>
             <IconButton
@@ -460,16 +451,14 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
             <Grid
               container
               spacing={2}
-              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
-            >
+              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
               <Grid item xs={12} sm={4}>
                 <label>First Name: </label>
                 <TextField
@@ -580,8 +569,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   onChange={handleChange}
                   name="purpose"
                   value={formData.purpose}
-                  select
-                >
+                  select>
                   <MenuItem value="marriage">Marriage</MenuItem>
                   <MenuItem value="passport">Passport</MenuItem>
                   <MenuItem value="school">School</MenuItem>
@@ -596,12 +584,11 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
 
             <Typography
               fontSize={"medium"}
-              sx={{ textAlign: "center", marginTop: "12px" }}
-            >
+              sx={{textAlign: "center", marginTop: "12px"}}>
               Transaction no: <b>{data.transaction_no}</b>
             </Typography>
             {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
                 Approved by: dummyDataStaffName
               </Typography>
             )}
@@ -613,8 +600,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -623,9 +609,9 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
+                  }}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("update")}
                     sx={{
                       backgroundColor: "#CDAB52",
@@ -633,18 +619,20 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#B89545",
                       },
-                    }}
-                  >
+                    }}>
                     Update
                   </Button>
                   <Button
+                    variant="contained"
                     onClick={close}
                     sx={{
                       backgroundColor: "#d9d9d9",
                       color: "black",
                       paddingX: "12px",
-                    }}
-                  >
+                      "&:hover": {
+                        backgroundColor: "#dddddd",
+                      },
+                    }}>
                     Close
                   </Button>
                 </Grid>
@@ -664,7 +652,7 @@ const ConfirmationCertInfoModal = ({ open, data, close }) => {
   );
 };
 
-const MarriageCertInfoModal = ({ open, data, close }) => {
+const MarriageCertInfoModal = ({open, data, close}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
@@ -713,8 +701,8 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const formatDate = (dateString) => {
@@ -765,25 +753,22 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               Marriage Certificate Request Information
             </Typography>
             <IconButton
@@ -794,16 +779,14 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
             <Grid
               container
               spacing={2}
-              sx={{ height: "auto", padding: "0px 10px", overflowY: "auto" }}
-            >
+              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
               <Grid item xs={12} sm={4}>
                 <label>First Name: </label>
                 <TextField
@@ -915,8 +898,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   name="purpose"
                   onChange={handleChange}
                   value={formData.purpose}
-                  select
-                >
+                  select>
                   <MenuItem value="marriage">Marriage</MenuItem>
                   <MenuItem value="passport">Passport</MenuItem>
                   <MenuItem value="school">School</MenuItem>
@@ -931,12 +913,11 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
 
             <Typography
               fontSize={"medium"}
-              sx={{ textAlign: "center", marginTop: "12px" }}
-            >
+              sx={{textAlign: "center", marginTop: "12px"}}>
               Transaction no: <b>{data.transaction_no}</b>
             </Typography>
             {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{ textAlign: "center" }}>
+              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
                 Approved by: dummyDataStaffName
               </Typography>
             )}
@@ -948,8 +929,7 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -958,9 +938,9 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
+                  }}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("update")}
                     sx={{
                       backgroundColor: "#CDAB52",
@@ -968,18 +948,17 @@ const MarriageCertInfoModal = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#B89545",
                       },
-                    }}
-                  >
+                    }}>
                     Update
                   </Button>
                   <Button
+                    variant="contained"
                     onClick={close}
                     sx={{
                       backgroundColor: "#d9d9d9",
                       color: "black",
                       paddingX: "12px",
-                    }}
-                  >
+                    }}>
                     Close
                   </Button>
                 </Grid>
