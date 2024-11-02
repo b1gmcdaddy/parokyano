@@ -221,6 +221,10 @@ const AnointingPending = ({open, data, handleClose}) => {
             window.location.reload();
           }
         } catch (err) {
+          setError({
+            message: err.response.data.message,
+            details: err.response.data.details,
+          });
           console.log("error submitting to server", err);
         }
         break;

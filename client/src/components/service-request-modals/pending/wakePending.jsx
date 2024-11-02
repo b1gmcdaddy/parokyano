@@ -183,7 +183,7 @@ const WakePending = ({open, data, handleClose}) => {
             }
           );
           console.log(response);
-          if (Object.keys(response.data).length > 0 || response.data != "") {
+          if (response.data && Object.keys(response.data).length > 0) {
             setError({
               message: response.data.message,
               details: response.data?.details,
@@ -227,7 +227,12 @@ const WakePending = ({open, data, handleClose}) => {
             window.location.reload();
           }
         } catch (err) {
-          console.log("error submitting to server", err);
+          if (err.response) {
+            setError({
+              message: err.response.data.message,
+              details: err.response.data.details,
+            });
+          }
         }
         break;
       case "update": // UPDATE PENDING REQUEST

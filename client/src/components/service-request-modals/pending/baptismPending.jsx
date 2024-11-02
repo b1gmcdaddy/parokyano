@@ -307,7 +307,10 @@ const BaptismPending = ({open, data, handleClose}) => {
             });
           }
         } catch (err) {
-          console.log("error submitting to server", err);
+          setError({
+            message: err.response.data.message,
+            details: err.response.data.details,
+          });
         }
         break;
       case "update":

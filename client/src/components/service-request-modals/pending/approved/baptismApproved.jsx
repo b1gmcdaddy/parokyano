@@ -784,6 +784,7 @@ const BaptismApproved = ({open, data, handleClose}) => {
                     sx={{
                       bgcolor: "#247E38",
                       gap: 1,
+
                       height: "30px",
                       fontWeight: "bold",
                       color: "white",

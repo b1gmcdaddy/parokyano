@@ -995,7 +995,10 @@ const WeddingApproved = ({open, data, handleClose}) => {
             window.location.reload(),
           ]);
         } catch (err) {
-          console.error("Error rescheduling request", err);
+          setError({
+            message: err.response.data.message,
+            details: err.response.data.details,
+          });
         }
         break;
 

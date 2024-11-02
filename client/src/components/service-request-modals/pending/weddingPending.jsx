@@ -714,7 +714,6 @@ const WeddingPending = ({open, data, handleClose}) => {
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
-  const [errorOpen, setErrorOpen] = useState(false);
   const [priests, setPriests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -961,10 +960,10 @@ const WeddingPending = ({open, data, handleClose}) => {
         window.location.reload();
       }
     } catch (err) {
-      console.error(err);
-      alert(
-        "Priest has another activity scheduled on that date and time.\nPlease select another date and time."
-      );
+      setError({
+        message: err.response.data.message,
+        details: err.response.data.details,
+      });
     }
   };
   // END SET INTERVIEW METHOD
@@ -1075,7 +1074,10 @@ const WeddingPending = ({open, data, handleClose}) => {
             window.location.reload();
           }
         } catch (err) {
-          console.log("error submitting to server", err);
+          setError({
+            message: err.response.data.message,
+            details: err.response.data.details,
+          });
         }
       default:
         break;
