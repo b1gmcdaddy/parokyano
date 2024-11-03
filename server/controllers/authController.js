@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 require("dotenv").config();
 const emailjs = require("emailjs-com");
+const saltRounds = 10;
 
 const secretKey = "please-Lord-graduate-mi";
 const refreshTokenSecret = "one-God-one-church";
@@ -81,37 +82,35 @@ exports.logout = (req, res) => {
   res.sendStatus(204);
 };
 
-// exports.requestPasswordReset = async (req, res) => {
-//   const { email } = req.body;
-//   console.log(email);
+exports.requestPasswordReset = async (req, res) => {
+  const { email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-//   try {
-//     const [user] = await db
-//       .promise()
-//       .query("SELECT * FROM user WHERE email = ?", [email]);
+  db.query("SELECT * FROM user WHERE email = ?", [email], (err, user) => {
+    if (err) {
+      console.error("Error fetching user", err);
+      return res.status(500).json({ message: "Database error" });
+    }
 
-//     if (user.length === 0) {
-//       return res.status(404).json({ message: "Email not found" });
-//     }
+    if (user.length === 0) {
+      return res.status(404).json({ message: "Email not found" });
+    }
 
-//     const resetToken = crypto.randomBytes(32).toString("hex");
-//     const tokenExpiry = new Date(Date.now() + 3600000); // 1 hour expiry
-
-//     await db
-//       .promise()
-//       .query(
-//         "UPDATE user SET reset_token = ?, reset_token_expiry = ? WHERE email = ?",
-//         [resetToken, tokenExpiry, email]
-//       );
-
-//     await sendResetEmail(email, resetToken);
-
-//     res.status(200).json({ message: "Password reset email sent!" });
-//   } catch (error) {
-//     console.error("Error processing request:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+    db.query(
+      "UPDATE user SET password = ? WHERE email = ?",
+      [hashedPassword, email],
+      (err, result) => {
+        if (err) {
+          console.error("Error updating user", err);
+          return res.status(500).json({ message: "Database error" });
+        }
+        return res
+          .status(200)
+          .json({ message: "Password updated successfully" });
+      }
+    );
+  });
+};
 
 // const sendResetEmail = async (email, token) => {
 //   const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
