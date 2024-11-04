@@ -163,6 +163,7 @@ const BaptismPending = ({open, data, handleClose}) => {
           middle_name: data.middle_name || "",
           last_name: data.last_name || "",
           birth_date: dayjs(data.birth_date).format("YYYY-MM-DD"),
+          contact_no: data.contact_no,
           birth_place: data.birth_place || "",
           // gender: details?.gender || "",
           father_name: data.father_name || "",
@@ -296,7 +297,7 @@ const BaptismPending = ({open, data, handleClose}) => {
               });
               console.log("logs success!");
               // sendSMS(data.service_id, formData, "approve");
-              handleClose();
+              alert("Baptism Schedule Set!");
               window.location.reload();
             }
           } else {
@@ -307,10 +308,7 @@ const BaptismPending = ({open, data, handleClose}) => {
             });
           }
         } catch (err) {
-          setError({
-            message: err.response.data.message,
-            details: err.response.data.details,
-          });
+          console.log("error submitting to server", err);
         }
         break;
       case "update":
