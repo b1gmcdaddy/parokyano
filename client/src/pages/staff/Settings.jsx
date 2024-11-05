@@ -119,7 +119,8 @@ const Settings = () => {
       book_no: "",
       page_no: "",
       line_no: "",
-      sponsor: ""
+      sponsor_no1: "",
+      sponsor_no2: ""
     },
   });
 
@@ -239,7 +240,6 @@ const Settings = () => {
     setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
   };
 
-  // this handles book line and page no.
   const handleArchive = (e) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -708,19 +708,8 @@ const Settings = () => {
                         />
                       </LocalizationProvider>
                     </Grid>
-                    <Grid item sm={6}>
-                      <label>Sponsor:</label>
-                      <TextField
-                        name="sponsor"
-                        onChange={handleArchive}
-                        autoComplete="off"
-                        required
-                        fullWidth
-                        sx={TextFieldStyleModal}
-                      />
-                    </Grid>
 
-                    <Grid item sm={12}>
+                    <Grid item sm={6}>
                       <label>Minister:</label>
                       <TextField
                         value={formData.officiating_priest}
@@ -736,6 +725,30 @@ const Settings = () => {
                           </MenuItem>
                         ))}
                       </TextField>
+                    </Grid>
+
+                    <Grid item sm={6}>
+                      <label>Sponsor 1:</label>
+                      <TextField
+                        name="sponsor_no1"
+                        onChange={handleArchive}
+                        autoComplete="off"
+                        required
+                        fullWidth
+                        sx={TextFieldStyleModal}
+                      />
+                    </Grid>
+
+                    <Grid item sm={6}>
+                      <label>Sponsor 2:</label>
+                      <TextField
+                        name="sponsor_no2"
+                        onChange={handleArchive}
+                        autoComplete="off"
+                        required
+                        fullWidth
+                        sx={TextFieldStyleModal}
+                      />
                     </Grid>
 
                     <Grid item sm={12}>
