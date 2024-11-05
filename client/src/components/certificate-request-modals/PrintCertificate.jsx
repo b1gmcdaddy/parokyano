@@ -8,6 +8,13 @@ import {
   Grid,
   Typography,
   DialogActions,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableBody,
+  TableCell,
+  Paper
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
@@ -25,11 +32,17 @@ const PrintCertificate = ({ open, data, close }) => {
   const [priests, setPriests] = useState([]);
   const dateToday = new Date().toJSON().slice(0, 10);
   const componentRef = useRef();
+  const bookDetails = JSON.parse(data.details || '{}');
+  const spouseDetails = JSON.parse(data.spouse_name || '{}');
   const [CertData, setCertData] = useState({
     full_name: "",
+    spouse_name: "",
     birth_day: "",
     birth_month: "",
     birth_year: "",
+    marriage_day: "",
+    marriage_month: "",
+    marriage_year: "",
     birth_place: "",
     preffered_day: "",
     preffered_month: "",
@@ -52,9 +65,13 @@ const PrintCertificate = ({ open, data, close }) => {
     if (open && data) {
       setCertData({
         full_name: data.first_name + " " + data.middle_name + " " + data.last_name,
+        spouse_name: `${spouseDetails?.firstName || ""} ${spouseDetails?.middleName || ""} ${spouseDetails?.lastName || ""}`,
         birth_day: "",
         birth_month: "",
         birth_year: "",
+        marriage_day: "",
+        marriage_month: "",
+        marriage_year: "",
         preffered_day: "",
         preffered_month: "",
         preffered_year: "",
@@ -62,9 +79,9 @@ const PrintCertificate = ({ open, data, close }) => {
         data_issue: formatDate(dateToday),
         father_name: data.father_name,
         mother_name: data.mother_name,
-        book_no: data.details.book_no,
-        line_no: data.details.line_no,
-        page_no: data.details.page_no,
+        book_no: bookDetails.book_no,
+        line_no: bookDetails.line_no,
+        page_no: bookDetails.page_no,
         OR_no: data.details.OR_no,
         purpose: data.purpose,
         transaction_no: data.transaction_no,
@@ -74,7 +91,8 @@ const PrintCertificate = ({ open, data, close }) => {
       });
     }
     BirthDayFormatter(data.birth_date);
-    BaptismDayFormatter(data.preferred_date)
+    BaptismDayFormatter(data.preferred_date);
+    MarriageDayFormatter(data.preferred_date);
     console.log(data);
   }, [open, data]);
 
@@ -101,6 +119,26 @@ const PrintCertificate = ({ open, data, close }) => {
       birth_day: day,
       birth_month: month,
       birth_year: year,
+    }));
+  };
+
+  const MarriageDayFormatter = (dateString) => {
+    const date = new Date(dateString);
+
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const day = date.getUTCDate();
+    const month = monthNames[date.getUTCMonth()]; 
+    const year = date.getUTCFullYear();
+  
+    setCertData((prevData) => ({
+      ...prevData,
+      marriage_day: day,
+      marriage_month: month,
+      marriage_year: year,
     }));
   };
 
@@ -449,6 +487,156 @@ const renderCertificateContainer = () => {
             sx={{ position: "relative", height: "1122.24px", width: "793.92px", py: 3 }}
             ref={componentRef}
           >
+            <Grid container spacing={2} justifyContent={"center"}>
+              <Grid item sm={4} sx={{backgroundImage: `url(${logo})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "contain",
+                backgroundPosition: "center",}}>
+                <img
+                  src={logo}
+                  style={{height: "90%", width: "60%", justifySelf: 'center'}}
+                  alt="Logo"
+                />
+              </Grid>
+
+              <Grid item sm={6.4}>
+                <Box textAlign={"center"} sx={{marginTop: '10px'}}>
+                  <Typography sx={{fontFamily: 'Cursiva', color: '#000000', fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>Catholic Church of Christ of the Agony</Typography>
+                  <Typography sx={{fontFamily: 'Palatino', fontSize: '27px', lineHeight: '1', letterSpacing: 0, color: '#040063', fontWeight: 'bold'}}>GETHSEMANE PARISH</Typography>
+                  <Typography sx={{fontWeight: 'bold',letterSpacing: 0, fontSize: '15px', lineHeight: '1',}}>Casuntingan, Mandaue City <br/><span style={{lineHeight: '1.3'}}>Cebu, Philippines 6014</span></Typography>
+                  <FontAwesomeIcon size="xs" icon={faPhone}/>
+                  <Typography sx={{fontWeight: 'bold',letterSpacing: 0, fontSize: '15px', lineHeight: '0', display: 'inline'}}>/fax no: (032) 346-9560</Typography>
+                </Box>
+              </Grid>
+
+              <Grid item sm={12} sx={{marginTop: '15px'}}>
+                <Typography sx={{fontFamily: 'Cursiva',fontSize: '40px', lineHeight: '1', letterSpacing: 3, fontWeight: 'bold', textAlign: 'center'}}>Certificate of Marriage</Typography>
+              </Grid>
+              <Grid item sm={12} sx={{marginTop: '10px'}}>
+                <Typography sx={{fontSize: '15px', lineHeight: '1', letterSpacing: 0, fontWeight: 'bold', textAlign: 'center'}}>This certifies that</Typography>
+              </Grid>
+              <Grid item sm={12} sx={{marginTop: '10px'}}>
+                <Typography sx={{fontSize: '15px', lineHeight: '1', letterSpacing: 1, fontWeight: 'bold', textAlign: 'center'}}><span style={{textDecoration: 'underline'}}>{CertData.full_name}</span> and <span style={{textDecoration: 'underline'}}>{CertData.spouse_name}</span></Typography>
+              </Grid>
+
+              <Grid item sm={12}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ borderBottom: '1px solid black', padding: '0px 0px 0px 0px'}}></TableCell>
+                      <TableCell align="center" sx={{ borderBottom: '1px solid black', padding: '0px 0px 0px 0px' }}>(Husband)</TableCell>
+                      <TableCell align="center" sx={{ borderBottom: '1px solid black', padding: '0px 0px 0px 0px' }}>(Wife)</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Legal Status</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Actual Address</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Date of Birth</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Place of Birth</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Date of Baptism</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Place of Baptism</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Father</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Mother</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px', height: '50px'}}>Witnesses</TableCell>
+                      <TableCell sx={{ border: '1px solid black', padding: '0px 0px 0px 0px' }}>
+                        <Box display="flex" flexDirection="column">
+                          <TableCell align="center" sx={{ borderBottom: '1px solid black', padding: '0px 0px 0px 0px'}}></TableCell>
+                          <TableCell align="center" sx={{ padding: '0px 0px 0px 0px'}}></TableCell>
+                        </Box>
+                      </TableCell>
+                      <TableCell sx={{ border: '1px solid black', padding: '0px 0px 0px 0px' }}>
+                        <Box display="flex" flexDirection="column">
+                          <TableCell align="center" sx={{ borderBottom: '1px solid black', padding: '0px 0px 0px 0px'}}></TableCell>
+                          <TableCell align="center" sx={{ padding: '0px 0px 0px 0px'}}></TableCell>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Grid>
+
+              <Grid item sm={12}>
+                <Typography sx={{fontSize: '15px', lineHeight: '0', letterSpacing: 1, fontWeight: 'bold', textAlign: 'center'}}>were united in</Typography>
+              </Grid>
+              <Grid item sm={12}>
+                <Typography sx={{fontFamily: 'Cursiva',fontSize: '20px', lineHeight: '1', letterSpacing: 3, fontWeight: 'bold', textAlign: 'center'}}>Holy Matrimony</Typography>
+              </Grid>
+              <Grid item sm={12}>
+                <Typography sx={{fontSize: '15px', lineHeight: '1', letterSpacing: 1, fontWeight: 'bold', textAlign: 'center'}}>according to the rules of the Holy Roman Catholic Church <br/>
+                  on the <span style={{textDecoration: 'underline'}}>{CertData.marriage_day}</span> day of <span style={{textDecoration: 'underline'}}>{CertData.marriage_month}</span> <span style={{textDecoration: 'underline'}}>{CertData.marriage_year}</span>
+                </Typography>
+              </Grid>
+
+              <Grid item sm={12}>
+                <Typography sx={{fontSize: '15px', lineHeight: '1', letterSpacing: 1, fontWeight: 'bold', textAlign: 'center'}}> The Marraige was solemized by <span style={{textDecoration: 'underline'}}>{
+                      priests.find(
+                        (priest) => priest.priestID === CertData.priest_id
+                      )?.first_name +
+                      " " +
+                      priests.find(
+                        (priest) => priest.priestID === CertData.priest_id
+                      )?.last_name
+                    }</span> <br/> I further certify to the correcteness of the above data as appears from the <br/> Catholic Marriage Register Book of the Church.
+                </Typography>
+              </Grid>
+
+              <Grid item sm={6}>
+                <Typography sx={{fontSize: '15px',fontWeight: 'bold', textAlign: 'center'}}>Book No. <span style={{textDecoration: 'underline'}}>{CertData.book_no}</span></Typography>
+              </Grid>
+              <Grid item sm={6}>
+                <Typography sx={{fontSize: '15px',fontWeight: 'bold', textAlign: 'center'}}>Date of Issue: <span style={{textDecoration: 'underline'}}>{util.formatDate(CertData.data_issue)}</span></Typography>
+              </Grid>
+              <Grid item sm={6}>
+                <Typography sx={{fontSize: '15px',fontWeight: 'bold', textAlign: 'center'}}>Page No. <span style={{textDecoration: 'underline'}}>{CertData.page_no}</span></Typography>
+              </Grid>
+              <Grid item sm={6}>
+                <Typography sx={{fontSize: '15px',fontWeight: 'bold', textAlign: 'center'}}>Line No. <span style={{textDecoration: 'underline'}}>{CertData.line_no}</span></Typography>
+              </Grid>
+              <Grid item sm={12}>
+                <Typography sx={{fontSize: '15px',fontWeight: 'bold', textAlign: 'left', marginLeft: '149px' }}>Purpose: <span style={{textDecoration: 'underline'}}>{CertData.purpose}</span></Typography>
+              </Grid>
+              
+              <Grid item sm={6} sx={{marginTop: '80px'}}>
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                  <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
+                  <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
+                </div>
+              </Grid>
+              
+            </Grid>
           </Container>
         );
       default:
