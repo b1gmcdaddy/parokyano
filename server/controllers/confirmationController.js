@@ -23,7 +23,7 @@ const retrieveByParams = (req, res) => {
 
 const addConfirmationRecord = (req, res) => {
   const request = req.body;
-  const archive = JSON.stringify(request.archive_info);
+  const details = JSON.stringify(request.archive_info);
 
   const child_name = `${request.first_name} ${request.middle_name} ${request.last_name}`;
   db.query(
@@ -34,7 +34,7 @@ const addConfirmationRecord = (req, res) => {
       request.mother_name,
       request.officiating_priest,
       request.confirmation_date,
-      archive,
+      details,
     ],
     (err, result) => {
       if (err) {
