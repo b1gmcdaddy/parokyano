@@ -18,27 +18,15 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {useState, useEffect} from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
-import util from "../../../utils/DateTimeFormatter";
 import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
 import sendSMS from "../../../utils/smsService";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "md",
-  bgcolor: "white",
-  borderRadius: "10px",
-  boxShadow: 3,
-  px: 4,
-  py: 3,
-};
 
 const TextFieldStyle = {
   "& .MuiInputBase-root": {height: "40px"},
@@ -58,12 +46,12 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const WakePending = ({open, data, handleClose}) => {
+const WakePending = ({open, data, handleClose, refreshList}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
-  const [errorOpen, setErrorOpen] = useState(false);
+  const [success, setSuccess] = useState(null);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
     requestID: "",
@@ -79,7 +67,6 @@ const WakePending = ({open, data, handleClose}) => {
     transaction_no: "",
     service_id: "",
     type: "",
-    mass_date: "", // DO NOT DELETE
   });
 
   useEffect(() => {
@@ -98,7 +85,6 @@ const WakePending = ({open, data, handleClose}) => {
         transaction_no: data.transaction_no,
         service_id: data.service_id,
         type: null,
-        mass_date: null,
       });
     }
   }, [open, data]);
@@ -118,6 +104,12 @@ const WakePending = ({open, data, handleClose}) => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const closeInfoModal = () => {
+    setSuccess(true);
+    handleClose();
+    refreshList();
   };
 
   useEffect(() => {
@@ -162,9 +154,7 @@ const WakePending = ({open, data, handleClose}) => {
     setDialogOpen(false);
   };
 
-  {
-    /** for sameple if success, ari butang backend**/
-  }
+  // CONFIRM ACTION (APPROVAL, UPDATE, CANCELLATION)
   const handleConfirm = async (action) => {
     switch (action) {
       case "approve":
@@ -188,11 +178,13 @@ const WakePending = ({open, data, handleClose}) => {
               message: response.data.message,
               details: response.data?.details,
             });
-          } else {
+            return;
+          }
+          await Promise.all([
             axios.put(`${config.API}/request/update-bulk`, {
               formData,
               id: data.requestID,
-            });
+            }),
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
@@ -206,8 +198,8 @@ const WakePending = ({open, data, handleClose}) => {
                 col5: "requestID",
                 val5: formData.requestID,
               },
-            });
-            console.log("request success!");
+            }),
+            console.log("request success!"),
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Wake mass for ${formData.first_name}`,
@@ -215,17 +207,18 @@ const WakePending = ({open, data, handleClose}) => {
               end_time: endTime(formData.preferred_time, service.duration),
               priest_id: formData.priest_id,
               request_id: formData.requestID,
-            });
-            console.log("priest sched success!");
+            }),
+            console.log("priest sched success!"),
             axios.post(`${config.API}/logs/create`, {
               activity: `Approved Wake Request for ${formData.first_name}`,
               user_id: currentUser.id,
               request_id: formData.requestID,
-            });
-            console.log("logs success!");
+            }),
+            console.log("logs success!"),
             // sendSMS(data.service_id, formData, "approve");
-            window.location.reload();
-          }
+            closeInfoModal(),
+            refreshList(),
+          ]);
         } catch (err) {
           if (err.response) {
             setError({
@@ -233,6 +226,8 @@ const WakePending = ({open, data, handleClose}) => {
               details: err.response.data.details,
             });
           }
+        } finally {
+          refreshList();
         }
         break;
       case "update": // UPDATE PENDING REQUEST
@@ -254,7 +249,6 @@ const WakePending = ({open, data, handleClose}) => {
             request_id: data.requestID,
           });
           console.log("logs success!");
-          // refetchData();
         }
         window.location.reload();
         break;
@@ -285,18 +279,28 @@ const WakePending = ({open, data, handleClose}) => {
     <>
       {error && (
         <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-          message={
-            <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
-                {error.message}
-              </span>
-              <p>{error.details}</p>
-            </>
-          }
-        />
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>Success!</AlertTitle>
+            The request was successfully updated.
+          </Alert>
+        </Snackbar>
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>

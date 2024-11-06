@@ -1,5 +1,4 @@
 import CloseIcon from "@mui/icons-material/Close";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
@@ -42,6 +41,8 @@ import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import sendSMS from "../../../utils/smsService";
 
 const boxModal = {
@@ -707,7 +708,7 @@ function SponsorsModal({id}) {
   );
 }
 
-const WeddingPending = ({open, data, handleClose}) => {
+const WeddingPending = ({open, data, handleClose, refreshList}) => {
   const [available, setAvailable] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completeRequirements, setCompleteRequirements] = useState(0);
@@ -715,6 +716,7 @@ const WeddingPending = ({open, data, handleClose}) => {
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
   const [priests, setPriests] = useState([]);
+  const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     requestID: "",
@@ -783,7 +785,6 @@ const WeddingPending = ({open, data, handleClose}) => {
         spouse_middleName: "",
         spouse_lastName: "",
         donation: data.donation,
-        service_id: data.service_id,
       });
       fetchWeddingData();
     }
@@ -825,6 +826,12 @@ const WeddingPending = ({open, data, handleClose}) => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const closeInfoModal = () => {
+    setSuccess(true);
+    handleClose();
+    refreshList();
   };
 
   const fetchAvailability = async (date, start, end) => {
@@ -956,14 +963,16 @@ const WeddingPending = ({open, data, handleClose}) => {
         });
         // sendSMS(data.service_id, formData, "approve-wed-interview");
 
-        alert("Marriage Interview Set!");
-        window.location.reload();
+        closeInfoModal();
+        refreshList();
       }
     } catch (err) {
       setError({
         message: err.response.data.message,
         details: err.response.data.details,
       });
+    } finally {
+      refreshList();
     }
   };
   // END SET INTERVIEW METHOD
@@ -1071,13 +1080,16 @@ const WeddingPending = ({open, data, handleClose}) => {
               request_id: formData.requestID,
             });
             // sendSMS(data.service_id, formData, "approve");
-            window.location.reload();
+            closeInfoModal();
+            refreshList();
           }
         } catch (err) {
           setError({
             message: err.response.data.message,
             details: err.response.data.details,
           });
+        } finally {
+          refreshList();
         }
       default:
         break;
@@ -1088,18 +1100,28 @@ const WeddingPending = ({open, data, handleClose}) => {
     <>
       {error && (
         <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-          message={
-            <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
-                {error.message}
-              </span>
-              <p>{error.details}</p>
-            </>
-          }
-        />
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>Success!</AlertTitle>
+            The request was successfully updated.
+          </Alert>
+        </Snackbar>
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>

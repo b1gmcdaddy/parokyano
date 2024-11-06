@@ -22,7 +22,8 @@ import Snackbar from "@mui/material/Snackbar";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {useState, useEffect} from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
-import util from "../../../utils/DateTimeFormatter";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
@@ -46,12 +47,12 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const AnointingPending = ({open, data, handleClose}) => {
+const AnointingPending = ({open, data, handleClose, refreshList}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
-  const [errorOpen, setErrorOpen] = useState(false);
+  const [success, setSuccess] = useState(null);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
     type: "",
@@ -138,6 +139,12 @@ const AnointingPending = ({open, data, handleClose}) => {
     setDialogOpen(false);
   };
 
+  const closeInfoModal = () => {
+    setSuccess(true);
+    handleClose();
+    refreshList();
+  };
+
   const handleChange = (e) => {
     const {name, value} = e.target;
     setFormData((prevData) => ({...prevData, [name]: value}));
@@ -179,11 +186,12 @@ const AnointingPending = ({open, data, handleClose}) => {
               details: response.data?.details,
             });
             return;
-          } else {
+          }
+          await Promise.all([
             axios.put(`${config.API}/request/update-bulk`, {
               formData,
               id: data.requestID,
-            });
+            }),
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
@@ -197,8 +205,8 @@ const AnointingPending = ({open, data, handleClose}) => {
                 col5: "requestID",
                 val5: formData.requestID,
               },
-            });
-            console.log("request success!");
+            }),
+            console.log("request success!"),
 
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
@@ -207,25 +215,27 @@ const AnointingPending = ({open, data, handleClose}) => {
               end_time: endTime(formData.preferred_time, service.duration),
               priest_id: formData.priest_id,
               request_id: formData.requestID,
-            });
+            }),
 
-            console.log("priest sched success!");
+            console.log("priest sched success!"),
 
             axios.post(`${config.API}/logs/create`, {
               activity: `Approved Anointing for ${formData.first_name} at ${formData.address}`,
               user_id: currentUser.id,
               request_id: formData.requestID,
-            });
-            console.log("logs success!");
+            }),
+            console.log("logs success!"),
             // sendSMS(data.service_id, formData, "approve");
-            window.location.reload();
-          }
+            closeInfoModal(),
+            refreshList(),
+          ]);
         } catch (err) {
           setError({
             message: err.response.data.message,
             details: err.response.data.details,
           });
-          console.log("error submitting to server", err);
+        } finally {
+          refreshList();
         }
         break;
       case "update": // UPDATE PENDING REQUEST
@@ -279,18 +289,28 @@ const AnointingPending = ({open, data, handleClose}) => {
     <>
       {error && (
         <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-          message={
-            <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
-                {error.message}
-              </span>
-              <p>{error.details}</p>
-            </>
-          }
-        />
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>Success!</AlertTitle>
+            The request was successfully updated.
+          </Alert>
+        </Snackbar>
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>

@@ -21,6 +21,8 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {useState, useEffect} from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
@@ -49,7 +51,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const OutsidePending = ({open, data, handleClose}) => {
+const OutsidePending = ({open, data, handleClose, refreshList}) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -57,7 +59,7 @@ const OutsidePending = ({open, data, handleClose}) => {
   const [priests, setPriests] = useState([]);
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
-  const [errorOpen, setErrorOpen] = useState(false);
+  const [success, setSuccess] = useState(null);
   const [formData, setFormData] = useState({
     first_name: "",
     address: "",
@@ -109,6 +111,12 @@ const OutsidePending = ({open, data, handleClose}) => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const closeInfoModal = () => {
+    setSuccess(true);
+    handleClose();
+    refreshList();
   };
 
   useEffect(() => {
@@ -192,11 +200,13 @@ const OutsidePending = ({open, data, handleClose}) => {
               message: response.data.message,
               details: response.data?.details,
             });
-          } else {
+            return;
+          }
+          await Promise.all([
             axios.put(`${config.API}/request/update-bulk`, {
               formData,
               id: data.requestID,
-            });
+            }),
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
@@ -210,8 +220,8 @@ const OutsidePending = ({open, data, handleClose}) => {
                 col5: "requestID",
                 val5: formData.requestID,
               },
-            });
-            console.log("request success!");
+            }),
+            console.log("request success!"),
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Outside mass for ${formData.first_name}`,
@@ -221,24 +231,25 @@ const OutsidePending = ({open, data, handleClose}) => {
               end_time: endTime(formData.preferred_time, service.duration),
               priest_id: formData.priest_id,
               request_id: formData.requestID,
-            });
-            console.log("priest sched success!");
+            }),
+            console.log("priest sched success!"),
             axios.post(`${config.API}/logs/create`, {
               activity: `Approved Outside Mass at ${formData.first_name}`,
               user_id: 1,
               request_id: formData.requestID,
-            });
-            console.log("logs success!");
+            }),
+            console.log("logs success!"),
             // sendSMS(data.service_id, formData, "approve");
-            handleClose();
-            window.location.reload();
-          }
+            closeInfoModal(),
+            refreshList(),
+          ]);
         } catch (err) {
           setError({
             message: err.response.data.message,
             details: err.response.data.details,
           });
-          console.log("error submitting to server", err);
+        } finally {
+          refreshList();
         }
         break;
       case "update": // UPDATE PENDING REQUEST
@@ -291,18 +302,28 @@ const OutsidePending = ({open, data, handleClose}) => {
     <>
       {error && (
         <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-          message={
-            <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
-                {error.message}
-              </span>
-              <p>{error.details}</p>
-            </>
-          }
-        />
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>Success!</AlertTitle>
+            The request was successfully updated.
+          </Alert>
+        </Snackbar>
       )}
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {formData && priests ? (

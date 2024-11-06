@@ -23,11 +23,12 @@ import {
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {useState, useEffect} from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
-import util from "../../../utils/DateTimeFormatter";
 import dayjs from "dayjs";
 import axios from "axios";
 import config from "../../../config";
 import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import sendSMS from "../../../utils/smsService";
 
 const TextFieldStyle = {
@@ -48,7 +49,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BlessingPending = ({open, data, handleClose}) => {
+const BlessingPending = ({open, data, handleClose, refreshList}) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -56,7 +57,7 @@ const BlessingPending = ({open, data, handleClose}) => {
   const [service, setService] = useState({});
   const [priests, setPriests] = useState([]);
   const [error, setError] = useState(null);
-  const [errorOpen, setErrorOpen] = useState(false);
+  const [success, setSuccess] = useState(null);
   const [formData, setFormData] = useState({
     requestID: "",
     type: "",
@@ -127,6 +128,12 @@ const BlessingPending = ({open, data, handleClose}) => {
     fetchService();
   }, []);
 
+  const closeInfoModal = () => {
+    setSuccess(true);
+    handleClose();
+    refreshList();
+  };
+
   const handleOpenDialog = (action) => {
     setCurrentAction(action);
     setDialogOpen(true);
@@ -190,11 +197,12 @@ const BlessingPending = ({open, data, handleClose}) => {
               details: response.data?.details,
             });
             return;
-          } else {
+          }
+          await Promise.all([
             axios.put(`${config.API}/request/update-bulk`, {
               formData,
               id: data.requestID,
-            });
+            }),
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
@@ -208,9 +216,8 @@ const BlessingPending = ({open, data, handleClose}) => {
                 col5: "requestID",
                 val5: formData.requestID,
               },
-            });
-            console.log("request success!");
-            console.log(formData);
+            }),
+            console.log("request success!"),
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Blessing for ${formData.first_name} at ${formData.address}`,
@@ -218,23 +225,25 @@ const BlessingPending = ({open, data, handleClose}) => {
               end_time: endTime(formData.preferred_time, service.duration),
               priest_id: formData.priest_id,
               request_id: formData.requestID,
-            });
-            console.log("priest sched success!");
+            }),
+            console.log("priest sched success!"),
             axios.post(`${config.API}/logs/create`, {
               activity: `Approved Blessing for ${formData.first_name} at ${formData.address}`,
               user_id: 1,
               request_id: formData.requestID,
-            });
-            console.log("logs success!");
+            }),
+            console.log("logs success!"),
             // sendSMS(data.service_id, formData, "approve");
-            handleClose();
-          }
+            closeInfoModal(),
+            refreshList(),
+          ]);
         } catch (err) {
           setError({
             message: err.response.data.message,
             details: err.response.data.details,
           });
-          console.log("error submitting to server", err);
+        } finally {
+          refreshList();
         }
         break;
       case "update": // UPDATE PENDING REQUEST
@@ -289,18 +298,28 @@ const BlessingPending = ({open, data, handleClose}) => {
     <>
       {error && (
         <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-          message={
-            <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
-                {error.message}
-              </span>
-              <p>{error.details}</p>
-            </>
-          }
-        />
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>Success!</AlertTitle>
+            The request was successfully updated.
+          </Alert>
+        </Snackbar>
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>

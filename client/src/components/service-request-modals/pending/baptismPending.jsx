@@ -30,6 +30,8 @@ import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import sendSMS from "../../../utils/smsService";
 
 const TextFieldStyle = {
@@ -51,12 +53,12 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BaptismPending = ({open, data, handleClose}) => {
+const BaptismPending = ({open, data, handleClose, refreshList}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState(null);
   const [error, setError] = useState(null);
-  const [errorOpen, setErrorOpen] = useState(false);
+  const [success, setSuccess] = useState(null);
   const [available, setAvailable] = useState("");
   const [sponsors, setSponsors] = useState([]);
   const [details, setDetails] = useState({});
@@ -115,6 +117,12 @@ const BaptismPending = ({open, data, handleClose}) => {
     } catch (err) {
       console.error("error retrieving sponsors", err);
     }
+  };
+
+  const closeInfoModal = () => {
+    setSuccess(true);
+    handleClose();
+    refreshList();
   };
 
   const fetchBaptismDetails = async (id) => {
@@ -297,8 +305,8 @@ const BaptismPending = ({open, data, handleClose}) => {
               });
               console.log("logs success!");
               // sendSMS(data.service_id, formData, "approve");
-              alert("Baptism Schedule Set!");
-              window.location.reload();
+              closeInfoModal();
+              refreshList();
             }
           } else {
             setError({
@@ -309,6 +317,8 @@ const BaptismPending = ({open, data, handleClose}) => {
           }
         } catch (err) {
           console.log("error submitting to server", err);
+        } finally {
+          refreshList();
         }
         break;
       case "update":
@@ -403,18 +413,28 @@ const BaptismPending = ({open, data, handleClose}) => {
     <>
       {error && (
         <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-          message={
-            <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
-                {error.message}
-              </span>
-              <p>{error.details}</p>
-            </>
-          }
-        />
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>Success!</AlertTitle>
+            The request was successfully updated.
+          </Alert>
+        </Snackbar>
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>

@@ -52,20 +52,24 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
     }
   };
 
-  const fetchTotalItems = async () => {
-    try {
-      const response = await axios.get(`${config.API}/request/count-request`, {
-        params: {
-          status: "pending",
-        },
-      });
-      setTotalItems(response.data.count);
-      console.log(totalItems);
-      console.log(totalPages);
-    } catch (err) {
-      console.error(err);
-    }
+  const refreshList = async () => {
+    await fetchRequests();
   };
+
+  // const fetchTotalItems = async () => {
+  //   try {
+  //     const response = await axios.get(`${config.API}/request/count-request`, {
+  //       params: {
+  //         status: "pending",
+  //       },
+  //     });
+  //     setTotalItems(response.data.count);
+  //     console.log(totalItems);
+  //     console.log(totalPages);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   // const handlePageChange = (newPage) => {
   //   if (newPage >= 0 && newPage < totalPages) {
@@ -85,8 +89,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
     } else {
       fetchRequests();
     }
-    // fetchTotalItems();
-  }, [filter, page, totalItems]);
+  }, [filter, page, totalItems, !modalOpen]);
 
   const renderModal = () => {
     switch (modalType) {
@@ -96,6 +99,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
             open={modalOpen}
             data={modalData}
             handleClose={() => setModalOpen(false)}
+            refreshList={refreshList}
           />
         );
       case "Baptism - General":
@@ -104,6 +108,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
             open={modalOpen}
             data={modalData}
             handleClose={() => setModalOpen(false)}
+            refreshList={refreshList}
           />
         );
       case "Baptism - Appointment":
@@ -112,6 +117,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
             open={modalOpen}
             data={modalData}
             handleClose={() => setModalOpen(false)}
+            refreshList={refreshList}
           />
         );
       case "Blessing":
@@ -120,6 +126,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
             open={modalOpen}
             data={modalData}
             handleClose={() => setModalOpen(false)}
+            refreshList={refreshList}
           />
         );
       case "Funeral Mass":
@@ -128,6 +135,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
             open={modalOpen}
             data={modalData}
             handleClose={() => setModalOpen(false)}
+            refreshList={refreshList}
           />
         );
       case "Outside Mass":
@@ -136,6 +144,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
             open={modalOpen}
             data={modalData}
             handleClose={() => setModalOpen(false)}
+            refreshList={refreshList}
           />
         );
       case "Wake Mass":
@@ -144,6 +153,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
             open={modalOpen}
             data={modalData}
             handleClose={() => setModalOpen(false)}
+            refreshList={refreshList}
           />
         );
       case "Wedding - Civilly Married":
@@ -152,6 +162,7 @@ const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
             open={modalOpen}
             data={modalData}
             handleClose={() => setModalOpen(false)}
+            refreshList={refreshList}
           />
         );
       default:

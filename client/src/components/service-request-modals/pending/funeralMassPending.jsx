@@ -5,8 +5,6 @@ import {
   DialogTitle,
   DialogActions,
   DialogContent,
-  Modal,
-  Box,
   Button,
   Grid,
   Typography,
@@ -20,10 +18,11 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {useState, useEffect} from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
-import util from "../../../utils/DateTimeFormatter";
 import axios from "axios";
 import config from "../../../config";
 import dayjs from "dayjs";
@@ -47,12 +46,12 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const FuneralMassModalPending = ({open, data, handleClose}) => {
+const FuneralMassModalPending = ({open, data, handleClose, refreshList}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
-  const [errorOpen, setErrorOpen] = useState(false);
+  const [success, setSuccess] = useState(null);
   const [available, setAvailable] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [priests, setPriests] = useState([]);
@@ -76,11 +75,11 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
     setDialogOpen(true);
   };
 
-  // const formatDate = (dateString) => {
-  //   if (!dateString) return "";
-  //   const date = new Date(dateString);
-  //   return date.toISOString().split("T")[0];
-  // };
+  const closeInfoModal = () => {
+    setSuccess(true);
+    handleClose();
+    refreshList();
+  };
 
   const fetchService = async () => {
     try {
@@ -256,16 +255,18 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
               request_id: formData.requestID,
             });
             console.log("logs success!");
-            sendSMS(data.service_id, formData, "approve");
-            handleClose();
+            //sendSMS(data.service_id, formData, "approve");
+            closeInfoModal();
+            refreshList();
           }
-          window.location.reload();
         } catch (err) {
           setError({
             message: err.response.data.message,
             details: err.response.data.details,
           });
           console.log("error submitting to server", err);
+        } finally {
+          refreshList();
         }
         break;
       case "update": // UPDATE PENDING REQUEST
@@ -323,18 +324,28 @@ const FuneralMassModalPending = ({open, data, handleClose}) => {
     <>
       {error && (
         <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-          message={
-            <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
-                {error.message}
-              </span>
-              <p>{error.details}</p>
-            </>
-          }
-        />
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>Success!</AlertTitle>
+            The request was successfully updated.
+          </Alert>
+        </Snackbar>
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
