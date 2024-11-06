@@ -28,25 +28,32 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     const resetToken = Math.random().toString(36).substring(2, 15); // Example token generation
-    const resetLink = `${window.location.origin}/reset-password/${resetToken}`;
+    const res = await axios.post(`${config.API}/auth/request-password-reset`, {
+      email: email,
+      password: resetToken,
+    });
 
-    const templateParams = {
-      to_name: "User", // Customize as needed
-      reset_link: resetLink,
-    };
+    if (res.status == 200) {
+      const resetLink = `Your new password is: ${resetToken}`;
 
-    try {
-      await emailjs.send(
-        "service_o2izpe4",
-        "template_6undcon",
-        templateParams,
-        "kJTNEAcM6BA0TgUcJ"
-      );
+      const templateParams = {
+        to_name: "User", // Customize as needed
+        reset_link: resetLink,
+      };
 
-      alert("Password reset email sent! Check your inbox.");
-    } catch (err) {
-      console.error("Error sending email:", err);
-      setError("Failed to send email. Please try again later.");
+      try {
+        await emailjs.send(
+          "service_o2izpe4",
+          "template_6undcon",
+          templateParams,
+          "kJTNEAcM6BA0TgUcJ"
+        );
+
+        alert("Password reset email sent! Check your inbox.");
+      } catch (err) {
+        console.error("Error sending email:", err);
+        setError("Failed to send email. Please try again later.");
+      }
     }
   };
 
