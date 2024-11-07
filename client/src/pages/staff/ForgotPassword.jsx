@@ -129,7 +129,14 @@ const ForgotPassword = () => {
             {message && <p>{message}</p>}
           </form>
           <Typography sx={{ textAlign: "center", marginTop: "16px" }}>
-            Switch to Login
+            <Button
+              type="button"
+              onClick={() => {
+                navigate("/forgot-password");
+              }}
+            >
+              Switch to Login
+            </Button>
           </Typography>
         </Paper>
       </Box>

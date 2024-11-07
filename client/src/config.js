@@ -1,3 +1,3 @@
 export default {
-  API: "https://parokyano.onrender.com",
+  API: "http://localhost:20998",
 };
