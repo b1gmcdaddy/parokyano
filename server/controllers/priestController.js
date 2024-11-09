@@ -87,20 +87,23 @@ const retrieveScheduleVenue = (req, res) => {
     WHERE r.service_id IN (5, 6, 7, 11)
       AND s.date = ?
       AND (
-        (s.start_time < ? AND s.end_time > ?) OR
-        (s.start_time >= ? AND s.start_time < ?) OR
-        (s.end_time > ? AND s.end_time <= ?)
+         (s.start_time <= ? AND s.end_time >= ?) OR  
+        (s.start_time <= ? AND s.end_time >= ?) OR 
+        (s.start_time >= ? AND s.end_time <= ?) OR   
+        (s.start_time <= ? AND s.end_time >= ?)   
       )
   `;
 
   const params = [
-    date.substring(0, 10), // Ensures the date format matches
+    date.substring(0, 10),
     start,
-    end, // Checking overlap scenario 1
     start,
-    end, // Checking overlap scenario 2
+    end,
+    end,
     start,
-    end, // Checking overlap scenario 3
+    end,
+    start,
+    end,
   ];
 
   db.query(query, params, (err, result) => {
