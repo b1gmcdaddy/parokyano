@@ -35,10 +35,11 @@ const PrintIntentions = ({open, close}) => {
   const componentRef = useRef();
 
   const timeOptions = [];
-  for (let hour = 8; hour <= 19; hour++) {
+  for (let hour = 6; hour <= 21; hour++) {
     for (let minute = 0; minute < 60; minute += 30) {
-      const time = dayjs().hour(hour).minute(minute).format("HH:mm");
-      timeOptions.push(time);
+      const value = dayjs().hour(hour).minute(minute).format("HH:mm");
+      const label = dayjs().hour(hour).minute(minute).format("h:mm A");
+      timeOptions.push({value, label});
     }
   }
 
@@ -280,8 +281,8 @@ const PrintIntentions = ({open, close}) => {
             value={timeSelected ? timeSelected.slice(0, 5) : ""}
             onChange={handleTimeChange}>
             {timeOptions.map((time) => (
-              <MenuItem key={time} value={time}>
-                {time}
+              <MenuItem key={time.value} value={time.value}>
+                {time.label}
               </MenuItem>
             ))}
           </Select>
