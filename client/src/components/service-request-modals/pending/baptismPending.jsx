@@ -230,6 +230,10 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
     open,
   ]);
 
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
+
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
@@ -244,8 +248,9 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
         const currentUser = JSON.parse(localStorage.getItem("user"));
         try {
           if (
-            (formData.payment_status === "paid" && details.birthCert == 1,
-            details.parent_marriageCert == 1)
+            formData.payment_status == "paid" &&
+            details.birthCert == 1 &&
+            details.parent_marriageCert == 1
           ) {
             const res = await axios.put(`${config.API}/request/update-bulk`, {
               formData,
