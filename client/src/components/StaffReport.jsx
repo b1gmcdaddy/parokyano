@@ -43,6 +43,7 @@ const StaffReport = ({ startDate, endDate, category }) => {
       setBaptismInfo(res.data.baptisms);
       setWeddingInfo(res.data.weddings);
       console.log("query", res.data.weddings);
+      console.log(res.data.results);
     } catch (err) {
       console.error("error retrieving summary", err);
     }
@@ -135,7 +136,12 @@ const StaffReport = ({ startDate, endDate, category }) => {
                     <TableCell align="right">{report.pending}</TableCell>
                     <TableCell align="right">{report.approved}</TableCell>
                     <TableCell align="right">{report.cancelled}</TableCell>
-                    <TableCell align="right"> {/* to implement */} </TableCell>
+                    <TableCell align="right">
+                      {" "}
+                      {report.totalFee != null
+                        ? `₱ ${parseFloat(report.totalFee).toFixed(2)}`
+                        : ""}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (

@@ -167,7 +167,11 @@ const StaffReportSpecific = ({ startDate, endDate, category }) => {
                         "day"
                       )}
                     </TableCell>
-                    <TableCell align="right">{data.donation}</TableCell>
+                    <TableCell align="right">
+                      {data.donation != null
+                        ? `₱ ${parseFloat(data.donation).toFixed(2)}`
+                        : ""}
+                    </TableCell>
                   </TableRow>
                 ))}
 

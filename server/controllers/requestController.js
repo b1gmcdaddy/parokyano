@@ -610,7 +610,7 @@ const getRequestSummary = (req, res) => {
 
   const query = `
     SELECT 
-      s.name, COUNT(CASE WHEN r.status = 'pending' THEN 1 END) AS pending, COUNT(CASE WHEN r.status = 'approved' THEN 1 END) AS approved, COUNT(CASE WHEN r.status = 'cancelled' THEN 1 END) AS cancelled
+      s.name, COUNT(CASE WHEN r.status = 'approved' THEN 1 END) * s.fee AS totalFee, COUNT(CASE WHEN r.status = 'pending' THEN 1 END) AS pending, COUNT(CASE WHEN r.status = 'approved' THEN 1 END) AS approved, COUNT(CASE WHEN r.status = 'cancelled' THEN 1 END) AS cancelled
     FROM 
       request r
     JOIN 
