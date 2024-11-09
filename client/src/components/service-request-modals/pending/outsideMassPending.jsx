@@ -57,6 +57,7 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [priests, setPriests] = useState([]);
+  const [snackBarStyle, setSnackBarStyle] = useState(null);
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -113,8 +114,26 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
     }
   };
 
-  const closeInfoModal = () => {
-    setSuccess(true);
+  const closeInfoModal = (action) => {
+    if (action == "approve") {
+      setSuccess({
+        message: "Approval Confirmed!",
+        details: "The request has successfully been approved.",
+      });
+      setSnackBarStyle("success");
+    } else if (action == "cancel") {
+      setSuccess({
+        message: "Cancellation Confirmed",
+        details: "The request has been cancelled.",
+      });
+      setSnackBarStyle("info");
+    } else {
+      setSuccess({
+        message: "Update Confirmed",
+        details: "The request has been updated",
+      });
+      setSnackBarStyle("info");
+    }
     handleClose();
     refreshList();
   };
@@ -179,10 +198,10 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
     /** for sameple if success, ari butang backend**/
   }
   const handleConfirm = async (action) => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     switch (action) {
       case "approve":
         console.log(formData);
-        const currentUser = JSON.parse(localStorage.getItem("user"));
         try {
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
@@ -240,7 +259,7 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
             }),
             console.log("logs success!"),
             // sendSMS(data.service_id, formData, "approve");
-            closeInfoModal(),
+            closeInfoModal("approve"),
             refreshList(),
           ]);
         } catch (err) {
@@ -265,16 +284,14 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
           });
         } else {
           console.log("request updated!");
-
           axios.post(`${config.API}/logs/create`, {
             activity: `Updated OutsideMass Request - Transaction number: ${data.transaction_no}`,
             user_id: currentUser.id,
             request_id: data.requestID,
           });
           console.log("logs success!");
-          // refetchData();
+          closeInfoModal("update");
         }
-        window.location.reload();
         break;
       case "cancel": // CANCEL PENDING REQUEST
         await axios.put(`${config.API}/request/update`, null, {
@@ -289,10 +306,10 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
         // sendSMS(data.service_id, formData, "cancel");
         await axios.post(`${config.API}/logs/create`, {
           activity: `Cancelled OutsideMass Request - Transaction number: ${data.transaction_no}`,
-          user_id: 1,
+          user_id: currentUser.id,
           request_id: data.requestID,
         });
-        window.location.reload();
+        closeInfoModal("cancel");
         break;
       default:
         break;
@@ -319,12 +336,13 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
           open={true}
           autoHideDuration={5000}
           onClose={() => setSuccess(null)}>
-          <Alert severity="info" sx={{width: "100%"}}>
-            <AlertTitle>Success!</AlertTitle>
-            The request was successfully updated.
+          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
           </Alert>
         </Snackbar>
       )}
+
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {formData && priests ? (
           <>

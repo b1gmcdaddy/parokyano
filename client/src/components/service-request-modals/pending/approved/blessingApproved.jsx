@@ -19,6 +19,9 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Snackbar from "@mui/material/Snackbar";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {useEffect, useState} from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
@@ -26,7 +29,6 @@ import util from "../../../../utils/DateTimeFormatter";
 import axios from "axios";
 import config from "../../../../config";
 import dayjs from "dayjs";
-import Snackbar from "@mui/material/Snackbar";
 import sendSMS from "../../../../utils/smsService";
 
 const TextFieldStyle = {
@@ -47,7 +49,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BlessingApproved = ({open, data, handleClose}) => {
+const BlessingApproved = ({open, data, handleClose, refreshList}) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -55,6 +57,8 @@ const BlessingApproved = ({open, data, handleClose}) => {
   const [approver, setApprover] = useState({});
   const [service, setService] = useState({});
   const [priests, setPriests] = useState([]);
+  const [success, setSuccess] = useState(null);
+  const [snackBarStyle, setSnackBarStyle] = useState(null);
   const [error, setError] = useState({});
   const [formData, setFormData] = useState({
     requestID: "",
@@ -90,7 +94,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
     }
   }, [open, data]);
 
-  const fetchUser = async (id, setApprover) => {
+  const fetchUser = async (id) => {
     try {
       const response = await axios.get(`${config.API}/user/retrieve`, {
         params: {
@@ -123,6 +127,30 @@ const BlessingApproved = ({open, data, handleClose}) => {
     }
   };
 
+  const closeInfoModal = (action) => {
+    if (action == "reschedule") {
+      setSuccess({
+        message: "Reschedule Confirmed!",
+        details: "The request has been successfully rescheduled.",
+      });
+      setSnackBarStyle("success");
+    } else if (action == "cancel") {
+      setSuccess({
+        message: "Cancellation Confirmed",
+        details: "The request has been cancelled.",
+      });
+      setSnackBarStyle("info");
+    } else {
+      setSuccess({
+        message: "Update Confirmed",
+        details: "The request has been updated",
+      });
+      setSnackBarStyle("info");
+    }
+    handleClose();
+    refreshList();
+  };
+
   useEffect(() => {
     const fetchPriest = async () => {
       try {
@@ -139,7 +167,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
     };
     fetchService();
     fetchPriest();
-    fetchUser(data.user_id, setApprover);
+    fetchUser(data.user_id);
   }, [open]);
 
   useEffect(() => {
@@ -182,6 +210,7 @@ const BlessingApproved = ({open, data, handleClose}) => {
   };
 
   const handleConfirm = async (action) => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     switch (action) {
       case "update": ////// UPDATE DETAILS
         try {
@@ -199,10 +228,10 @@ const BlessingApproved = ({open, data, handleClose}) => {
             console.log("request updated!");
             await axios.post(`${config.API}/logs/create`, {
               activity: `Updated Blessing Request - Transaction number: ${data.transaction_no}`,
-              user_id: 1,
+              user_id: currentUser.id,
               request_id: data.requestID,
             });
-            window.location.reload();
+            closeInfoModal("update");
           }
         } catch (err) {
           console.error("Error updating request", err);
@@ -230,9 +259,11 @@ const BlessingApproved = ({open, data, handleClose}) => {
             }),
             axios.post(`${config.API}/logs/create`, {
               activity: `Cancelled Blessing Request - Transaction number: ${data.transaction_no}`,
-              user_id: 1,
+              user_id: currentUser.id,
               request_id: data.requestID,
             }),
+            // sendSMS(data.service_id, formData, "cancel");
+            closeInfoModal("cancel"),
           ]);
         } catch (err) {
           console.error("Error cancelling request", err);
@@ -283,11 +314,11 @@ const BlessingApproved = ({open, data, handleClose}) => {
             }),
             axios.post(`${config.API}/logs/create`, {
               activity: `Rescheduled Blessing for ${formData.first_name} at ${formData.address}`,
-              user_id: 1,
+              user_id: currentUser.id,
               request_id: data.requestID,
             }),
             // sendSMS(data.service_id, formData, "reschedule"),
-            window.location.reload(),
+            closeInfoModal("reschedule"),
           ]);
         } catch (err) {
           setError({
@@ -306,18 +337,28 @@ const BlessingApproved = ({open, data, handleClose}) => {
     <>
       {error && (
         <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-          message={
-            <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
-                {error.message}
-              </span>
-              <p>{error.details}</p>
-            </>
-          }
-        />
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
+          </Alert>
+        </Snackbar>
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>

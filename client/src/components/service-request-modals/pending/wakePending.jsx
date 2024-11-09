@@ -52,6 +52,7 @@ const WakePending = ({open, data, handleClose, refreshList}) => {
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [snackBarStyle, setSnackBarStyle] = useState(null);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
     requestID: "",
@@ -106,8 +107,26 @@ const WakePending = ({open, data, handleClose, refreshList}) => {
     }
   };
 
-  const closeInfoModal = () => {
-    setSuccess(true);
+  const closeInfoModal = (action) => {
+    if (action == "approve") {
+      setSuccess({
+        message: "Approval Confirmed!",
+        details: "The request has successfully been approved.",
+      });
+      setSnackBarStyle("success");
+    } else if (action == "cancel") {
+      setSuccess({
+        message: "Cancellation Confirmed",
+        details: "The request has been cancelled.",
+      });
+      setSnackBarStyle("info");
+    } else {
+      setSuccess({
+        message: "Update Confirmed",
+        details: "The request has been updated",
+      });
+      setSnackBarStyle("info");
+    }
     handleClose();
     refreshList();
   };
@@ -156,11 +175,11 @@ const WakePending = ({open, data, handleClose, refreshList}) => {
 
   // CONFIRM ACTION (APPROVAL, UPDATE, CANCELLATION)
   const handleConfirm = async (action) => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     switch (action) {
       case "approve":
         console.log(formData);
         try {
-          const currentUser = JSON.parse(localStorage.getItem("user"));
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
             {
@@ -216,7 +235,7 @@ const WakePending = ({open, data, handleClose, refreshList}) => {
             }),
             console.log("logs success!"),
             // sendSMS(data.service_id, formData, "approve");
-            closeInfoModal(),
+            closeInfoModal("approve"),
             refreshList(),
           ]);
         } catch (err) {
@@ -235,22 +254,22 @@ const WakePending = ({open, data, handleClose, refreshList}) => {
           formData,
           id: data.requestID,
         });
-        if (Object.keys(response.data).length > 0 || response.data != "") {
+        if (res.status !== 200) {
+          console.log("error updating request");
           setError({
-            message: response.data.message,
-            details: response.data?.details,
+            message: res.data.message,
+            details: res.data?.details,
           });
         } else {
           console.log("request updated!");
-
           axios.post(`${config.API}/logs/create`, {
             activity: `Updated WakeMass Request - Transaction number: ${data.transaction_no}`,
-            user_id: 1,
+            user_id: currentUser.id,
             request_id: data.requestID,
           });
           console.log("logs success!");
+          closeInfoModal("update");
         }
-        window.location.reload();
         break;
       case "cancel": // CANCEL PENDING REQUEST
         await axios.put(`${config.API}/request/update`, null, {
@@ -265,10 +284,10 @@ const WakePending = ({open, data, handleClose, refreshList}) => {
         // sendSMS(data.service_id, formData, "cancel");
         await axios.post(`${config.API}/logs/create`, {
           activity: `Cancelled WakeMass Request - Transaction number: ${data.transaction_no}`,
-          user_id: 1,
+          user_id: currentUser.id,
           request_id: data.requestID,
         });
-        window.location.reload();
+        closeInfoModal("cancel");
         break;
       default:
         break;
@@ -296,9 +315,9 @@ const WakePending = ({open, data, handleClose, refreshList}) => {
           open={true}
           autoHideDuration={5000}
           onClose={() => setSuccess(null)}>
-          <Alert severity="info" sx={{width: "100%"}}>
-            <AlertTitle>Success!</AlertTitle>
-            The request was successfully updated.
+          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
           </Alert>
         </Snackbar>
       )}

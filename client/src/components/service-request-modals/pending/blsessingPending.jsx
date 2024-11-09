@@ -58,6 +58,7 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
   const [priests, setPriests] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [snackBarStyle, setSnackBarStyle] = useState(null);
   const [formData, setFormData] = useState({
     requestID: "",
     type: "",
@@ -128,8 +129,26 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
     fetchService();
   }, []);
 
-  const closeInfoModal = () => {
-    setSuccess(true);
+  const closeInfoModal = (action) => {
+    if (action == "approve") {
+      setSuccess({
+        message: "Approval Confirmed!",
+        details: "The request has successfully been approved.",
+      });
+      setSnackBarStyle("success");
+    } else if (action == "cancel") {
+      setSuccess({
+        message: "Cancellation Confirmed",
+        details: "The request has been cancelled.",
+      });
+      setSnackBarStyle("info");
+    } else {
+      setSuccess({
+        message: "Update Confirmed",
+        details: "The request has been updated",
+      });
+      setSnackBarStyle("info");
+    }
     handleClose();
     refreshList();
   };
@@ -175,8 +194,9 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
     /** for sameple if success, ari butang backend**/
   }
   const handleConfirm = async (action) => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     switch (action) {
-      case "approve": // APPROVE PENDING REQUEST
+      case "approve": ////////// APPROVE PENDING REQUEST
         console.log("approve");
         try {
           const response = await axios.get(
@@ -209,8 +229,8 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
                 val: "approved",
                 col2: "payment_status",
                 val2: "paid",
-                col3: "preferred_date",
-                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                col3: "user_id",
+                val3: currentUser.id,
                 col4: "priest_id",
                 val4: formData.priest_id,
                 col5: "requestID",
@@ -229,12 +249,12 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
             console.log("priest sched success!"),
             axios.post(`${config.API}/logs/create`, {
               activity: `Approved Blessing for ${formData.first_name} at ${formData.address}`,
-              user_id: 1,
+              user_id: currentUser.id,
               request_id: formData.requestID,
             }),
             console.log("logs success!"),
             // sendSMS(data.service_id, formData, "approve");
-            closeInfoModal(),
+            closeInfoModal("approve"),
             refreshList(),
           ]);
         } catch (err) {
@@ -246,7 +266,7 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
           refreshList();
         }
         break;
-      case "update": // UPDATE PENDING REQUEST
+      case "update": /////// UPDATE PENDING REQUEST///////
         const res = await axios.put(`${config.API}/request/update-bulk`, {
           formData,
           id: data.requestID,
@@ -262,13 +282,12 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
 
           axios.post(`${config.API}/logs/create`, {
             activity: `Updated Blessing Request - Transaction number: ${data.transaction_no}`,
-            user_id: 1,
+            user_id: currentUser.id,
             request_id: data.requestID,
           });
           console.log("logs success!");
-          // refetchData();
+          closeInfoModal("update");
         }
-        window.location.reload();
         break;
       case "cancel": // CANCEL PENDING REQUEST
         await axios.put(`${config.API}/request/update`, null, {
@@ -284,10 +303,10 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
 
         await axios.post(`${config.API}/logs/create`, {
           activity: `Cancelled Blessing Request - Transaction number: ${data.transaction_no}`,
-          user_id: 1,
+          user_id: currentUser.id,
           request_id: data.requestID,
         });
-        window.location.reload();
+        closeInfoModal("cancel");
         break;
       default:
         break;
@@ -315,9 +334,9 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
           open={true}
           autoHideDuration={5000}
           onClose={() => setSuccess(null)}>
-          <Alert severity="info" sx={{width: "100%"}}>
-            <AlertTitle>Success!</AlertTitle>
-            The request was successfully updated.
+          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
           </Alert>
         </Snackbar>
       )}

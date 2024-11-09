@@ -32,7 +32,6 @@ import {
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
-
 import Snackbar from "@mui/material/Snackbar";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {useState, useEffect} from "react";
@@ -714,6 +713,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
   const [completeRequirements, setCompleteRequirements] = useState(0);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
+  const [snackBarStyle, setSnackBarStyle] = useState(null);
   const [error, setError] = useState(null);
   const [priests, setPriests] = useState([]);
   const [success, setSuccess] = useState(null);
@@ -828,8 +828,26 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
     }
   };
 
-  const closeInfoModal = () => {
-    setSuccess(true);
+  const closeInfoModal = (action) => {
+    if (action == "approve") {
+      setSuccess({
+        message: "Approval Confirmed!",
+        details: "The request has successfully been approved.",
+      });
+      setSnackBarStyle("success");
+    } else if (action == "cancel") {
+      setSuccess({
+        message: "Cancellation Confirmed",
+        details: "The request has been cancelled.",
+      });
+      setSnackBarStyle("info");
+    } else {
+      setSuccess({
+        message: "Update Confirmed",
+        details: "The request has been updated",
+      });
+      setSnackBarStyle("info");
+    }
     handleClose();
     refreshList();
   };
@@ -934,42 +952,43 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
           details: response.data?.details,
         });
       } else {
-        axios.put(`${config.API}/request/approve-dynamic`, null, {
-          params: {
-            col: "interview_date",
-            val: dayjs(formData.interview_date).format("YYYY-MM-DD"),
-            col2: "interview_time",
-            val2: formData.interview_time,
-            col3: "priest_id",
-            val3: formData.priest_id,
-            col4: "requestID",
-            val4: formData.requestID,
-          },
-        });
+        await Promise.all([
+          axios.put(`${config.API}/request/approve-dynamic`, null, {
+            params: {
+              col: "interview_date",
+              val: dayjs(formData.interview_date).format("YYYY-MM-DD"),
+              col2: "interview_time",
+              val2: formData.interview_time,
+              col3: "priest_id",
+              val3: formData.priest_id,
+              col4: "requestID",
+              val4: formData.requestID,
+            },
+          }),
 
-        axios.post(`${config.API}/priest/createPriestSched`, {
-          date: dayjs(formData.interview_date).format("YYYY-MM-DD"),
-          activity: `Marriage Interview for ${formData.first_name}`,
-          start_time: formData.interview_time,
-          end_time: endTime(formData.interview_time, service.duration),
-          priest_id: formData.priest_id,
-          request_id: formData.requestID,
-        });
+          axios.post(`${config.API}/priest/createPriestSched`, {
+            date: dayjs(formData.interview_date).format("YYYY-MM-DD"),
+            activity: `Marriage Interview for ${formData.first_name}`,
+            start_time: formData.interview_time,
+            end_time: endTime(formData.interview_time, service.duration),
+            priest_id: formData.priest_id,
+            request_id: formData.requestID,
+          }),
 
-        axios.post(`${config.API}/logs/create`, {
-          activity: `Set Marriage Interview Schedule for ${formData.first_name}`,
-          user_id: currentUser.id,
-          request_id: formData.requestID,
-        });
-        // sendSMS(data.service_id, formData, "approve-wed-interview");
-
-        closeInfoModal();
-        refreshList();
+          axios.post(`${config.API}/logs/create`, {
+            activity: `Set Marriage Interview Schedule for ${formData.first_name}`,
+            user_id: currentUser.id,
+            request_id: formData.requestID,
+          }),
+          // sendSMS(data.service_id, formData, "approve-wed-interview"),
+          handleClose(),
+          refreshList(),
+        ]);
       }
     } catch (err) {
       setError({
-        message: err.response.data.message,
-        details: err.response.data.details,
+        message: err.response?.data?.message,
+        details: err.response?.data?.details,
       });
     } finally {
       refreshList();
@@ -978,6 +997,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
   // END SET INTERVIEW METHOD
 
   const handleConfirm = async (action) => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     switch (action) {
       case "update": // UPDATE PENDING REQUEST
         const res = await axios.put(
@@ -995,13 +1015,12 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
 
           axios.post(`${config.API}/logs/create`, {
             activity: `Updated Wedding Request - Transaction number: ${data.transaction_no}`,
-            user_id: 1,
+            user_id: currentUser.id,
             request_id: data.requestID,
           });
           console.log("logs success!");
-          // refetchData();
+          closeInfoModal("update");
         }
-        window.location.reload();
         break;
       case "cancel": // CANCEL PENDING REQUEST
         await axios.put(`${config.API}/request/update`, null, {
@@ -1016,14 +1035,13 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
         // sendSMS(data.service_id, formData, "cancel");
         await axios.post(`${config.API}/logs/create`, {
           activity: `Cancelled Wedding Request - Transaction number: ${data.transaction_no}`,
-          user_id: 1,
+          user_id: currentUser.id,
           request_id: data.requestID,
         });
-        window.location.reload();
+        closeInfoModal("cancel");
         break;
       case "approve": ///////////// APPROVE WEDDING ///////////
         try {
-          const currentUser = JSON.parse(localStorage.getItem("user"));
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
             {
@@ -1050,21 +1068,24 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
               });
               return;
             }
+            axios.put(`${config.API}/request/update-bulk`, {
+              formData,
+              id: data.requestID,
+            });
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
                 val: "approved",
                 col2: "payment_status",
                 val2: "paid",
-                col3: "preferred_date",
-                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                col3: "user_id",
+                val3: currentUser.id,
                 col4: "preferred_time",
                 val4: formData.preferred_time,
                 col5: "requestID",
                 val5: formData.requestID,
               },
             });
-
             axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
@@ -1080,7 +1101,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
               request_id: formData.requestID,
             });
             // sendSMS(data.service_id, formData, "approve");
-            closeInfoModal();
+            closeInfoModal("approve");
             refreshList();
           }
         } catch (err) {
@@ -1117,9 +1138,9 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
           open={true}
           autoHideDuration={5000}
           onClose={() => setSuccess(null)}>
-          <Alert severity="info" sx={{width: "100%"}}>
-            <AlertTitle>Success!</AlertTitle>
-            The request was successfully updated.
+          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
           </Alert>
         </Snackbar>
       )}
@@ -1226,7 +1247,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                 <Grid item sm={4}>
                   <label>
                     Payment:
-                    <strong>₱{parseFloat(formData.donation).toFixed(2)}</strong>
+                    {/* <strong>₱{parseFloat(formData.donation).toFixed(2)}</strong> */}
                   </label>
                   <TextField
                     name="payment_status"
@@ -1282,7 +1303,6 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   <TextField
                     select
                     fullWidth
-                    disabled={completeRequirements !== 1}
                     name="priest_id"
                     sx={TextFieldStyle}
                     value={formData.priest_id}
@@ -1299,7 +1319,6 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       fullWidth
-                      disabled={completeRequirements !== 1}
                       name="interview_date"
                       sx={TextFieldStyle}
                       value={
@@ -1323,7 +1342,6 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     <TimePicker
                       fullWidth
                       name="interview_time"
-                      disabled={completeRequirements !== 1}
                       sx={TextFieldStyle}
                       value={
                         formData.interview_time
@@ -1359,95 +1377,99 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   <hr className="my-1" />
                 </Grid>
 
-                <Grid item xs={12} sm={3}>
-                  <label>Wedding Priest:</label>
-                  <TextField
-                    select
-                    fullWidth
-                    disabled={completeRequirements !== 1}
-                    sx={TextFieldStyle}
-                    value={formData.priest_id}
-                    onChange={handleChange}>
-                    {priests.map((priest) => (
-                      <MenuItem key={priest.id} value={priest.priestID}>
-                        {`${priest.first_name} ${priest.last_name}`}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <label>Wedding Date:</label>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      fullWidth
-                      disabled={completeRequirements !== 1}
-                      name="preferred_date"
-                      sx={TextFieldStyle}
-                      value={
-                        formData.preferred_date
-                          ? dayjs(formData.preferred_date)
-                          : null
-                      }
-                      onChange={(date) =>
-                        handleDateChange("preferred_date", date)
-                      }
-                      renderInput={(params) => (
-                        <TextField {...params} required />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </Grid>
+                {completeRequirements == 1 ? (
+                  <>
+                    <Grid item xs={12} sm={3}>
+                      <label>Wedding Priest:</label>
+                      <TextField
+                        select
+                        fullWidth
+                        disabled={completeRequirements != 1}
+                        sx={TextFieldStyle}
+                        value={formData.priest_id}
+                        onChange={handleChange}>
+                        {priests.map((priest) => (
+                          <MenuItem key={priest.id} value={priest.priestID}>
+                            {`${priest.first_name} ${priest.last_name}`}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <label>Wedding Date:</label>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          fullWidth
+                          disabled={completeRequirements != 1}
+                          name="preferred_date"
+                          sx={TextFieldStyle}
+                          value={
+                            formData.preferred_date
+                              ? dayjs(formData.preferred_date)
+                              : null
+                          }
+                          onChange={(date) =>
+                            handleDateChange("preferred_date", date)
+                          }
+                          renderInput={(params) => (
+                            <TextField {...params} required />
+                          )}
+                        />
+                      </LocalizationProvider>
+                    </Grid>
 
-                <Grid item xs={12} sm={3}>
-                  <label>Wedding Time:</label>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <TimePicker
-                      fullWidth
-                      name="preferred_time"
-                      disabled={completeRequirements !== 1}
-                      sx={TextFieldStyle}
-                      value={
-                        formData.preferred_time
-                          ? dayjs(formData.preferred_time, "HH:mm:ss")
-                          : null
-                      }
-                      onChange={(time) =>
-                        handleTimeChange("preferred_time", time)
-                      }
-                      renderInput={(params) => (
-                        <TextField {...params} required />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <label>Wedding Time:</label>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <TimePicker
+                          fullWidth
+                          name="preferred_time"
+                          disabled={completeRequirements != 1}
+                          sx={TextFieldStyle}
+                          value={
+                            formData.preferred_time
+                              ? dayjs(formData.preferred_time, "HH:mm:ss")
+                              : null
+                          }
+                          onChange={(time) =>
+                            handleTimeChange("preferred_time", time)
+                          }
+                          renderInput={(params) => (
+                            <TextField {...params} required />
+                          )}
+                        />
+                      </LocalizationProvider>
+                    </Grid>
 
-                <Grid item xs={12} sm={3}>
-                  {available === "Available" ? (
-                    <span className="font-bold text-green-700 text-sm">
-                      Church is Available
-                    </span>
-                  ) : available === "Unavailable" ? (
-                    <span className="font-bold text-red-500 text-sm">
-                      Church is Unavailable
-                    </span>
-                  ) : (
-                    <span>&nbsp;</span>
-                  )}
-                  <Button
-                    fullWidth
-                    disabled={!available || available == "Unavailable"}
-                    variant="contained"
-                    onClick={() => handleOpenDialog("approve")}
-                    sx={{
-                      bgcolor: "#d1d1d1",
-                      height: "40px",
-                      fontWeight: "bold",
-                      color: "#355173",
-                      "&:hover": {bgcolor: "#f9f9f9"},
-                    }}>
-                    CONFIRM WEDDING
-                  </Button>
-                </Grid>
+                    <Grid item xs={12} sm={3}>
+                      {available === "Available" ? (
+                        <span className="font-bold text-green-700 text-sm">
+                          Church is Available
+                        </span>
+                      ) : available === "Unavailable" ? (
+                        <span className="font-bold text-red-500 text-sm">
+                          Church is Unavailable
+                        </span>
+                      ) : (
+                        <span>&nbsp;</span>
+                      )}
+                      <Button
+                        fullWidth
+                        disabled={!available || available == "Unavailable"}
+                        variant="contained"
+                        onClick={() => handleOpenDialog("approve")}
+                        sx={{
+                          bgcolor: "#d1d1d1",
+                          height: "40px",
+                          fontWeight: "bold",
+                          color: "#355173",
+                          "&:hover": {bgcolor: "#f9f9f9"},
+                        }}>
+                        CONFIRM WEDDING
+                      </Button>
+                    </Grid>
+                  </>
+                ) : null}
 
                 <Grid
                   item

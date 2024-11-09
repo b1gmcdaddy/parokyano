@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
   Paper,
   Box,
@@ -28,7 +28,7 @@ import WakePending from "../../../components/service-request-modals/pending/wake
 import BaptismPending from "../../../components/service-request-modals/pending/baptismPending";
 import WeddingPending from "../../../components/service-request-modals/pending/weddingPending";
 
-const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
+const PendingRequests = ({filter, page, totalItems, handlePageChange}) => {
   const [tableData, setTableData] = useState([]);
   const rowsPerPage = 10;
   const totalPages = Math.ceil(totalItems / rowsPerPage);
@@ -171,24 +171,22 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
   };
 
   return (
-    <div style={{ margin: "0 auto" }}>
+    <div style={{margin: "0 auto"}}>
       <TableContainer
         sx={{
           display: "flex",
           borderRadius: "16px",
           overflowX: "auto",
           border: "none",
-        }}
-      >
+        }}>
         <Table
           stickyHeader
           aria-label="custom table"
           sx={{
             borderCollapse: "separate",
             borderSpacing: 0,
-            sm: { minWidth: 650 },
-          }}
-        >
+            sm: {minWidth: 650},
+          }}>
           <TableHead>
             <TableRow>
               <TableCell
@@ -197,8 +195,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                   border: "none",
                   fontSize: "0.85rem",
                   fontWeight: "bold",
-                }}
-              >
+                }}>
                 SERVICE
               </TableCell>
               <TableCell
@@ -207,8 +204,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                   border: "none",
                   fontSize: "0.85rem",
                   fontWeight: "bold",
-                }}
-              >
+                }}>
                 SCHEDULED DATE
               </TableCell>
               <TableCell
@@ -217,8 +213,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                   border: "none",
                   fontSize: "0.85rem",
                   fontWeight: "bold",
-                }}
-              >
+                }}>
                 REQUESTED BY
               </TableCell>
               <TableCell
@@ -227,8 +222,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                   border: "none",
                   fontSize: "0.85rem",
                   fontWeight: "bold",
-                }}
-              >
+                }}>
                 CONTACT NO.
               </TableCell>
               <TableCell
@@ -237,8 +231,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                   border: "none",
                   fontSize: "0.85rem",
                   fontWeight: "bold",
-                }}
-              >
+                }}>
                 TRANSACTION NO.
               </TableCell>
               <TableCell
@@ -247,8 +240,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                   border: "none",
                   fontSize: "0.85rem",
                   fontWeight: "bold",
-                }}
-              >
+                }}>
                 ACTIONS
               </TableCell>
             </TableRow>
@@ -264,9 +256,8 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                       backgroundColor: "#ffffff",
                       padding: 0,
                       border: "none",
-                    }}
-                  >
-                    <Box sx={{ height: "5px", backgroundColor: "white" }} />
+                    }}>
+                    <Box sx={{height: "5px", backgroundColor: "white"}} />
                   </TableCell>
                 </TableRow>
 
@@ -277,8 +268,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                     "& > *": {
                       borderBottom: "none",
                     },
-                  }}
-                >
+                  }}>
                   <TableCell
                     sx={{
                       border: "none",
@@ -286,8 +276,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                       textAlign: "center",
                       borderRadius: "15px 0 0 15px",
                       backgroundColor: "#e0e0e0",
-                    }}
-                  >
+                    }}>
                     {req.service_name.length > 0
                       ? req.service_name.substring(0, 20) + "..."
                       : req.service_name}
@@ -298,8 +287,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                       padding: "16px",
                       textAlign: "center",
                       backgroundColor: "#e0e0e0",
-                    }}
-                  >
+                    }}>
                     {req.preferred_date
                       ? util.formatDate(req.preferred_date)
                       : req.interview_date
@@ -312,8 +300,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                       padding: "16px",
                       textAlign: "center",
                       backgroundColor: "#e0e0e0",
-                    }}
-                  >
+                    }}>
                     {req.service_id == 5 || req.service_id == 6
                       ? req.father_name
                       : req.service_id == 7
@@ -326,8 +313,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                       padding: "16px",
                       textAlign: "center",
                       backgroundColor: "#e0e0e0",
-                    }}
-                  >
+                    }}>
                     {req.contact_no}
                   </TableCell>
                   <TableCell
@@ -336,8 +322,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                       padding: "16px",
                       textAlign: "center",
                       backgroundColor: "#e0e0e0",
-                    }}
-                  >
+                    }}>
                     {req.transaction_no}
                   </TableCell>
                   <TableCell
@@ -347,8 +332,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                       textAlign: "center",
                       borderRadius: "0 15px 15px 0",
                       backgroundColor: "#e0e0e0",
-                    }}
-                  >
+                    }}>
                     <Button
                       type="button"
                       variant="contained"
@@ -366,8 +350,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                         setModalData(req);
                         setModalType(req.service_name);
                         setModalOpen(true);
-                      }}
-                    >
+                      }}>
                       INFO
                     </Button>
                     <Button
@@ -413,8 +396,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
                         } catch (err) {
                           console.error("error updating request", err);
                         }
-                      }}
-                    >
+                      }}>
                       CANCEL
                     </Button>
                   </TableCell>
@@ -431,8 +413,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
           justifyContent: "center",
           alignItems: "center",
           marginTop: 2,
-        }}
-      >
+        }}>
         <IconButton
           onClick={() => handlePageChange(page - 1)}
           disabled={page === 0} // Disable on the first page
@@ -440,12 +421,11 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
             backgroundColor: page === 0 ? "grey.300" : "black",
             color: page === 0 ? "grey.600" : "white",
             marginRight: "10px",
-          }}
-        >
+          }}>
           <KeyboardArrowLeft />
         </IconButton>
 
-        <Typography sx={{ margin: "0 10px", fontWeight: "bold" }}>
+        <Typography sx={{margin: "0 10px", fontWeight: "bold"}}>
           Page {page + 1} of {totalPages}
         </Typography>
 
@@ -456,8 +436,7 @@ const PendingRequests = ({ filter, page, totalItems, handlePageChange }) => {
             backgroundColor: page === totalPages - 1 ? "grey.300" : "black",
             color: page === totalPages - 1 ? "grey.600" : "white",
             marginLeft: "10px",
-          }}
-        >
+          }}>
           <KeyboardArrowRight />
         </IconButton>
       </Box>

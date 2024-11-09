@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  Divider,
   DialogTitle,
   Button,
   Grid,
@@ -52,6 +51,7 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState({});
   const [error, setError] = useState(null);
+  const [snackBarStyle, setSnackBarStyle] = useState(null);
   const [success, setSuccess] = useState(null);
   const [priests, setPriests] = useState([]);
   const [formData, setFormData] = useState({
@@ -139,8 +139,26 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
     setDialogOpen(false);
   };
 
-  const closeInfoModal = () => {
-    setSuccess(true);
+  const closeInfoModal = (action) => {
+    if (action == "approve") {
+      setSuccess({
+        message: "Approval Confirmed!",
+        details: "The request has successfully been approved.",
+      });
+      setSnackBarStyle("success");
+    } else if (action == "cancel") {
+      setSuccess({
+        message: "Cancellation Confirmed",
+        details: "The request has been cancelled.",
+      });
+      setSnackBarStyle("info");
+    } else {
+      setSuccess({
+        message: "Update Confirmed",
+        details: "The request has been updated",
+      });
+      setSnackBarStyle("info");
+    }
     handleClose();
     refreshList();
   };
@@ -163,10 +181,10 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
     /** for sameple if success, ari butang backend**/
   }
   const handleConfirm = async (action) => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     switch (action) {
       case "approve":
         console.log(formData);
-        const currentUser = JSON.parse(localStorage.getItem("user"));
         try {
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
@@ -226,7 +244,7 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
             }),
             console.log("logs success!"),
             // sendSMS(data.service_id, formData, "approve");
-            closeInfoModal(),
+            closeInfoModal("approve"),
             refreshList(),
           ]);
         } catch (err) {
@@ -254,13 +272,12 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
 
           axios.post(`${config.API}/logs/create`, {
             activity: `Updated Anointing Request - Transaction number: ${data.transaction_no}`,
-            user_id: 1,
+            user_id: currentUser.id,
             request_id: data.requestID,
           });
           console.log("logs success!");
-          // refetchData();
+          closeInfoModal("update");
         }
-        window.location.reload();
         break;
       case "cancel": // CANCEL PENDING REQUEST
         await axios.put(`${config.API}/request/update`, null, {
@@ -275,10 +292,10 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
         // sendSMS(data.service_id, formData, "cancel");
         await axios.post(`${config.API}/logs/create`, {
           activity: `Cancelled Anointing Request - Transaction number: ${data.transaction_no}`,
-          user_id: 1,
+          user_id: currentUser.id,
           request_id: data.requestID,
         });
-        window.location.reload();
+        closeInfoModal("cancel");
         break;
       default:
         break;
@@ -306,9 +323,9 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
           open={true}
           autoHideDuration={5000}
           onClose={() => setSuccess(null)}>
-          <Alert severity="info" sx={{width: "100%"}}>
-            <AlertTitle>Success!</AlertTitle>
-            The request was successfully updated.
+          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
           </Alert>
         </Snackbar>
       )}
@@ -443,6 +460,9 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
                   <label>Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
+                      minutesStep={30}
+                      minTime={dayjs().hour(7).minute(30)}
+                      maxTime={dayjs().hour(20).minute(0)}
                       fullWidth
                       sx={TextFieldStyle}
                       value={
