@@ -6,21 +6,24 @@ import {
   Dialog,
   DialogContent,
   Grid,
-  Select,
   MenuItem,
   Typography,
   DialogActions,
 } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
 import config from "../../config";
 import ConfirmationDialog from "../ConfirmationModal";
 
-const BaptismCertInfoModal = ({open, data, close}) => {
+const BaptismCertInfoModal = ({open, data, close, refreshList}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
-  const [service, setService] = useState({});
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
@@ -77,268 +80,298 @@ const BaptismCertInfoModal = ({open, data, close}) => {
   };
 
   const updateCertReq = async () => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     const res = await axios.put(`${config.API}/request/update-bulk`, {
       formData,
       id: data.requestID,
     });
     if (res.status !== 200) {
       console.log("error updating request");
-      // setError({
-      //   message: res.data.message,
-      //   details: res.data?.details,
-      // });
+      setError({
+        message: res.data.message,
+        details: res.data?.details,
+      });
     } else {
-      console.log("certificate request updated!");
-
       axios.post(`${config.API}/logs/create`, {
         activity: `Updated Baptismal Certificate Request - Transaction number: ${data.transaction_no}`,
-        user_id: 1,
+        user_id: currentUser.id,
         request_id: data.requestID,
       });
       console.log("logs success!");
+      setSuccess({
+        message: "Updated Certificate Request",
+        details: "Baptismal Certificate Updated.",
+      });
+      refreshList();
+      setTimeout(() => {
+        close();
+      }, 2000);
     }
-    window.location.reload();
   };
 
   return (
-    <Dialog
-      fullWidth
-      maxWidth="md"
-      open={open}
-      onClose={close}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
-      <DialogContent>
-        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
-          <Grid
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              margin: "10px",
-            }}>
-            <Typography
-              sx={{
-                textAlign: "center",
-                fontWeight: "bold",
-                marginBottom: "10px",
-              }}>
-              Baptismal Certificate Request Information
-            </Typography>
-            <IconButton
-              aria-label="close"
-              onClick={close}
-              sx={(theme) => ({
-                position: "absolute",
-                right: 8,
-                top: 8,
-                color: theme.palette.grey[500],
-              })}>
-              <CloseIcon />
-            </IconButton>
+    <>
+      {error && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
 
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        open={open}
+        onClose={close}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description">
+        <DialogContent>
+          <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
             <Grid
-              container
-              spacing={2}
-              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
-              <Grid item xs={12} sm={4}>
-                <label>First Name: </label>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  name="first_name"
-                  onChange={handleChange}
-                  value={formData.first_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Middle Name: </label>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  name="middle_name"
-                  onChange={handleChange}
-                  value={formData.middle_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Last Name: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="last_name"
-                  onChange={handleChange}
-                  value={formData.last_name}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <label>Place of Birth: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="birth_place"
-                  onChange={handleChange}
-                  value={formData.birth_place}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Contact No: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="contact_no"
-                  onChange={handleChange}
-                  value={formData.contact_no}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Father's Name: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="father_name"
-                  onChange={handleChange}
-                  value={formData.father_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Mother's Maiden Name: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="mother_name"
-                  onChange={handleChange}
-                  value={formData.mother_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Date of Baptism: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  type="date"
-                  name="preferred_date"
-                  onChange={handleChange}
-                  value={formData.preferred_date}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Date of Request: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="date_requested"
-                  onChange={handleChange}
-                  value={formData.date_requested}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label>Purpose: </label>
-                <TextField
-                  labelId="demo-simple-select-label"
-                  fullWidth
-                  size="small"
-                  id="demo-simple-select"
-                  name="purpose"
-                  onChange={handleChange}
-                  value={formData.purpose}
-                  select>
-                  <MenuItem value="marriage">Marriage</MenuItem>
-                  <MenuItem value="passport">Passport</MenuItem>
-                  <MenuItem value="school">School</MenuItem>
-                  <MenuItem value="late registration">
-                    Late Registration
-                  </MenuItem>
-                  <MenuItem value="sss">SSS</MenuItem>
-                  <MenuItem value="others">Other</MenuItem>
-                </TextField>
-              </Grid>
-            </Grid>
-
-            <Typography
-              fontSize={"medium"}
-              sx={{textAlign: "center", marginTop: "12px"}}>
-              Transaction no: <b>{data.transaction_no}</b>
-            </Typography>
-            {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
-                Approved by: dummyDataStaffName
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                margin: "10px",
+              }}>
+              <Typography
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  marginBottom: "10px",
+                }}>
+                Baptismal Certificate Request Information
               </Typography>
-            )}
-            <DialogActions>
+              <IconButton
+                aria-label="close"
+                onClick={close}
+                sx={(theme) => ({
+                  position: "absolute",
+                  right: 8,
+                  top: 8,
+                  color: theme.palette.grey[500],
+                })}>
+                <CloseIcon />
+              </IconButton>
+
               <Grid
                 container
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "10px",
-                }}>
+                spacing={2}
+                sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
+                <Grid item xs={12} sm={4}>
+                  <label>First Name: </label>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    name="first_name"
+                    onChange={handleChange}
+                    value={formData.first_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>Middle Name: </label>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    name="middle_name"
+                    onChange={handleChange}
+                    value={formData.middle_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>Last Name: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="last_name"
+                    onChange={handleChange}
+                    value={formData.last_name}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <label>Place of Birth: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="birth_place"
+                    onChange={handleChange}
+                    value={formData.birth_place}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Contact No: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="contact_no"
+                    onChange={handleChange}
+                    value={formData.contact_no}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Father's Name: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="father_name"
+                    onChange={handleChange}
+                    value={formData.father_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Mother's Maiden Name: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="mother_name"
+                    onChange={handleChange}
+                    value={formData.mother_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Date of Baptism: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    type="date"
+                    name="preferred_date"
+                    onChange={handleChange}
+                    value={formData.preferred_date}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Date of Request: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="date_requested"
+                    onChange={handleChange}
+                    value={formData.date_requested}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <label>Purpose: </label>
+                  <TextField
+                    labelId="demo-simple-select-label"
+                    fullWidth
+                    size="small"
+                    id="demo-simple-select"
+                    name="purpose"
+                    onChange={handleChange}
+                    value={formData.purpose}
+                    select>
+                    <MenuItem value="marriage">Marriage</MenuItem>
+                    <MenuItem value="passport">Passport</MenuItem>
+                    <MenuItem value="school">School</MenuItem>
+                    <MenuItem value="late registration">
+                      Late Registration
+                    </MenuItem>
+                    <MenuItem value="sss">SSS</MenuItem>
+                    <MenuItem value="others">Other</MenuItem>
+                  </TextField>
+                </Grid>
+              </Grid>
+
+              <Typography
+                fontSize={"medium"}
+                sx={{textAlign: "center", marginTop: "12px"}}>
+                Transaction no: <b>{data.transaction_no}</b>
+              </Typography>
+              <DialogActions>
                 <Grid
-                  item
-                  xs={12}
-                  sm={12}
+                  container
                   sx={{
                     display: "flex",
                     justifyContent: "center",
-                    gap: "20px",
+                    alignItems: "center",
+                    marginTop: "10px",
                   }}>
-                  <Button
-                    variant="contained"
-                    onClick={() => handleOpenDialog("update")}
+                  <Grid
+                    item
+                    xs={12}
+                    sm={12}
                     sx={{
-                      backgroundColor: "#CDAB52",
-                      color: "white",
-                      "&:hover": {
-                        backgroundColor: "#B89545",
-                      },
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "20px",
                     }}>
-                    Update
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={close}
-                    sx={{
-                      backgroundColor: "#d9d9d9",
-                      color: "black",
-                      paddingX: "12px",
-                      "&:hover": {
-                        backgroundColor: "#dddddd",
-                      },
-                    }}>
-                    Close
-                  </Button>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleOpenDialog("update")}
+                      sx={{
+                        backgroundColor: "#CDAB52",
+                        color: "white",
+                        "&:hover": {
+                          backgroundColor: "#B89545",
+                        },
+                      }}>
+                      Update
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={close}
+                      sx={{
+                        backgroundColor: "#d9d9d9",
+                        color: "black",
+                        paddingX: "12px",
+                        "&:hover": {
+                          backgroundColor: "#dddddd",
+                        },
+                      }}>
+                      Close
+                    </Button>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </DialogActions>
-          </Grid>
-          <ConfirmationDialog
-            open={dialogOpen}
-            onClose={handleCloseDialog}
-            action={currentAction}
-            onConfirm={updateCertReq}
-            service={"Baptismal Certificate"}
-          />
-        </Box>
-      </DialogContent>
-    </Dialog>
+              </DialogActions>
+            </Grid>
+            <ConfirmationDialog
+              open={dialogOpen}
+              onClose={handleCloseDialog}
+              action={currentAction}
+              onConfirm={updateCertReq}
+              service={"Baptismal Certificate"}
+            />
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
-const ConfirmationCertInfoModal = ({open, data, close}) => {
+const ConfirmationCertInfoModal = ({open, data, close, refreshList}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
-  const [service, setService] = useState({});
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
@@ -394,268 +427,303 @@ const ConfirmationCertInfoModal = ({open, data, close}) => {
     return date.toISOString().split("T")[0];
   };
 
-  const updateCertReq2 = async () => {
+  const updateCertReq = async () => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     const res = await axios.put(`${config.API}/request/update-bulk`, {
       formData,
       id: data.requestID,
     });
     if (res.status !== 200) {
       console.log("error updating request");
-      // setError({
-      //   message: res.data.message,
-      //   details: res.data?.details,
-      // });
+      setError({
+        message: res.data.message,
+        details: res.data?.details,
+      });
     } else {
-      console.log(" confirmation certificate request updated!");
-
       axios.post(`${config.API}/logs/create`, {
         activity: `Updated Confirmation Certificate Request - Transaction number: ${data.transaction_no}`,
-        user_id: 1,
+        user_id: currentUser.id,
         request_id: data.requestID,
       });
       console.log("logs success!");
+      setSuccess({
+        message: "Updated Certificate Request",
+        details: "Confirmation Certificate Updated.",
+      });
+      refreshList();
+      setTimeout(() => {
+        close();
+      }, 2000);
     }
-    window.location.reload();
   };
 
   return (
-    <Dialog
-      fullWidth
-      maxWidth="md"
-      open={open}
-      onClose={close}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
-      <DialogContent>
-        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
-          <Grid
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              margin: "10px",
-            }}>
-            <Typography
-              sx={{
-                textAlign: "center",
-                fontWeight: "bold",
-                marginBottom: "10px",
-              }}>
-              Confirmation Certificate Request Information
-            </Typography>
-            <IconButton
-              aria-label="close"
-              onClick={close}
-              sx={(theme) => ({
-                position: "absolute",
-                right: 8,
-                top: 8,
-                color: theme.palette.grey[500],
-              })}>
-              <CloseIcon />
-            </IconButton>
+    <>
+      {error && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
 
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        open={open}
+        onClose={close}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description">
+        <DialogContent>
+          <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
             <Grid
-              container
-              spacing={2}
-              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
-              <Grid item xs={12} sm={4}>
-                <label>First Name: </label>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  onChange={handleChange}
-                  name="first_name"
-                  value={formData.first_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Middle Name: </label>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  onChange={handleChange}
-                  name="middle_name"
-                  value={formData.middle_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Last Name: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  onChange={handleChange}
-                  name="last_name"
-                  value={formData.last_name}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <label>Place of Birth: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  onChange={handleChange}
-                  name="birth_place"
-                  value={formData.birth_place}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Contact No: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  onChange={handleChange}
-                  name="contact_no"
-                  value={formData.contact_no}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Father's Name: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  onChange={handleChange}
-                  name="father_name"
-                  value={formData.father_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Mother's Maiden Name: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  onChange={handleChange}
-                  name="mother_name"
-                  value={formData.mother_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Date of Confirmation: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  onChange={handleChange}
-                  name="preferred_date"
-                  value={formData.preferred_date}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Date of Request: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  onChange={handleChange}
-                  name="date_requested"
-                  value={formData.date_requested}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label>Purpose: </label>
-                <TextField
-                  labelId="demo-simple-select-label"
-                  fullWidth
-                  size="small"
-                  id="demo-simple-select"
-                  onChange={handleChange}
-                  name="purpose"
-                  value={formData.purpose}
-                  select>
-                  <MenuItem value="marriage">Marriage</MenuItem>
-                  <MenuItem value="passport">Passport</MenuItem>
-                  <MenuItem value="school">School</MenuItem>
-                  <MenuItem value="late registration">
-                    Late Registration
-                  </MenuItem>
-                  <MenuItem value="sss">SSS</MenuItem>
-                  <MenuItem value="others">Other</MenuItem>
-                </TextField>
-              </Grid>
-            </Grid>
-
-            <Typography
-              fontSize={"medium"}
-              sx={{textAlign: "center", marginTop: "12px"}}>
-              Transaction no: <b>{data.transaction_no}</b>
-            </Typography>
-            {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
-                Approved by: dummyDataStaffName
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                margin: "10px",
+              }}>
+              <Typography
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  marginBottom: "10px",
+                }}>
+                Confirmation Certificate Request Information
               </Typography>
-            )}
-            <DialogActions>
+              <IconButton
+                aria-label="close"
+                onClick={close}
+                sx={(theme) => ({
+                  position: "absolute",
+                  right: 8,
+                  top: 8,
+                  color: theme.palette.grey[500],
+                })}>
+                <CloseIcon />
+              </IconButton>
+
               <Grid
                 container
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "10px",
-                }}>
+                spacing={2}
+                sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
+                <Grid item xs={12} sm={4}>
+                  <label>First Name: </label>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    onChange={handleChange}
+                    name="first_name"
+                    value={formData.first_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>Middle Name: </label>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    onChange={handleChange}
+                    name="middle_name"
+                    value={formData.middle_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>Last Name: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onChange={handleChange}
+                    name="last_name"
+                    value={formData.last_name}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <label>Place of Birth: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onChange={handleChange}
+                    name="birth_place"
+                    value={formData.birth_place}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Contact No: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onChange={handleChange}
+                    name="contact_no"
+                    value={formData.contact_no}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Father's Name: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onChange={handleChange}
+                    name="father_name"
+                    value={formData.father_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Mother's Maiden Name: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onChange={handleChange}
+                    name="mother_name"
+                    value={formData.mother_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Date of Confirmation: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onChange={handleChange}
+                    name="preferred_date"
+                    value={formData.preferred_date}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Date of Request: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    onChange={handleChange}
+                    name="date_requested"
+                    value={formData.date_requested}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <label>Purpose: </label>
+                  <TextField
+                    labelId="demo-simple-select-label"
+                    fullWidth
+                    size="small"
+                    id="demo-simple-select"
+                    onChange={handleChange}
+                    name="purpose"
+                    value={formData.purpose}
+                    select>
+                    <MenuItem value="marriage">Marriage</MenuItem>
+                    <MenuItem value="passport">Passport</MenuItem>
+                    <MenuItem value="school">School</MenuItem>
+                    <MenuItem value="late registration">
+                      Late Registration
+                    </MenuItem>
+                    <MenuItem value="sss">SSS</MenuItem>
+                    <MenuItem value="others">Other</MenuItem>
+                  </TextField>
+                </Grid>
+              </Grid>
+
+              <Typography
+                fontSize={"medium"}
+                sx={{textAlign: "center", marginTop: "12px"}}>
+                Transaction no: <b>{data.transaction_no}</b>
+              </Typography>
+              {data.status === "unpaid" && (
+                <Typography fontSize={"small"} sx={{textAlign: "center"}}>
+                  Approved by: dummyDataStaffName
+                </Typography>
+              )}
+              <DialogActions>
                 <Grid
-                  item
-                  xs={12}
-                  sm={12}
+                  container
                   sx={{
                     display: "flex",
                     justifyContent: "center",
-                    gap: "20px",
+                    alignItems: "center",
+                    marginTop: "10px",
                   }}>
-                  <Button
-                    variant="contained"
-                    onClick={() => handleOpenDialog("update")}
+                  <Grid
+                    item
+                    xs={12}
+                    sm={12}
                     sx={{
-                      backgroundColor: "#CDAB52",
-                      color: "white",
-                      "&:hover": {
-                        backgroundColor: "#B89545",
-                      },
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "20px",
                     }}>
-                    Update
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={close}
-                    sx={{
-                      backgroundColor: "#d9d9d9",
-                      color: "black",
-                      paddingX: "12px",
-                      "&:hover": {
-                        backgroundColor: "#dddddd",
-                      },
-                    }}>
-                    Close
-                  </Button>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleOpenDialog("update")}
+                      sx={{
+                        backgroundColor: "#CDAB52",
+                        color: "white",
+                        "&:hover": {
+                          backgroundColor: "#B89545",
+                        },
+                      }}>
+                      Update
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={close}
+                      sx={{
+                        backgroundColor: "#d9d9d9",
+                        color: "black",
+                        paddingX: "12px",
+                        "&:hover": {
+                          backgroundColor: "#dddddd",
+                        },
+                      }}>
+                      Close
+                    </Button>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </DialogActions>
-          </Grid>
-          <ConfirmationDialog
-            open={dialogOpen}
-            onClose={handleCloseDialog}
-            action={currentAction}
-            onConfirm={updateCertReq2}
-            service={"Confirmation Certificate"}
-          />
-        </Box>
-      </DialogContent>
-    </Dialog>
+              </DialogActions>
+            </Grid>
+            <ConfirmationDialog
+              open={dialogOpen}
+              onClose={handleCloseDialog}
+              action={currentAction}
+              onConfirm={updateCertReq}
+              service={"Confirmation Certificate"}
+            />
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
-const MarriageCertInfoModal = ({open, data, close}) => {
+const MarriageCertInfoModal = ({open, data, close, refreshList}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
-  const [service, setService] = useState({});
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const spouseDetails = JSON.parse(data.spouse_name);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -712,7 +780,7 @@ const MarriageCertInfoModal = ({open, data, close}) => {
   };
 
   const updateCertReq3 = async () => {
-    // Merge spouse details into the `details` field
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     const updatedFormData = {
       ...formData,
       details: JSON.stringify({
@@ -731,250 +799,290 @@ const MarriageCertInfoModal = ({open, data, close}) => {
     });
 
     if (res.status !== 200) {
-      console.log("Error updating request");
+      setError({
+        message: res.data.message,
+        details: res.data?.details,
+      });
     } else {
       console.log("Marriage certificate request updated!");
 
       axios.post(`${config.API}/logs/create`, {
         activity: `Updated Marriage Certificate Request - Transaction number: ${data.transaction_no}`,
-        user_id: 1,
+        user_id: currentUser.id,
         request_id: data.requestID,
       });
       console.log("Logs success!");
+      setSuccess({
+        message: "Updated Certificate Request",
+        details: "Confirmation Certificate Updated.",
+      });
+      refreshList();
+      setTimeout(() => {
+        close();
+      }, 2000);
     }
-
-    window.location.reload();
   };
 
   return (
-    <Dialog
-      fullWidth
-      maxWidth="md"
-      open={open}
-      onClose={close}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
-      <DialogContent>
-        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
-          <Grid
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              margin: "10px",
-            }}>
-            <Typography
-              sx={{
-                textAlign: "center",
-                fontWeight: "bold",
-                marginBottom: "10px",
-              }}>
-              Marriage Certificate Request Information
-            </Typography>
-            <IconButton
-              aria-label="close"
-              onClick={close}
-              sx={(theme) => ({
-                position: "absolute",
-                right: 8,
-                top: 8,
-                color: theme.palette.grey[500],
-              })}>
-              <CloseIcon />
-            </IconButton>
+    <>
+      {error && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
 
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        open={open}
+        onClose={close}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description">
+        <DialogContent>
+          <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
             <Grid
-              container
-              spacing={2}
-              sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
-              <Grid item xs={12} sm={4}>
-                <label>First Name: </label>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  name="first_name"
-                  onChange={handleChange}
-                  value={formData.first_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Middle Name: </label>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  name="middle_name"
-                  onChange={handleChange}
-                  value={formData.middle_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Last Name: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="last_name"
-                  onChange={handleChange}
-                  value={formData.last_name}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>First Name of Spouse: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="spouse_firstName"
-                  onChange={handleChange}
-                  value={formData.spouse_firstName}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Middle Name of Spouse: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="spouse_middleName"
-                  onChange={handleChange}
-                  value={formData.spouse_middleName}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <label>Last Name of Spouse: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="spouse_lastName"
-                  onChange={handleChange}
-                  value={formData.spouse_lastName}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Contact No: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="contact_no"
-                  onChange={handleChange}
-                  value={formData.contact_no}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Date of Marriage: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  type="date"
-                  name="preferred_date"
-                  onChange={handleChange}
-                  value={formData.preferred_date}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Date of Request: </label>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  type="date"
-                  name="date_requested"
-                  onChange={handleChange}
-                  value={formData.date_requested}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <label>Purpose: </label>
-                <TextField
-                  labelId="demo-simple-select-label"
-                  fullWidth
-                  size="small"
-                  id="demo-simple-select"
-                  name="purpose"
-                  onChange={handleChange}
-                  value={formData.purpose}
-                  select>
-                  <MenuItem value="marriage">Marriage</MenuItem>
-                  <MenuItem value="passport">Passport</MenuItem>
-                  <MenuItem value="school">School</MenuItem>
-                  <MenuItem value="late registration">
-                    Late Registration
-                  </MenuItem>
-                  <MenuItem value="sss">SSS</MenuItem>
-                  <MenuItem value="others">Other</MenuItem>
-                </TextField>
-              </Grid>
-            </Grid>
-
-            <Typography
-              fontSize={"medium"}
-              sx={{textAlign: "center", marginTop: "12px"}}>
-              Transaction no: <b>{data.transaction_no}</b>
-            </Typography>
-            {data.status === "paid" && (
-              <Typography fontSize={"small"} sx={{textAlign: "center"}}>
-                Approved by: dummyDataStaffName
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                margin: "10px",
+              }}>
+              <Typography
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  marginBottom: "10px",
+                }}>
+                Marriage Certificate Request Information
               </Typography>
-            )}
-            <DialogActions>
+              <IconButton
+                aria-label="close"
+                onClick={close}
+                sx={(theme) => ({
+                  position: "absolute",
+                  right: 8,
+                  top: 8,
+                  color: theme.palette.grey[500],
+                })}>
+                <CloseIcon />
+              </IconButton>
+
               <Grid
                 container
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "10px",
-                }}>
+                spacing={2}
+                sx={{height: "auto", padding: "0px 10px", overflowY: "auto"}}>
+                <Grid item xs={12} sm={4}>
+                  <label>First Name: </label>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    name="first_name"
+                    onChange={handleChange}
+                    value={formData.first_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>Middle Name: </label>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    name="middle_name"
+                    onChange={handleChange}
+                    value={formData.middle_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>Last Name: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="last_name"
+                    onChange={handleChange}
+                    value={formData.last_name}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>First Name of Spouse: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="spouse_firstName"
+                    onChange={handleChange}
+                    value={formData.spouse_firstName}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>Middle Name of Spouse: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="spouse_middleName"
+                    onChange={handleChange}
+                    value={formData.spouse_middleName}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>Last Name of Spouse: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="spouse_lastName"
+                    onChange={handleChange}
+                    value={formData.spouse_lastName}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Contact No: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    name="contact_no"
+                    onChange={handleChange}
+                    value={formData.contact_no}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Date of Marriage: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    type="date"
+                    name="preferred_date"
+                    onChange={handleChange}
+                    value={formData.preferred_date}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Date of Request: </label>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    type="date"
+                    name="date_requested"
+                    onChange={handleChange}
+                    value={formData.date_requested}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <label>Purpose: </label>
+                  <TextField
+                    labelId="demo-simple-select-label"
+                    fullWidth
+                    size="small"
+                    id="demo-simple-select"
+                    name="purpose"
+                    onChange={handleChange}
+                    value={formData.purpose}
+                    select>
+                    <MenuItem value="marriage">Marriage</MenuItem>
+                    <MenuItem value="passport">Passport</MenuItem>
+                    <MenuItem value="school">School</MenuItem>
+                    <MenuItem value="late registration">
+                      Late Registration
+                    </MenuItem>
+                    <MenuItem value="sss">SSS</MenuItem>
+                    <MenuItem value="others">Other</MenuItem>
+                  </TextField>
+                </Grid>
+              </Grid>
+
+              <Typography
+                fontSize={"medium"}
+                sx={{textAlign: "center", marginTop: "12px"}}>
+                Transaction no: <b>{data.transaction_no}</b>
+              </Typography>
+              {data.status === "paid" && (
+                <Typography fontSize={"small"} sx={{textAlign: "center"}}>
+                  Approved by: dummyDataStaffName
+                </Typography>
+              )}
+              <DialogActions>
                 <Grid
-                  item
-                  xs={12}
-                  sm={12}
+                  container
                   sx={{
                     display: "flex",
                     justifyContent: "center",
-                    gap: "20px",
+                    alignItems: "center",
+                    marginTop: "10px",
                   }}>
-                  <Button
-                    variant="contained"
-                    onClick={() => handleOpenDialog("update")}
+                  <Grid
+                    item
+                    xs={12}
+                    sm={12}
                     sx={{
-                      backgroundColor: "#CDAB52",
-                      color: "white",
-                      "&:hover": {
-                        backgroundColor: "#B89545",
-                      },
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "20px",
                     }}>
-                    Update
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={close}
-                    sx={{
-                      backgroundColor: "#d9d9d9",
-                      color: "black",
-                      paddingX: "12px",
-                    }}>
-                    Close
-                  </Button>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleOpenDialog("update")}
+                      sx={{
+                        backgroundColor: "#CDAB52",
+                        color: "white",
+                        "&:hover": {
+                          backgroundColor: "#B89545",
+                        },
+                      }}>
+                      Update
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={close}
+                      sx={{
+                        backgroundColor: "#d9d9d9",
+                        color: "black",
+                        paddingX: "12px",
+                        "&:hover": {
+                          backgroundColor: "#d1d1d1",
+                        },
+                      }}>
+                      Close
+                    </Button>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </DialogActions>
-          </Grid>
-          <ConfirmationDialog
-            open={dialogOpen}
-            onClose={handleCloseDialog}
-            action={currentAction}
-            onConfirm={updateCertReq3}
-            service={"Marriage Certificate"}
-          />
-        </Box>
-      </DialogContent>
-    </Dialog>
+              </DialogActions>
+            </Grid>
+            <ConfirmationDialog
+              open={dialogOpen}
+              onClose={handleCloseDialog}
+              action={currentAction}
+              onConfirm={updateCertReq3}
+              service={"Marriage Certificate"}
+            />
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

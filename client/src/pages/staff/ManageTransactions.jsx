@@ -384,11 +384,12 @@ const ManageTransactions = () => {
                                   backgroundColor: "#e0e0e0",
                                 }}>
                                 <Button
+                                  variant="contained"
                                   type="button"
                                   sx={{
                                     backgroundColor: "#355173",
                                     color: "white",
-                                    borderRadius: "10px",
+                                    borderRadius: "6px",
                                     "&:hover": {
                                       backgroundColor: "#0036B1",
                                     },

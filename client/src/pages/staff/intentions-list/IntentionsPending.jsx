@@ -295,6 +295,7 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
                           backgroundColor: "#e0e0e0",
                         }}>
                         <Button
+                          variant="contained"
                           type="button"
                           sx={{
                             backgroundColor: "#355173",
