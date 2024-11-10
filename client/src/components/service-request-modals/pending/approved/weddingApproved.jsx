@@ -1263,6 +1263,9 @@ const WeddingApproved = ({open, data, handleClose, refreshList}) => {
                     <TimePicker
                       fullWidth
                       sx={TextFieldStyle}
+                      timeSteps={{hours: 30, minutes: 30}}
+                      minTime={dayjs().set("hour", 6)}
+                      maxTime={dayjs().set("hour", 19)}
                       value={
                         data.preferred_time
                           ? dayjs(data.preferred_time, "HH:mm:ss")

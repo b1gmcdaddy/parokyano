@@ -481,6 +481,9 @@ const BlessingPending = ({open, data, handleClose, refreshList}) => {
                   <label>Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
+                      timeSteps={{hours: 30, minutes: 30}}
+                      minTime={dayjs().set("hour", 6)}
+                      maxTime={dayjs().set("hour", 19)}
                       fullWidth
                       sx={TextFieldStyle}
                       value={

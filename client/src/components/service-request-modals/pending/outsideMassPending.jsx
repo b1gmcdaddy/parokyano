@@ -481,6 +481,9 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
                       fullWidth
+                      timeSteps={{hours: 30, minutes: 30}}
+                      minTime={dayjs().set("hour", 6)}
+                      maxTime={dayjs().set("hour", 19)}
                       sx={TextFieldStyle}
                       value={
                         formData.preferred_time

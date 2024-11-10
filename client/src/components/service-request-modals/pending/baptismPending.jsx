@@ -813,9 +813,9 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                   <label>Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
-                      minutesStep={30}
-                      minTime={dayjs().hour(7).minute(30)}
-                      maxTime={dayjs().hour(20).minute(0)}
+                      timeSteps={{hours: 30, minutes: 30}}
+                      minTime={dayjs().set("hour", 6)}
+                      maxTime={dayjs().set("hour", 19)}
                       type="time"
                       fullWidth
                       name="preferred_time"
