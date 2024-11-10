@@ -484,7 +484,6 @@ function SponsorsModal({id}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [service] = useState("wedding");
   const [sponsors, setSponsors] = useState([]);
   const [newSponsor, setNewSponsor] = useState({
     name: "",
@@ -552,16 +551,17 @@ function SponsorsModal({id}) {
         await axios.delete(
           `${config.API}/sponsor/delete-sponsor/${sponsor.sponsorID}`
         );
+
         if (sponsors.length >= 4) {
           await axios.put(`${config.API}/request/remove-sponsor-fee`, {
             requestID: id,
           });
         }
-        fetchSponsors();
-        alert("Sponsor deleted successfully!");
+        await fetchSponsors();
+        // alert("Sponsor deleted successfully!");
       } catch (err) {
         console.error("Error deleting sponsor", err);
-        alert("Failed to delete sponsor.");
+        await fetchSponsors();
       }
     }
   };
@@ -594,11 +594,15 @@ function SponsorsModal({id}) {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
-                Wedding Sponsors Information
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  marginBottom: "1em",
+                }}>
+                Manage Wedding Sponsors
               </Typography>
             </Grid>
-            <Grid item sm={4.5}>
+            <Grid item sm={5}>
               <label>Full Name:</label>
               <TextField
                 name="name"
@@ -608,10 +612,11 @@ function SponsorsModal({id}) {
                 sx={TextFieldStyle}
               />
             </Grid>
-            <Grid item sm={1.5}>
+            <Grid item sm={2}>
               <label>Age:</label>
               <TextField
                 name="age"
+                type="number"
                 value={newSponsor.age}
                 onChange={handleInputChange}
                 fullWidth
@@ -631,7 +636,7 @@ function SponsorsModal({id}) {
                 <MenuItem value="0">Not Married</MenuItem>
               </TextField>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2}>
               <label>Catholic?:</label>
               <TextField
                 select
@@ -646,10 +651,11 @@ function SponsorsModal({id}) {
             </Grid>
             <Grid item sm={12} sx={{textAlign: "center"}}>
               <Button
+                variant="contained"
                 onClick={handleAddSponsor}
                 sx={{
                   bgcolor: "#355173",
-                  height: "28px",
+
                   width: "150px",
                   fontWeight: "bold",
                   color: "white",
@@ -660,7 +666,7 @@ function SponsorsModal({id}) {
             </Grid>
 
             <Grid item sm={12}>
-              <TableContainer component={Paper}>
+              <TableContainer>
                 <Table sx={{tableLayout: "fixed"}}>
                   <TableHead>
                     <TableRow>
