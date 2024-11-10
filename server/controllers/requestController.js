@@ -187,8 +187,8 @@ const createRequestWedding = async (req, res) => {
 
   try {
     const insertRequestQuery = `INSERT INTO request 
-      (first_name, middle_name, last_name, contact_no, relationship, transaction_no, service_id, date_requested)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+      (first_name, middle_name, last_name, contact_no, relationship, transaction_no, service_id, date_requested, isParishioner)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const insertRequestValues = [
       request.first_name,
@@ -199,6 +199,7 @@ const createRequestWedding = async (req, res) => {
       request.transaction_no,
       request.service_id,
       dateToday,
+      request.isParishioner,
     ];
 
     const [insertResult] = await db

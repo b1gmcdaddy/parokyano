@@ -4,7 +4,7 @@ const db = require("./db");
 const _ = require("lodash");
 
 const retrieveByParams = (req, res) => {
-  const {reqID} = req.query;
+  const { reqID } = req.query;
 
   db.query(
     `SELECT * FROM sponsor WHERE request_id = ?`,
@@ -25,7 +25,7 @@ const retrieveByParams = (req, res) => {
 };
 
 const addSponsor = async (req, res) => {
-  const {name, age, isMarried, isCatholic, request_id} = req.body;
+  const { name, age, isMarried, isCatholic, request_id } = req.body;
 
   try {
     const query = `INSERT INTO sponsor (name, age, isMarried, isCatholic, request_id) VALUES (?, ?, ?, ?, ?)`;
@@ -44,7 +44,7 @@ const addSponsor = async (req, res) => {
 };
 
 const deleteSponsor = async (req, res) => {
-  const {sponsorID} = req.params;
+  const { sponsorID } = req.params;
 
   try {
     const deleteSponsorQuery = `DELETE FROM sponsor WHERE sponsorID = ?`;
@@ -61,8 +61,23 @@ const deleteSponsor = async (req, res) => {
   }
 };
 
+const retrieveCount = (req, res) => {
+  const { col, val } = req.query;
+
+  const query = `SELECT COUNT(*) as count FROM sponsor WHERE ${col} = ?`;
+  db.query(query, [val], (err, result) => {
+    if (err) {
+      console.error("error retrieving sponsors", err);
+      return res.status(500);
+    }
+    console.log(result[0].count);
+    res.status(200).json({ count: result[0].count });
+  });
+};
+
 module.exports = {
   retrieveByParams,
   addSponsor,
   deleteSponsor,
+  retrieveCount,
 };
