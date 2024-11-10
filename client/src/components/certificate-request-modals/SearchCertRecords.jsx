@@ -65,7 +65,7 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
             mother_name: data.mother_name || "",
             father_name: data.father_name || "",
             birth_place: data.birth_place || "",
-            status: "pending",
+            status: "approved", // should be finished
           },
         });
         setRecords(res.data.result);

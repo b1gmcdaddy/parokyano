@@ -175,16 +175,26 @@ const TrackRequest = () => {
                 </Typography>
 
                 {activity.length > 0 ? (
-                  activity.map((item) => (
-                    <div
-                      key={item.logID}
-                      className="md:mt-8 md:flex justify-between p-8">
-                      <Typography>{item.date.substring(0, 10)}</Typography>
-                      <Typography>{item.activity.split("-")[0]}</Typography>
+                  <div>
+                    <div className="md:mt-8 md:flex justify-between p-8">
+                      <Typography>
+                        {activity[0]?.date_requested.substring(0, 10)}
+                      </Typography>
+                      <Typography>Request Submitted</Typography>
                     </div>
-                  ))
+
+                    {/* Display the logs */}
+                    {activity.map((item) => (
+                      <div
+                        key={item.logID}
+                        className="md:mt-8 md:flex justify-between p-8">
+                        <Typography>{item.date.substring(0, 10)}</Typography>
+                        <Typography>{item.activity.split("-")[0]}</Typography>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  <div>loading..</div>
+                  <div>loading...</div>
                 )}
               </Paper>
             </Grid>

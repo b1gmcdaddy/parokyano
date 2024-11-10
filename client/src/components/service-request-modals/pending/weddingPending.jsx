@@ -852,6 +852,16 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
     refreshList();
   };
 
+  const handleUpdateInterview = () => {
+    setSuccess({
+      message: "Interview Schedule Success",
+      details: "Request Interview Schedule has been set",
+    });
+    setSnackBarStyle("info");
+    handleClose();
+    refreshList();
+  };
+
   const fetchAvailability = async (date, start, end) => {
     const avail = await axios.get(
       `${config.API}/priest/retrieve-schedule-venue`,
@@ -980,8 +990,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
             user_id: currentUser.id,
             request_id: formData.requestID,
           }),
-          // sendSMS(data.service_id, formData, "approve-wed-interview"),
-          handleClose(),
+          handleUpdateInterview(),
           refreshList(),
         ]);
       }

@@ -27,7 +27,14 @@ const createLog = (req, res) => {
 const retrieveAll = (req, res) => {
   const id = req.query.id;
 
-  db.query(`SELECT * from logs WHERE request_id = ?`, [id], (err, result) => {
+  const query = `
+    SELECT logs.*, request.date_requested
+    FROM logs 
+    JOIN request ON logs.request_id = request.requestID
+    WHERE logs.request_id = ?
+  `;
+
+  db.query(query, [id], (err, result) => {
     if (err) {
       console.error("error retrieving logs", err);
       return res.status(500).json({

@@ -152,8 +152,10 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                       marginBottom: "10px",
                     }}>
                     {recordData.service_id == 5 || recordData == 6
-                      ? "BAPTISM"
-                      : "MARRIAGE"}{" "}
+                      ? "BAPTISM "
+                      : recordData.service_id == 7
+                      ? "WEDDING "
+                      : "CONFIRMATION "}
                     RECORD
                   </Typography>
                 </Grid>
