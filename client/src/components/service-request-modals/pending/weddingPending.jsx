@@ -784,38 +784,76 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
     }
   };
 
+  const fetchPriest = async () => {
+    try {
+      const response = await axios.get(`${config.API}/priest/retrieve`, {
+        params: {
+          col: "status",
+          val: "active",
+        },
+      });
+      setPriests(response.data);
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchService = async () => {
+    try {
+      const response = await axios.get(
+        `${config.API}/service/retrieveByParams`,
+        {
+          params: {
+            id: data.service_id,
+          },
+        }
+      );
+      console.log(response.data);
+      setService(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
-    if (open && data) {
-      setFormData({
-        requestID: data.requestID,
-        first_name: data.first_name,
-        middle_name: data.middle_name,
-        last_name: data.last_name,
-        contact_no: data.contact_no,
-        relationship: data.relationship,
-        interview_date: data.interview_date
-          ? dayjs(data.interview_date).format("YYYY-MM-DD")
-          : null,
-        interview_time: data.interview_time || null,
-        priest_id: data.priest_id || null,
-        preferred_date: data.preferred_date
-          ? dayjs(data.preferred_date).format("YYYY-MM-DD")
-          : null,
-        preferred_time: data.preferred_time || null,
-        transaction_no: data.transaction_no,
-        payment_status: data.payment_status,
-        service_id: data.service_id,
-        spouse_firstName: "",
-        spouse_middleName: "",
-        spouse_lastName: "",
-        donation: data.donation,
-      });
-      fetchWeddingData();
-    }
-    setTimeout(() => {
-      setIsLoading(false);
-    }, "500");
+    new Promise((resolve) => {
+      if (open && data) {
+        setFormData({
+          requestID: data.requestID,
+          first_name: data.first_name,
+          middle_name: data.middle_name,
+          last_name: data.last_name,
+          contact_no: data.contact_no,
+          relationship: data.relationship,
+          interview_date: data.interview_date
+            ? dayjs(data.interview_date).format("YYYY-MM-DD")
+            : null,
+          interview_time: data.interview_time || null,
+          priest_id: data.priest_id || null,
+          preferred_date: data.preferred_date
+            ? dayjs(data.preferred_date).format("YYYY-MM-DD")
+            : null,
+          preferred_time: data.preferred_time || null,
+          transaction_no: data.transaction_no,
+          payment_status: data.payment_status,
+          service_id: data.service_id,
+          spouse_firstName: "",
+          spouse_middleName: "",
+          spouse_lastName: "",
+          donation: data.donation,
+        });
+        fetchWeddingData();
+        fetchPriest();
+        fetchService();
+      }
+      resolve();
+    });
+    // setTimeout(() => {
+
+    setIsLoading(false);
+    // }, "500");
   }, [open, data]);
 
   useEffect(() => {
@@ -842,23 +880,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
           }));
     }
   }, [formData.preferred_date, formData.preferred_time]);
-
-  const fetchService = async () => {
-    try {
-      const response = await axios.get(
-        `${config.API}/service/retrieveByParams`,
-        {
-          params: {
-            id: data.service_id,
-          },
-        }
-      );
-      console.log(response.data);
-      setService(response.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const closeInfoModal = (action) => {
     if (action == "approve") {
@@ -924,24 +945,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
     open,
   ]);
 
-  useEffect(() => {
-    const fetchPriest = async () => {
-      try {
-        const response = await axios.get(`${config.API}/priest/retrieve`, {
-          params: {
-            col: "status",
-            val: "active",
-          },
-        });
-        setPriests(response.data);
-        console.log(response.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchPriest();
-    fetchService();
-  }, []);
   // END RETRIEVE WEDDING DETAILS
 
   // START FORM HANDLERS AND CONTROLS
