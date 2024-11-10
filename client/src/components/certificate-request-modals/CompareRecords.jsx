@@ -159,7 +159,64 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                     RECORD
                   </Typography>
                 </Grid>
+                {/* START BAPTISM RECORD */}
                 <Grid item xs={4}>
+                  <label>First Name: </label>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    value={recordData.first_name}
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true,
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <label>Middle Name: </label>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    value={recordData.middle_name}
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true,
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <label>Last Name: </label>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    value={recordData.last_name}
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true,
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <label>Date of Birth: </label>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    value={util.formatDate(recordData.birth_date)}
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true,
+                      },
+                    }}
+                  />
+                </Grid>
+                {/* <Grid item xs={4}>
                   <label>First Name: </label>
                   <TextField
                     size="small"
@@ -214,8 +271,8 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                       },
                     }}
                   />
-                </Grid>
-                <Grid item xs={4}>
+                </Grid> */}
+                {/* <Grid item xs={4}>
                   <label>Date of Birth: </label>
                   <TextField
                     size="small"
@@ -228,18 +285,22 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                       },
                     }}
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={4}>
-                  {recordData.service_id === 5 ? (
-                    <label>Date of Baptism</label>
+                  {recordData.service_id == 5 || recordData.service_id == 6 ? (
+                    <label>Date of Baptism:</label>
+                  ) : recordData.service_id == 7 ? (
+                    <label>Date of Wedding:</label>
                   ) : (
-                    <label>Date of Marriage</label>
+                    <label>Date of Confirmation:</label>
                   )}
                   <TextField
                     size="small"
                     fullWidth
                     variant="filled"
-                    value={util.formatDate(recordData.preferred_date)}
+                    value={util.formatDate(
+                      recordData.preferred_date || recordData.confirmation_date
+                    )}
                     slotProps={{
                       inputLabel: {
                         shrink: true,
@@ -247,7 +308,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <label>Birth Place: </label>
                   <TextField
                     size="small"
@@ -260,8 +321,8 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                       },
                     }}
                   />
-                </Grid>
-                <Grid item xs={6}>
+                </Grid> */}
+                {/* <Grid item xs={6}>
                   <label>Father's Name: </label>
                   <TextField
                     size="small"
@@ -288,7 +349,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                       },
                     }}
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={4}>
                   <label>Book no.: </label>
                   <TextField

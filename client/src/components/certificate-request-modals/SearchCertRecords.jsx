@@ -241,7 +241,7 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                         }}>
                         <Typography>
                           {data.service_id == 3 || data.service_id == 4
-                            ? rec.first_name + rec.last_name
+                            ? rec.first_name + " " + rec.last_name
                             : rec.father_name}
                         </Typography>
 
