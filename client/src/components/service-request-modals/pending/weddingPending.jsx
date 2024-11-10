@@ -531,6 +531,12 @@ function SponsorsModal({ id }) {
         }
       );
 
+      if (response && sponsors.length >= 4) {
+        await axios.put(`${config.API}/request/add-sponsor-fee`, {
+          requestID: id,
+        });
+      }
+
       const newSponsorData = {
         ...newSponsor,
       };
@@ -551,6 +557,11 @@ function SponsorsModal({ id }) {
         await axios.delete(
           `${config.API}/sponsor/delete-sponsor/${sponsor.sponsorID}`
         );
+        if (sponsors.length >= 4) {
+          await axios.put(`${config.API}/request/remove-sponsor-fee`, {
+            requestID: id,
+          });
+        }
         fetchSponsors();
         alert("Sponsor deleted successfully!");
       } catch (err) {
@@ -817,17 +828,17 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
     ) {
       setFormData((prevState) => ({
         ...prevState,
-        donation: 1000.0,
+        donation: data.donation + 1000.0,
       }));
     } else {
       data.isParishioner
         ? setFormData((prevState) => ({
             ...prevState,
-            donation: 3000.0,
+            donation: data.donation + 3000.0,
           }))
         : setFormData((prevState) => ({
             ...prevState,
-            donation: 3500.0,
+            donation: data.donation + 3500.0,
           }));
     }
   }, [formData.preferred_date, formData.preferred_time]);

@@ -31,6 +31,8 @@ const {
   searchTransactions,
   updateByParams,
   updateBulk,
+  addSponsorFee,
+  removeSponsorFee,
 } = require("../controllers/requestController");
 
 router.post("/create-intention", createRequestIntention);
@@ -64,5 +66,7 @@ router.get("/retrieve-multiple-byDate", retrieveMultipleDateFiltered);
 router.put("/update", updateByParams);
 router.put("/update-bulk", updateBulk);
 router.get("/upcoming", getUpcomingEvents);
+router.put("/add-sponsor-fee", addSponsorFee);
+router.put("/remove-sponsor-fee", removeSponsorFee);
 
 module.exports = router;

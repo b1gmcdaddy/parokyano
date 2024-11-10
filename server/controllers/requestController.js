@@ -957,6 +957,69 @@ const updateBulk = (req, res) => {
   );
 };
 
+const addSponsorFee = (req, res) => {
+  const { requestID } = req.body;
+
+  db.query(
+    `SELECT donation FROM request WHERE requestID = ?`,
+    [requestID],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Error retrieving fee" });
+      }
+
+      const currentFee = result[0].donation || 0;
+      const newFee = currentFee + 50.0;
+      db.query(
+        `UPDATE request SET donation = ? WHERE requestID = ?`,
+        [newFee, requestID],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ message: "Error updating fee" });
+          }
+          return res
+            .status(200)
+            .json({ message: "Fee updated successfully", newFee });
+        }
+      );
+    }
+  );
+};
+
+const removeSponsorFee = (req, res) => {
+  const { requestID } = req.body;
+
+  db.query(
+    `SELECT donation FROM request WHERE requestID = ?`,
+    [requestID],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Error retrieving fee" });
+      }
+
+      const currentFee = result[0].donation || 0;
+      const newFee = Math.max(0, currentFee - 50.0);
+
+      db.query(
+        `UPDATE request SET donation = ? WHERE requestID = ?`,
+        [newFee, requestID],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ message: "Error updating fee" });
+          }
+          return res
+            .status(200)
+            .json({ message: "Fee updated successfully", newFee });
+        }
+      );
+    }
+  );
+};
+
 module.exports = {
   createRequestIntention,
   createRequestCertificate,
@@ -987,4 +1050,6 @@ module.exports = {
   searchCertRecords,
   updateByParams,
   updateBulk,
+  addSponsorFee,
+  removeSponsorFee,
 };
