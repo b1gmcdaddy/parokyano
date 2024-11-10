@@ -26,9 +26,15 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
   const [currentAction, setCurrentAction] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [modalSize, setModalSize] = useState("");
 
   useEffect(() => {
-    console.log(recordData);
+    // console.log(recordData);
+    if (certData.service_id == 2 || certData.service_id == 4) {
+      setModalSize("lg");
+    } else {
+      setModalSize("xl");
+    }
   }, [open, recordData]);
 
   const handleOpenDialog = (action) => {
@@ -106,7 +112,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
 
       <Dialog
         fullWidth
-        maxWidth="lg"
+        maxWidth={modalSize}
         open={open}
         onClose={close}
         aria-labelledby="alert-dialog-title"
@@ -151,7 +157,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                       fontWeight: "bold",
                       marginBottom: "10px",
                     }}>
-                    {recordData.service_id == 5 || recordData == 6
+                    {recordData.service_id == 5 || recordData.service_id == 6
                       ? "BAPTISM "
                       : recordData.service_id == 7
                       ? "WEDDING "
@@ -160,196 +166,340 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                   </Typography>
                 </Grid>
                 {/* START BAPTISM RECORD */}
-                <Grid item xs={4}>
-                  <label>First Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.first_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <label>Middle Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.middle_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <label>Last Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.last_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <label>Date of Birth: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={util.formatDate(recordData.birth_date)}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                {/* <Grid item xs={4}>
-                  <label>First Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.first_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <label>Middle Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.middle_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <label>Last Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.last_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <label>Contact Number: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.contact_no}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid> */}
-                {/* <Grid item xs={4}>
-                  <label>Date of Birth: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={util.formatDate(recordData.birth_date)}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid> */}
-                <Grid item xs={4}>
-                  {recordData.service_id == 5 || recordData.service_id == 6 ? (
-                    <label>Date of Baptism:</label>
-                  ) : recordData.service_id == 7 ? (
-                    <label>Date of Wedding:</label>
-                  ) : (
-                    <label>Date of Confirmation:</label>
-                  )}
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={util.formatDate(
-                      recordData.preferred_date || recordData.confirmation_date
-                    )}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                {/* <Grid item xs={12}>
-                  <label>Birth Place: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.birth_place}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid> */}
-                {/* <Grid item xs={6}>
-                  <label>Father's Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.father_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <label>Mother's Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    value={recordData.mother_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid> */}
+                {recordData.service_id == 5 || recordData.service_id == 6 ? (
+                  <>
+                    <Grid item xs={4}>
+                      <label>First Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.first_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <label>Middle Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.middle_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <label>Last Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.last_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <label>Date of Birth: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={util.formatDate(recordData.birth_date)}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      {recordData.service_id == 5 ||
+                      recordData.service_id == 6 ? (
+                        <label>Date of Baptism:</label>
+                      ) : recordData.service_id == 7 ? (
+                        <label>Date of Wedding:</label>
+                      ) : (
+                        <label>Date of Confirmation:</label>
+                      )}
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={util.formatDate(
+                          recordData.preferred_date ||
+                            recordData.confirmation_date
+                        )}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <label>Contact Number: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.contact_no}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <label>Birth Place: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.birth_place}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Father's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.father_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Mother's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.mother_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                  </>
+                ) : ////////// END BAPTISM RECORD ////////////
+
+                ///////// START WEDDING RECORD ///////////
+                recordData.service_id == 7 ? (
+                  <>
+                    {" "}
+                    <Grid item xs={6}>
+                      <label>First Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={certData.first_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Last Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={certData.last_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Spouse's First Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value="To be Implemented"
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Spouse's Last Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value="To be Implemented"
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Date of Wedding: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={util.formatDate(certData.preferred_date)}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Contact Number: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={certData.contact_no}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                  </>
+                ) : (
+                  //////// END WEDDING RECORD /////////////
+                  /////// START CONFIRMATION RECORD //////////
+                  <>
+                    <Grid item xs={12}>
+                      <label>Child's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.child_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={4}>
+                      <label>Gender: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.gender}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      {recordData.service_id == 5 ||
+                      recordData.service_id == 6 ? (
+                        <label>Date of Baptism:</label>
+                      ) : recordData.service_id == 7 ? (
+                        <label>Date of Wedding:</label>
+                      ) : (
+                        <label>Date of Confirmation:</label>
+                      )}
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={util.formatDate(
+                          recordData.preferred_date ||
+                            recordData.confirmation_date
+                        )}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={4}>
+                      <label>Ministered by: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.officiating_priest}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Father's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.father_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Mother's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.mother_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                  </>
+                  /////// END CONFIRMATION RECORD //////////
+                )}
+
                 <Grid item xs={4}>
                   <label>Book no.: </label>
                   <TextField
@@ -428,40 +578,42 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                     CERTIFICATE REQUEST
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
-                  <label>First Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    color="success"
-                    focused
-                    value={certData.first_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <label>Last Name: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    color="success"
-                    focused
-                    value={certData.last_name}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
                 {certData.service_id == 3 ? (
+                  /////// BAPTISMAL CERTIFICATE ///////////
                   <>
+                    <Grid item xs={6}>
+                      <label>First Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.first_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Last Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.last_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+
                     <Grid item xs={6}>
                       <label>Father's Name: </label>
                       <TextField
@@ -486,7 +638,74 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         variant="filled"
                         color="success"
                         focused
-                        value={certData.father_name}
+                        value={certData.mother_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <label>Birth Place: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.birth_place}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Date of Birth: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={util.formatDate(certData.birth_date)}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={6}>
+                      <label>Date of Baptism: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={util.formatDate(certData.preferred_date)}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <label>Contact No: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.contact_no}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -495,41 +714,183 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                       />
                     </Grid>
                   </>
-                ) : null}
-                <Grid item xs={12}>
-                  <label>Birth Place: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    color="success"
-                    focused
-                    value={certData.birth_place}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <label>Date of Birth: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    color="success"
-                    focused
-                    value={util.formatDate(certData.birth_date)}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
-                {certData.service_id == 4 ? (
+                ) : /////////// CONFIRMATION CERTIFICATE ////////////
+                certData.service_id == 2 ? (
                   <>
+                    <Grid item xs={12}>
+                      <label>Child's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.first_name + " " + certData.last_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={6}>
+                      <label>Father's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.father_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Mother's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.mother_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <label>Birth Place: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.birth_place}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <label>Date of Confirmation: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={util.formatDate(certData.preferred_date)}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                  </>
+                ) : (
+                  //////////// WEDDING CERTIFICATE ///////////////
+                  <>
+                    <Grid item xs={6}>
+                      <label>First Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.first_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Last Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.last_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Spouse's First Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={
+                          certData.details
+                            ? JSON.parse(certData.details).spouse_firstName
+                            : ""
+                        }
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Spouse's Last Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={
+                          certData.details
+                            ? JSON.parse(certData.details).spouse_lastName
+                            : ""
+                        }
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <label>Contact Number: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.contact_no}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
                     <Grid item xs={12}>
                       <label>Date of Marriage: </label>
                       <TextField
@@ -547,23 +908,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                       />
                     </Grid>
                   </>
-                ) : null}
-                <Grid item xs={12}>
-                  <label>Contact No: </label>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="filled"
-                    color="success"
-                    focused
-                    value={certData.contact_no}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true,
-                      },
-                    }}
-                  />
-                </Grid>
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -575,7 +920,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              marginY: "16px",
+              marginBottom: "16px",
             }}>
             <Grid
               item

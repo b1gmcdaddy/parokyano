@@ -76,6 +76,9 @@ const ManageSchedules = () => {
   };
 
   const timeSlots = [
+    "06:00 AM - 06:30 AM",
+    "06:30 AM - 07:00 AM",
+    "07:00 AM - 07:30 AM",
     "07:30 AM - 08:00 AM",
     "08:00 AM - 08:30 AM",
     "08:30 AM - 09:00 AM",
@@ -99,8 +102,6 @@ const ManageSchedules = () => {
     "05:30 PM - 06:00 PM",
     "06:00 PM - 06:30 PM",
     "06:30 PM - 07:00 PM",
-    "07:00 PM - 07:30 PM",
-    "07:30 PM - 08:00 PM",
   ];
 
   const handleDateChange = (e) => {

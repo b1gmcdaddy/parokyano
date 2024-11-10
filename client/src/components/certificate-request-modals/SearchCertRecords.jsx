@@ -221,7 +221,8 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                 </Grid>
                 <Grid item xs={12} sx={{textAlign: "center"}}>
                   <Typography sx={{fontWeight: "bold"}}>
-                    {records.length} RECORDS FOUND
+                    {records.length} {records.length > 1 ? "RECORDS" : "RECORD"}{" "}
+                    FOUND
                   </Typography>
                 </Grid>
 

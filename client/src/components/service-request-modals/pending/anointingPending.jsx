@@ -460,9 +460,9 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
                   <label>Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
-                      minutesStep={30}
-                      // minTime={dayjs().hour(7)}
-                      // maxTime={dayjs().hour(20)}
+                      timeSteps={{hours: 30, minutes: 30}} // if mabuang, delete hours
+                      minTime={dayjs().set("hour", 7)}
+                      maxTime={dayjs().set("hour", 20)}
                       fullWidth
                       sx={TextFieldStyle}
                       value={
