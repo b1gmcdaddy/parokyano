@@ -90,10 +90,10 @@ const TrackStatus = () => {
       )}
       <Box sx={pageContainerStyle}>
         <NavParishioner />
-        <div style={containerStyle}>
+        <div style={containerStyle} className="flex items-center justify-center h-full">
           <div
             style={overlayStyle}
-            className="absolute top-56 w-full p-14 text-center z-0 ">
+            className="w-full p-14 text-center z-0 ">
             <div className="z-10 mx-auto">
               <h1 className="md:text-4xl font-bold mb-5">
                 Track Status of Request
@@ -123,6 +123,11 @@ const TrackStatus = () => {
                       width: "50%",
                     },
                   }}
+
+                  inputProps={{
+                    style: { textAlign: "center" },
+                  }}
+                  
                   onChange={handleChange}
                   type="text"
                   name="transaction_no"

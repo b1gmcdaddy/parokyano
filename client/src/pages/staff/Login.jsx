@@ -53,39 +53,37 @@ const Login = () => {
         className="bg-neutral-50"
         sx={{
           width: "100%",
-          height: "93vh",
+          height: "98vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           position: "relative",
         }}
       >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "8%",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <img
-            src={logo}
-            alt="Logo"
-            style={{ width: "220px", height: "200px" }}
-          />
-        </Box>
         <Paper
           elevation={2}
           sx={{
-            padding: { md: 6, xs: 6 },
+            padding: {  md: 3, xs:  3  },
             display: "flex",
             flexDirection: "column",
-            gap: 2,
             width: "100%",
             maxWidth: "600px",
-            marginTop: "50px",
           }}
         >
+          <Box
+            sx={{
+              top: "8%",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              style={{ width: "220px", height: "200px" }}
+            />
+          </Box>
+          
           <Typography
             sx={{
               fontWeight: "bold",

@@ -23,7 +23,7 @@ const inputstyling = {
       fontWeight: "bold",
       marginLeft: "30px",
       fontSize: "18px",
-      padding: "12px",
+      padding: "12px 0px 12px 0px",
     },
     "&.Mui-disabled .MuiInputBase-input": {
       color: "black",
@@ -120,6 +120,9 @@ const TrackRequest = () => {
                   disabled
                   value={request.transaction_no}
                   sx={inputstyling}
+                  inputProps={{
+                    style: { textAlign: "center" },
+                  }}
                 />
 
                 <Typography
