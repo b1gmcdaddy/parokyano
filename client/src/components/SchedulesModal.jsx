@@ -49,7 +49,7 @@ const AddSchedulesModal = ({open, close}) => {
 
   const handleClose = () => {
     setError(null);
-    window.location.reload();
+    close();
   };
 
   useEffect(() => {

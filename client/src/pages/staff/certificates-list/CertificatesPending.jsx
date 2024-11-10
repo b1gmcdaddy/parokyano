@@ -51,6 +51,10 @@ const CertificatesPending = ({filter, page, totalItems, handlePageChange}) => {
     }
   };
 
+  const refreshList = async () => {
+    await fetchCertificates();
+  };
+
   const openInfoModal = (cert) => {
     setOpenModal(true);
     setModalType(cert.service_id);
@@ -84,6 +88,7 @@ const CertificatesPending = ({filter, page, totalItems, handlePageChange}) => {
           open={openModal}
           data={modalData}
           close={closeInfoModal}
+          refreshList={refreshList}
         />
       )}
       {modalType === 3 && (
@@ -91,6 +96,7 @@ const CertificatesPending = ({filter, page, totalItems, handlePageChange}) => {
           open={openModal}
           data={modalData}
           close={closeInfoModal}
+          refreshList={refreshList}
         />
       )}
       {modalType === 4 && (
@@ -98,12 +104,14 @@ const CertificatesPending = ({filter, page, totalItems, handlePageChange}) => {
           open={openModal}
           data={modalData}
           close={closeInfoModal}
+          refreshList={refreshList}
         />
       )}
       <SearchCertRecords
         open={searchModal}
         data={modalData}
         close={closeInfoModal}
+        refreshList={refreshList}
       />
 
       {loading ? (

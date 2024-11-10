@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Footer from "../../components/Footer";
-import {Box, Typography, Button, Snackbar} from "@mui/material";
+import {Box, Typography, Button, Snackbar, TextField} from "@mui/material";
 import ReCAPTCHA from "react-google-recaptcha";
 import {Link} from "react-router-dom";
 import axios from "axios";
@@ -103,12 +103,29 @@ const TrackStatus = () => {
                 request
               </p>
               <form onSubmit={handleSubmit}>
-                <input
-                  name="transaction_no"
-                  type="text"
+                <TextField
+                  size="normal"
+                  sx={{
+                    marginTop: "2.5rem",
+                    backgroundColor: "white",
+                    borderRadius: "0.375rem",
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    width: "100%",
+                    maxWidth: "400px",
+                    transition: "box-shadow 0.3s ease",
+                    "&:hover": {
+                      boxShadow: "0px 6px 10px rgba(0, 0, 0, 0.15)",
+                    },
+                    "@media (min-width: 600px)": {
+                      width: "70%",
+                    },
+                    "@media (min-width: 900px)": {
+                      width: "50%",
+                    },
+                  }}
                   onChange={handleChange}
-                  className="border-slate-700 rounded-md mt-10 shadow-md shadow-slate-600 md:py-3 md:px-48 text-center focus:outline-none"
-                  style={{borderWidth: "0.1px"}}
+                  type="text"
+                  name="transaction_no"
                   placeholder="e.g. 2024-10-270f8e1172fb76203522b4"
                 />
                 <div className="mt-10 flex justify-center">

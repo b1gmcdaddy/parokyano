@@ -61,6 +61,10 @@ const CertificateForClaiming = ({
     }
   };
 
+  const refreshList = async () => {
+    await fetchCertificates();
+  };
+
   const openInfoModal = (cert) => {
     setOpenModal(true);
     setModalType(cert.service_id);
@@ -93,6 +97,7 @@ const CertificateForClaiming = ({
           open={openModal}
           data={modalData}
           close={closeInfoModal}
+          refreshList={refreshList}
         />
       )}
       {modalType === 3 && (
@@ -100,6 +105,7 @@ const CertificateForClaiming = ({
           open={openModal}
           data={modalData}
           close={closeInfoModal}
+          refreshList={refreshList}
         />
       )}
       {modalType === 4 && (
@@ -107,6 +113,7 @@ const CertificateForClaiming = ({
           open={openModal}
           data={modalData}
           close={closeInfoModal}
+          refreshList={refreshList}
         />
       )}
       <PrintCertificate
@@ -215,7 +222,7 @@ const CertificateForClaiming = ({
                           borderRadius: "15px 0 0 15px",
                           backgroundColor: "#e0e0e0",
                         }}>
-                        {cert.first_name}
+                        {cert.first_name} {cert.last_name}
                       </TableCell>
                       <TableCell
                         sx={{

@@ -16,6 +16,9 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import axios from "axios";
 import config from "../../../config";
 import util from "../../../utils/DateTimeFormatter";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 
 //Modals
 import AnointingApproved from "../../../components/service-request-modals/pending/approved/anointingApproved";
@@ -25,6 +28,7 @@ import FuneralMassModalApproved from "../../../components/service-request-modals
 import OutsideApproved from "../../../components/service-request-modals/pending/approved/outsideMassApproved";
 import WakeApproved from "../../../components/service-request-modals/pending/approved/wakeApproved";
 import WeddingApproved from "../../../components/service-request-modals/pending/approved/weddingApproved";
+import ConfirmationDialog from "../../../components/ConfirmationModal";
 
 const ApprovedRequests = ({filter, page, totalItems, handlePageChange}) => {
   const [tableData, setTableData] = useState([]);
@@ -33,6 +37,51 @@ const ApprovedRequests = ({filter, page, totalItems, handlePageChange}) => {
   const [modalOpen, setModalOpen] = useState(false);
   const rowsPerPage = 10;
   const totalPages = Math.ceil(totalItems / rowsPerPage);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentAction, setCurrentAction] = useState("");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+
+  const cancelRequest = async () => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    const req = selectedRequest;
+    try {
+      axios.put(`${config.API}/request/update`, null, {
+        params: {
+          col: "status",
+          val: "cancelled",
+          id: req.requestID,
+        },
+      });
+      axios
+        .delete(`${config.API}/priest/deleteSched`, {
+          params: {
+            col: "request_id",
+            val: req.requestID,
+          },
+        })
+        .then(() => {
+          axios.post(`${config.API}/logs/create`, {
+            activity: `Cancelled Request - Transaction number: ${req.transaction_no}`,
+            user_id: currentUser.id,
+            request_id: req.requestID,
+          });
+          console.log("logs success!");
+          setSuccess({
+            message: "Cancelation Success",
+            details: "The request has been successfully canceled.",
+          });
+          fetchRequests();
+        });
+    } catch (err) {
+      console.error("error updating request", err);
+      setError({
+        message: err,
+        details: "",
+      });
+    }
+  };
 
   const fetchRequests = async () => {
     try {
@@ -52,6 +101,12 @@ const ApprovedRequests = ({filter, page, totalItems, handlePageChange}) => {
 
   const refreshList = async () => {
     await fetchRequests();
+  };
+
+  const handleOpenDialog = (action, req) => {
+    setSelectedRequest(req);
+    setCurrentAction(action);
+    setDialogOpen(true);
   };
 
   // const handlePageChange = (newPage) => {
@@ -150,282 +205,288 @@ const ApprovedRequests = ({filter, page, totalItems, handlePageChange}) => {
   };
 
   return (
-    <div style={{margin: "0 auto"}}>
-      <TableContainer
-        sx={{
-          display: "flex",
-          borderRadius: "16px",
-          overflowX: "auto",
-          border: "none",
-        }}>
-        <Table
-          stickyHeader
-          aria-label="custom table"
-          sx={{
-            borderCollapse: "separate",
-            borderSpacing: 0,
-            sm: {minWidth: 650},
-          }}>
-          <TableHead>
-            <TableRow>
-              <TableCell
-                sx={{
-                  textAlign: "center",
-                  border: "none",
-                  fontSize: "0.85rem",
-                  fontWeight: "bold",
-                }}>
-                SERVICE
-              </TableCell>
-              <TableCell
-                sx={{
-                  textAlign: "center",
-                  border: "none",
-                  fontSize: "0.85rem",
-                  fontWeight: "bold",
-                }}>
-                SCHEDULED DATE
-              </TableCell>
-              <TableCell
-                sx={{
-                  textAlign: "center",
-                  border: "none",
-                  fontSize: "0.85rem",
-                  fontWeight: "bold",
-                }}>
-                PRIEST ASSIGNED
-              </TableCell>
-              <TableCell
-                sx={{
-                  textAlign: "center",
-                  border: "none",
-                  fontSize: "0.85rem",
-                  fontWeight: "bold",
-                }}>
-                REQUESTED BY
-              </TableCell>
-              <TableCell
-                sx={{
-                  textAlign: "center",
-                  border: "none",
-                  fontSize: "0.85rem",
-                  fontWeight: "bold",
-                }}>
-                CONTACT NO.
-              </TableCell>
-              <TableCell
-                sx={{
-                  textAlign: "center",
-                  border: "none",
-                  fontSize: "0.85rem",
-                  fontWeight: "bold",
-                }}>
-                ACTIONS
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tableData.length > 0 ? (
-              tableData.map((req) => (
-                <React.Fragment key={req.requestID}>
-                  {/* this is to add space in between rows sa table */}
-                  <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      sx={{
-                        backgroundColor: "#ffffff",
-                        padding: 0,
-                        border: "none",
-                      }}>
-                      <Box sx={{height: "5px", backgroundColor: "white"}} />
-                    </TableCell>
-                  </TableRow>
+    <>
+      {error && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
+            <AlertTitle>{error.message}</AlertTitle>
+            {error.details}
+          </Alert>
+        </Snackbar>
+      )}
 
-                  <TableRow
-                    sx={{
-                      backgroundColor: "#e0e0e0",
-                      borderRadius: "10px",
-                      "& > *": {
-                        borderBottom: "none",
-                      },
-                    }}>
-                    <TableCell
-                      sx={{
-                        border: "none",
-                        padding: "16px",
-                        textAlign: "center",
-                        borderRadius: "15px 0 0 15px",
-                        backgroundColor: "#e0e0e0",
-                      }}>
-                      {req?.service_name?.length > 0
-                        ? req.service_name.substring(0, 20) + "..."
-                        : req.service_name}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        border: "none",
-                        padding: "16px",
-                        textAlign: "center",
-                        backgroundColor: "#e0e0e0",
-                      }}>
-                      {util.formatDate(req.preferred_date)}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        border: "none",
-                        padding: "16px",
-                        textAlign: "center",
-                        backgroundColor: "#e0e0e0",
-                      }}>
-                      {req.priest_id == 1
-                        ? "Fr. Priest Test A"
-                        : "Fr. Priest Test B"}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        border: "none",
-                        padding: "16px",
-                        textAlign: "center",
-                        backgroundColor: "#e0e0e0",
-                      }}>
-                      {req.service_id == 5 || req.service_id == 6
-                        ? req.father_name
-                        : req.service_id == 7
-                        ? req.first_name
-                        : req.requested_by}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        border: "none",
-                        padding: "16px",
-                        textAlign: "center",
-                        backgroundColor: "#e0e0e0",
-                      }}>
-                      {req.contact_no}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        border: "none",
-                        padding: "16px",
-                        textAlign: "center",
-                        borderRadius: "0 15px 15px 0",
-                        backgroundColor: "#e0e0e0",
-                      }}>
-                      <Button
-                        variant="contained"
-                        type="button"
+      {success && (
+        <Snackbar
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
+            <AlertTitle>{success.message}</AlertTitle>
+            {success.details}
+          </Alert>
+        </Snackbar>
+      )}
+
+      <div style={{margin: "0 auto"}}>
+        <TableContainer
+          sx={{
+            display: "flex",
+            borderRadius: "16px",
+            overflowX: "auto",
+            border: "none",
+          }}>
+          <Table
+            stickyHeader
+            aria-label="custom table"
+            sx={{
+              borderCollapse: "separate",
+              borderSpacing: 0,
+              sm: {minWidth: 650},
+            }}>
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    border: "none",
+                    fontSize: "0.85rem",
+                    fontWeight: "bold",
+                  }}>
+                  SERVICE
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    border: "none",
+                    fontSize: "0.85rem",
+                    fontWeight: "bold",
+                  }}>
+                  SCHEDULED DATE
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    border: "none",
+                    fontSize: "0.85rem",
+                    fontWeight: "bold",
+                  }}>
+                  PRIEST ASSIGNED
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    border: "none",
+                    fontSize: "0.85rem",
+                    fontWeight: "bold",
+                  }}>
+                  REQUESTED BY
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    border: "none",
+                    fontSize: "0.85rem",
+                    fontWeight: "bold",
+                  }}>
+                  CONTACT NO.
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    border: "none",
+                    fontSize: "0.85rem",
+                    fontWeight: "bold",
+                  }}>
+                  ACTIONS
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tableData.length > 0 ? (
+                tableData.map((req) => (
+                  <React.Fragment key={req.requestID}>
+                    {/* this is to add space in between rows sa table */}
+                    <TableRow>
+                      <TableCell
+                        colSpan={5}
                         sx={{
-                          backgroundColor: "#355173",
-                          color: "white",
-                          marginRight: "8px",
-                          borderRadius: "10px",
-                          "&:hover": {
-                            backgroundColor: "#0036B1",
-                          },
-                        }}
-                        onClick={() => {
-                          setModalData(req);
-                          setModalType(req.service_name);
-                          setModalOpen(true);
+                          backgroundColor: "#ffffff",
+                          padding: 0,
+                          border: "none",
                         }}>
-                        INFO
-                      </Button>
-                      <Button
-                        variant="contained"
-                        type="button"
+                        <Box sx={{height: "5px", backgroundColor: "white"}} />
+                      </TableCell>
+                    </TableRow>
+
+                    <TableRow
+                      sx={{
+                        backgroundColor: "#e0e0e0",
+                        borderRadius: "10px",
+                        "& > *": {
+                          borderBottom: "none",
+                        },
+                      }}>
+                      <TableCell
                         sx={{
-                          backgroundColor: "#C34444",
-                          color: "white",
-                          borderRadius: "10px",
-                          "&:hover": {
-                            backgroundColor: "#880808",
-                          },
-                        }}
-                        onClick={() => {
-                          try {
-                            axios.put(`${config.API}/request/update`, null, {
-                              params: {
-                                col: "status",
-                                val: "cancelled",
-                                id: req.requestID,
-                              },
-                            });
-
-                            console.log("request cancelled!");
-                            axios
-                              .delete(`${config.API}/priest/deleteSched`, {
-                                params: {
-                                  col: "request_id",
-                                  val: req.requestID,
-                                },
-                              })
-                              .then(() => {
-                                console.log("priest sched deleted!");
-                                axios.post(`${config.API}/logs/create`, {
-                                  activity: `Cancelled Wake Mass Request - Transaction number: ${req.transaction_no}`,
-                                  user_id: 1,
-                                  request_id: req.requestID,
-                                });
-                                console.log("logs success!");
-                              });
-                            alert("Request cancelled!");
-                            window.location.reload();
-                          } catch (err) {
-                            console.error("error updating request", err);
-                          }
+                          border: "none",
+                          padding: "16px",
+                          textAlign: "center",
+                          borderRadius: "15px 0 0 15px",
+                          backgroundColor: "#e0e0e0",
                         }}>
-                        CANCEL
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                </React.Fragment>
-              ))
-            ) : (
-              //NEEDS WORK
-              //temporary:
-              <div className="float ">
-                <h1 className="">No requests found</h1>
-              </div>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                        {req?.service_name?.length > 0
+                          ? req.service_name.substring(0, 20) + "..."
+                          : req.service_name}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          border: "none",
+                          padding: "16px",
+                          textAlign: "center",
+                          backgroundColor: "#e0e0e0",
+                        }}>
+                        {util.formatDate(req.preferred_date)}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          border: "none",
+                          padding: "16px",
+                          textAlign: "center",
+                          backgroundColor: "#e0e0e0",
+                        }}>
+                        {req.priest_id == 1
+                          ? "Fr. Priest Test A"
+                          : "Fr. Priest Test B"}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          border: "none",
+                          padding: "16px",
+                          textAlign: "center",
+                          backgroundColor: "#e0e0e0",
+                        }}>
+                        {req.service_id == 5 || req.service_id == 6
+                          ? req.father_name
+                          : req.service_id == 7
+                          ? req.first_name
+                          : req.requested_by}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          border: "none",
+                          padding: "16px",
+                          textAlign: "center",
+                          backgroundColor: "#e0e0e0",
+                        }}>
+                        {req.contact_no}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          border: "none",
+                          padding: "16px",
+                          textAlign: "center",
+                          borderRadius: "0 15px 15px 0",
+                          backgroundColor: "#e0e0e0",
+                        }}>
+                        <Button
+                          variant="contained"
+                          type="button"
+                          sx={{
+                            backgroundColor: "#355173",
+                            color: "white",
+                            marginRight: "8px",
+                            borderRadius: "10px",
+                            "&:hover": {
+                              backgroundColor: "#0036B1",
+                            },
+                          }}
+                          onClick={() => {
+                            setModalData(req);
+                            setModalType(req.service_name);
+                            setModalOpen(true);
+                          }}>
+                          INFO
+                        </Button>
+                        <Button
+                          variant="contained"
+                          type="button"
+                          sx={{
+                            backgroundColor: "#C34444",
+                            color: "white",
+                            borderRadius: "10px",
+                            "&:hover": {
+                              backgroundColor: "#880808",
+                            },
+                          }}
+                          onClick={() => {
+                            handleOpenDialog("cancel", req);
+                          }}>
+                          CANCEL
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  </React.Fragment>
+                ))
+              ) : (
+                //NEEDS WORK
+                //temporary:
+                <div className="float ">
+                  <h1 className="">No requests found</h1>
+                </div>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: 2,
-        }}>
-        <IconButton
-          onClick={() => handlePageChange(page - 1)}
-          disabled={page === 0} // Disable on the first page
+        <Box
           sx={{
-            backgroundColor: page === 0 ? "grey.300" : "black",
-            color: page === 0 ? "grey.600" : "white",
-            marginRight: "10px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 2,
           }}>
-          <KeyboardArrowLeft />
-        </IconButton>
+          <IconButton
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 0} // Disable on the first page
+            sx={{
+              backgroundColor: page === 0 ? "grey.300" : "black",
+              color: page === 0 ? "grey.600" : "white",
+              marginRight: "10px",
+            }}>
+            <KeyboardArrowLeft />
+          </IconButton>
 
-        <Typography sx={{margin: "0 10px", fontWeight: "bold"}}>
-          Page {page + 1} of {totalPages}
-        </Typography>
+          <Typography sx={{margin: "0 10px", fontWeight: "bold"}}>
+            Page {page + 1} of {totalPages}
+          </Typography>
 
-        <IconButton
-          onClick={() => handlePageChange(page + 1)}
-          disabled={page === totalPages - 1} // Disable on the last page
-          sx={{
-            backgroundColor: page === totalPages - 1 ? "grey.300" : "black",
-            color: page === totalPages - 1 ? "grey.600" : "white",
-            marginLeft: "10px",
-          }}>
-          <KeyboardArrowRight />
-        </IconButton>
-      </Box>
-      {renderModal()}
-    </div>
+          <IconButton
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page === totalPages - 1} // Disable on the last page
+            sx={{
+              backgroundColor: page === totalPages - 1 ? "grey.300" : "black",
+              color: page === totalPages - 1 ? "grey.600" : "white",
+              marginLeft: "10px",
+            }}>
+            <KeyboardArrowRight />
+          </IconButton>
+        </Box>
+        {renderModal()}
+
+        <ConfirmationDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          action={currentAction}
+          onConfirm={() => cancelRequest()}
+          service={""}
+        />
+      </div>
+    </>
   );
 };
 

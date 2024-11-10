@@ -873,6 +873,16 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
     refreshList();
   };
 
+  const handleUpdateInterview = () => {
+    setSuccess({
+      message: "Interview Schedule Success",
+      details: "Request Interview Schedule has been set",
+    });
+    setSnackBarStyle("info");
+    handleClose();
+    refreshList();
+  };
+
   const fetchAvailability = async (date, start, end) => {
     const avail = await axios.get(
       `${config.API}/priest/retrieve-schedule-venue`,
@@ -1001,8 +1011,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
             user_id: currentUser.id,
             request_id: formData.requestID,
           }),
-          // sendSMS(data.service_id, formData, "approve-wed-interview"),
-          handleClose(),
+          handleUpdateInterview(),
           refreshList(),
         ]);
       }
@@ -1092,6 +1101,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
             axios.put(`${config.API}/request/update-bulk`, {
               formData,
               id: data.requestID,
+              user_id: currentUser.id,
             });
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
@@ -1099,8 +1109,8 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                 val: "approved",
                 col2: "payment_status",
                 val2: "paid",
-                col3: "user_id",
-                val3: currentUser.id,
+                col3: "preferred_date",
+                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
                 col4: "preferred_time",
                 val4: formData.preferred_time,
                 col5: "requestID",
@@ -1417,7 +1427,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                       <TextField
                         select
                         fullWidth
-                        disabled={completeRequirements != 1}
                         sx={TextFieldStyle}
                         value={formData.priest_id}
                         onChange={handleChange}
@@ -1434,7 +1443,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           fullWidth
-                          disabled={completeRequirements != 1}
                           name="preferred_date"
                           sx={TextFieldStyle}
                           value={
@@ -1458,7 +1466,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                         <TimePicker
                           fullWidth
                           name="preferred_time"
-                          disabled={completeRequirements != 1}
                           sx={TextFieldStyle}
                           value={
                             formData.preferred_time

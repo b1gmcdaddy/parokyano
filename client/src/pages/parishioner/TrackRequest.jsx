@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Footer from "../../components/Footer";
-import { Typography, Grid, Container, Box, Paper } from "@mui/material";
-import { DefaultCopyField } from "@eisberg-labs/mui-copy-field";
-import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import {Typography, Grid, Container, Box, Paper} from "@mui/material";
+import {DefaultCopyField} from "@eisberg-labs/mui-copy-field";
+import {Link} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import config from "../../config";
 import axios from "axios";
 
@@ -13,18 +13,17 @@ const inputstyling = {
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       boxShadow: "0 3px 2px rgba(0,0,0,0.1)",
-      borderRadius: "10px",
+      borderRadius: "3px",
     },
     "&.Mui-focused fieldset": {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
     "& .MuiInputBase-input": {
-      textAlign: "center",
       fontWeight: "bold",
       marginLeft: "30px",
       fontSize: "18px",
-      padding: "10px",
+      padding: "12px",
     },
     "&.Mui-disabled .MuiInputBase-input": {
       color: "black",
@@ -87,7 +86,11 @@ const TrackRequest = () => {
   }, [service]);
 
   const statusStyling =
-    request.status === "approved" ? { color: "green" } : { color: "orange" };
+    request.status === "approved"
+      ? {color: "green"}
+      : request.status === "cancelled"
+      ? {color: "red"}
+      : {color: "orange"};
 
   return (
     <>
@@ -102,16 +105,14 @@ const TrackRequest = () => {
           flexDirection: "column",
           paddingTop: 8,
           paddingBottom: 8,
-        }}
-      >
+        }}>
         <Container maxWidth="lg">
           <Grid container spacing={4} justifyContent="center">
-            <Grid item xs={12} md={4}>
-              <Paper elevation={3} sx={{ padding: 4 }}>
+            <Grid item xs={12} md={5}>
+              <Paper elevation={3} sx={{padding: 4}}>
                 <Typography
                   gutterBottom
-                  sx={{ textAlign: "center", fontSize: "18px" }}
-                >
+                  sx={{textAlign: "center", fontSize: "18px"}}>
                   Transaction No.
                 </Typography>
                 <DefaultCopyField
@@ -127,8 +128,7 @@ const TrackRequest = () => {
                     marginTop: "40px",
                     marginBottom: "10px",
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   Request Information
                 </Typography>
 
@@ -155,8 +155,8 @@ const TrackRequest = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} md={8}>
-              <Paper elevation={3} sx={{ padding: 4 }}>
+            <Grid item xs={12} md={7}>
+              <Paper elevation={3} sx={{padding: 4}}>
                 <Typography
                   variant="h5"
                   gutterBottom
@@ -164,25 +164,37 @@ const TrackRequest = () => {
                     fontWeight: "bold",
                     fontSize: "28px",
                     ...statusStyling,
-                  }}
-                >
+                  }}>
                   {request.status.toLowerCase() == "approved"
                     ? "APPROVED"
-                    : "PENDING"}
+                    : request.status.toLowerCase() == "pending"
+                    ? "PENDING"
+                    : request.status.toLowerCase() == "cancelled"
+                    ? "CANCELLED"
+                    : "FINISHED"}
                 </Typography>
 
                 {activity.length > 0 ? (
-                  activity.map((item) => (
-                    <div
-                      key={item.logID}
-                      className="md:mt-8 md:flex justify-between p-8"
-                    >
-                      <Typography>{item.date.substring(0, 10)}</Typography>
-                      <Typography>{item.activity.split("-")[0]}</Typography>
+                  <div>
+                    <div className="md:mt-8 md:flex justify-between p-8">
+                      <Typography>
+                        {activity[0]?.date_requested.substring(0, 10)}
+                      </Typography>
+                      <Typography>Request Submitted</Typography>
                     </div>
-                  ))
+
+                    {/* Display the logs */}
+                    {activity.map((item) => (
+                      <div
+                        key={item.logID}
+                        className="md:mt-8 md:flex justify-between p-8">
+                        <Typography>{item.date.substring(0, 10)}</Typography>
+                        <Typography>{item.activity.split("-")[0]}</Typography>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  <div>loading..</div>
+                  <div>loading...</div>
                 )}
               </Paper>
             </Grid>

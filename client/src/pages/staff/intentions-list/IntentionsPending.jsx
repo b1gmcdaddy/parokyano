@@ -86,6 +86,10 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
     }
   };
 
+  const refreshList = async () => {
+    await fetchIntentions();
+  };
+
   const openInfoModal = (row) => {
     setModalData(row);
     setModalType(row.type);
@@ -115,6 +119,7 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
           open={true}
           data={modalData}
           close={closeInfoModal}
+          refreshList={refreshList}
         />
       )}
       {modaltype === "Thanksgiving" && (
@@ -122,6 +127,7 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
           open={true}
           data={modalData}
           close={closeInfoModal}
+          refreshList={refreshList}
         />
       )}
       {modaltype === "Petition" && (
@@ -129,6 +135,7 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
           open={true}
           data={modalData}
           close={closeInfoModal}
+          refreshList={refreshList}
         />
       )}
 
@@ -288,6 +295,7 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
                           backgroundColor: "#e0e0e0",
                         }}>
                         <Button
+                          variant="contained"
                           type="button"
                           sx={{
                             backgroundColor: "#355173",

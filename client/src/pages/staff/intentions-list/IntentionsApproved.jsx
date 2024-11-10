@@ -188,15 +188,6 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
                     sx={{
                       textAlign: "center",
                       border: "none",
-                      fontSize: "0.85rem",
-                      fontWeight: "bold",
-                    }}>
-                    SCHEDULED MASS
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      textAlign: "center",
-                      border: "none",
                       fontSize: "0.75rem",
                       fontWeight: "bold",
                     }}>
@@ -206,10 +197,10 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
                     sx={{
                       textAlign: "center",
                       border: "none",
-                      fontSize: "0.75rem",
+                      fontSize: "0.85rem",
                       fontWeight: "bold",
                     }}>
-                    DATE REQUESTED
+                    SCHEDULED MASS
                   </TableCell>
                   <TableCell
                     sx={{
@@ -272,15 +263,6 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
                         }}>
-                        {schedule(row.preferred_date, row.preferred_time)}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          border: "none",
-                          padding: "16px",
-                          textAlign: "center",
-                          backgroundColor: "#e0e0e0",
-                        }}>
                         {row.transaction_no}
                       </TableCell>
                       <TableCell
@@ -290,8 +272,9 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
                         }}>
-                        {util.formatDate(row.date_requested)}
+                        {schedule(row.preferred_date, row.preferred_time)}
                       </TableCell>
+
                       <TableCell
                         sx={{
                           border: "none",
@@ -302,6 +285,7 @@ const IntentionsApproved = ({filter, page, count, handlePageChange}) => {
                         }}>
                         <Button
                           type="button"
+                          variant="contained"
                           sx={{
                             backgroundColor: "#355173",
                             color: "white",
