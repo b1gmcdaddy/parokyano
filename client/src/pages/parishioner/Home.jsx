@@ -16,13 +16,13 @@ import {faCross, faQuestion} from "@fortawesome/free-solid-svg-icons";
 import RequestNotice from "../../components/RequestNotice";
 
 const containerStyle = {
-  margin: '0px',
-  padding: '0px',
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-  minWidth: '100%',
-}
+  margin: "0px",
+  padding: "0px",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
+  minWidth: "100%",
+};
 
 const Home = () => {
   const [open, setOpen] = useState(false);
