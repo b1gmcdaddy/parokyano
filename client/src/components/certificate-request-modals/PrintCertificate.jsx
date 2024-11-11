@@ -53,12 +53,14 @@ const PrintCertificate = ({ open, data, close }) => {
     book_no: "",
     line_no: "",
     page_no: "",
+    sponsor_no1: "",
+    sponsor_no2: "",
     OR_no: "",
     purpose: "",
     transaction_no: "",
     service_id: "",
     priest_id: "",
-    request_id: "",
+    sponsor_id: "",
   });
 
   useEffect(() => {
@@ -82,12 +84,14 @@ const PrintCertificate = ({ open, data, close }) => {
         book_no: bookDetails.book_no,
         line_no: bookDetails.line_no,
         page_no: bookDetails.page_no,
+        sponsor_no1: bookDetails.sponsor_no1,
+        sponsor_no2: bookDetails.sponsor_no2,
         OR_no: data.details.OR_no,
         purpose: data.purpose,
         transaction_no: data.transaction_no,
         service_id: data.service_id,
         priest_id: data.priest_id,
-        request_id: data.requestID,
+        sponsor_id: bookDetails.record_id
       });
     }
     BirthDayFormatter(data.birth_date);
@@ -157,7 +161,7 @@ const PrintCertificate = ({ open, data, close }) => {
       }
     };
     fetchPriest();
-    fetchSponsors(CertData.request_id);
+    fetchSponsors(CertData.sponsor_id);
   }, [open, data]);
 
   const fetchSponsors = async (id) => {
@@ -295,9 +299,7 @@ const renderCertificateContainer = () => {
                       Sponsors:
                     </Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                      {sponsors.map((sponsor, index) => (
                         <Typography
-                          key={index}
                           sx={{
                             fontSize: '18px',
                             lineHeight: '1.8',
@@ -307,9 +309,20 @@ const renderCertificateContainer = () => {
                             marginRight: '10px',
                           }}
                         >
-                          {sponsor.name},
+                          {CertData.sponsor_no1},
                         </Typography>
-                      ))}
+                        <Typography
+                          sx={{
+                            fontSize: '18px',
+                            lineHeight: '1.8',
+                            letterSpacing: 1,
+                            fontWeight: 'bold',
+                            textAlign: 'justify',
+                            marginRight: '10px',
+                          }}
+                        >
+                          {CertData.sponsor_no2},
+                        </Typography>
                     </Box>
                   </Box>
                 </Box>
@@ -317,7 +330,7 @@ const renderCertificateContainer = () => {
 
               <Grid item sm={12} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  CONFIRMATION Registry Bk. No: {CertData.book_no} Page No. {CertData.page_no} Line No. {CertData.line_no}
+                  CONFIRMATION Registry Bk. No: <span style={{textDecoration: 'underline'}}>{CertData.book_no}</span> Page No. <span style={{textDecoration: 'underline'}}>{CertData.page_no}</span> Line No. <span style={{textDecoration: 'underline'}}>{CertData.line_no}</span>
                 </Typography>
               </Grid>
               <Grid item sm={12} sx={{marginTop: '10px'}}>
@@ -325,15 +338,21 @@ const renderCertificateContainer = () => {
                   Date of issue: <span style={{textDecoration: 'underline'}}>{util.formatDate(CertData.data_issue)}</span>
                 </Typography>
               </Grid>
-              <Grid item sm={6} sx={{marginTop: '10px'}}>
+              <Grid item sm={8} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  O.R No. <span style={{textDecoration: 'underline'}}>{CertData.OR_no}</span>
+                  O.R No. <span style={{textDecoration: 'underline'}}>{CertData.transaction_no}</span>
                 </Typography>
               </Grid>
-              <Grid item sm={6} sx={{marginTop: '10px'}}>
+              <Grid item sm={4} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
                   Purpose: <span style={{textDecoration: 'underline'}}>{CertData.purpose}</span>
                 </Typography>
+              </Grid>
+              <Grid item sm={6} sx={{marginTop: '150px'}}>
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                  <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
+                  <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
+                </div>
               </Grid>
             </Grid>
           </Container>
@@ -468,12 +487,12 @@ const renderCertificateContainer = () => {
                 </Typography>
               </Grid>
 
-              <Grid item sm={6} sx={{marginTop: '10px'}}>
+              <Grid item sm={8} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
-                  O.R No. <span style={{textDecoration: 'underline'}}>{CertData.OR_no}</span>
+                  O.R No. <span style={{textDecoration: 'underline'}}>{CertData.transaction_no}</span>
                 </Typography>
               </Grid>
-              <Grid item sm={6} sx={{marginTop: '10px'}}>
+              <Grid item sm={4} sx={{marginTop: '10px'}}>
                 <Typography sx={{fontSize: '18px', lineHeight: '2', letterSpacing: 1, fontWeight: 'bold', textAlign: 'justify'}}>
                   Purpose: <span style={{textDecoration: 'underline'}}>{CertData.purpose}</span>
                 </Typography>

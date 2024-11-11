@@ -27,6 +27,77 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [modalSize, setModalSize] = useState("");
+  const [priests, setPriests] = useState([]);
+  const bookDetails = JSON.parse(recordData.details || '{}');
+  const [baptismData, setBaptismData] = useState({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    birth_place: "",
+    father_name: "",
+    mother_name: "",
+    preferred_date: "",
+    birth_date: "",
+    priest_id: "",
+  });
+
+  const [confirmationData, setConfirmationData] = useState({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    father_name: "",
+    mother_name: "",
+    preferred_date_date: "",
+    priest_id: "",
+  });
+
+  useEffect(() => {
+    if (open && recordData) {
+      if (certData.service_id == 3){
+        const details = {
+          book_no: bookDetails.book_no || null,
+          page_no: bookDetails.page_no || null,
+          line_no: bookDetails.line_no || null,
+          record_id: recordData.requestID || null,
+        };
+        setBaptismData({
+          first_name: recordData.first_name,
+          middle_name: recordData.middle_name,
+          last_name: recordData.last_name,
+          birth_place: recordData.birth_place,
+          father_name: recordData.father_name,
+          mother_name: recordData.mother_name,
+          preferred_date: formatDate(recordData.preferred_date),
+          birth_date: formatDate(recordData.birth_date),
+          priest_id: recordData.priest_id,
+          ...(details.book_no || details.page_no || details.line_no || details.record_id? { details } : {}),
+        });
+      }
+
+      if (certData.service_id == 2){
+        const details = {
+          book_no: bookDetails.book_no || null,
+          page_no: bookDetails.page_no || null,
+          line_no: bookDetails.line_no || null,
+          sponsor_no1: bookDetails.sponsor_no1 || null,
+          sponsor_no2: bookDetails.sponsor_no2 || null,
+        };
+        setConfirmationData({
+          first_name: recordData.first_name,
+          middle_name: recordData.middle_name,
+          last_name: recordData.last_name,
+          birth_place: recordData.birth_place,
+          father_name: recordData.father_name,
+          mother_name: recordData.mother_name,
+          preferred_date: recordData.confirmation_date_date,
+          priest_id: recordData.officiating_priest,
+          ...(details.book_no || details.page_no || details.line_no || details.sponsor_no1 || details.sponsor_no2 ? { details } : {}),
+        });
+      }
+    }
+    console.log(recordData);
+  }, [open, recordData]);
+
 
   useEffect(() => {
     // console.log(recordData);
@@ -41,6 +112,25 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
     setCurrentAction(action);
     setDialogOpen(true);
   };
+
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const response = await axios.get(`${config.API}/priest/retrieve`, {
+          params: {
+            col: "status",
+            val: "active",
+          },
+        });
+        setPriests(response.data);
+        console.log(response.data); 
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchPriest();
+  }, []);
 
   const handleConfirm = async () => {
     const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -57,6 +147,22 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
           },
         }
       );
+
+      // UPDATE Cert Request Data
+      if(certData.service_id == 3){
+        await axios.put(`${config.API}/request/update-certificate`, {
+          baptismData,
+          id: certData.requestID,
+        });
+        }
+    
+      if(certData.service_id == 2){
+        await axios.put(`${config.API}/request/update-confirmation-cert`, {
+          confirmationData,
+          id: certData.requestID,
+        });
+        }
+
       // INSERT to LoGS
       axios.post(`${config.API}/logs/create`, {
         activity: `Approved Certificate Request for ${certData.first_name} ${certData.last_name}`,
@@ -80,6 +186,12 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
         details: "",
       });
     }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
   };
 
   return (
@@ -406,7 +518,30 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         size="small"
                         fullWidth
                         variant="filled"
-                        value={recordData.child_name}
+                        value={
+                          recordData.child_name
+                          ? (
+                              (typeof recordData.child_name === "string"
+                                ? JSON.parse(recordData.child_name)
+                                : recordData.child_name
+                              ).first_name || ""
+                            ) +
+                            " " +
+                            (
+                              (typeof recordData.child_name === "string"
+                                ? JSON.parse(recordData.child_name)
+                                : recordData.child_name
+                              ).middle_name || ""
+                            ) +
+                            " " +
+                            (
+                              (typeof recordData.child_name === "string"
+                                ? JSON.parse(recordData.child_name)
+                                : recordData.child_name
+                              ).last_name || ""
+                            )
+                          : ""
+                        }
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -460,7 +595,15 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         size="small"
                         fullWidth
                         variant="filled"
-                        value={recordData.officiating_priest}
+                        value={
+                          priests.find(
+                            (priest) => priest.priestID === recordData.officiating_priest
+                          )?.first_name +
+                          " " +
+                          priests.find(
+                            (priest) => priest.priestID === recordData.officiating_priest
+                          )?.last_name
+                        }
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -725,7 +868,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         variant="filled"
                         color="success"
                         focused
-                        value={certData.first_name + " " + certData.last_name}
+                        value={certData.first_name + " " + certData.middle_name + " " + certData.last_name}
                         slotProps={{
                           inputLabel: {
                             shrink: true,

@@ -957,6 +957,96 @@ const updateBulk = (req, res) => {
   );
 };
 
+const updateConfirmationCert = (req, res) => {
+  const { confirmationData, id } = req.body;
+  if (!id) {
+    return res.status(400).json({ message: "Missing record ID" });
+  }
+
+  const { details, ...mainFields } = confirmationData;
+
+  const columns = Object.keys(mainFields).map((key) => `${key} = ?`).join(", ");
+  const values = Object.values(mainFields);
+
+  const detailsUpdate = `
+    JSON_SET(
+      details,
+      '$.book_no', ?,
+      '$.page_no', ?,
+      '$.line_no', ?,
+      '$.sponsor_no1', ?,
+      '$.sponsor_no2', ?
+    )
+  `;
+  const detailsValues = [
+    details.book_no || null,
+    details.page_no || null,
+    details.line_no || null,
+    details.sponsor_no1 || null,
+    details.sponsor_no2 || null,
+  ];
+
+  const query = `
+    UPDATE request 
+    SET ${columns}, 
+        details = ${detailsUpdate} 
+    WHERE requestID = ?
+  `;
+
+  db.query(query, [...values, ...detailsValues, id], (err, result) => {
+    if (err) {
+      console.error("Error updating request", err);
+      return res.status(500).json({ message: "Error updating request" });
+    }
+    return res.status(200).json({ message: "Update successful" });
+  });
+};
+
+const updateCerts = (req, res) => {
+  const { baptismData, id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ message: "Missing record ID" });
+  }
+
+  const { details, ...mainFields } = baptismData;
+
+  const columns = Object.keys(mainFields).map((key) => `${key} = ?`).join(", ");
+  const values = Object.values(mainFields);
+
+  const detailsUpdate = `
+    JSON_SET(
+      details,
+      '$.book_no', ?,
+      '$.page_no', ?,
+      '$.line_no', ?,
+      '$.record_id', ?
+    )
+  `;
+  const detailsValues = [
+    details.book_no || null,
+    details.page_no || null,
+    details.line_no || null,
+    details.record_id || null,
+  ];
+
+  const query = `
+    UPDATE request 
+    SET ${columns}, 
+        details = ${detailsUpdate} 
+    WHERE requestID = ?
+  `;
+
+  db.query(query, [...values, ...detailsValues, id], (err, result) => {
+    if (err) {
+      console.error("Error updating request", err);
+      return res.status(500).json({ message: "Error updating request" });
+    }
+    return res.status(200).json({ message: "Update successful" });
+  });
+};
+
+
 const addSponsorFee = (req, res) => {
   const { requestID } = req.body;
 
@@ -1050,6 +1140,8 @@ module.exports = {
   searchCertRecords,
   updateByParams,
   updateBulk,
+  updateConfirmationCert,
+  updateCerts,
   addSponsorFee,
   removeSponsorFee,
 };

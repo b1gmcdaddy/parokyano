@@ -108,9 +108,11 @@ const Settings = () => {
   const [priests, setPriests] = useState([]);
 
   const [formData, setFormData] = useState({
-    first_name: "",
-    middle_name: "",
-    last_name: "",
+    child_name:{
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+    },
     father_name: "",
     mother_name: "",
     officiating_priest: "",
@@ -245,6 +247,16 @@ const Settings = () => {
       ...prevState,
       archive_info: {
         ...formData.archive_info,
+        [e.target.name]: e.target.value,
+      },
+    }));
+  };
+
+  const handleName = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      child_name: {
+        ...formData.child_name,
         [e.target.name]: e.target.value,
       },
     }));
@@ -636,7 +648,7 @@ const Settings = () => {
                       <label>First Name:</label>
                       <TextField
                         name="first_name"
-                        onChange={handleChange}
+                        onChange={handleName}
                         autoComplete="off"
                         required
                         fullWidth
@@ -647,9 +659,8 @@ const Settings = () => {
                       <label>Middle Name:</label>
                       <TextField
                         name="middle_name"
-                        onChange={handleChange}
+                        onChange={handleName}
                         autoComplete="off"
-                        required
                         fullWidth
                         sx={TextFieldStyleModal}
                       />
@@ -658,7 +669,7 @@ const Settings = () => {
                       <label>Last Name:</label>
                       <TextField
                         name="last_name"
-                        onChange={handleChange}
+                        onChange={handleName}
                         autoComplete="off"
                         required
                         fullWidth
@@ -720,7 +731,7 @@ const Settings = () => {
                         sx={TextFieldStyleModal}
                       >
                         {priests.map((priest) => (
-                          <MenuItem key={priest.priestID} value={priest.first_name + " " + priest.last_name}>
+                          <MenuItem key={priest.priestID} value={priest.priestID}>
                             {priest.first_name + " " + priest.last_name}
                           </MenuItem>
                         ))}

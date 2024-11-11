@@ -31,6 +31,8 @@ const {
   searchTransactions,
   updateByParams,
   updateBulk,
+  updateConfirmationCert,
+  updateCerts,
   addSponsorFee,
   removeSponsorFee,
 } = require("../controllers/requestController");
@@ -65,6 +67,8 @@ router.get("/search-transactions", searchTransactions);
 router.get("/retrieve-multiple-byDate", retrieveMultipleDateFiltered);
 router.put("/update", updateByParams);
 router.put("/update-bulk", updateBulk);
+router.put("/update-confirmation-cert", updateConfirmationCert);
+router.put("/update-certificate", updateCerts);
 router.get("/upcoming", getUpcomingEvents);
 router.put("/add-sponsor-fee", addSponsorFee);
 router.put("/remove-sponsor-fee", removeSponsorFee);

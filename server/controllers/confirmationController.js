@@ -23,9 +23,9 @@ const retrieveByParams = (req, res) => {
 
 const addConfirmationRecord = (req, res) => {
   const request = req.body;
+  const child_name = JSON.stringify(request.child_name);
   const details = JSON.stringify(request.archive_info);
 
-  const child_name = `${request.first_name} ${request.middle_name} ${request.last_name}`;
   db.query(
     "INSERT INTO confirmation (child_name, father_name, mother_name, officiating_priest, confirmation_date, details) VALUES (?, ?, ?, ?, ?, ?)",
     [
