@@ -556,56 +556,56 @@ const renderCertificateContainer = () => {
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Legal Status</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>single</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>single</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Actual Address</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Mandaue</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Talisay</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Date of Birth</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>May 25,1998</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>June 8, 1999</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Place of Birth</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Cebu</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Cebu</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Date of Baptism</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>December 5, 2001</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>September 27, 2000</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Place of Baptism</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>GETHSEMANE</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>GETHSEMANE</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Father</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Miko Chavez</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Kyle Lopez</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Mother</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}></TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Hanna Chavez</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Nika Lopez</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px', height: '50px'}}>Witnesses</TableCell>
                       <TableCell sx={{ border: '1px solid black', padding: '0px 0px 0px 0px' }}>
                         <Box display="flex" flexDirection="column">
-                          <TableCell align="center" sx={{ borderBottom: '1px solid black', padding: '0px 0px 0px 0px'}}></TableCell>
-                          <TableCell align="center" sx={{ padding: '0px 0px 0px 0px'}}></TableCell>
+                          <TableCell align="center" sx={{ borderBottom: '1px solid black', padding: '0px 0px 0px 0px',  height: '25px'}}>{sponsors[0]?.name || ""}</TableCell>
+                          <TableCell align="center" sx={{ padding: '0px 0px 0px 0px',  height: '25px'}}>{sponsors[2]?.name || ""}</TableCell>
                         </Box>
                       </TableCell>
                       <TableCell sx={{ border: '1px solid black', padding: '0px 0px 0px 0px' }}>
                         <Box display="flex" flexDirection="column">
-                          <TableCell align="center" sx={{ borderBottom: '1px solid black', padding: '0px 0px 0px 0px'}}></TableCell>
-                          <TableCell align="center" sx={{ padding: '0px 0px 0px 0px'}}></TableCell>
+                          <TableCell align="center" sx={{ borderBottom: '1px solid black', padding: '0px 0px 0px 0px',  height: '25px'}}>{sponsors[1]?.name || ""}</TableCell>
+                          <TableCell align="center" sx={{ padding: '0px 0px 0px 0px',  height: '25px'}}>{sponsors[3]?.name || ""}</TableCell>
                         </Box>
                       </TableCell>
                     </TableRow>

@@ -33,6 +33,7 @@ const {
   updateBulk,
   updateConfirmationCert,
   updateCerts,
+  updateMarriageCert,
   addSponsorFee,
   removeSponsorFee,
 } = require("../controllers/requestController");
@@ -69,6 +70,7 @@ router.put("/update", updateByParams);
 router.put("/update-bulk", updateBulk);
 router.put("/update-confirmation-cert", updateConfirmationCert);
 router.put("/update-certificate", updateCerts);
+router.put("/update-marriage-cert", updateMarriageCert);
 router.get("/upcoming", getUpcomingEvents);
 router.put("/add-sponsor-fee", addSponsorFee);
 router.put("/remove-sponsor-fee", removeSponsorFee);
