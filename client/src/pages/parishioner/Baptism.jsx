@@ -17,7 +17,7 @@ import {
   RadioGroup,
   Button,
   FormHelperText,
-  Box
+  Box,
 } from "@mui/material";
 import axios from "axios";
 import config from "../../config";
@@ -34,13 +34,13 @@ import all from "../../components/PaymentModal";
 import GCashQR from "../../components/GCashQR";
 
 const containerStyle = {
-  margin: '0px',
-  padding: '0px',
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-  minWidth: '100%',
-}
+  margin: "0px",
+  padding: "0px",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
+  minWidth: "100%",
+};
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -202,7 +202,10 @@ const Baptism = () => {
   const cashModalInfo = {
     transaction_no: formData.transaction_no,
     fee: formData.donation,
-    requirements: null,
+    requirements: [
+      "Photocopy of Birth Certificate",
+      "Photocopy of Parent - Marriage Certificate",
+    ],
     message:
       formData.payment_method === "cash"
         ? "Note: Kindly go to the parish office during office hours to pay. Please submit the requirements and pay within 2 days to avoid cancellation."

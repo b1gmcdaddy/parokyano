@@ -831,6 +831,9 @@ const searchCertRecords = (req, res) => {
     father_name,
     birth_place,
     status,
+    spouse_firstName,
+    spouse_lastName,
+    preferred_date,
   } = req.query;
 
   const serviceId = req.query.service_id;
@@ -838,20 +841,40 @@ const searchCertRecords = (req, res) => {
   const queryParams = [];
 
   if (parseInt(serviceId) === 14) {
-    // for confirmation records
+    // For confirmation records
     query = `
       SELECT c.* 
       FROM confirmation c 
       WHERE c.child_name LIKE ? 
       OR c.father_name LIKE ? 
       OR c.mother_name LIKE ?`;
-
     queryParams.push(
       `%${first_name || ""}%`,
       `%${father_name || ""}%`,
       `%${mother_name || ""}%`
     );
+  } else if (parseInt(serviceId) === 7) {
+    // For wedding records
+    query = `
+      SELECT r.*, w.* 
+      FROM request r 
+      JOIN wedding w ON r.requestID = w.request_id
+      WHERE r.service_id = ? AND r.status = ?`;
+    queryParams.push(serviceId, status);
+
+    if (first_name || last_name || contact_no) {
+      query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR w.spouse_firstName LIKE ? OR w.spouse_lastName LIKE ? OR r.preferred_date LIKE ?)`;
+      queryParams.push(
+        `%${first_name || ""}%`,
+        `%${last_name || ""}%`,
+        `%${contact_no || ""}%`,
+        `%${spouse_firstName || ""}%`,
+        `%${spouse_lastName || ""}%`,
+        `%${preferred_date.slice(0, 10) || ""}%`
+      );
+    }
   } else {
+    // For other records
     query = `SELECT r.* FROM request r WHERE r.service_id = ? AND r.status = ?`;
     queryParams.push(serviceId, status);
 
@@ -873,17 +896,6 @@ const searchCertRecords = (req, res) => {
             `%${mother_name || ""}%`,
             `%${father_name || ""}%`,
             `%${birth_place || ""}%`
-          );
-        }
-        break;
-
-      case 7: // Wedding
-        if (first_name || last_name || contact_no) {
-          query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ?)`;
-          queryParams.push(
-            `%${first_name || ""}%`,
-            `%${last_name || ""}%`,
-            `%${contact_no || ""}%`
           );
         }
         break;
@@ -910,6 +922,7 @@ const searchCertRecords = (req, res) => {
         break;
     }
   }
+
   db.query(query, queryParams, (err, result) => {
     if (err) {
       console.error("Error retrieving matching records", err);
@@ -965,7 +978,9 @@ const updateConfirmationCert = (req, res) => {
 
   const { details, ...mainFields } = confirmationData;
 
-  const columns = Object.keys(mainFields).map((key) => `${key} = ?`).join(", ");
+  const columns = Object.keys(mainFields)
+    .map((key) => `${key} = ?`)
+    .join(", ");
   const values = Object.values(mainFields);
 
   const detailsUpdate = `
@@ -1011,7 +1026,9 @@ const updateCerts = (req, res) => {
 
   const { details, ...mainFields } = baptismData;
 
-  const columns = Object.keys(mainFields).map((key) => `${key} = ?`).join(", ");
+  const columns = Object.keys(mainFields)
+    .map((key) => `${key} = ?`)
+    .join(", ");
   const values = Object.values(mainFields);
 
   const detailsUpdate = `
@@ -1054,9 +1071,10 @@ const updateMarriageCert = (req, res) => {
 
   const { spouse_name, details, ...mainFields } = marriageData;
 
-  const columns = Object.keys(mainFields).map((key) => `${key} = ?`).join(", ");
+  const columns = Object.keys(mainFields)
+    .map((key) => `${key} = ?`)
+    .join(", ");
   const values = Object.values(mainFields);
-
 
   const spouseUpdate = `
     JSON_SET(
@@ -1097,15 +1115,18 @@ const updateMarriageCert = (req, res) => {
     WHERE requestID = ?
   `;
 
-  db.query(query, [...values, ...spouseValues, ...detailsValues, id], (err, result) => {
-    if (err) {
-      console.error("Error updating request", err);
-      return res.status(500).json({ message: "Error updating request" });
+  db.query(
+    query,
+    [...values, ...spouseValues, ...detailsValues, id],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating request", err);
+        return res.status(500).json({ message: "Error updating request" });
+      }
+      return res.status(200).json({ message: "Update successful" });
     }
-    return res.status(200).json({ message: "Update successful" });
-  });
+  );
 };
-
 
 const addSponsorFee = (req, res) => {
   const { requestID } = req.body;

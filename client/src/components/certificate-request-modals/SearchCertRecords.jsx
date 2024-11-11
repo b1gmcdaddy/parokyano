@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Box,
@@ -22,7 +22,7 @@ import CompareRecords from "./CompareRecords";
 import ConfirmationDialog from "../ConfirmationModal";
 import sendSMS from "../../utils/smsService";
 
-const SearchCertRecords = ({open, data, close, refreshList}) => {
+const SearchCertRecords = ({ open, data, close, refreshList }) => {
   const [certType, setCertType] = useState(null);
   const [confirmationData, setConfirmationData] = useState([]);
   const [confirmationID, setConfirmationID] = useState(null);
@@ -47,6 +47,7 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
   // };
 
   useEffect(() => {
+    console.log(data);
     const searchRecords = async () => {
       try {
         const res = await axios.get(`${config.API}/request/search-records`, {
@@ -66,6 +67,9 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
             father_name: data.father_name || "",
             birth_place: data.birth_place || "",
             status: "approved", // should be finished
+            preferred_date: data.preferred_date || "",
+            spouse_firstName: JSON.parse(data.spouse_name).firstName || "",
+            spouse_lastName: JSON.parse(data.spouse_name).lastName || "",
           },
         });
         setRecords(res.data.result);
@@ -133,11 +137,12 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -146,11 +151,12 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity="info" sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity="info" sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -163,7 +169,8 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
         open={open}
         onClose={close}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
+        aria-describedby="alert-dialog-description"
+      >
         <DialogContent>
           {/* START COMPARISON OF CERTIFICATE MODAL */}
           <CompareRecords
@@ -174,20 +181,22 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
             refreshList={refreshList}
           />
           {/* END COMPARISON OF CERTIFICATE MODAL */}
-          <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
             <Grid
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
                 margin: "10px",
-              }}>
+              }}
+            >
               <Typography
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
                   marginBottom: "10px",
-                }}>
+                }}
+              >
                 SEARCH RESULT
               </Typography>
               <IconButton
@@ -198,7 +207,8 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                   right: 8,
                   top: 8,
                   color: theme.palette.grey[500],
-                })}>
+                })}
+              >
                 <CloseIcon />
               </IconButton>
 
@@ -208,19 +218,21 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                 sx={{
                   height: "auto",
                   overflowY: "auto",
-                }}>
+                }}
+              >
                 <Grid
                   item
                   xs={12}
-                  sx={{display: "flex", justifyContent: "center"}}>
+                  sx={{ display: "flex", justifyContent: "center" }}
+                >
                   {records.length > 0 ? (
-                    <CheckCircleIcon sx={{color: "green", fontSize: "5em"}} />
+                    <CheckCircleIcon sx={{ color: "green", fontSize: "5em" }} />
                   ) : (
-                    <CancelIcon sx={{color: "#C34444", fontSize: "5em"}} />
+                    <CancelIcon sx={{ color: "#C34444", fontSize: "5em" }} />
                   )}
                 </Grid>
-                <Grid item xs={12} sx={{textAlign: "center"}}>
-                  <Typography sx={{fontWeight: "bold"}}>
+                <Grid item xs={12} sx={{ textAlign: "center" }}>
+                  <Typography sx={{ fontWeight: "bold" }}>
                     {records.length} {records.length > 1 ? "RECORDS" : "RECORD"}{" "}
                     FOUND
                   </Typography>
@@ -239,7 +251,8 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                           padding: "14px 14px",
                           backgroundColor: "#D9D9D9",
                           marginBottom: "8px",
-                        }}>
+                        }}
+                      >
                         <Typography>
                           {data.service_id == 3 || data.service_id == 4
                             ? rec.first_name + " " + rec.last_name
@@ -247,7 +260,7 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                         </Typography>
 
                         {/* Container for buttons */}
-                        <Box sx={{display: "flex", gap: 1}}>
+                        <Box sx={{ display: "flex", gap: 1 }}>
                           <Button
                             variant="contained"
                             sx={{
@@ -258,7 +271,8 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                                 backgroundColor: "#0036B1",
                               },
                             }}
-                            onClick={() => handleOpenCompareModal(rec)}>
+                            onClick={() => handleOpenCompareModal(rec)}
+                          >
                             View
                           </Button>
                         </Box>
@@ -276,12 +290,14 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                     justifyContent: "center",
                     alignItems: "center",
                     marginTop: "10px",
-                  }}>
+                  }}
+                >
                   <Grid
                     item
                     xs={12}
                     sm={12}
-                    sx={{display: "flex", justifyContent: "center"}}>
+                    sx={{ display: "flex", justifyContent: "center" }}
+                  >
                     <Button
                       variant="contained"
                       size="small"
@@ -293,7 +309,8 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                         "&:hover": {
                           backgroundColor: "maroon",
                         },
-                      }}>
+                      }}
+                    >
                       NOTIFY AND CANCEL REQUEST
                     </Button>
                   </Grid>
