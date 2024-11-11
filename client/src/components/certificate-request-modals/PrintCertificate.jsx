@@ -497,6 +497,12 @@ const renderCertificateContainer = () => {
                   Purpose: <span style={{textDecoration: 'underline'}}>{CertData.purpose}</span>
                 </Typography>
               </Grid>
+              <Grid item sm={6} sx={{marginTop: '120px'}}>
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                  <div style={{flex: .1, height: '1px', backgroundColor: 'black'}} />
+                  <div style={{flex: 1, height: '1px', backgroundColor: 'black'}} />
+                </div>
+              </Grid>
             </Grid>
           </Container>
         );
