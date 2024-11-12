@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const db = require("../controllers/db");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 require("dotenv").config();
 const emailjs = require("emailjs-com");
@@ -11,18 +11,18 @@ const refreshTokenSecret = "one-God-one-church";
 let refreshTokens = [];
 
 exports.login = (req, res) => {
-  const { email, password } = req.body;
+  const {email, password} = req.body;
 
   const query = `SELECT * FROM user WHERE email = ?`;
 
   db.query(query, [email], (err, results) => {
     if (err) {
       console.error("Error fetching user", err);
-      return res.status(500).json({ message: "Database error" });
+      return res.status(500).json({message: "Database error"});
     }
 
     if (results.length === 0) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({message: "Invalid credentials"});
     }
 
     const user = results[0];
@@ -30,20 +30,20 @@ exports.login = (req, res) => {
     const isMatch = bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({message: "Invalid credentials"});
     }
 
     const accessToken = jwt.sign(
-      { id: user.userID, role: user.user_type },
+      {id: user.userID, role: user.user_type},
       secretKey,
       {
         expiresIn: "15m",
       }
     );
     const refreshToken = jwt.sign(
-      { id: user.userID, role: user.user_type },
+      {id: user.userID, role: user.user_type},
       refreshTokenSecret,
-      { expiresIn: "7d" }
+      {expiresIn: "7d"}
     );
 
     console.log(accessToken);
@@ -61,39 +61,39 @@ exports.login = (req, res) => {
 };
 
 exports.token = (req, res) => {
-  const { token } = req.body;
+  const {token} = req.body;
   if (!token) return res.sendStatus(401);
   if (!refreshTokens.includes(token)) return res.sendStatus(403);
 
   jwt.verify(token, refreshTokenSecret, (err, user) => {
     if (err) return res.sendStatus(403);
     const newAccessToken = jwt.sign(
-      { id: user.userID, role: user.user_type },
+      {id: user.userID, role: user.user_type},
       secretKey,
-      { expiresIn: "15m" }
+      {expiresIn: "15m"}
     );
-    res.json({ accessToken: newAccessToken });
+    res.json({accessToken: newAccessToken});
   });
 };
 
 exports.logout = (req, res) => {
-  const { token } = req.body;
+  const {token} = req.body;
   refreshTokens = refreshTokens.filter((t) => t !== token);
   res.sendStatus(204);
 };
 
 exports.requestPasswordReset = async (req, res) => {
-  const { email, password } = req.body;
+  const {email, password} = req.body;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
   db.query("SELECT * FROM user WHERE email = ?", [email], (err, user) => {
     if (err) {
       console.error("Error fetching user", err);
-      return res.status(500).json({ message: "Database error" });
+      return res.status(500).json({message: "Database error"});
     }
 
     if (user.length === 0) {
-      return res.status(404).json({ message: "Email not found" });
+      return res.status(404).json({message: "Email not found"});
     }
 
     db.query(
@@ -102,11 +102,9 @@ exports.requestPasswordReset = async (req, res) => {
       (err, result) => {
         if (err) {
           console.error("Error updating user", err);
-          return res.status(500).json({ message: "Database error" });
+          return res.status(500).json({message: "Database error"});
         }
-        return res
-          .status(200)
-          .json({ message: "Password updated successfully" });
+        return res.status(200).json({message: "Password updated successfully"});
       }
     );
   });
