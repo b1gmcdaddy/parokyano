@@ -25,6 +25,7 @@ import IconButton from "@mui/material/IconButton";
 import CertificatesPending from "./certificates-list/CertificatesPending";
 import CertificatesForClaiming from "./certificates-list/CertificatesForClaiming";
 import all from "../../components/certificate-request-modals/AddCertRequest";
+import {useNavigate} from "react-router-dom";
 
 const CertificateRequests = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -34,7 +35,7 @@ const CertificateRequests = () => {
   const [inputValue, setValue] = useState("");
   const rowsPerPage = 10;
   const totalPages = Math.ceil(totalItems / rowsPerPage);
-
+  const navigate = useNavigate();
   const [openSelectionModal, setOpenSelectionModal] = useState(false);
   const [openAddCertModal, setOpenAddCertModal] = useState(false);
   const [selectedCertType, setSelectedCertType] = useState("Baptism");
@@ -73,13 +74,6 @@ const CertificateRequests = () => {
   };
   const handleCloseSelection = () => {
     setOpenSelectionModal(false);
-  };
-  const handleOpenAdd = () => {
-    setOpenSelectionModal(false);
-    setOpenAddCertModal(true); // Open the certificate modal
-  };
-  const handleCloseCertModal = () => {
-    setOpenAddCertModal(false);
   };
 
   const handleChange = (e) => {
@@ -131,26 +125,14 @@ const CertificateRequests = () => {
   const renderCertModal = () => {
     switch (selectedCertType) {
       case "Baptism":
-        return (
-          <all.AddBaptismCertReq
-            open={openAddCertModal}
-            onClose={handleCloseCertModal}
-          />
-        );
+        navigate("/certificate-baptism");
+        break;
       case "Marriage":
-        return (
-          <all.AddMarriageCertReq
-            open={openAddCertModal}
-            onClose={handleCloseCertModal}
-          />
-        );
+        navigate("/certificate-wedding");
+        break;
       case "Confirmation":
-        return (
-          <all.AddConfirmationCertReq
-            open={openAddCertModal}
-            onClose={handleCloseCertModal}
-          />
-        );
+        navigate("/certificate-confirmation");
+        break;
       default:
         return null;
     }
@@ -227,12 +209,15 @@ const CertificateRequests = () => {
               </FormControl>
             </DialogContent>
             <DialogActions>
-              <Button autoFocus onClick={handleOpenAdd} sx={{color: "#355173"}}>
+              <Button
+                autoFocus
+                onClick={renderCertModal}
+                sx={{color: "#355173"}}>
                 CONFIRM
               </Button>
             </DialogActions>
           </Dialog>
-          {renderCertModal()}
+
           {/*-----END MANUALLY ADD CERTIFICATE REQUEST SELECTION MODAL-----*/}
 
           <Box sx={{width: "100%", marginTop: "20px"}}>
