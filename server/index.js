@@ -45,6 +45,6 @@ app.get("/", (req, res) => {
   // connection.release();
 });
 
-app.listen(PORT, () => {
+app.listen(3000, () => {
   console.log(`port running on ${PORT}`);
 });

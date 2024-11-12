@@ -1,3 +1,3 @@
 export default {
-  API: "https://parokyano-ny9y.onrender.com",
+  API: "http://144.126.220.220",
 };
