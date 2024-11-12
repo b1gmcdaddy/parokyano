@@ -59,7 +59,7 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
   const [priests, setPriests] = useState([]);
   const [success, setSuccess] = useState(null);
   const [snackBarStyle, setSnackBarStyle] = useState(null);
-  const [error, setError] = useState({});
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     requestID: "",
     type: "",
@@ -362,256 +362,242 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
-        {formData && priests ? (
-          <>
-            <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
-              <b>Blessing Request Information</b>
-              <IconButton
-                aria-label="close"
-                onClick={handleClose}
-                sx={{position: "absolute", right: 8, top: 8}}>
-                <CloseIcon />
-              </IconButton>
-            </DialogTitle>
-            <DialogContent>
-              <Grid container spacing={2} sx={{padding: 3}}>
-                <Grid item sm={12}>
-                  <RadioGroup
-                    row
-                    name="type"
-                    sx={{marginTop: "-5px"}}
-                    value={formData.type}
-                    onChange={handleRadioChange}>
-                    <FormControlLabel
-                      value="House Blessing"
-                      control={<Radio size="small" />}
-                      label="House"
-                    />
-                    <FormControlLabel
-                      value="Company Blessing"
-                      control={<Radio size="small" />}
-                      label="Company"
-                    />
-                    <FormControlLabel
-                      value="others"
-                      control={<Radio size="small" />}
-                      label="Others:"
-                    />
-                    <TextField
-                      disabled={isOtherSelected ? false : true}
-                      value={otherValue}
-                      size="small"
-                      onChange={handleOtherChange}
-                      sx={{
-                        opacity: isOtherSelected ? 1 : 0.4,
-                        marginLeft: "10px",
-                      }}
-                    />
-                  </RadioGroup>
-                </Grid>
+        <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
+          <b>Blessing Request Information</b>
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={{position: "absolute", right: 8, top: 8}}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2} sx={{padding: 3}}>
+            <Grid item sm={12}>
+              <RadioGroup
+                row
+                name="type"
+                sx={{marginTop: "-5px"}}
+                value={formData.type}
+                onChange={handleRadioChange}>
+                <FormControlLabel
+                  value="House Blessing"
+                  control={<Radio size="small" />}
+                  label="House"
+                />
+                <FormControlLabel
+                  value="Company Blessing"
+                  control={<Radio size="small" />}
+                  label="Company"
+                />
+                <FormControlLabel
+                  value="others"
+                  control={<Radio size="small" />}
+                  label="Others:"
+                />
+                <TextField
+                  disabled={isOtherSelected ? false : true}
+                  value={otherValue}
+                  size="small"
+                  onChange={handleOtherChange}
+                  sx={{
+                    opacity: isOtherSelected ? 1 : 0.4,
+                    marginLeft: "10px",
+                  }}
+                />
+              </RadioGroup>
+            </Grid>
 
-                <Grid item sm={8}>
-                  <label>Name:</label>
-                  <TextField
-                    fullWidth
-                    name="first_name"
-                    onChange={handleChange}
-                    size="small"
-                    value={formData.first_name}></TextField>
-                </Grid>
+            <Grid item sm={8}>
+              <label>Name:</label>
+              <TextField
+                fullWidth
+                name="first_name"
+                onChange={handleChange}
+                size="small"
+                value={formData.first_name}></TextField>
+            </Grid>
 
-                <Grid item sm={4}>
-                  <label>Requested by:</label>
-                  <TextField
-                    fullWidth
-                    name="requested_by"
-                    onChange={handleChange}
-                    size="small"
-                    value={formData.requested_by}
-                    readonly
-                  />
-                </Grid>
+            <Grid item sm={4}>
+              <label>Requested by:</label>
+              <TextField
+                fullWidth
+                name="requested_by"
+                onChange={handleChange}
+                size="small"
+                value={formData.requested_by}
+                readonly
+              />
+            </Grid>
 
-                <Grid item sm={8}>
-                  <label>Address:</label>
-                  <TextField
-                    fullWidth
-                    name="address"
-                    onChange={handleChange}
-                    size="small"
-                    value={formData.address}
-                    readonly
-                  />
-                </Grid>
+            <Grid item sm={8}>
+              <label>Address:</label>
+              <TextField
+                fullWidth
+                name="address"
+                onChange={handleChange}
+                size="small"
+                value={formData.address}
+                readonly
+              />
+            </Grid>
 
-                <Grid item sm={4}>
-                  <label>Contact no:</label>
-                  <TextField
-                    fullWidth
-                    name="contact_no"
-                    onChange={handleChange}
-                    size="small"
-                    value={formData.contact_no}
-                    readonly
-                  />
-                </Grid>
+            <Grid item sm={4}>
+              <label>Contact no:</label>
+              <TextField
+                fullWidth
+                name="contact_no"
+                onChange={handleChange}
+                size="small"
+                value={formData.contact_no}
+                readonly
+              />
+            </Grid>
 
-                <Grid item xs={12}>
-                  <hr className="my-3" />
-                </Grid>
+            <Grid item xs={12}>
+              <hr className="my-3" />
+            </Grid>
 
-                <Grid item xs={12} sm={4}>
-                  <label>Selected Priest:</label>
-                  <TextField
-                    value={formData.priest_id}
-                    size="small"
-                    name="priest_id"
-                    onChange={handleChange}
-                    select
-                    fullWidth>
-                    {priests.map((priest) => (
-                      <MenuItem key={priest.priestID} value={priest.priestID}>
-                        {priest.first_name + " " + priest.last_name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <label>Selected Date:</label>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      disablePast
-                      fullWidth
-                      sx={TextFieldStyle}
-                      value={
-                        formData.preferred_date
-                          ? dayjs(formData.preferred_date)
-                          : null
-                      }
-                      onChange={(date) =>
-                        handleDateChange("preferred_date", date)
-                      }
-                      renderInput={(params) => (
-                        <TextField {...params} required />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <label>Selected Time:</label>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <TimePicker
-                      fullWidth
-                      timeSteps={{hours: 30, minutes: 30}}
-                      minTime={dayjs().set("hour", 6)}
-                      maxTime={dayjs().set("hour", 19)}
-                      sx={TextFieldStyle}
-                      value={
-                        data.preferred_time
-                          ? dayjs(data.preferred_time, "HH:mm:ss")
-                          : null
-                      }
-                      onChange={(time) =>
-                        handleTimeChange("preferred_time", time)
-                      }
-                      renderInput={(params) => (
-                        <TextField {...params} required />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
-                  <Button
-                    variant="contained"
-                    onClick={() => handleOpenDialog("reschedule")}
-                    sx={{
-                      bgcolor: "#247E38",
-                      marginTop: "24px",
-                      height: "40px",
-                      fontWeight: "bold",
-                      color: "white",
-                      "&:hover": {bgcolor: "#578A62"},
-                    }}>
-                    Reschedule
-                  </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <label>Approved by:</label>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    disabled
-                    value={approver?.first_name + " " + approver?.last_name}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <label>Transaction Number:</label>
-                  <Paper
-                    elevation={1}
-                    sx={{
-                      height: "40px",
-                      alignItems: "center",
-                      display: "flex",
-                      justifyContent: "center",
-                      backgroundColor: "#d1d1d1",
-                      fontWeight: "bold",
-                    }}>
-                    {data.transaction_no}
-                  </Paper>
-                </Grid>
-              </Grid>
-            </DialogContent>
-
-            <DialogActions>
-              <Grid
-                container
+            <Grid item xs={12} sm={4}>
+              <label>Selected Priest:</label>
+              <TextField
+                value={formData.priest_id}
+                size="small"
+                name="priest_id"
+                onChange={handleChange}
+                select
+                fullWidth>
+                {priests.map((priest) => (
+                  <MenuItem key={priest.priestID} value={priest.priestID}>
+                    {priest.first_name + " " + priest.last_name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <label>Selected Date:</label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  disablePast
+                  fullWidth
+                  sx={TextFieldStyle}
+                  value={
+                    formData.preferred_date
+                      ? dayjs(formData.preferred_date)
+                      : null
+                  }
+                  onChange={(date) => handleDateChange("preferred_date", date)}
+                  renderInput={(params) => <TextField {...params} required />}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <label>Selected Time:</label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  fullWidth
+                  timeSteps={{hours: 30, minutes: 30}}
+                  minTime={dayjs().set("hour", 6)}
+                  maxTime={dayjs().set("hour", 19)}
+                  sx={TextFieldStyle}
+                  value={
+                    data.preferred_time
+                      ? dayjs(data.preferred_time, "HH:mm:ss")
+                      : null
+                  }
+                  onChange={(time) => handleTimeChange("preferred_time", time)}
+                  renderInput={(params) => <TextField {...params} required />}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
+              <Button
+                variant="contained"
+                onClick={() => handleOpenDialog("reschedule")}
                 sx={{
+                  bgcolor: "#247E38",
+                  marginTop: "24px",
+                  height: "40px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": {bgcolor: "#578A62"},
+                }}>
+                Reschedule
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <label>Approved by:</label>
+              <TextField
+                fullWidth
+                size="small"
+                disabled
+                value={approver?.first_name + " " + approver?.last_name}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <label>Transaction Number:</label>
+              <Paper
+                elevation={1}
+                sx={{
+                  height: "40px",
+                  alignItems: "center",
                   display: "flex",
                   justifyContent: "center",
-                  alignItems: "center",
+                  backgroundColor: "#d1d1d1",
+                  fontWeight: "bold",
                 }}>
-                <Grid
-                  item
-                  sm={12}
-                  sx={{
-                    display: "flex",
-                    margin: "-40px 0 10px 0",
-                    justifyContent: "center",
-                    gap: "20px",
-                  }}>
-                  <Button
-                    variant="contained"
-                    onClick={() => handleOpenDialog("update")}
-                    sx={{
-                      bgcolor: "#CDAB52",
-                      marginTop: "24px",
-                      height: "40px",
-                      fontWeight: "bold",
-                      color: "white",
-                      "&:hover": {bgcolor: "#A58228"},
-                    }}>
-                    UPDATE
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={() => handleOpenDialog("cancel")}
-                    sx={{
-                      bgcolor: "#C34444",
-                      marginTop: "24px",
-                      height: "40px",
-                      fontWeight: "bold",
-                      color: "white",
-                      "&:hover": {bgcolor: "#f44336"},
-                    }}>
-                    CANCEL
-                  </Button>
-                </Grid>
-              </Grid>
-            </DialogActions>
-          </>
-        ) : (
-          <Skeleton variant="rectangular" height={400} />
-        )}
+                {data.transaction_no}
+              </Paper>
+            </Grid>
+          </Grid>
+        </DialogContent>
+
+        <DialogActions>
+          <Grid
+            container
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+            <Grid
+              item
+              sm={12}
+              sx={{
+                display: "flex",
+                margin: "-40px 0 10px 0",
+                justifyContent: "center",
+                gap: "20px",
+              }}>
+              <Button
+                variant="contained"
+                onClick={() => handleOpenDialog("update")}
+                sx={{
+                  bgcolor: "#CDAB52",
+                  marginTop: "24px",
+                  height: "40px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": {bgcolor: "#A58228"},
+                }}>
+                UPDATE
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => handleOpenDialog("cancel")}
+                sx={{
+                  bgcolor: "#C34444",
+                  marginTop: "24px",
+                  height: "40px",
+                  fontWeight: "bold",
+                  color: "white",
+                  "&:hover": {bgcolor: "#f44336"},
+                }}>
+                CANCEL
+              </Button>
+            </Grid>
+          </Grid>
+        </DialogActions>
       </Dialog>
 
       <ConfirmationDialog

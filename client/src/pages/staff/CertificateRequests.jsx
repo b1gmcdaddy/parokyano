@@ -24,7 +24,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import CertificatesPending from "./certificates-list/CertificatesPending";
 import CertificatesForClaiming from "./certificates-list/CertificatesForClaiming";
-import all from "../../components/certificate-request-modals/AddCertRequest";
 import {useNavigate} from "react-router-dom";
 
 const CertificateRequests = () => {

@@ -121,7 +121,7 @@ const TrackRequest = () => {
                   value={request.transaction_no}
                   sx={inputstyling}
                   inputProps={{
-                    style: { textAlign: "center" },
+                    style: {textAlign: "center"},
                   }}
                 />
 
@@ -176,16 +176,15 @@ const TrackRequest = () => {
                     ? "CANCELLED"
                     : "FINISHED"}
                 </Typography>
+                <div className="md:mt-8 md:flex justify-between p-8">
+                  <Typography>
+                    {request.date_requested.substring(0, 10)}
+                  </Typography>
+                  <Typography>Request Submitted</Typography>
+                </div>
 
                 {activity.length > 0 ? (
                   <div>
-                    <div className="md:mt-8 md:flex justify-between p-8">
-                      <Typography>
-                        {activity[0]?.date_requested.substring(0, 10)}
-                      </Typography>
-                      <Typography>Request Submitted</Typography>
-                    </div>
-
                     {/* Display the logs */}
                     {activity.map((item) => (
                       <div
@@ -196,9 +195,7 @@ const TrackRequest = () => {
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div>loading...</div>
-                )}
+                ) : null}
               </Paper>
             </Grid>
           </Grid>
