@@ -10,12 +10,12 @@ const secretKey = "please-Lord-graduate-mi";
 const refreshTokenSecret = "one-God-one-church";
 let refreshTokens = [];
 
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
   const {email, password} = req.body;
 
   const query = `SELECT * FROM user WHERE email = ?`;
 
-  db.query(query, [email], (err, results) => {
+  db.query(query, [email], async (err, results) => {
     if (err) {
       console.error("Error fetching user", err);
       return res.status(500).json({message: "Database error"});
@@ -27,7 +27,12 @@ exports.login = (req, res) => {
 
     const user = results[0];
     console.log(user);
-    const isMatch = bcrypt.compare(password, user.password);
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({message: "Invalid credentials"});
+    }
 
     if (!isMatch) {
       return res.status(401).json({message: "Invalid credentials"});
