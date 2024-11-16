@@ -29,7 +29,7 @@ pool.getConnection((err, connection) => {
 });
 
 const cron = new CronJob(
-  "0 0 * * *",
+  "* * * * *",
   () => {
     console.log("running cron job");
     pool.query(
