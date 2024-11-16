@@ -5,6 +5,7 @@ const bp = require("body-parser");
 const app = require("./routes");
 const cors = require("cors");
 require("dotenv").config();
+const { CronJob } = require("cron");
 
 const pool = mysql.createPool({
   host: process.env.MYSQL_ADDON_HOST,
@@ -27,15 +28,28 @@ pool.getConnection((err, connection) => {
   connection.release();
 });
 
-// app.use(bp.urlencoded({ extended: true }));
-
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173", // Allow requests from this origin
-//     methods: ["GET", "POST", "PUT", "DELETE"], // Specify the allowed HTTP methods
-//     allowedHeaders: ["Content-Type", "Authorization"], // Specify the allowed headers
-//   })
-// );
+const cron = new CronJob(
+  "0 0 * * *",
+  () => {
+    console.log("running cron job");
+    pool.query(
+      `
+      UPDATE request SET status = 'finished' WHERE status = 'approved' AND preferred_date < CURDATE() - INTERVAL 1 DAY;
+    `,
+      (err, result) => {
+        if (err) {
+          console.error("error updating requests", err);
+          return;
+        }
+        console.log("updated requests!");
+      }
+    );
+  },
+  null,
+  true,
+  "Asia/Manila"
+);
+cron.start();
 
 app.get("/", (req, res) => {
   res.json({
@@ -45,6 +59,6 @@ app.get("/", (req, res) => {
   // connection.release();
 });
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
   console.log(`port running on ${PORT}`);
 });
