@@ -10,7 +10,7 @@ import {
   FormControlLabel,
   Checkbox,
   FormHelperText,
-  Box
+  Box,
 } from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
@@ -27,13 +27,13 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import GCashQR from "../../../components/GCashQR";
 
 const containerStyle = {
-  margin: '0px',
-  padding: '0px',
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-  minWidth: '100%',
-}
+  margin: "0px",
+  padding: "0px",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
+  minWidth: "100%",
+};
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -145,10 +145,6 @@ const Thanksgiving = () => {
     e.preventDefault();
     let validate = ValidateForm(formData);
     setErrors(validate);
-
-    if (formData.payment_method == "gcash" && !formData.gcashRefNo) {
-      return;
-    }
 
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
@@ -460,8 +456,13 @@ const Thanksgiving = () => {
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
-                  inputProps={{maxLength: 11}}
+                  inputProps={{maxLength: 13}}
                 />
+                {errors.gcashRefNo != null && (
+                  <FormHelperText sx={{color: "red"}}>
+                    {errors.gcashRefNo}
+                  </FormHelperText>
+                )}
               </Grid>
             ) : null}
           </Grid>
