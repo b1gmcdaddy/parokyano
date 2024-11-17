@@ -36,6 +36,7 @@ const {
   updateMarriageCert,
   addSponsorFee,
   removeSponsorFee,
+  retrieveTransactions,
 } = require("../controllers/requestController");
 
 router.post("/create-intention", createRequestIntention);
@@ -74,5 +75,6 @@ router.put("/update-marriage-cert", updateMarriageCert);
 router.get("/upcoming", getUpcomingEvents);
 router.put("/add-sponsor-fee", addSponsorFee);
 router.put("/remove-sponsor-fee", removeSponsorFee);
+router.get("/retrieve-transactions", retrieveTransactions);
 
 module.exports = router;

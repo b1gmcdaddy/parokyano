@@ -28,6 +28,7 @@ pool.getConnection((err, connection) => {
   connection.release();
 });
 
+<<<<<<< HEAD
 // const cron = new CronJob(
 //   "* * * * *",
 //   () => {
@@ -50,6 +51,30 @@ pool.getConnection((err, connection) => {
 //   "Asia/Manila"
 // );
 // cron.start();
+=======
+const cron = new CronJob(
+  "0 0 * * *",
+  () => {
+    console.log("running cron job");
+    pool.query(
+      `
+      UPDATE request SET status = 'finished' WHERE status = 'approved' AND preferred_date < CURDATE() AND payment_status = 'paid';
+    `,
+      (err, result) => {
+        if (err) {
+          console.error("error updating requests", err);
+          return;
+        }
+        console.log("updated requests!");
+      }
+    );
+  },
+  null,
+  true,
+  "Asia/Manila"
+);
+cron.start();
+>>>>>>> dee4c35de1fbbc65d40eaad4de470c17115594d6
 
 app.get("/", (req, res) => {
   res.json({

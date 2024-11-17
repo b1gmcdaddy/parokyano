@@ -11,7 +11,7 @@ import {
   Radio,
   MenuItem,
   FormHelperText,
-  Box
+  Box,
 } from "@mui/material";
 import Footer from "../../../components/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,13 +32,13 @@ import ValidateForm from "../../../utils/Validators";
 import dayjs from "dayjs";
 
 const containerStyle = {
-  margin: '0px',
-  padding: '0px',
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-  minWidth: '100%',
-}
+  margin: "0px",
+  padding: "0px",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
+  minWidth: "100%",
+};
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -114,10 +114,6 @@ const OutsideMass = () => {
     setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
-  useEffect(() => {
-    console.log(formData.preferred_time);
-  }, [formData.preferred_time]);
-
   const handleCaptchaChange = (value) => {
     setCaptchaValue(value);
   };
@@ -136,6 +132,7 @@ const OutsideMass = () => {
         console.error("error submitting to server", err);
       }
     }
+    return;
   };
 
   const handleRadioChange = (e) => {
