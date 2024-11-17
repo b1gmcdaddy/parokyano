@@ -850,9 +850,6 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
   }, [open, data]);
 
   useEffect(() => {
-    // console.log(formData.preferred_date);
-    // console.log(dayjs(formData.preferred_time, "HH:mm:ss").hour());
-    // console.log(dayjs(formData.preferred_date).get("day"));
     if (
       dayjs(formData.preferred_date).get("day") == 6 &&
       dayjs(formData.preferred_time, "HH:mm:ss").hour() == 6
@@ -937,7 +934,6 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
     formData.priest_id,
     open,
   ]);
-
   // END RETRIEVE WEDDING DETAILS
 
   // START FORM HANDLERS AND CONTROLS
@@ -1105,12 +1101,12 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
               });
               return;
             }
-            axios.put(`${config.API}/request/update-bulk`, {
+            await axios.put(`${config.API}/request/update-bulk`, {
               formData,
               id: data.requestID,
               user_id: currentUser.id,
             });
-            axios.put(`${config.API}/request/approve-service`, null, {
+            await axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
                 val: "approved",
@@ -1124,7 +1120,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                 val5: formData.requestID,
               },
             });
-            axios.post(`${config.API}/priest/createPriestSched`, {
+            await axios.post(`${config.API}/priest/createPriestSched`, {
               date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
               activity: `Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
               start_time: formData.preferred_time,
@@ -1133,7 +1129,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
               request_id: formData.requestID,
             });
 
-            axios.post(`${config.API}/logs/create`, {
+            await axios.post(`${config.API}/logs/create`, {
               activity: `Approved Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
               user_id: currentUser.id,
               request_id: formData.requestID,

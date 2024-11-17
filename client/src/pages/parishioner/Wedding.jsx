@@ -100,6 +100,16 @@ const Wedding = () => {
     isParishioner: "",
   });
 
+  const isFormValid = () => {
+    const isGroomValid = Object.values(formData.groomDetails).every(
+      (value) => value.trim() !== ""
+    );
+    const isBrideValid = Object.values(formData.brideDetails).every(
+      (value) => value.trim() !== ""
+    );
+    return isGroomValid && isBrideValid;
+  };
+
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -150,7 +160,7 @@ const Wedding = () => {
       } catch (err) {
         console.log(err);
       }
-      // console.log(formData);
+      //console.log(formData);
     }
   };
 
@@ -773,6 +783,7 @@ const Wedding = () => {
             item
             sx={{display: "flex", justifyContent: "center", marginTop: "5em"}}>
             <Button
+              disabled={!isFormValid()}
               variant="contained"
               type="submit"
               sx={{backgroundColor: "#355173"}}>

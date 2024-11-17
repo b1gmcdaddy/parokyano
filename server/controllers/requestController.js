@@ -225,8 +225,8 @@ const createRequestWedding = async (req, res) => {
     }
 
     const insertWeddingQuery = `INSERT INTO wedding 
-      (spouse_firstName, spouse_middleName, spouse_lastName, isCatholic, request_id)
-      VALUES (?, ?, ?, ?, ?)`;
+      (spouse_firstName, spouse_middleName, spouse_lastName, isCatholic, request_id, groomDetails, brideDetails)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
     const weddingValues = [
       request.wedding_details.firstName,
@@ -234,6 +234,8 @@ const createRequestWedding = async (req, res) => {
       request.wedding_details.lastName,
       request.wedding_details.isCatholic,
       requestID,
+      JSON.stringify(request.groomDetails),
+      JSON.stringify(request.brideDetails),
     ];
 
     await db.promise().query(insertWeddingQuery, weddingValues);
@@ -372,7 +374,7 @@ const retrieveMultipleParams = (req, res) => {
 
 //only transactions
 const retrieveTransactions = (req, res) => {
-  const { col1, val1, col2, val2, order, page, limit } = req.query;
+  const {col1, val1, col2, val2, order, page, limit} = req.query;
   const offset = Number(page - 1) * parseInt(limit);
 
   const query = `SELECT r.*, s.name AS 'service_name' FROM request r, service s WHERE (r.${col1} = ? OR r.status = 'finished') AND r.${col2} = ? AND r.service_id = s.serviceID ORDER BY ${order} DESC LIMIT ? OFFSET ?`;
@@ -382,7 +384,7 @@ const retrieveTransactions = (req, res) => {
       console.error("error retrieving requests", err);
       return res.status(500);
     }
-    res.status(200).json({ result });
+    res.status(200).json({result});
   });
 };
 
