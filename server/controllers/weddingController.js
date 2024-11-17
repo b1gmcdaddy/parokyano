@@ -238,8 +238,29 @@ const updateRequirements = (req, res) => {
   }
 };
 
+const updateBulk = (req, res) => {
+  const {weddingInfo, id} = req.body;
+  const Columns = Object.keys(weddingInfo)
+    .map((key) => `${key} = ?`)
+    .join(", ");
+  const Values = [...Object.values(weddingInfo), id];
+
+  db.query(
+    `UPDATE wedding SET ${Columns} WHERE request_id = ?`,
+    Values,
+    (err, result) => {
+      if (err) {
+        console.error("Error updating wedding", err);
+        return res.status(500).json({message: "Error updating wedding"});
+      }
+      res.status(200).json({message: "Update successful"});
+    }
+  );
+};
+
 module.exports = {
   retrieveByParams,
   updateRequirements,
   updateWeddingDetails,
+  updateBulk,
 };
