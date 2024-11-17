@@ -5,7 +5,7 @@ const bp = require("body-parser");
 const app = require("./routes");
 const cors = require("cors");
 require("dotenv").config();
-const { CronJob } = require("cron");
+const {CronJob} = require("cron");
 
 const pool = mysql.createPool({
   host: process.env.MYSQL_ADDON_HOST,
@@ -28,28 +28,28 @@ pool.getConnection((err, connection) => {
   connection.release();
 });
 
-const cron = new CronJob(
-  "* * * * *",
-  () => {
-    console.log("running cron job");
-    pool.query(
-      `
-      UPDATE request SET status = 'finished' WHERE status = 'approved' AND preferred_date < CURDATE() - INTERVAL 1 DAY;
-    `,
-      (err, result) => {
-        if (err) {
-          console.error("error updating requests", err);
-          return;
-        }
-        console.log("updated requests!");
-      }
-    );
-  },
-  null,
-  true,
-  "Asia/Manila"
-);
-cron.start();
+// const cron = new CronJob(
+//   "* * * * *",
+//   () => {
+//     console.log("running cron job");
+//     pool.query(
+//       `
+//       UPDATE request SET status = 'finished' WHERE status = 'approved' AND preferred_date < CURDATE() - INTERVAL 1 DAY;
+//     `,
+//       (err, result) => {
+//         if (err) {
+//           console.error("error updating requests", err);
+//           return;
+//         }
+//         console.log("updated requests!");
+//       }
+//     );
+//   },
+//   null,
+//   true,
+//   "Asia/Manila"
+// );
+// cron.start();
 
 app.get("/", (req, res) => {
   res.json({

@@ -151,7 +151,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
           reqID: id,
         },
       });
-      console.log(response.data);
+      //console.log(response.data);
       setDetails({
         birthCert: response.data.result[0].birthCert,
         parent_marriageCert: response.data.result[0].parent_marriageCert,
@@ -230,7 +230,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
         },
       }
     );
-    console.log(avail.data.message);
+    //  console.log(avail.data.message);
     setAvailable(avail.data.message);
   };
 
@@ -264,7 +264,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
     const currentUser = JSON.parse(localStorage.getItem("user"));
     switch (action) {
       case "approve":
-        console.log(formData);
+        // console.log(formData);
         try {
           if (
             formData.payment_status == "paid" &&
@@ -279,7 +279,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
               details,
               id: data.requestID,
             });
-            console.log("updated!", res);
+            //  console.log("updated!", res);
             const response = await axios.get(
               `${config.API}/priest/retrieve-schedule-by-params`,
               {
@@ -291,7 +291,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                 },
               }
             );
-            console.log(response.status);
+            //  console.log(response.status);
             if (response.status !== 200) {
               setError({
                 message: response.data.message,
@@ -312,7 +312,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                   val5: data.requestID,
                 },
               });
-              console.log("request success!");
+              //  console.log("request success!");
               axios.post(`${config.API}/priest/createPriestSched`, {
                 date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
                 activity: `Baptism for ${formData.first_name} ${formData.last_name}`,
@@ -321,13 +321,13 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                 priest_id: formData.priest_id,
                 request_id: data.requestID,
               });
-              console.log("priest sched success!");
+              // console.log("priest sched success!");
               axios.post(`${config.API}/logs/create`, {
                 activity: `Approved Baptism for ${formData.first_name} ${formData.last_name}`,
                 user_id: currentUser.id,
                 request_id: data.requestID,
               });
-              console.log("logs success!");
+              //  console.log("logs success!");
               // sendSMS(data.service_id, formData, "approve");
               closeInfoModal("approve");
               refreshList();
@@ -362,7 +362,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
             user_id: currentUser.id,
             request_id: data.requestID,
           });
-          console.log("logs success!");
+          //   console.log("logs success!");
           closeInfoModal("update");
         }
         break;
