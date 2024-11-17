@@ -26,10 +26,10 @@ const authenticateStaff = (req, res, next) => {
   authenticateToken(req, res, () => {
     if (req.user.role !== "staff") {
       console.log("Access denied. Role:", req.user.role);
-      return res.status(403).json({ error: "Access denied" });
+      return res.status(403).json({error: "Access denied"});
     }
     next();
   });
 };
 
-module.exports = { authenticateToken, authenticateStaff };
+module.exports = {authenticateToken, authenticateStaff};

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authenticateStaff } = require("../middleware/authMiddleware");
+const {authenticateStaff} = require("../middleware/authMiddleware");
 const {
   createRequestIntention,
   createRequestCertificate,
