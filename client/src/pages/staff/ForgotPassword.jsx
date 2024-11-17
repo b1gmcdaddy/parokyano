@@ -1,16 +1,9 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import StaffAppBar from "../../components/StaffAppBar";
-import {
-  Box,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Alert,
-} from "@mui/material";
+import {Box, Paper, TextField, Button, Typography, Alert} from "@mui/material";
 import logo from "../../assets/logo.png";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import config from "../../config";
 import emailjs from "@emailjs/browser";
 
@@ -69,41 +62,37 @@ const ForgotPassword = () => {
           justifyContent: "center",
           alignItems: "center",
           position: "relative",
-        }}
-      >
+        }}>
         <Box
           sx={{
             position: "absolute",
             top: "8%",
             display: "flex",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <img
             src={logo}
             alt="Logo"
-            style={{ width: "220px", height: "200px" }}
+            style={{width: "220px", height: "200px"}}
           />
         </Box>
         <Paper
           elevation={2}
           sx={{
-            padding: { md: 6, xs: 6 },
+            padding: {md: 6, xs: 6},
             display: "flex",
             flexDirection: "column",
             gap: 2,
             width: "100%",
             maxWidth: "600px",
             marginTop: "50px",
-          }}
-        >
+          }}>
           <Typography
             sx={{
               fontWeight: "bold",
-              fontSize: { md: "1.55em", xs: "1.25em" },
+              fontSize: {md: "1.55em", xs: "1.25em"},
               textAlign: "center",
-            }}
-          >
+            }}>
             Forgot Password
           </Typography>
           {error && <Alert severity="error">{error}</Alert>}{" "}
@@ -116,25 +105,23 @@ const ForgotPassword = () => {
               variant="outlined"
               fullWidth
               onChange={handleChange}
-              sx={{ marginBottom: "12px " }}
+              sx={{marginBottom: "12px "}}
             />
             <Button
               variant="contained"
               fullWidth
-              sx={{ backgroundColor: "#355173", marginTop: "12px" }}
-              type="submit"
-            >
+              sx={{backgroundColor: "#355173", marginTop: "12px"}}
+              type="submit">
               Submit
             </Button>
             {message && <p>{message}</p>}
           </form>
-          <Typography sx={{ textAlign: "center", marginTop: "16px" }}>
+          <Typography sx={{textAlign: "center", marginTop: "16px"}}>
             <Button
               type="button"
               onClick={() => {
-                navigate("/forgot-password");
-              }}
-            >
+                navigate("/login");
+              }}>
               Switch to Login
             </Button>
           </Typography>

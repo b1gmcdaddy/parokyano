@@ -3,7 +3,9 @@ import config from "../config";
 
 const sendSMS = async (serviceId, data, action) => {
   let message = "";
+  let priestName = "";
   let recipient = data.contact_no;
+
   // FOR IDENTIFYIN SERVICE TYPE
   let serviceType =
     serviceId === 1
@@ -29,6 +31,17 @@ const sendSMS = async (serviceId, data, action) => {
       : serviceId === 13
       ? "Blessing"
       : "";
+
+  // FOR MAPPING WHICH PRIEST
+  const response = await axios.get(`${config.API}/priest/retrieve`, {
+    params: {
+      col: "priestID",
+      val: data.priest_id,
+    },
+  });
+  const result = response.data[0];
+  priestName = result.first_name + " " + result.last_name;
+
   // FOR THE GREETING IN GHE MSG
   let recipientName =
     serviceId === 2 ||
@@ -45,7 +58,7 @@ const sendSMS = async (serviceId, data, action) => {
       message = `Greetings ${recipientName},\n
 We are pleased to inform you that your request for ${serviceType} has been APPROVED. Below are the details:\n
 Transaction Number: ${data.transaction_no}
-Assigned Priest: Fr. Priest A
+Assigned Priest: ${priestName}
 Date: ${data.preferred_date}
 Time: ${data.preferred_time}\n
 [This is an auto-generated message] If you have any questions, feel free to contact our office at 346-9560 or +639690217771.\n
@@ -56,7 +69,7 @@ Gethsemane Parish`;
       message = `Greetings ${recipientName},\n
 This message is to inform you that your Wedding interview schedule has been set. Below are the details:\n
 Transaction Number: ${data.transaction_no}
-Assigned Priest: Fr. Priest A
+Assigned Priest: ${priestName}
 Date: ${data.interview_date}
 Time: ${data.interview_time}\n
 [This is an auto-generated message] If you have any questions, feel free to contact our office at 346-9560 or +639690217771.\n
@@ -94,7 +107,7 @@ Gethsemane Parish `;
       message = `Greetings ${recipientName},\n
 Your request for ${serviceType} has been rescheduled. Below are the details:\n
 Transaction Number: ${data.transaction_no}
-Assigned Priest: ${data.priest_id}
+Assigned Priest: ${priestName}
 Date: ${data.preferred_date}
 Time: ${data.preferred_time}\n
 [This is an auto-generated message] Feel free to contact our office at 346-9560 or +639690217771 if you have any questions.\n

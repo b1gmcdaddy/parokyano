@@ -15,6 +15,19 @@ export default function ValidateForm(data) {
     }
   }
 
+  // FOR GCASH REF NUMBERS
+  if (data.gcashRefNo !== null && data.payment_method === "gcash") {
+    if (data.gcashRefNo.length === 13) {
+      const isNumeric = validator.isNumeric(data.gcashRefNo);
+      if (!isNumeric) {
+        errors.gcashRefNo =
+          "GCash Reference Number should only contain numbers";
+      }
+    } else {
+      errors.gcashRefNo = "GCash Reference Number must have 13 digits";
+    }
+  }
+
   // FOR REQUEST MASS DATES
   // note: might be refactored to lessen lines
   // expected data format = "YYYY-MM-DD" and "HH-mm-ss"

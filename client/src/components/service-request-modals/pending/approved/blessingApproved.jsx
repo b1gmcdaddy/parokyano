@@ -317,7 +317,7 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
               user_id: currentUser.id,
               request_id: data.requestID,
             }),
-            // sendSMS(data.service_id, formData, "reschedule"),
+            //sendSMS(data.service_id, formData, "reschedule"),
             closeInfoModal("reschedule"),
           ]);
         } catch (err) {
