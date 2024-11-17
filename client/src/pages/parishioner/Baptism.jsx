@@ -82,7 +82,7 @@ const Baptism = () => {
       isLiveIn: 0,
       marriage_date: null,
       marriage_place: "",
-      liveIn_years: 0,
+      liveIn_years: "",
       birthCert: 0,
       parent_marriageCert: 0,
     },
@@ -103,6 +103,10 @@ const Baptism = () => {
     ],
     donation: 1600.0,
   });
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   useEffect(() => {
     if (
@@ -228,6 +232,7 @@ const Baptism = () => {
         console.log(error);
       }
     }
+    return;
   };
 
   return (

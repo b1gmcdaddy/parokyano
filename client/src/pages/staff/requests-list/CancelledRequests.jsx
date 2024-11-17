@@ -275,7 +275,7 @@ const CancelledRequests = ({ filter, page, totalItems, handlePageChange }) => {
                       backgroundColor: "#e0e0e0",
                     }}
                   >
-                    {req.service_name.length > 0
+                    {req.service_name.length > 20
                       ? req.service_name.substring(0, 20) + "..."
                       : req.service_name}
                   </TableCell>

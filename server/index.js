@@ -29,12 +29,12 @@ pool.getConnection((err, connection) => {
 });
 
 const cron = new CronJob(
-  "* * * * *",
+  "0 0 * * *",
   () => {
     console.log("running cron job");
     pool.query(
       `
-      UPDATE request SET status = 'finished' WHERE status = 'approved' AND preferred_date < CURDATE() - INTERVAL 1 DAY;
+      UPDATE request SET status = 'finished' WHERE status = 'approved' AND preferred_date < CURDATE() AND payment_status = 'paid';
     `,
       (err, result) => {
         if (err) {

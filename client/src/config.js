@@ -1,3 +1,3 @@
 export default {
-  API: "https://apiparok.info",
+  API: "http://localhost:20998",
 };

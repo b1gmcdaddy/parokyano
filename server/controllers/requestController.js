@@ -145,12 +145,16 @@ const createRequestBaptism = (req, res) => {
               request.details.gender,
               request.details.father_age,
               request.details.mother_age,
-              request.details.isChurchMarried,
-              request.details.isCivilMarried,
-              request.details.isLiveIn,
+              request.details.isChurchMarried != ""
+                ? request.details.isChurchMarried
+                : 0,
+              request.details.isCivilMarried != ""
+                ? request.details.isCivilMarried
+                : 0,
+              request.details.isLiveIn != "" ? request.details.liveIn_years : 0,
               request.details.marriage_date || null,
-              request.details.marriage_place,
-              request.details.liveIn_years,
+              request.details.marriage_place || null,
+              request.details.liveIn_years || null,
               requestID,
             ],
             (err, result) => {
@@ -356,6 +360,22 @@ const retrieveMultipleParams = (req, res) => {
   const offset = Number(page - 1) * parseInt(limit);
 
   const query = `SELECT r.*, s.name AS 'service_name' FROM request r, service s WHERE r.${col1} = ? AND r.${col2} = ? AND r.service_id = s.serviceID ORDER BY ${order} DESC LIMIT ? OFFSET ?`;
+
+  db.query(query, [val1, val2, parseInt(limit), offset], (err, result) => {
+    if (err) {
+      console.error("error retrieving requests", err);
+      return res.status(500);
+    }
+    res.status(200).json({ result });
+  });
+};
+
+//only transactions
+const retrieveTransactions = (req, res) => {
+  const { col1, val1, col2, val2, order, page, limit } = req.query;
+  const offset = Number(page - 1) * parseInt(limit);
+
+  const query = `SELECT r.*, s.name AS 'service_name' FROM request r, service s WHERE (r.${col1} = ? OR r.status = 'finished') AND r.${col2} = ? AND r.service_id = s.serviceID ORDER BY ${order} DESC LIMIT ? OFFSET ?`;
 
   db.query(query, [val1, val2, parseInt(limit), offset], (err, result) => {
     if (err) {
@@ -1226,4 +1246,5 @@ module.exports = {
   updateMarriageCert,
   addSponsorFee,
   removeSponsorFee,
+  retrieveTransactions,
 };

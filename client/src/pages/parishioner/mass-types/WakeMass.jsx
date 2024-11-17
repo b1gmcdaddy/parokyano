@@ -11,7 +11,7 @@ import {
   Radio,
   MenuItem,
   FormHelperText,
-  Box
+  Box,
 } from "@mui/material";
 import {
   LocalizationProvider,
@@ -32,13 +32,13 @@ import dayjs from "dayjs";
 import ValidateForm from "../../../utils/Validators";
 
 const containerStyle = {
-  margin: '0px',
-  padding: '0px',
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-  minWidth: '100%',
-}
+  margin: "0px",
+  padding: "0px",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
+  minWidth: "100%",
+};
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -115,6 +115,7 @@ const WakeMass = () => {
       }
       console.log(formData);
     }
+    return;
   };
 
   const handleChange = (e) => {
@@ -128,10 +129,6 @@ const WakeMass = () => {
   const handleTimeChange = (name, time) => {
     setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
-
-  useEffect(() => {
-    console.log(formData.preferred_time);
-  }, [formData.preferred_time]);
 
   const handleCaptchaChange = (value) => {
     setCaptchaValue(value);
