@@ -33,10 +33,8 @@ const PrintCertificate = ({ open, data, close }) => {
   const dateToday = new Date().toJSON().slice(0, 10);
   const componentRef = useRef();
   const bookDetails = JSON.parse(data.details || '{}');
-  const spouseDetails = JSON.parse(data.spouse_name || '{}');
   const [CertData, setCertData] = useState({
     full_name: "",
-    spouse_name: "",
     birth_day: "",
     birth_month: "",
     birth_year: "",
@@ -61,22 +59,31 @@ const PrintCertificate = ({ open, data, close }) => {
     service_id: "",
     priest_id: "",
     sponsor_id: "",
+    spouse_name: "",
+    groom_details: {
+      groom_father: "",
+      groom_mother: "",
+      groom_address: "",
+      groom_bday: "",
+      groom_bplace: "",
+      groom_bapday: "",
+      groom_bapplace: "",
+    },
+    bride_details: {
+      bride_father: "",
+      bride_mother: "",
+      bride_address: "",
+      bride_bday: "",
+      bride_bplace: "",
+      bride_bapday: "",
+      bride_bapplace: "",
+    }
   });
 
   useEffect(() => {
     if (open && data) {
       setCertData({
         full_name: data.first_name + " " + data.middle_name + " " + data.last_name,
-        spouse_name: `${spouseDetails?.firstName || ""} ${spouseDetails?.middleName || ""} ${spouseDetails?.lastName || ""}`,
-        birth_day: "",
-        birth_month: "",
-        birth_year: "",
-        marriage_day: "",
-        marriage_month: "",
-        marriage_year: "",
-        preffered_day: "",
-        preffered_month: "",
-        preffered_year: "",
         birth_place: data.birth_place,
         data_issue: formatDate(dateToday),
         father_name: data.father_name,
@@ -94,6 +101,8 @@ const PrintCertificate = ({ open, data, close }) => {
         sponsor_id: bookDetails.record_id
       });
     }
+    fetchSponsors(bookDetails.record_id);
+    fetchWeddingData();
     BirthDayFormatter(data.birth_date);
     BaptismDayFormatter(data.preferred_date);
     MarriageDayFormatter(data.preferred_date);
@@ -161,7 +170,6 @@ const PrintCertificate = ({ open, data, close }) => {
       }
     };
     fetchPriest();
-    fetchSponsors(CertData.sponsor_id);
   }, [open, data]);
 
   const fetchSponsors = async (id) => {
@@ -196,6 +204,55 @@ const PrintCertificate = ({ open, data, close }) => {
       preffered_month: month,
       preffered_year: year,
     }));
+  };
+
+  const fetchWeddingDetails = async (id) => {
+    try {
+      const response = await axios.get(`${config.API}/wedding/retrieve`, {
+        params: {reqID: id},
+      });
+  
+      return response.data?.result[0];
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+
+  const fetchWeddingData = async () => {
+    try {
+      const weddingDetails = await fetchWeddingDetails(bookDetails.record_id);
+      const groomDetails = JSON.parse(weddingDetails.groomDetails || '{}');
+      const brideDetails = JSON.parse(weddingDetails.brideDetails || '{}');
+
+      if (weddingDetails) {
+        setCertData((prevData) => ({
+          ...prevData,
+          spouse_name: weddingDetails.spouse_firstName + " " +  weddingDetails.spouse_middleName + " " + weddingDetails.spouse_lastName,
+          groom_details: {
+            groom_father: groomDetails.groomFather,
+            groom_mother: groomDetails.groomMother,
+            groom_address: groomDetails.groomAddress,
+            groom_bday: groomDetails.groomBirthDate,
+            groom_bplace: groomDetails.groomBirthPlace,
+            groom_bapday: groomDetails.groomBaptismDate,
+            groom_bapplace: groomDetails.groomBaptismPlace,
+          },
+          bride_details: {
+            bride_father: brideDetails.brideFather,
+            bride_mother: brideDetails.brideMother,
+            bride_address: brideDetails.brideAddress,
+            bride_bday: brideDetails.brideBirthDate,
+            bride_bplace: brideDetails.brideBirthPlace,
+            bride_bapday: brideDetails.brideBaptismDate,
+            bride_bapplace: brideDetails.brideBaptismPlace,
+          }
+        }
+      ));
+      }
+    } catch (err) {
+      console.error("Error fetching wedding details", err);
+    }
   };
 
 const renderCertificateContainer = () => {
@@ -561,38 +618,38 @@ const renderCertificateContainer = () => {
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Actual Address</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Mandaue</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Talisay</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.groom_details?.groom_address}</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.bride_details?.bride_address}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Date of Birth</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>May 25,1998</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>June 8, 1999</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{util.formatDate(CertData?.groom_details?.groom_bday)}</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{util.formatDate(CertData?.bride_details?.bride_bday)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Place of Birth</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Cebu</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Cebu</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.groom_details?.groom_bplace}</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.bride_details?.bride_bplace}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Date of Baptism</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>December 5, 2001</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>September 27, 2000</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{util.formatDate(CertData?.groom_details?.groom_bapday)}</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{util.formatDate(CertData?.bride_details?.bride_bapday)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Place of Baptism</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>GETHSEMANE</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>GETHSEMANE</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.groom_details?.groom_bapplace}</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.bride_details?.bride_bapplace}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Father</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Miko Chavez</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Kyle Lopez</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.groom_details?.groom_father}</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.bride_details?.bride_father}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px'}}>Mother</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Hanna Chavez</TableCell>
-                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>Nika Lopez</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.groom_details?.groom_mother}</TableCell>
+                      <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '300px' }}>{CertData?.bride_details?.bride_mother}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center" sx={{ border: '1px solid black', padding: '0px 0px 0px 0px', width: '200px', height: '50px'}}>Witnesses</TableCell>

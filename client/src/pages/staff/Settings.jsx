@@ -728,6 +728,7 @@ const Settings = () => {
                         onChange={handleChange}
                         select
                         fullWidth
+                        required
                         sx={TextFieldStyleModal}
                       >
                         {priests.map((priest) => (
@@ -794,6 +795,7 @@ const Settings = () => {
                         onChange={handleArchive}
                         autoComplete="off"
                         fullWidth
+                        required
                         sx={TextFieldStyleModal}
                       />
                     </Grid>
@@ -804,6 +806,7 @@ const Settings = () => {
                         onChange={handleArchive}
                         autoComplete="off"
                         fullWidth
+                        required
                         sx={TextFieldStyleModal}
                       />
                     </Grid>
@@ -814,6 +817,7 @@ const Settings = () => {
                         onChange={handleArchive}
                         autoComplete="off"
                         fullWidth
+                        required
                         sx={TextFieldStyleModal}
                       />
                     </Grid>
