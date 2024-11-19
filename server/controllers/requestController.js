@@ -6,7 +6,7 @@ const _ = require("lodash");
 const {parse} = require("dotenv");
 const dayjs = require("dayjs");
 
-const dateToday = new Date().toJSON().slice(0, 10);
+const dateToday = dayjs().tz("Asia/Manila").format("YYYY-MM-DDTHH:mm:ssZ");
 
 const createRequestIntention = (req, res) => {
   const data = req.body;
@@ -417,7 +417,7 @@ const retrieveRequests = (req, res) => {
                  WHERE r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 
                  AND r.service_id = s.serviceID 
                  AND r.status = ? 
-                 ORDER BY preferred_date DESC
+                 ORDER BY date_requested DESC
                  LIMIT ? OFFSET ?`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
