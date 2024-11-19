@@ -104,13 +104,16 @@ const updateRequirements = (req, res) => {
     spouse_baptismCert,
     spouse_confirmationCert,
     spouse_birthCert,
+    groomMarriageLicense,
+    brideMarriageLicense,
+    groomCENOMAR,
+    brideCENOMAR,
+    groomCEDULA,
+    brideCEDULA,
     isParishPermit,
     isPrenuptial,
     isPreCana,
-    isMarriageLicense,
     isMarriageBann,
-    isCENOMAR,
-    isCEDULA,
     isJointAffidavit,
     isCivilContract,
     isDeathCert,
@@ -144,10 +147,13 @@ const updateRequirements = (req, res) => {
       isParishPermit === 1 &&
       isPrenuptial === 1 &&
       isPreCana === 1 &&
-      isMarriageLicense === 1 &&
+      groomMarriageLicense === 1 &&
+      brideMarriageLicense === 1 &&
       isMarriageBann === 1 &&
-      isCENOMAR === 1 &&
-      isCEDULA === 1
+      groomCEDULA === 1 &&
+      brideCEDULA === 1 &&
+      groomCENOMAR === 1 &&
+      brideCENOMAR === 1
         ? 1
         : 0;
   } else if (type == "Live-in for more than 4 years") {
@@ -163,8 +169,12 @@ const updateRequirements = (req, res) => {
       isPreCana === 1 &&
       isJointAffidavit === 1 &&
       isMarriageBann === 1 &&
-      isCENOMAR === 1 &&
-      isCEDULA === 1
+      groomMarriageLicense === 1 &&
+      brideMarriageLicense === 1 &&
+      groomCEDULA === 1 &&
+      brideCEDULA === 1 &&
+      groomCENOMAR === 1 &&
+      brideCENOMAR === 1
         ? 1
         : 0;
   } else {
@@ -178,11 +188,14 @@ const updateRequirements = (req, res) => {
       isParishPermit === 1 &&
       isPrenuptial === 1 &&
       isPreCana === 1 &&
-      isMarriageLicense === 1 &&
+      groomMarriageLicense === 1 &&
+      brideMarriageLicense === 1 &&
       isMarriageBann === 1 &&
-      isCENOMAR === 1 &&
       isDeathCert === 1 &&
-      isCEDULA === 1
+      groomCEDULA === 1 &&
+      brideCEDULA === 1 &&
+      groomCENOMAR === 1 &&
+      brideCENOMAR === 1
         ? 1
         : 0;
   }
@@ -195,13 +208,16 @@ const updateRequirements = (req, res) => {
         spouse_baptismCert = ?, 
         spouse_confirmationCert = ?, 
         spouse_birthCert = ?, 
+        groomMarriageLicense = ?,
+        brideMarriageLicense = ?,
+        groomCENOMAR = ?,
+        brideCENOMAR = ?,
+        groomCEDULA = ?,
+        brideCEDULA = ?,
         isParishPermit = ?, 
         isPrenuptial = ?, 
         isPreCana = ?, 
-        isMarriageLicense = ?, 
         isMarriageBann = ?,
-        isCENOMAR = ?,
-        isCEDULA = ?,
         isJointAffidavit = ?,
         isCivilContract = ?,
         isDeathCert = ?,
@@ -214,13 +230,16 @@ const updateRequirements = (req, res) => {
         spouse_baptismCert,
         spouse_confirmationCert,
         spouse_birthCert,
+        groomMarriageLicense,
+        brideMarriageLicense,
+        groomCENOMAR,
+        brideCENOMAR,
+        groomCEDULA,
+        brideCEDULA,
         isParishPermit,
         isPrenuptial,
         isPreCana,
-        isMarriageLicense,
         isMarriageBann,
-        isCENOMAR,
-        isCEDULA,
         isJointAffidavit,
         isCivilContract,
         isDeathCert,
