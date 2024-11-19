@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -20,7 +20,7 @@ import axios from "axios";
 import config from "../config";
 import util from "../utils/DateTimeFormatter";
 
-const TransactionModal = ({open, data, close}) => {
+const TransactionModal = ({ open, data, close }) => {
   const [staff, setStaff] = useState([]);
   console.log(data);
 
@@ -45,34 +45,37 @@ const TransactionModal = ({open, data, close}) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description">
+      aria-describedby="alert-dialog-description"
+    >
       <DialogContent>
-        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 3,
               margin: "10px",
-            }}>
+            }}
+          >
             <Typography
               variant="h6"
-              sx={{textAlign: "center", fontWeight: "bold"}}>
+              sx={{ textAlign: "center", fontWeight: "bold" }}
+            >
               Payment Information
             </Typography>
 
-            <Grid container sx={{marginTop: "10px"}}>
-              <Grid container justifyContent={"left"} sx={{padding: 1}}>
-                <Typography variant="subtitle2" sx={{marginRight: 2}}>
+            <Grid container sx={{ marginTop: "10px" }}>
+              <Grid container justifyContent={"left"} sx={{ padding: 1 }}>
+                <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
                   <strong>Transaction number:</strong>
                 </Typography>
-                <Typography variant="subtitle2" sx={{color: "red"}}>
+                <Typography variant="subtitle2" sx={{ color: "red" }}>
                   {data.transaction_no}
                 </Typography>
               </Grid>
 
-              <Grid container justifyContent={"left"} sx={{padding: 1}}>
-                <Typography variant="subtitle2" sx={{marginRight: 2}}>
+              <Grid container justifyContent={"left"} sx={{ padding: 1 }}>
+                <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
                   <strong>Name:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
@@ -82,44 +85,22 @@ const TransactionModal = ({open, data, close}) => {
                 </Typography>
               </Grid>
 
-              <Grid container justifyContent={"left"} sx={{padding: 1}}>
-                <Typography variant="subtitle2" sx={{marginRight: 2}}>
+              <Grid container justifyContent={"left"} sx={{ padding: 1 }}>
+                <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
                   <strong>Amount Paid:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
-                  {(() => {
-                    const amount = (() => {
-                      switch (data.service_id) {
-                        case 1:
-                          return data.donation;
-                        case 2:
-                          return 50;
-                        case 3:
-                          return 100;
-                        case 4:
-                          return 150;
-                        case 5:
-                          return 1600;
-                        case 6:
-                          return 800;
-                        case 7:
-                          return 1000;
-                        default:
-                          return "N/A";
-                      }
-                    })();
-
-                    return amount === "N/A" ? (
-                      amount
-                    ) : (
-                      <span style={{fontWeight: "bold"}}>₱{amount}</span>
-                    );
-                  })()}
+                  {data.donation
+                    ? `₱ ${parseFloat(data.donation).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}`
+                    : "N/A"}
                 </Typography>
               </Grid>
 
-              <Grid container justifyContent={"left"} sx={{padding: 1}}>
-                <Typography variant="subtitle2" sx={{marginRight: 2}}>
+              <Grid container justifyContent={"left"} sx={{ padding: 1 }}>
+                <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
                   <strong>Contact number:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
@@ -127,8 +108,8 @@ const TransactionModal = ({open, data, close}) => {
                 </Typography>
               </Grid>
 
-              <Grid container justifyContent={"left"} sx={{padding: 1}}>
-                <Typography variant="subtitle2" sx={{marginRight: 2}}>
+              <Grid container justifyContent={"left"} sx={{ padding: 1 }}>
+                <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
                   <strong>Date paid:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
@@ -136,8 +117,8 @@ const TransactionModal = ({open, data, close}) => {
                 </Typography>
               </Grid>
 
-              <Grid container justifyContent={"left"} sx={{padding: 1}}>
-                <Typography variant="subtitle2" sx={{marginRight: 2}}>
+              <Grid container justifyContent={"left"} sx={{ padding: 1 }}>
+                <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
                   <strong>Payment for:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
@@ -145,8 +126,8 @@ const TransactionModal = ({open, data, close}) => {
                 </Typography>
               </Grid>
 
-              <Grid container justifyContent={"left"} sx={{padding: 1}}>
-                <Typography variant="subtitle2" sx={{marginRight: 2}}>
+              <Grid container justifyContent={"left"} sx={{ padding: 1 }}>
+                <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
                   <strong>Mode of payment:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
@@ -154,8 +135,8 @@ const TransactionModal = ({open, data, close}) => {
                 </Typography>
               </Grid>
 
-              <Grid container justifyContent={"left"} sx={{padding: 1}}>
-                <Typography variant="subtitle2" sx={{marginRight: 2}}>
+              <Grid container justifyContent={"left"} sx={{ padding: 1 }}>
+                <Typography variant="subtitle2" sx={{ marginRight: 2 }}>
                   <strong>Handled by:</strong>
                 </Typography>
                 <Typography variant="subtitle2" sx={{}}>
@@ -169,7 +150,7 @@ const TransactionModal = ({open, data, close}) => {
             </Grid>
 
             <DialogActions>
-              <Grid container sx={{display: "flex", justifyContent: "end"}}>
+              <Grid container sx={{ display: "flex", justifyContent: "end" }}>
                 <Grid item xs={12} sm={"auto"}>
                   <Button
                     variant="contained"
@@ -180,7 +161,8 @@ const TransactionModal = ({open, data, close}) => {
                         backgroundColor: "#D9D9d9",
                       },
                     }}
-                    onClick={close}>
+                    onClick={close}
+                  >
                     Close
                   </Button>
                 </Grid>

@@ -67,8 +67,8 @@ const retrieveScheduleByParams = (req, res) => {
         );
         let priestName = `${result[0].first_name} ${result[0].last_name}`;
 
-        const message = `${priestName} has a scheduled service from ${startTimeFormatted} to ${endTimeFormatted}`;
-        const details = "Service: " + result[0].activity;
+        const message = `${priestName} has a schedule from ${startTimeFormatted} to ${endTimeFormatted}`;
+        const details = "Activity: " + result[0].activity;
         return res.status(409).send({ message, details });
       } else {
         return res.status(200).send();

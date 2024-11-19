@@ -1296,7 +1296,13 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                     Payment:
                     <strong>
                       {formData.donation != null
-                        ? `₱ ${parseFloat(formData.donation).toFixed(2)}`
+                        ? `₱ ${parseFloat(formData.donation).toLocaleString(
+                            undefined,
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )}`
                         : ""}
                     </strong>
                   </label>

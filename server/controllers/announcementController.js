@@ -1,19 +1,21 @@
 require("dotenv").config();
 
 const db = require("./db");
-const dateToday = new Date().toJSON().slice(0, 10);
 
 const retrieveAll = (req, res) => {
-  db.query("Select * FROM announcement", (err, result) => {
-    if (err) {
-      console.error("error retrieving from db", err);
-      return res.status(500).json({
-        error: "server error",
-        status: "500",
-      });
+  db.query(
+    "Select * FROM announcement ORDER BY date_announced DESC",
+    (err, result) => {
+      if (err) {
+        console.error("error retrieving from db", err);
+        return res.status(500).json({
+          error: "server error",
+          status: "500",
+        });
+      }
+      return res.status(200).send(result);
     }
-    return res.status(200).send(result);
-  });
+  );
 };
 
 const createAnnouncement = (req, res) => {
@@ -22,7 +24,7 @@ const createAnnouncement = (req, res) => {
 
   db.query(
     "INSERT INTO announcement (title, description, date_announced, user_id) VALUES (?, ?, ?, ?)",
-    [data.title, data.description, dateToday, user],
+    [data.title, data.description, new Date(), user],
     (err, result) => {
       if (err) {
         console.error("error submitting to db", err);
@@ -59,14 +61,14 @@ const deleteAnnouncement = (req, res) => {
     (err, result) => {
       if (err) {
         console.error("Error deleting announcement from db:", err);
-        return res.status(500).json({message: "Internal Server Error"});
+        return res.status(500).json({ message: "Internal Server Error" });
       }
       if (result.affectedRows === 0) {
-        return res.status(404).json({message: "Announcement not found"});
+        return res.status(404).json({ message: "Announcement not found" });
       }
       return res
         .status(200)
-        .json({message: "Announcement deleted successfully"});
+        .json({ message: "Announcement deleted successfully" });
     }
   );
 };

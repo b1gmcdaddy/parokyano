@@ -706,7 +706,14 @@ const BaptismApproved = ({ open, data, handleClose, refreshList }) => {
                                 marginLeft: "10px",
                               }}
                             >
-                              ₱{parseFloat(formData.donation).toFixed(2)}
+                              ₱
+                              {parseFloat(data.donation).toLocaleString(
+                                undefined,
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }
+                              )}
                             </Typography>
                           </Grid>
                           <Grid item sm={6}>

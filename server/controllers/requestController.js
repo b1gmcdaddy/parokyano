@@ -517,7 +517,7 @@ const getUpcomingEvents = (req, res) => {
     FROM request 
     WHERE status = 'approved' 
     AND preferred_date >= ? 
-    ORDER BY preferred_date DESC 
+    ORDER BY preferred_date ASC
     LIMIT 5
   `;
 
