@@ -859,22 +859,25 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
   useEffect(() => {
     if (
       dayjs(formData.preferred_date).get("day") == 6 &&
-      dayjs(formData.preferred_time, "HH:mm:ss").hour() == 6
+      dayjs(formData.preferred_time, "HH:mm:ss").hour() == 6 &&
+      data.donation == 0
     ) {
       setFormData((prevState) => ({
         ...prevState,
         donation: data.donation + 1000.0,
       }));
     } else {
-      data.isParishioner
+      data.isParishioner && data.donation == 0
         ? setFormData((prevState) => ({
             ...prevState,
             donation: data.donation + 3000.0,
           }))
-        : setFormData((prevState) => ({
+        : data.donation == 0
+        ? setFormData((prevState) => ({
             ...prevState,
             donation: data.donation + 3500.0,
-          }));
+          }))
+        : "";
     }
   }, [formData.preferred_date, formData.preferred_time]);
 

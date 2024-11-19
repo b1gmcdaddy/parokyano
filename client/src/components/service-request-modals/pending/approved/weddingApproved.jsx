@@ -1181,7 +1181,20 @@ const WeddingApproved = ({ open, data, handleClose, refreshList }) => {
                   </TextField>
                 </Grid>
                 <Grid item sm={4}>
-                  <label>Payment:</label>
+                  <label>
+                    Payment:
+                    <strong>
+                      {formData.donation != null
+                        ? `₱ ${parseFloat(formData.donation).toLocaleString(
+                            undefined,
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )}`
+                        : ""}
+                    </strong>
+                  </label>
                   <TextField
                     name="payment_status"
                     onChange={handleChange}

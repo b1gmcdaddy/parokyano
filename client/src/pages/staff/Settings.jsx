@@ -16,7 +16,8 @@ import {
   TableHead,
   Divider,
   Modal,
-  MenuItem
+  MenuItem,
+  InputAdornment,
 } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
@@ -33,6 +34,7 @@ import util from "../../utils/DateTimeFormatter";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const modalStyle = {
   position: "absolute",
@@ -95,6 +97,7 @@ const inputstyling = {
 const Settings = () => {
   const [currentView, setCurrentView] = useState("settings");
   const [hover, setHover] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -106,9 +109,12 @@ const Settings = () => {
   const handleOpen = () => setOpen(true);
   const [errors, setErrors] = useState({});
   const [priests, setPriests] = useState([]);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
-    child_name:{
+    child_name: {
       first_name: "",
       middle_name: "",
       last_name: "",
@@ -122,7 +128,7 @@ const Settings = () => {
       page_no: "",
       line_no: "",
       sponsor_no1: "",
-      sponsor_no2: ""
+      sponsor_no2: "",
     },
   });
 
@@ -136,7 +142,7 @@ const Settings = () => {
           },
         });
         setPriests(response.data);
-        console.log(response.data); 
+        console.log(response.data);
       } catch (err) {
         console.error(err);
       }
@@ -148,6 +154,44 @@ const Settings = () => {
   const handleClose = (event, reason) => {
     if (reason === "backdropClick") {
       setOpen(false);
+    }
+  };
+
+  const handleOldPasswordVisibility = () => {
+    setShowOldPassword((prev) => !prev);
+  };
+
+  const handleNewPasswordVisibility = () => {
+    setShowNewPassword((prev) => !prev);
+  };
+
+  const handleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prev) => !prev);
+  };
+
+  const handleSubmitPass = async () => {
+    const res = await axios.put(
+      `${config.API}/user/editUser/${id}`,
+      {
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    console.log(res);
+    if (res.status === 200) {
+      setOpen(false);
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setShowOldPassword(false);
+      setShowNewPassword(false);
+      setShowConfirmPassword(false);
     }
   };
 
@@ -192,6 +236,11 @@ const Settings = () => {
     fetchLogs();
     fetchTotalLogs();
   }, [page]);
+
+  useEffect(() => {
+    console.log(newPassword);
+    console.log(confirmPassword);
+  }, [newPassword]);
 
   const handleChangeView = (view) => {
     setCurrentView(view);
@@ -571,9 +620,52 @@ const Settings = () => {
                   <Grid sx={{ marginTop: "20px" }} item sm="12">
                     <TextField
                       fullWidth
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="Enter Your Old Password"
+                      type={showOldPassword ? "text" : "password"}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={handleOldPasswordVisibility}
+                              edge="end"
+                            >
+                              {showOldPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={TextFieldStyle}
+                    ></TextField>
+                  </Grid>
+                  <Grid sx={{ marginTop: "20px" }} item sm="12">
+                    <TextField
+                      fullWidth
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Enter Your New Password"
+                      type={showNewPassword ? "text" : "password"}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={handleNewPasswordVisibility}
+                              edge="end"
+                            >
+                              {showNewPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                       sx={TextFieldStyle}
                     ></TextField>
                   </Grid>
@@ -583,6 +675,23 @@ const Settings = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirm New Password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={handleConfirmPasswordVisibility}
+                              edge="end"
+                            >
+                              {showConfirmPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                       sx={TextFieldStyle}
                     ></TextField>
                   </Grid>
@@ -732,7 +841,10 @@ const Settings = () => {
                         sx={TextFieldStyleModal}
                       >
                         {priests.map((priest) => (
-                          <MenuItem key={priest.priestID} value={priest.priestID}>
+                          <MenuItem
+                            key={priest.priestID}
+                            value={priest.priestID}
+                          >
                             {priest.first_name + " " + priest.last_name}
                           </MenuItem>
                         ))}
@@ -887,8 +999,7 @@ const Settings = () => {
                       </Grid>
                     </Box>
                     <Grid container spacing={2}>
-                      <Grid item sm={12}>
-                      </Grid>
+                      <Grid item sm={12}></Grid>
                     </Grid>
                   </Box>
                 </Modal>

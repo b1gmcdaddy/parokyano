@@ -570,7 +570,7 @@ const getSpecificSummary = (req, res) => {
 
   const queryApproved = `
     SELECT r.* FROM request r 
-    WHERE r.status = 'approved'  AND r.payment_status = 'paid'
+    WHERE (r.status = 'approved' OR r.status = 'finished') AND r.payment_status = 'paid'
       AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' 
       ${category};
   `;
@@ -631,7 +631,11 @@ const getRequestSummary = (req, res) => {
 
   const query = `
     SELECT 
-      s.name, COUNT(CASE WHEN r.status = 'approved' AND r.payment_status = 'paid' THEN 1 END) * s.fee AS totalFee, COUNT(CASE WHEN r.status = 'pending' THEN 1 END) AS pending, COUNT(CASE WHEN r.status = 'approved' THEN 1 END) AS approved, COUNT(CASE WHEN r.status = 'cancelled' THEN 1 END) AS cancelled
+      s.name, 
+      SUM(CASE WHEN (r.status = 'approved' OR r.status = 'finished') AND r.payment_status = 'paid' THEN r.donation ELSE 0 END) AS totalFee, 
+      COUNT(CASE WHEN r.status = 'pending' THEN 1 END) AS pending, 
+      COUNT(CASE WHEN (r.status = 'approved' OR r.status = 'finished') THEN 1 END) AS approved, 
+      COUNT(CASE WHEN r.status = 'cancelled' THEN 1 END) AS cancelled
     FROM 
       request r
     JOIN 
@@ -639,8 +643,7 @@ const getRequestSummary = (req, res) => {
     WHERE 
       r.date_requested BETWEEN '${startDate}' AND '${endDate}' ${category}
     GROUP BY 
-      s.serviceID;`;
-
+      s.serviceID, s.name;`;
   console.log(query);
 
   db.query(query, (err, summary) => {
@@ -652,14 +655,14 @@ const getRequestSummary = (req, res) => {
     const results = summary;
 
     db.query(
-      `SELECT * FROM request r WHERE  r.date_requested BETWEEN '${startDate}' AND '${endDate}' AND (r.service_id = 5 OR r.service_id = 6) AND r.status = 'approved' ${category}`,
+      `SELECT * FROM request r WHERE  r.date_requested BETWEEN '${startDate}' AND '${endDate}' AND (r.service_id = 5 OR r.service_id = 6) AND (r.status = 'approved' OR r.status = 'finished') ${category}`,
       (err, baptisms) => {
         if (err) {
           console.error("error retrieving requests", err);
           return res.status(500).json({ error: "Error retrieving requests" });
         }
         db.query(
-          `SELECT r.*, w.* FROM request r, wedding w WHERE (r.service_id = 7) AND r.requestID = w.request_id AND r.status = 'approved' AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' ${category}`,
+          `SELECT r.*, w.* FROM request r, wedding w WHERE (r.service_id = 7) AND r.requestID = w.request_id AND (r.status = 'approved' OR r.status = 'finished') AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' ${category}`,
           (err, weddings) => {
             if (err) {
               console.error("error retrieving requests", err);
@@ -667,7 +670,20 @@ const getRequestSummary = (req, res) => {
                 .status(500)
                 .json({ error: "Error retrieving requests" });
             }
-            res.status(200).json({ results, baptisms, weddings });
+            db.query(
+              `SELECT r.*, b.* FROM request r, baptism b WHERE (r.service_id = 6) AND r.requestID = b.request_id AND (r.status = 'approved' OR r.status = 'finished') AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' ${category}`,
+              (err, baptismsGeneral) => {
+                if (err) {
+                  console.error("error retrieving requests", err);
+                  return res
+                    .status(500)
+                    .json({ error: "Error retrieving requests" });
+                }
+                res
+                  .status(200)
+                  .json({ results, baptisms, weddings, baptismsGeneral });
+              }
+            );
           }
         );
       }

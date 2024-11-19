@@ -169,7 +169,13 @@ const StaffReportSpecific = ({ startDate, endDate, category }) => {
                     </TableCell>
                     <TableCell align="right">
                       {data.donation != null
-                        ? `₱ ${parseFloat(data.donation).toFixed(2)}`
+                        ? ` ₱ ${parseFloat(data.donation).toLocaleString(
+                            undefined,
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )}`
                         : ""}
                     </TableCell>
                   </TableRow>

@@ -32,6 +32,7 @@ import ConfirmationDialog from "../../../components/ConfirmationModal";
 
 const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
   const [tableData, setTableData] = useState([]);
+  const [tableDataPriests, setTableDataPriests] = useState([]);
   const [modalData, setModalData] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -99,6 +100,21 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
     }
   };
 
+  const fetchPriests = async () => {
+    try {
+      const res = await axios.get(`${config.API}/priest/retrieve`, {
+        params: {
+          col: "status",
+          val: "active",
+        },
+      });
+      setTableDataPriests(res.data);
+      console.log(res.data);
+    } catch (err) {
+      console.error("error retrieving pending reqs", err);
+    }
+  };
+
   const refreshList = async () => {
     await fetchRequests();
   };
@@ -124,6 +140,10 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
     }
     // fetchTotalItems();
   }, [filter, page, totalItems]);
+
+  useEffect(() => {
+    fetchPriests();
+  }, [open, page]);
 
   const renderModal = () => {
     switch (modalType) {
@@ -374,9 +394,13 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                           backgroundColor: "#e0e0e0",
                         }}
                       >
-                        {req.priest_id == 1
-                          ? "Fr. Priest Test A"
-                          : "Fr. Priest Test B"}
+                        {tableDataPriests.find(
+                          (p) => p.priestID == req.priest_id
+                        )?.first_name +
+                          " " +
+                          tableDataPriests.find(
+                            (p) => p.priestID == req.priest_id
+                          )?.last_name}
                       </TableCell>
                       <TableCell
                         sx={{

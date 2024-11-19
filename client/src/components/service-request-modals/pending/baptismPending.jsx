@@ -162,7 +162,7 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
         isChurchMarried: response.data.result[0].isChurchMarried,
         isCivilMarried: response.data.result[0].isCivilMarried,
         isLiveIn: response.data.result[0].isLiveIn,
-        marriage_date: response.data.result[0].marriage_date.slice(0, 10),
+        marriage_date: response.data.result[0].marriage_date?.slice(0, 10),
         marriage_place: response.data.result[0].marriage_place,
         liveIn_years: response.data.result[0].liveIn_years,
       });
@@ -241,6 +241,10 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
     //  console.log(avail.data.message);
     setAvailable(avail.data.message);
   };
+
+  useEffect(() => {
+    console.log(details);
+  }, [details]);
 
   useEffect(() => {
     if (formData && service)

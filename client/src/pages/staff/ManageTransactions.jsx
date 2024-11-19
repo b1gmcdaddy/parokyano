@@ -333,7 +333,12 @@ const ManageTransactions = () => {
                                   }}
                                 >
                                   {row.donation
-                                    ? `₱ ${parseFloat(row.donation).toFixed(2)}`
+                                    ? ` ₱ ${parseFloat(
+                                        row.donation
+                                      ).toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                      })}`
                                     : "N/A"}
                                 </span>
                               </TableCell>

@@ -26,6 +26,7 @@ const start = formatDate(new Date(now.getFullYear(), now.getMonth(), 1));
 const StaffReport = ({ startDate, endDate, category }) => {
   const [reportInfo, setReportInfo] = useState({});
   const [baptismInfo, setBaptismInfo] = useState({});
+  const [baptismGeneralInfo, setBaptismGeneralInfo] = useState({});
   const [weddingInfo, setWeddingInfo] = useState({});
 
   const getSummaryReport = async () => {
@@ -42,8 +43,8 @@ const StaffReport = ({ startDate, endDate, category }) => {
       setReportInfo(res.data.results);
       setBaptismInfo(res.data.baptisms);
       setWeddingInfo(res.data.weddings);
-      console.log("query", res.data.weddings);
-      console.log(res.data.results);
+      setBaptismGeneralInfo(res.data.baptismsGeneral);
+      // console.log(res.data.results);
     } catch (err) {
       console.error("error retrieving summary", err);
     }
@@ -118,6 +119,18 @@ const StaffReport = ({ startDate, endDate, category }) => {
                           </div>
                         </>
                       )}
+                      {baptismGeneralInfo && (
+                        <>
+                          <div className="ml-4 mt-2">
+                            {report.name == "Baptism - General" &&
+                              baptismGeneralInfo.map((baptism, index) => (
+                                <li key={index}>
+                                  {baptism.first_name} {baptism.last_name}
+                                </li>
+                              ))}
+                          </div>
+                        </>
+                      )}
                       {weddingInfo && (
                         <>
                           <div className="ml-4 mt-2">
@@ -138,8 +151,14 @@ const StaffReport = ({ startDate, endDate, category }) => {
                     <TableCell align="right">{report.cancelled}</TableCell>
                     <TableCell align="right">
                       {" "}
-                      {report.totalFee != null
-                        ? `₱ ${parseFloat(report.totalFee).toFixed(2)}`
+                      {report.totalFee != null && report.totalFee > 0
+                        ? ` ₱ ${parseFloat(report.totalFee).toLocaleString(
+                            undefined,
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )}`
                         : ""}
                     </TableCell>
                   </TableRow>
