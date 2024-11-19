@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import {useState, useEffect, useRef} from "react";
 import {
   Button,
   Box,
@@ -18,8 +18,8 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPhone } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPhone} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import config from "../../config";
 import ReactToPrint from "react-to-print";
@@ -27,7 +27,7 @@ import logo from "../../assets/logoCert.png";
 import confirmationSaint from "../../assets/confirmationSaint.jpg";
 import util from "../../utils/DateTimeFormatter";
 
-const PrintCertificate = ({ open, data, close }) => {
+const PrintCertificate = ({open, data, close}) => {
   const [sponsors, setSponsors] = useState([]);
   const [priests, setPriests] = useState([]);
   const dateToday = new Date().toJSON().slice(0, 10);
@@ -114,6 +114,26 @@ const PrintCertificate = ({ open, data, close }) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
+  };
+
+  const updateCertStatus = async () => {
+    try {
+      const response = await axios.put(
+        `${config.API}/request/approve-dynamic`,
+        null,
+        {
+          params: {
+            col: "payment_status",
+            val: "paid",
+            col4: "requestID",
+            val4: data.requestID,
+          },
+        }
+      );
+      close();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const BirthDayFormatter = (dateString) => {
@@ -240,7 +260,7 @@ const PrintCertificate = ({ open, data, close }) => {
   const fetchWeddingDetails = async (id) => {
     try {
       const response = await axios.get(`${config.API}/wedding/retrieve`, {
-        params: { reqID: id },
+        params: {reqID: id},
       });
 
       return response.data?.result[0];
@@ -301,8 +321,7 @@ const PrintCertificate = ({ open, data, close }) => {
               width: "793.92px",
               py: 3,
             }}
-            ref={componentRef}
-          >
+            ref={componentRef}>
             <Box
               sx={{
                 position: "absolute",
@@ -315,20 +334,19 @@ const PrintCertificate = ({ open, data, close }) => {
                 backgroundSize: "contain",
                 backgroundPosition: "center",
                 opacity: 0.2,
-              }}
-            ></Box>
+              }}></Box>
 
             <Grid container spacing={2} justifyContent={"center"}>
               <Grid item sm={3}>
                 <img
                   src={logo}
-                  style={{ height: "60%", width: "auto" }}
+                  style={{height: "60%", width: "auto"}}
                   alt="Logo"
                 />
               </Grid>
 
               <Grid item sm={5}>
-                <Box textAlign={"center"} sx={{ marginTop: "20px" }}>
+                <Box textAlign={"center"} sx={{marginTop: "20px"}}>
                   <Typography
                     sx={{
                       fontFamily: "Dharma Gothic",
@@ -336,8 +354,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       lineHeight: "1",
                       letterSpacing: 2,
                       color: "#040063",
-                    }}
-                  >
+                    }}>
                     Archdiocese of Cebu
                   </Typography>
                   <Typography
@@ -348,8 +365,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       letterSpacing: 0,
                       color: "#040063",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     Catholic Church of Christ of the Agony
                   </Typography>
                   <Typography
@@ -358,8 +374,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       fontSize: "18px",
                       lineHeight: "2",
                       color: "#040063",
-                    }}
-                  >
+                    }}>
                     GETHSEMANE PARISH
                   </Typography>
                   <Typography
@@ -368,8 +383,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       letterSpacing: 0,
                       fontSize: "12px",
                       lineHeight: "0",
-                    }}
-                  >
+                    }}>
                     Casuntingan, Mandaue City Cebu, Philippines 6014
                   </Typography>
                   <FontAwesomeIcon size="xs" icon={faPhone} />
@@ -380,8 +394,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       fontSize: "12px",
                       lineHeight: "3",
                       display: "inline",
-                    }}
-                  >
+                    }}>
                     /fax no: (032) 346-9560
                   </Typography>
                 </Box>
@@ -390,19 +403,18 @@ const PrintCertificate = ({ open, data, close }) => {
               <Grid item sm={3} container justifyContent="flex-end">
                 <img
                   src={confirmationSaint}
-                  style={{ height: "60%", width: "auto" }}
+                  style={{height: "60%", width: "auto"}}
                   alt="confirmationSaint"
                 />
               </Grid>
 
-              <Grid item sm={11} sx={{ marginTop: "-80px" }}>
+              <Grid item sm={11} sx={{marginTop: "-80px"}}>
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       flex: 0.1,
@@ -411,12 +423,12 @@ const PrintCertificate = ({ open, data, close }) => {
                     }}
                   />
                   <div
-                    style={{ flex: 1, height: "2px", backgroundColor: "black" }}
+                    style={{flex: 1, height: "2px", backgroundColor: "black"}}
                   />
                 </div>
               </Grid>
 
-              <Grid item sm={12} sx={{ marginTop: "-60px" }}>
+              <Grid item sm={12} sx={{marginTop: "-60px"}}>
                 <Typography
                   sx={{
                     fontFamily: "Cursiva",
@@ -425,8 +437,7 @@ const PrintCertificate = ({ open, data, close }) => {
                     letterSpacing: 4,
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   CONFIRMATION CERTIFICATE
                 </Typography>
               </Grid>
@@ -437,12 +448,11 @@ const PrintCertificate = ({ open, data, close }) => {
                     lineHeight: "1",
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   This is to certify that
                 </Typography>
               </Grid>
-              <Grid item sm={12} sx={{ marginTop: "10px" }}>
+              <Grid item sm={12} sx={{marginTop: "10px"}}>
                 <Typography
                   sx={{
                     fontSize: "20px",
@@ -451,54 +461,47 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontWeight: "bold",
                     textAlign: "center",
                     textDecoration: "underline",
-                  }}
-                >
+                  }}>
                   {CertData.full_name}
                 </Typography>
               </Grid>
 
-              <Grid item sm={11} sx={{ marginTop: "10px" }}>
+              <Grid item sm={11} sx={{marginTop: "10px"}}>
                 <Typography
                   sx={{
                     fontSize: "18px",
                     lineHeight: "2",
                     fontWeight: "regular",
                     textAlign: "justify",
-                  }}
-                >
+                  }}>
                   Son/daughter of{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.father_name}
                   </span>{" "}
                   and{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.mother_name}
                   </span>{" "}
                   was, CONFIRMED on the{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.preffered_day}
                   </span>{" "}
                   day of{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.preffered_month}
                   </span>{" "}
                   in the year of our Lord{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.preffered_year}
                   </span>{" "}
-                  <span style={{ fontStyle: "italic" }}>
+                  <span style={{fontStyle: "italic"}}>
                     according to the Rites of the{" "}
-                    <span style={{ fontWeight: "bold" }}>
+                    <span style={{fontWeight: "bold"}}>
                       Holy Roman Catholic Church.
                     </span>
                   </span>
@@ -506,22 +509,20 @@ const PrintCertificate = ({ open, data, close }) => {
               </Grid>
 
               <Grid item sm={12}>
-                <Box sx={{ marginLeft: "4em" }}>
+                <Box sx={{marginLeft: "4em"}}>
                   <Typography
                     sx={{
                       fontSize: "18px",
                       lineHeight: "2",
                       fontWeight: "regular",
                       textAlign: "justify",
-                    }}
-                  >
+                    }}>
                     Minister: &nbsp;&nbsp;
                     <span
                       style={{
                         fontWeight: "bold",
                         textDecoration: "underline",
-                      }}
-                    >
+                      }}>
                       {priests.find(
                         (priest) => priest.priestID === CertData.priest_id
                       )?.first_name +
@@ -531,7 +532,7 @@ const PrintCertificate = ({ open, data, close }) => {
                         )?.last_name}
                     </span>
                   </Typography>
-                  <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                  <Box sx={{display: "flex", alignItems: "flex-start"}}>
                     <Typography
                       sx={{
                         fontSize: "18px",
@@ -539,8 +540,7 @@ const PrintCertificate = ({ open, data, close }) => {
                         fontWeight: "regular",
                         textAlign: "justify",
                         marginRight: "10px",
-                      }}
-                    >
+                      }}>
                       Sponsors:
                     </Typography>
                     <Box
@@ -548,8 +548,7 @@ const PrintCertificate = ({ open, data, close }) => {
                         display: "flex",
                         flexWrap: "wrap",
                         textDecoration: "underline",
-                      }}
-                    >
+                      }}>
                       <Typography
                         sx={{
                           fontSize: "18px",
@@ -557,8 +556,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           fontWeight: "bold",
                           textAlign: "justify",
                           marginRight: "10px",
-                        }}
-                      >
+                        }}>
                         {CertData.sponsor_no1},
                       </Typography>
                       <Typography
@@ -567,8 +565,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           lineHeight: "1.8",
                           fontWeight: "bold",
                           textAlign: "justify",
-                        }}
-                      >
+                        }}>
                         {CertData.sponsor_no2},
                       </Typography>
                     </Box>
@@ -576,40 +573,38 @@ const PrintCertificate = ({ open, data, close }) => {
                 </Box>
               </Grid>
 
-              <Grid item sm={11} sx={{ marginTop: "10px" }}>
+              <Grid item sm={11} sx={{marginTop: "10px"}}>
                 <Typography
                   sx={{
                     fontSize: "18px",
                     lineHeight: "2",
                     fontWeight: "bold",
                     textAlign: "justify",
-                  }}
-                >
+                  }}>
                   CONFIRMATION Registry Bk. No:{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.book_no}
                   </span>{" "}
                   &nbsp; Page No.{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.page_no}
                   </span>{" "}
                   &nbsp; Line No.{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.line_no}
                   </span>
                 </Typography>
               </Grid>
-              <Grid item sm={11} sx={{ marginTop: "10px" }}>
+              <Grid item sm={11} sx={{marginTop: "10px"}}>
                 <Typography
                   sx={{
                     fontSize: "18px",
                     lineHeight: "2",
                     fontWeight: "bold",
                     textAlign: "justify",
-                  }}
-                >
+                  }}>
                   Date of issue:{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {util.formatDate(CertData.data_issue)}
                   </span>
                 </Typography>
@@ -622,8 +617,7 @@ const PrintCertificate = ({ open, data, close }) => {
                   display: "flex",
                   gap: 15,
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <div>
                   <Typography
                     sx={{
@@ -631,10 +625,9 @@ const PrintCertificate = ({ open, data, close }) => {
                       lineHeight: "2",
                       fontWeight: "bold",
                       textAlign: "left",
-                    }}
-                  >
+                    }}>
                     O.R No.{" "}
-                    <span style={{ textDecoration: "underline" }}>
+                    <span style={{textDecoration: "underline"}}>
                       {CertData.transaction_no}
                     </span>
                   </Typography>
@@ -647,24 +640,22 @@ const PrintCertificate = ({ open, data, close }) => {
                       lineHeight: "2",
                       fontWeight: "bold",
                       textAlign: "justify",
-                    }}
-                  >
+                    }}>
                     Purpose:{" "}
-                    <span style={{ textDecoration: "underline" }}>
+                    <span style={{textDecoration: "underline"}}>
                       {CertData.purpose}
                     </span>
                   </Typography>
                 </div>
               </Grid>
 
-              <Grid item sm={6} sx={{ marginTop: "150px" }}>
+              <Grid item sm={6} sx={{marginTop: "150px"}}>
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       flex: 0.1,
@@ -673,7 +664,7 @@ const PrintCertificate = ({ open, data, close }) => {
                     }}
                   />
                   <div
-                    style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                    style={{flex: 1, height: "1px", backgroundColor: "black"}}
                   />
                 </div>
               </Grid>
@@ -689,8 +680,7 @@ const PrintCertificate = ({ open, data, close }) => {
               width: "793.92px",
               py: 3,
             }}
-            ref={componentRef}
-          >
+            ref={componentRef}>
             <Box
               sx={{
                 position: "absolute",
@@ -703,8 +693,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 backgroundSize: "contain",
                 backgroundPosition: "center",
                 opacity: 0.2,
-              }}
-            ></Box>
+              }}></Box>
 
             <Grid container spacing={1}>
               <Grid item sm={12}>
@@ -716,8 +705,7 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontSize: "40px",
                     letterSpacing: 2.5,
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   Catholic Church of Christ of the Agony
                 </Typography>
               </Grid>
@@ -725,8 +713,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 item
                 sm={12}
                 align="center"
-                sx={{ display: "flex", justifyContent: "center", gap: 2 }}
-              >
+                sx={{display: "flex", justifyContent: "center", gap: 2}}>
                 <img
                   src={logo}
                   style={{
@@ -735,7 +722,7 @@ const PrintCertificate = ({ open, data, close }) => {
                   }}
                   alt="Logo"
                 />
-                <Box textAlign={"center"} sx={{ marginTop: 2 }}>
+                <Box textAlign={"center"} sx={{marginTop: 2}}>
                   <Typography
                     sx={{
                       fontFamily: "Palatino",
@@ -743,8 +730,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       lineHeight: "1",
                       color: "#000000",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     GETHSEMANE PARISH
                   </Typography>
                   <Typography
@@ -753,8 +739,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       fontFamily: "Times New Roman",
                       fontSize: "16px",
                       lineHeight: "2",
-                    }}
-                  >
+                    }}>
                     Casuntingan, Mandaue City Cebu, Philippines 6014
                   </Typography>
                   <FontAwesomeIcon size="xs" icon={faPhone} />
@@ -764,14 +749,13 @@ const PrintCertificate = ({ open, data, close }) => {
                       fontFamily: "Times New Roman",
                       fontSize: "15px",
                       display: "inline",
-                    }}
-                  >
+                    }}>
                     /fax no: (032) 346-9560
                   </Typography>
                 </Box>
               </Grid>
 
-              <Grid item sm={12} sx={{ marginTop: -30 }}>
+              <Grid item sm={12} sx={{marginTop: -30}}>
                 <Typography
                   sx={{
                     fontFamily: "Cursiva",
@@ -779,34 +763,31 @@ const PrintCertificate = ({ open, data, close }) => {
                     letterSpacing: 1.5,
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   BAPTISMAL CERTIFICATE
                 </Typography>
               </Grid>
-              <Grid item sm={12} sx={{ marginTop: -21 }}>
+              <Grid item sm={12} sx={{marginTop: -21}}>
                 <Typography
                   sx={{
                     fontSize: "20px",
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   through the Mercy and Love of God
                 </Typography>
               </Grid>
-              <Grid item sm={12} sx={{ marginTop: -15 }}>
+              <Grid item sm={12} sx={{marginTop: -15}}>
                 <Typography
                   sx={{
                     fontSize: "22px",
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   This is to certify that
                 </Typography>
               </Grid>
-              <Grid item sm={12} sx={{ marginTop: -8 }}>
+              <Grid item sm={12} sx={{marginTop: -8}}>
                 <Typography
                   sx={{
                     fontSize: "24px",
@@ -814,95 +795,79 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontWeight: "bold",
                     textAlign: "center",
                     textDecoration: "underline",
-                  }}
-                >
+                  }}>
                   {CertData.full_name}
                 </Typography>
               </Grid>
 
-              <Grid
-                item
-                sm={12}
-                sx={{ marginLeft: "30px", marginRight: "30px" }}
-              >
+              <Grid item sm={12} sx={{marginLeft: "30px", marginRight: "30px"}}>
                 <Typography
                   sx={{
                     fontSize: "18px",
                     lineHeight: "2",
                     fontWeight: "regular",
                     textAlign: "justify",
-                  }}
-                >
+                  }}>
                   born in{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.birth_place}
                   </span>{" "}
                   on the{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.birth_day}
                   </span>{" "}
                   day of{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.birth_month}
                   </span>{" "}
                   year of our Lord{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.birth_year}
                   </span>
                   . Legitimate child of{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.father_name}
                   </span>{" "}
                   and{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.mother_name}
                   </span>{" "}
                   was solemnly baptized on the{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.preffered_day}
                   </span>{" "}
                   day of{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.preffered_month}
                   </span>{" "}
                   in the year of our Lord{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {CertData.preffered_year}
                   </span>
                   , according to the Rites of the Holy Roman Catholic Church.
                 </Typography>
               </Grid>
 
-              <Grid item sm={12} sx={{ marginTop: "10px" }}>
-                <Box sx={{ marginLeft: "30px" }}>
+              <Grid item sm={12} sx={{marginTop: "10px"}}>
+                <Box sx={{marginLeft: "30px"}}>
                   <Typography
                     sx={{
                       fontSize: "18px",
                       lineHeight: "2",
                       fontWeight: "regular",
                       textAlign: "justify",
-                    }}
-                  >
+                    }}>
                     Minister of Baptism:{" "}
-                    <span style={{ fontWeight: "bold" }}>
+                    <span style={{fontWeight: "bold"}}>
                       {priests.find(
                         (priest) => priest.priestID === CertData.priest_id
                       )?.first_name +
@@ -912,7 +877,7 @@ const PrintCertificate = ({ open, data, close }) => {
                         )?.last_name}
                     </span>
                   </Typography>
-                  <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                  <Box sx={{display: "flex", alignItems: "flex-start"}}>
                     <Typography
                       sx={{
                         fontSize: "18px",
@@ -920,11 +885,10 @@ const PrintCertificate = ({ open, data, close }) => {
                         fontWeight: "regular",
                         textAlign: "justify",
                         marginRight: "10px",
-                      }}
-                    >
+                      }}>
                       Sponsors:
                     </Typography>
-                    <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                    <Box sx={{display: "flex", flexWrap: "wrap"}}>
                       {sponsors.map((sponsor, index) => (
                         <Typography
                           key={index}
@@ -935,8 +899,7 @@ const PrintCertificate = ({ open, data, close }) => {
                             fontWeight: "bold",
                             textAlign: "justify",
                             marginRight: "10px",
-                          }}
-                        >
+                          }}>
                           {sponsor.name},
                         </Typography>
                       ))}
@@ -945,32 +908,30 @@ const PrintCertificate = ({ open, data, close }) => {
                 </Box>
               </Grid>
 
-              <Grid item sm={4} sx={{ marginTop: "20px", ml: "30px" }}>
+              <Grid item sm={4} sx={{marginTop: "20px", ml: "30px"}}>
                 <Typography
                   sx={{
                     fontSize: "18px",
                     lineHeight: "2",
                     fontWeight: "bold",
                     textAlign: "justify",
-                  }}
-                >
+                  }}>
                   Registry Bk. No:{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.book_no}
                   </span>
                 </Typography>
               </Grid>
-              <Grid item sm={6} sx={{ marginTop: "20px", ml: 10 }}>
+              <Grid item sm={6} sx={{marginTop: "20px", ml: 10}}>
                 <Typography
                   sx={{
                     fontSize: "18px",
                     lineHeight: "2",
                     fontWeight: "bold",
                     textAlign: "justify",
-                  }}
-                >
+                  }}>
                   Date of issue:{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {util.formatDate(CertData.data_issue)}
                   </span>
                 </Typography>
@@ -979,18 +940,16 @@ const PrintCertificate = ({ open, data, close }) => {
               <Grid
                 item
                 sm={4}
-                sx={{ marginTop: "10px", ml: "30px", display: "flex", gap: 3 }}
-              >
+                sx={{marginTop: "10px", ml: "30px", display: "flex", gap: 3}}>
                 <Typography
                   sx={{
                     fontSize: "18px",
                     lineHeight: "2",
                     fontWeight: "bold",
                     textAlign: "justify",
-                  }}
-                >
+                  }}>
                   Page No.{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.page_no}
                   </span>
                 </Typography>
@@ -1000,10 +959,9 @@ const PrintCertificate = ({ open, data, close }) => {
                     lineHeight: "2",
                     fontWeight: "bold",
                     textAlign: "justify",
-                  }}
-                >
+                  }}>
                   Line No.{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.line_no}
                   </span>
                 </Typography>
@@ -1012,18 +970,16 @@ const PrintCertificate = ({ open, data, close }) => {
               <Grid
                 item
                 sm={12}
-                sx={{ marginTop: "10px", ml: "30px", display: "flex", gap: 6 }}
-              >
+                sx={{marginTop: "10px", ml: "30px", display: "flex", gap: 6}}>
                 <Typography
                   sx={{
                     fontSize: "18px",
                     lineHeight: "2",
                     letterSpacing: 1,
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   O.R No.{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.transaction_no}
                   </span>
                 </Typography>
@@ -1033,10 +989,9 @@ const PrintCertificate = ({ open, data, close }) => {
                     lineHeight: "2",
                     letterSpacing: 1,
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   Purpose:{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.purpose}
                   </span>
                 </Typography>
@@ -1046,15 +1001,13 @@ const PrintCertificate = ({ open, data, close }) => {
                 item
                 sm={11}
                 align="center"
-                sx={{ marginTop: "100px", ml: "30px" }}
-              >
+                sx={{marginTop: "100px", ml: "30px"}}>
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       flex: 0.1,
@@ -1063,7 +1016,7 @@ const PrintCertificate = ({ open, data, close }) => {
                     }}
                   />
                   <div
-                    style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                    style={{flex: 1, height: "1px", backgroundColor: "black"}}
                   />
                 </div>
               </Grid>
@@ -1079,16 +1032,14 @@ const PrintCertificate = ({ open, data, close }) => {
               width: "793.92px",
               py: 5,
             }}
-            ref={componentRef}
-          >
+            ref={componentRef}>
             <Grid container spacing={2}>
               <Grid
                 item
                 sm={11}
                 display={"flex"}
                 justifyContent={"center"}
-                gap={1}
-              >
+                gap={1}>
                 <img
                   src={logo}
                   style={{
@@ -1105,8 +1056,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       fontWeight: "bold",
                       fontSize: "26px",
                       textAlign: "center",
-                    }}
-                  >
+                    }}>
                     Catholic Church of Christ of the Agony
                   </Typography>
                   <Typography
@@ -1116,8 +1066,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       lineHeight: "1",
                       color: "#040063",
                       fontWeight: "bold",
-                    }}
-                  >
+                    }}>
                     GETHSEMANE PARISH
                   </Typography>
                   <Typography
@@ -1125,16 +1074,14 @@ const PrintCertificate = ({ open, data, close }) => {
                       fontSize: "15px",
                       lineHeight: "1",
                       mb: "3px",
-                    }}
-                  >
+                    }}>
                     Casuntingan, Mandaue City
                   </Typography>
                   <Typography
                     sx={{
                       fontSize: "15px",
                       lineHeight: "1",
-                    }}
-                  >
+                    }}>
                     Cebu, Philippines 6014
                   </Typography>
                   <FontAwesomeIcon size="xs" icon={faPhone} />
@@ -1143,14 +1090,13 @@ const PrintCertificate = ({ open, data, close }) => {
                       fontSize: "15px",
                       lineHeight: "0",
                       display: "inline",
-                    }}
-                  >
+                    }}>
                     /fax no: (032) 346-9560
                   </Typography>
                 </Box>
               </Grid>
 
-              <Grid item sm={12} sx={{ marginTop: -30 }}>
+              <Grid item sm={12} sx={{marginTop: -30}}>
                 <Typography
                   sx={{
                     fontFamily: "Cursiva",
@@ -1159,43 +1105,40 @@ const PrintCertificate = ({ open, data, close }) => {
                     letterSpacing: 1,
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   Certificate of Marriage
                 </Typography>
               </Grid>
-              <Grid item sm={12} sx={{ marginTop: -20 }}>
+              <Grid item sm={12} sx={{marginTop: -20}}>
                 <Typography
                   sx={{
                     fontSize: "15px",
                     lineHeight: "1",
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   This certifies that
                 </Typography>
               </Grid>
-              <Grid item sm={12} sx={{ marginTop: -13 }}>
+              <Grid item sm={12} sx={{marginTop: -13}}>
                 <Typography
                   sx={{
                     fontSize: "15px",
                     lineHeight: "1",
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
-                  <span style={{ textDecoration: "underline" }}>
+                  }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.full_name}
                   </span>{" "}
                   and{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.spouse_name}
                   </span>
                 </Typography>
               </Grid>
 
-              <Grid item sm={12} sx={{ mt: -8 }}>
+              <Grid item sm={12} sx={{mt: -8}}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -1203,15 +1146,13 @@ const PrintCertificate = ({ open, data, close }) => {
                         sx={{
                           borderBottom: "1px solid black",
                           padding: "0px 0px 0px 0px",
-                        }}
-                      ></TableCell>
+                        }}></TableCell>
                       <TableCell
                         align="center"
                         sx={{
                           borderBottom: "1px solid black",
                           padding: "0px 0px 0px 0px",
-                        }}
-                      >
+                        }}>
                         (Husband)
                       </TableCell>
                       <TableCell
@@ -1219,8 +1160,7 @@ const PrintCertificate = ({ open, data, close }) => {
                         sx={{
                           borderBottom: "1px solid black",
                           padding: "0px 0px 0px 0px",
-                        }}
-                      >
+                        }}>
                         (Wife)
                       </TableCell>
                     </TableRow>
@@ -1233,8 +1173,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "200px",
-                        }}
-                      >
+                        }}>
                         Legal Status
                       </TableCell>
                       <TableCell
@@ -1243,8 +1182,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         Married
                       </TableCell>
                       <TableCell
@@ -1253,8 +1191,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         Married
                       </TableCell>
                     </TableRow>
@@ -1265,8 +1202,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "200px",
-                        }}
-                      >
+                        }}>
                         Actual Address
                       </TableCell>
                       <TableCell
@@ -1275,8 +1211,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.groom_details?.groom_address}
                       </TableCell>
                       <TableCell
@@ -1285,8 +1220,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.bride_details?.bride_address}
                       </TableCell>
                     </TableRow>
@@ -1297,8 +1231,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "200px",
-                        }}
-                      >
+                        }}>
                         Date of Birth
                       </TableCell>
                       <TableCell
@@ -1307,8 +1240,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {util.formatDate(CertData?.groom_details?.groom_bday)}
                       </TableCell>
                       <TableCell
@@ -1317,8 +1249,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {util.formatDate(CertData?.bride_details?.bride_bday)}
                       </TableCell>
                     </TableRow>
@@ -1329,8 +1260,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "200px",
-                        }}
-                      >
+                        }}>
                         Place of Birth
                       </TableCell>
                       <TableCell
@@ -1339,8 +1269,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.groom_details?.groom_bplace}
                       </TableCell>
                       <TableCell
@@ -1349,8 +1278,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.bride_details?.bride_bplace}
                       </TableCell>
                     </TableRow>
@@ -1361,8 +1289,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "200px",
-                        }}
-                      >
+                        }}>
                         Date of Baptism
                       </TableCell>
                       <TableCell
@@ -1371,8 +1298,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {util.formatDate(CertData?.groom_details?.groom_bapday)}
                       </TableCell>
                       <TableCell
@@ -1381,8 +1307,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {util.formatDate(CertData?.bride_details?.bride_bapday)}
                       </TableCell>
                     </TableRow>
@@ -1393,8 +1318,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "200px",
-                        }}
-                      >
+                        }}>
                         Place of Baptism
                       </TableCell>
                       <TableCell
@@ -1403,8 +1327,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.groom_details?.groom_bapplace}
                       </TableCell>
                       <TableCell
@@ -1413,8 +1336,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.bride_details?.bride_bapplace}
                       </TableCell>
                     </TableRow>
@@ -1425,8 +1347,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "200px",
-                        }}
-                      >
+                        }}>
                         Father
                       </TableCell>
                       <TableCell
@@ -1435,8 +1356,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.groom_details?.groom_father}
                       </TableCell>
                       <TableCell
@@ -1445,8 +1365,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.bride_details?.bride_father}
                       </TableCell>
                     </TableRow>
@@ -1457,8 +1376,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "200px",
-                        }}
-                      >
+                        }}>
                         Mother
                       </TableCell>
                       <TableCell
@@ -1467,8 +1385,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.groom_details?.groom_mother}
                       </TableCell>
                       <TableCell
@@ -1477,8 +1394,7 @@ const PrintCertificate = ({ open, data, close }) => {
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
                           width: "300px",
-                        }}
-                      >
+                        }}>
                         {CertData?.bride_details?.bride_mother}
                       </TableCell>
                     </TableRow>
@@ -1490,16 +1406,14 @@ const PrintCertificate = ({ open, data, close }) => {
                           padding: "0px 0px 0px 0px",
                           width: "200px",
                           height: "50px",
-                        }}
-                      >
+                        }}>
                         Witnesses
                       </TableCell>
                       <TableCell
                         sx={{
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
-                        }}
-                      >
+                        }}>
                         <Box display="flex" flexDirection="column">
                           <TableCell
                             align="center"
@@ -1507,14 +1421,12 @@ const PrintCertificate = ({ open, data, close }) => {
                               borderBottom: "1px solid black",
                               padding: "0px 0px 0px 0px",
                               height: "25px",
-                            }}
-                          >
+                            }}>
                             {sponsors[0]?.name || ""}
                           </TableCell>
                           <TableCell
                             align="center"
-                            sx={{ padding: "0px 0px 0px 0px", height: "25px" }}
-                          >
+                            sx={{padding: "0px 0px 0px 0px", height: "25px"}}>
                             {sponsors[2]?.name || ""}
                           </TableCell>
                         </Box>
@@ -1523,8 +1435,7 @@ const PrintCertificate = ({ open, data, close }) => {
                         sx={{
                           border: "1px solid black",
                           padding: "0px 0px 0px 0px",
-                        }}
-                      >
+                        }}>
                         <Box display="flex" flexDirection="column">
                           <TableCell
                             align="center"
@@ -1532,14 +1443,12 @@ const PrintCertificate = ({ open, data, close }) => {
                               borderBottom: "1px solid black",
                               padding: "0px 0px 0px 0px",
                               height: "25px",
-                            }}
-                          >
+                            }}>
                             {sponsors[1]?.name || ""}
                           </TableCell>
                           <TableCell
                             align="center"
-                            sx={{ padding: "0px 0px 0px 0px", height: "25px" }}
-                          >
+                            sx={{padding: "0px 0px 0px 0px", height: "25px"}}>
                             {sponsors[3]?.name || ""}
                           </TableCell>
                         </Box>
@@ -1555,8 +1464,7 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontSize: "15px",
                     lineHeight: "0",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   were united in
                 </Typography>
               </Grid>
@@ -1569,8 +1477,7 @@ const PrintCertificate = ({ open, data, close }) => {
                     letterSpacing: 1,
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   Holy Matrimony
                 </Typography>
               </Grid>
@@ -1580,19 +1487,18 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontSize: "15px",
                     lineHeight: "1",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   according to the rules of the Holy Roman Catholic Church{" "}
                   <br />
                   on the{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.marriage_day}
                   </span>{" "}
                   day of{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.marriage_month}
                   </span>{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.marriage_year}
                   </span>
                 </Typography>
@@ -1604,13 +1510,11 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontSize: "15px",
                     lineHeight: "1",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   {" "}
                   The Marraige was solemized by{" "}
                   <span
-                    style={{ textDecoration: "underline", fontWeight: "bold" }}
-                  >
+                    style={{textDecoration: "underline", fontWeight: "bold"}}>
                     {priests.find(
                       (priest) => priest.priestID === CertData.priest_id
                     )?.first_name +
@@ -1631,10 +1535,9 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontSize: "15px",
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   Book No.{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.book_no}12
                   </span>
                 </Typography>
@@ -1645,10 +1548,9 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontSize: "15px",
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   Date of Issue:{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {util.formatDate(CertData.data_issue)}
                   </span>
                 </Typography>
@@ -1660,10 +1562,9 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontSize: "15px",
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   Line No.{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.line_no}44
                   </span>
                 </Typography>
@@ -1674,10 +1575,9 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontSize: "15px",
                     fontWeight: "bold",
                     ml: 7.5,
-                  }}
-                >
+                  }}>
                   Purpose:{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.purpose}
                   </span>
                 </Typography>
@@ -1688,23 +1588,21 @@ const PrintCertificate = ({ open, data, close }) => {
                     fontSize: "15px",
                     fontWeight: "bold",
                     textAlign: "center",
-                  }}
-                >
+                  }}>
                   Page No.{" "}
-                  <span style={{ textDecoration: "underline" }}>
+                  <span style={{textDecoration: "underline"}}>
                     {CertData.page_no}33
                   </span>
                 </Typography>
               </Grid>
 
-              <Grid item sm={7} sx={{ marginTop: "80px", ml: 20 }}>
+              <Grid item sm={7} sx={{marginTop: "80px", ml: 20}}>
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       flex: 0.1,
@@ -1713,7 +1611,7 @@ const PrintCertificate = ({ open, data, close }) => {
                     }}
                   />
                   <div
-                    style={{ flex: 1, height: "1px", backgroundColor: "black" }}
+                    style={{flex: 1, height: "1px", backgroundColor: "black"}}
                   />
                 </div>
               </Grid>
@@ -1732,25 +1630,22 @@ const PrintCertificate = ({ open, data, close }) => {
       open={open}
       onClose={close}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+      aria-describedby="alert-dialog-description">
       <DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
           <Grid
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
               margin: "10px",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 textAlign: "center",
                 fontWeight: "bold",
                 marginBottom: "10px",
-              }}
-            >
+              }}>
               {data.service_id == 2
                 ? "Confirmation"
                 : data.service_id == 3
@@ -1768,8 +1663,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 right: 8,
                 top: 8,
                 color: theme.palette.grey[500],
-              })}
-            >
+              })}>
               <CloseIcon />
             </IconButton>
 
@@ -1784,8 +1678,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 "&::-webkit-scrollbar": {
                   display: "none",
                 },
-              }}
-            >
+              }}>
               {renderCertificateContainer()}
             </Box>
 
@@ -1797,8 +1690,7 @@ const PrintCertificate = ({ open, data, close }) => {
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: "10px",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -1807,8 +1699,7 @@ const PrintCertificate = ({ open, data, close }) => {
                     display: "flex",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
+                  }}>
                   <ReactToPrint
                     trigger={() => (
                       <Button
@@ -1819,12 +1710,12 @@ const PrintCertificate = ({ open, data, close }) => {
                           "&:hover": {
                             backgroundColor: "#1E5730",
                           },
-                        }}
-                      >
+                        }}>
                         print
                       </Button>
                     )}
                     content={() => componentRef.current}
+                    onAfterPrint={updateCertStatus}
                   />
 
                   <Button
@@ -1836,8 +1727,7 @@ const PrintCertificate = ({ open, data, close }) => {
                       "&:hover": {
                         backgroundColor: "#D9D9C9",
                       },
-                    }}
-                  >
+                    }}>
                     close
                   </Button>
                 </Grid>
