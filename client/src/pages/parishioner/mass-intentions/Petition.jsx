@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from "../../../assets/imageHeader.jpg";
@@ -11,17 +11,17 @@ import {
   FormHelperText,
   Box,
 } from "@mui/material";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
 import config from "../../../config";
 import all from "../../../components/PaymentModal";
 import generateHash from "../../../utils/GenerateHash";
 import ValidateForm from "../../../utils/Validators";
-import {LocalizationProvider, DatePicker} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import GCashQR from "../../../components/GCashQR";
 
 const containerStyle = {
@@ -50,7 +50,7 @@ const Petition = () => {
   const [openCash, setOpenCash] = useState(false);
   const [openGCash, setOpenGCash] = useState(false);
   const [captchaValue, setCaptchaValue] = useState(null);
-  const [schedule, setSchedule] = useState({slots: ["00:00:00"]});
+  const [schedule, setSchedule] = useState({ slots: ["00:00:00"] });
   const [modalData, setModalData] = useState({});
   const id = 1;
   var dateToday = new Date().toJSON().slice(0, 10);
@@ -102,11 +102,11 @@ const Petition = () => {
 
   // event handlers
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
   };
 
   const paymentInfo = {
@@ -149,7 +149,8 @@ const Petition = () => {
       <Header backgroundImage={imageHeader} title="MASS INTENTION - PETITION" />
       <Link
         to="/mass-intention-select"
-        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center">
+        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center"
+      >
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <span className="xs:hidden md:flex">Return to Selection</span>
       </Link>
@@ -160,11 +161,11 @@ const Petition = () => {
       <all.CashPaymentModal open={openCash} data={modalData} />
       <GCashQR open={openGCash} close={() => setOpenGCash(false)} />
 
-      <Container maxWidth="md" sx={{marginBottom: "50px"}}>
+      <Container maxWidth="md" sx={{ marginBottom: "50px" }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={12}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Write Petition here:</label>
               <TextField
                 name="intention_details"
@@ -180,7 +181,7 @@ const Petition = () => {
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Offered by:</label>
               <TextField
                 name="offered_by"
@@ -194,11 +195,11 @@ const Petition = () => {
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Mass Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  slotProps={{textField: {fullWidth: true}}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   name="mass_date"
                   variant="outlined"
                   disablePast
@@ -210,14 +211,14 @@ const Petition = () => {
                 />
               </LocalizationProvider>
               {errors.mass_date != null && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   {errors.mass_date}
                 </FormHelperText>
               )}
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Time Slot:</label>
               <TextField
                 name="mass_time"
@@ -229,7 +230,8 @@ const Petition = () => {
                 size="small"
                 required
                 sx={inputstlying}
-                disabled={!isDateSelected}>
+                disabled={!isDateSelected}
+              >
                 {schedule.slots.map((time, index) => {
                   return (
                     <MenuItem key={index} value={time}>
@@ -241,7 +243,7 @@ const Petition = () => {
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Payment Method:</label>
               <TextField
                 name="payment_method"
@@ -252,7 +254,8 @@ const Petition = () => {
                 variant="outlined"
                 size="small"
                 required
-                sx={inputstlying}>
+                sx={inputstlying}
+              >
                 <MenuItem value="cash">Cash</MenuItem>
                 <MenuItem value="gcash">GCash</MenuItem>
               </TextField>
@@ -270,7 +273,7 @@ const Petition = () => {
                 sx={inputstlying}
               />
               {errors.donation_amount != null && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   {errors.donation_amount}
                 </FormHelperText>
               )}
@@ -283,11 +286,13 @@ const Petition = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                  }}>
+                  }}
+                >
                   <label>GCash Ref No:</label>
                   <span
                     onClick={openQR}
-                    className="cursor-pointer text-sm italic text-blue-800 hover:text-blue-400 hover:scale-105 duration-300">
+                    className="cursor-pointer text-sm italic text-blue-800 hover:text-blue-400 hover:scale-105 duration-300"
+                  >
                     View QR Code
                   </span>
                 </div>
@@ -298,10 +303,10 @@ const Petition = () => {
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
-                  inputProps={{maxLength: 13}}
+                  inputProps={{ maxLength: 13 }}
                 />
                 {errors.gcashRefNo != null && (
-                  <FormHelperText sx={{color: "red"}}>
+                  <FormHelperText sx={{ color: "red" }}>
                     {errors.gcashRefNo}
                   </FormHelperText>
                 )}
@@ -309,7 +314,7 @@ const Petition = () => {
             ) : null}
 
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Contact Number:</label>
               <TextField
                 name="contact_no"
@@ -319,10 +324,10 @@ const Petition = () => {
                 size="small"
                 required
                 sx={inputstlying}
-                inputProps={{maxLength: 11}}
+                inputProps={{ maxLength: 11 }}
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
@@ -340,7 +345,8 @@ const Petition = () => {
                 isCaptchaChecked ? "bg-[#355173]" : "bg-[#868686]"
               }`}
               disabled={!isCaptchaChecked}
-              type="submit">
+              type="submit"
+            >
               SUBMIT REQUEST
             </button>
           </div>

@@ -80,7 +80,13 @@ const CashPaymentModal = ({ open, data }) => {
                 </Typography>
                 <Typography variant="subtitle1" sx={{ textAlign: "left" }}>
                   {data.fee != null && (
-                    <p>₱ {parseFloat(data.fee).toFixed(2)}</p>
+                    <p>
+                      ₱
+                      {parseFloat(data.fee).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </p>
                   )}
                   {data.requirements != null &&
                     data.requirements.map((req, index) => (
@@ -195,7 +201,16 @@ const GCashPaymentModal = ({ open, data }) => {
                 )}
               </Typography>
               <Typography variant="subtitle2" sx={{ textAlign: "left" }}>
-                {data.fee !== null && <p>{data.fee}</p>}
+                {data.fee !== null && (
+                  <p>
+                    {" "}
+                    ₱
+                    {parseFloat(data.fee).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                )}
                 {data.requirements != null &&
                   data.requirements.map((req, index) => (
                     <p key={index}>{req}</p>

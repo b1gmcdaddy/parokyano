@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import NavStaff from "../../components/NavStaff";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,12 +9,12 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
-import {styled} from "@mui/material/styles";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, {tableCellClasses} from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
@@ -23,7 +23,7 @@ import config from "../../config";
 import axios from "axios";
 import ManageUserForm from "../../components/ManageUserForm";
 
-const StyledTableCell = styled(TableCell)(({theme}) => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "#355173",
     color: theme.palette.common.white,
@@ -34,7 +34,7 @@ const StyledTableCell = styled(TableCell)(({theme}) => ({
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({theme}) => ({
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
@@ -55,7 +55,9 @@ const ManageAccounts = () => {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const res = await axios.get(`${config.API}/user/retrieveUsers`);
+        const res = await axios.get(
+          `${config.API}/user/retrieveUsersWithActivity`
+        );
         setUser(res.data);
       } catch (err) {
         console.error("error retrieving user", err);
@@ -76,16 +78,17 @@ const ManageAccounts = () => {
 
   const handleFormSave = async () => {
     handleFormClose();
-    const res = await axios.get(`${config.API}/user/retrieveUsers`);
+    const res = await axios.get(`${config.API}/user/retrieveUsersWithActivity`);
     setUser(res.data);
   };
 
   return (
-    <Box sx={{display: "flex", mx: {md: "30px"}}}>
+    <Box sx={{ display: "flex", mx: { md: "30px" } }}>
       <NavStaff />
       <Box
         component="main"
-        sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
+      >
         <Toolbar />
         <Box
           sx={{
@@ -93,23 +96,26 @@ const ManageAccounts = () => {
             justifyContent: "space-between",
             marginTop: "8px",
             alignItems: "center",
-          }}>
+          }}
+        >
           <Typography
-            sx={{fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600}}>
+            sx={{ fontSize: "1.25rem", lineHeight: "1.75rem", fontWeight: 600 }}
+          >
             Manage Accounts
           </Typography>
           <Button
             variant="contained"
             type="button"
-            sx={{backgroundColor: "#355173"}}
-            onClick={() => handleFormOpen()}>
+            sx={{ backgroundColor: "#355173" }}
+            onClick={() => handleFormOpen()}
+          >
             Create New Staff
           </Button>
         </Box>
 
-        <Box sx={{marginTop: "3em"}}>
-          <TableContainer component={Paper} sx={{overflowX: "auto"}}>
-            <Table sx={{minWidth: 700}} aria-label="customized table">
+        <Box sx={{ marginTop: "3em" }}>
+          <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
+            <Table sx={{ minWidth: 700 }} aria-label="customized table">
               <TableHead>
                 <TableRow>
                   <StyledTableCell>Username</StyledTableCell>
@@ -123,7 +129,7 @@ const ManageAccounts = () => {
                 {user.map((user) => (
                   <StyledTableRow key={user.userID}>
                     <StyledTableCell component="th" scope="row">
-                      {user.username}
+                      {`${user.first_name} ${user.last_name}`}
                     </StyledTableCell>
                     <StyledTableCell>{capitalize(user.status)}</StyledTableCell>
                     <StyledTableCell>
@@ -151,7 +157,8 @@ const ManageAccounts = () => {
             open={openForm}
             onClose={handleFormClose}
             fullWidth
-            maxWidth="sm">
+            maxWidth="sm"
+          >
             <DialogTitle>
               {currentUser ? "Edit Staff Account" : "Create New Staff Account"}
             </DialogTitle>

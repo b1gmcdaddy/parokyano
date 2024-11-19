@@ -67,8 +67,8 @@ const retrieveScheduleByParams = (req, res) => {
         );
         let priestName = `${result[0].first_name} ${result[0].last_name}`;
 
-        const message = `${priestName} has a scheduled service from ${startTimeFormatted} to ${endTimeFormatted}`;
-        const details = "Service: " + result[0].activity;
+        const message = `${priestName} has a schedule from ${startTimeFormatted} to ${endTimeFormatted}`;
+        const details = "Activity: " + result[0].activity;
         return res.status(409).send({ message, details });
       } else {
         return res.status(200).send();
@@ -78,7 +78,7 @@ const retrieveScheduleByParams = (req, res) => {
 };
 
 const retrieveScheduleVenue = (req, res) => {
-  const { date, start, end } = req.query;
+  const { date, start, end, request_id } = req.query;
 
   const query = `
     SELECT s.*
@@ -92,6 +92,7 @@ const retrieveScheduleVenue = (req, res) => {
         (s.start_time >= ? AND s.end_time <= ?) OR   
         (s.start_time <= ? AND s.end_time >= ?)   
       )
+        AND s.request_id != ?
   `;
 
   const params = [
@@ -104,6 +105,7 @@ const retrieveScheduleVenue = (req, res) => {
     end,
     start,
     end,
+    request_id || null,
   ];
 
   db.query(query, params, (err, result) => {
