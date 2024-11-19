@@ -6,7 +6,7 @@ const _ = require("lodash");
 const {parse} = require("dotenv");
 const dayjs = require("dayjs");
 
-const dateToday = dayjs().tz("Asia/Manila").format("YYYY-MM-DDTHH:mm:ssZ");
+const dateToday = new Date().toJSON().slice(0, 10);
 
 const createRequestIntention = (req, res) => {
   const data = req.body;
