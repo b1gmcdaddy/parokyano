@@ -18,6 +18,9 @@ import {
   Modal,
   MenuItem,
   InputAdornment,
+  Snackbar,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
@@ -107,11 +110,15 @@ const Settings = () => {
   const [open, setOpen] = useState(false);
   const [transacNoModal, setOpenTransac] = useState(false);
   const handleOpen = () => setOpen(true);
-  const [errors, setErrors] = useState({});
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [priests, setPriests] = useState([]);
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userID = user.id;
 
   const [formData, setFormData] = useState({
     child_name: {
@@ -167,32 +174,6 @@ const Settings = () => {
 
   const handleConfirmPasswordVisibility = () => {
     setShowConfirmPassword((prev) => !prev);
-  };
-
-  const handleSubmitPass = async () => {
-    const res = await axios.put(
-      `${config.API}/user/editUser/${id}`,
-      {
-        oldPassword,
-        newPassword,
-        confirmPassword,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-    console.log(res);
-    if (res.status === 200) {
-      setOpen(false);
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setShowOldPassword(false);
-      setShowNewPassword(false);
-      setShowConfirmPassword(false);
-    }
   };
 
   // PAGINATION
@@ -270,11 +251,32 @@ const Settings = () => {
     }
   };
 
-  const handleConfirm = (action) => {
+  const handleConfirm = async (action) => {
     switch (action) {
       case "change password":
-        alert("Change password confirmed.");
-        handleChangeView("settings");
+        try {
+          const res = await axios.post(`${config.API}/auth/change-password`, {
+            oldPassword,
+            newPassword,
+            userID,
+          });
+          console.log(res);
+
+          if (res.status === 200 && res.data.message === "success") {
+            setOpen(false);
+            setOldPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+            setShowOldPassword(false);
+            setShowNewPassword(false);
+            setShowConfirmPassword(false);
+          } else {
+            setErrorMessage(res.data.message);
+            setError(true);
+          }
+        } catch (err) {
+          console.error(err);
+        }
         break;
       default:
         break;
@@ -324,6 +326,22 @@ const Settings = () => {
 
   return (
     <>
+      {error && (
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => {
+            setError(false);
+            setErrorMessage("");
+          }}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
+            <AlertTitle>{errorMessage}</AlertTitle>
+          </Alert>
+        </Snackbar>
+      )}
+
       <Box sx={{ display: "flex", mx: { md: "30px" } }}>
         <NavStaff />
         <Box
@@ -669,7 +687,7 @@ const Settings = () => {
                       sx={TextFieldStyle}
                     ></TextField>
                   </Grid>
-                  <Grid item sm="12">
+                  {/* <Grid item sm="12">
                     <TextField
                       fullWidth
                       value={confirmPassword}
@@ -694,7 +712,7 @@ const Settings = () => {
                       }}
                       sx={TextFieldStyle}
                     ></TextField>
-                  </Grid>
+                  </Grid> */}
                   <Grid item sm="12" textAlign={"center"}>
                     <Button
                       onClick={handleClearFields}
