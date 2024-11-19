@@ -125,6 +125,15 @@ const PrintCertificate = ({ open, data, close }) => {
           params: {
             col: "payment_status",
             val: "paid",
+            col2: "donation",
+            val2:
+              data.service_id == 2
+                ? "50"
+                : data.service_id == 3
+                ? "100"
+                : "150",
+            col3: "transaction_date",
+            val3: new Date().toISOString().slice(0, 19).replace("T", " "),
             col4: "requestID",
             val4: data.requestID,
           },
@@ -1655,7 +1664,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 >
                   Book No.{" "}
                   <span style={{ textDecoration: "underline" }}>
-                    {CertData.book_no}12
+                    {CertData.book_no}
                   </span>
                 </Typography>
               </Grid>
@@ -1684,7 +1693,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 >
                   Line No.{" "}
                   <span style={{ textDecoration: "underline" }}>
-                    {CertData.line_no}44
+                    {CertData.line_no}
                   </span>
                 </Typography>
               </Grid>
@@ -1712,7 +1721,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 >
                   Page No.{" "}
                   <span style={{ textDecoration: "underline" }}>
-                    {CertData.page_no}33
+                    {CertData.page_no}
                   </span>
                 </Typography>
               </Grid>

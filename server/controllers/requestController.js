@@ -1101,16 +1101,23 @@ const updateCerts = (req, res) => {
 
 const updateMarriageCert = (req, res) => {
   const { marriageData, id } = req.body;
+
   if (!id) {
     return res.status(400).json({ message: "Missing record ID" });
   }
 
-  const { details, ...mainFields } = marriageData;
-
-  const columns = Object.keys(mainFields)
-    .map((key) => `${key} = ?`)
-    .join(", ");
+  const { spouse_name, details, ...mainFields } = marriageData;
+  const columns = Object.keys(mainFields).map((key) => `${key} = ?`).join(", ");
   const values = Object.values(mainFields);
+
+  const spouseUpdate = `
+    JSON_SET(
+      spouse_name,
+      '$.firstName', ?,
+      '$.middleName', ?,
+      '$.lastName', ?
+    )
+  `;
 
   const detailsUpdate = `
     JSON_SET(
@@ -1122,21 +1129,27 @@ const updateMarriageCert = (req, res) => {
     )
   `;
 
+  const spouseValues = [
+    spouse_name.firstName || null,
+    spouse_name.middleName || null,
+    spouse_name.lastName || null,
+  ];
+
   const detailsValues = [
     details.book_no || null,
     details.page_no || null,
     details.line_no || null,
     details.record_id || null,
   ];
-
+  
   const query = `
     UPDATE request 
-    SET ${columns},
+    SET ${columns}, spouse_name = ${spouseUpdate} ,
         details = ${detailsUpdate} 
     WHERE requestID = ?
   `;
-
-  db.query(query, [...values, ...detailsValues, id], (err, result) => {
+  
+  db.query(query, [...values, ...spouseValues, ...detailsValues, id], (err, result) => {
     if (err) {
       console.error("Error updating request", err);
       return res.status(500).json({ message: "Error updating request" });

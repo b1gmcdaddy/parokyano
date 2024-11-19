@@ -31,9 +31,18 @@ export default function GCashQR({open, close, service}) {
       </IconButton>
       <DialogContent dividers sx={{margin: "auto"}}>
         {service == "baptism" ? (
-          <Typography sx={{textAlign: "center"}}>Please pay 800 PHP</Typography>
+          <Typography sx={{textAlign: "center"}}>
+            Kindly use the QR code given below to send:
+            <br />
+            Sunday Baptism: <b>₱800.00</b>
+            <br />
+            Other Days: <b>₱1,600.00</b>
+          </Typography>
         ) : (
-          <Typography>Please pay your inputted donation amount.</Typography>
+          <Typography textAlign={"center"}>
+            Kindly use the QR code given below to send your inputted donation
+            amount.
+          </Typography>
         )}
         <img src={qrCode} />
       </DialogContent>

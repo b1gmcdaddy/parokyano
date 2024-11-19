@@ -136,14 +136,48 @@ const Wedding = () => {
     }
   };
 
-  const modalData = {
-    message:
-      "Please wait for the parish to communicate for further instructions. You may call us at (032) 346-9560 / +63969-021-7771 to follow-up after 2 days",
-    req: [
+  var requirements = [];
+  if (formData.relationship == "Civilly Married") {
+    requirements = [
       "Copy of Birth Certificate",
       "Baptismal Certificate - Marriage Purposes (issued within last 3 months)",
       "Confirmation Certificate - Marriage Purposes (issued within last 3 months)",
-    ],
+      "Photocopy of the Civil Marriage Contract",
+    ];
+  } else if (formData.relationship == "Live-in for under 4 years") {
+    requirements = [
+      "Copy of Birth Certificate",
+      "Baptismal Certificate - Marriage Purposes (issued within last 3 months)",
+      "Confirmation Certificate - Marriage Purposes (issued within last 3 months)",
+      "Marriage License",
+      "CENOMAR",
+      "CEDULA",
+    ];
+  } else if (formData.relationship == "Live-in for more than 4 years") {
+    requirements = [
+      "Copy of Birth Certificate",
+      "Baptismal Certificate - Marriage Purposes (issued within last 3 months)",
+      "Confirmation Certificate - Marriage Purposes (issued within last 3 months)",
+      "CENOMAR",
+      "CEDULA",
+      "Joint Affidavit of Marital Cohabitation",
+    ];
+  } else if (formData.relationship == "Widow") {
+    requirements = [
+      "Copy of Birth Certificate",
+      "Baptismal Certificate - Marriage Purposes (issued within last 3 months)",
+      "Confirmation Certificate - Marriage Purposes (issued within last 3 months)",
+      "Marriage License",
+      "CENOMAR",
+      "CEDULA",
+      "Death Certificate of Partner",
+    ];
+  }
+
+  const modalData = {
+    message:
+      "Please wait for the parish to communicate for further instructions. You may call us at (032) 346-9560 / +63969-021-7771 to follow-up after 2 days",
+    req: requirements,
     transaction_no: formData.transaction_no,
   };
 
