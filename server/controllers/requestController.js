@@ -417,7 +417,7 @@ const retrieveRequests = (req, res) => {
                  WHERE r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 
                  AND r.service_id = s.serviceID 
                  AND r.status = ? 
-                 ORDER BY date_requested ASC 
+                 ORDER BY preferred_date DESC
                  LIMIT ? OFFSET ?`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
