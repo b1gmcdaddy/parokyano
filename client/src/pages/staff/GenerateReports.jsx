@@ -127,6 +127,7 @@ const GenerateReports = () => {
               fullWidth
               required
             >
+              <MenuItem value="">All</MenuItem>
               <MenuItem value="5">Baptism - Appointment</MenuItem>
               <MenuItem value="6">Baptism - General</MenuItem>
               <MenuItem value="7">Wedding</MenuItem>

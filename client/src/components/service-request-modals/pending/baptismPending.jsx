@@ -23,9 +23,9 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
-import {Skeleton} from "@mui/material";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState, useEffect} from "react";
+import { Skeleton } from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../config";
@@ -36,7 +36,7 @@ import sendSMS from "../../../utils/smsService";
 import util from "../../../utils/DateTimeFormatter";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "30px"},
+  "& .MuiInputBase-root": { height: "30px" },
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -54,7 +54,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BaptismPending = ({open, data, handleClose, refreshList}) => {
+const BaptismPending = ({ open, data, handleClose, refreshList }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [service, setService] = useState(null);
@@ -69,21 +69,21 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
   const [snackBarStyle, setSnackBarStyle] = useState(null);
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   const handleDetailsChange = (e) => {
-    setDetails({...details, [e.target.name]: e.target.value});
+    setDetails({ ...details, [e.target.name]: e.target.value });
   };
 
   const handleOpenDialog = (action) => {
@@ -162,7 +162,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
         isChurchMarried: response.data.result[0].isChurchMarried,
         isCivilMarried: response.data.result[0].isCivilMarried,
         isLiveIn: response.data.result[0].isLiveIn,
-        marriage_date: response.data.result[0].marriage_date,
+        marriage_date: response.data.result[0].marriage_date.slice(0, 10),
         marriage_place: response.data.result[0].marriage_place,
         liveIn_years: response.data.result[0].liveIn_years,
       });
@@ -431,11 +431,12 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -444,11 +445,12 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity={snackBarStyle} sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -458,17 +460,18 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {!isLoading ? (
           <>
-            <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
+            <DialogTitle sx={{ mt: 3, p: 2, textAlign: "center" }}>
               <b>Baptism Request Information</b>
               <IconButton
                 aria-label="close"
                 onClick={handleClose}
-                sx={{position: "absolute", right: 8, top: 8}}>
+                sx={{ position: "absolute", right: 8, top: 8 }}
+              >
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
-              <Grid container spacing={1} sx={{padding: 4}}>
+              <Grid container spacing={1} sx={{ padding: 4 }}>
                 <Grid item sm={4}>
                   <label>First name of child:</label>
                   <TextField
@@ -539,7 +542,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                     name="gender"
                     select
                     onChange={handleDetailsChange}
-                    sx={TextFieldStyle}>
+                    sx={TextFieldStyle}
+                  >
                     <MenuItem value="male">Male</MenuItem>
                     <MenuItem value="female">Female</MenuItem>
                   </TextField>
@@ -589,16 +593,17 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                   />
                 </Grid>
 
-                <Grid item sm={12} sx={{marginY: 2}}>
-                  <Grid container spacing={4} sx={{marginBottom: "20px"}}>
+                <Grid item sm={12} sx={{ marginY: 2 }}>
+                  <Grid container spacing={4} sx={{ marginBottom: "20px" }}>
                     <Grid item xs={3} sm={3}>
                       <Typography>Is Church Married?</Typography>
                       <RadioGroup
                         row
                         name="isChurchMarried"
-                        sx={{marginTop: "-5px"}}
+                        sx={{ marginTop: "-5px" }}
                         value={details?.isChurchMarried}
-                        readonly>
+                        readonly
+                      >
                         <FormControlLabel
                           value="1"
                           control={<Radio size="small" />}
@@ -641,9 +646,10 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                           <RadioGroup
                             row
                             name="civil_married"
-                            sx={{marginTop: "-5px"}}
+                            sx={{ marginTop: "-5px" }}
                             value={details?.isCivilMarried}
-                            readonly>
+                            readonly
+                          >
                             <FormControlLabel
                               value="1"
                               control={<Radio size="small" />}
@@ -666,9 +672,10 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                             <RadioGroup
                               row
                               name="isLiveIn"
-                              sx={{marginTop: "-5px"}}
+                              sx={{ marginTop: "-5px" }}
                               value={details?.isLiveIn}
-                              readonly>
+                              readonly
+                            >
                               <FormControlLabel
                                 value="1"
                                 control={<Radio size="small" />}
@@ -711,7 +718,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                         <Grid item sm={4}>
                           <Typography
                             variant="subtitle1"
-                            sx={{fontWeight: "bold"}}>
+                            sx={{ fontWeight: "bold" }}
+                          >
                             Catholic?
                           </Typography>
                         </Grid>
@@ -724,7 +732,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                               ? "90px"
                               : "300px",
                           overflowY: "auto",
-                        }}>
+                        }}
+                      >
                         {/* Ninong */}
                         <Grid container>
                           {sponsors &&
@@ -745,8 +754,9 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                                   <RadioGroup
                                     row
                                     defaultValue={godparent.isCatholic}
-                                    sx={{marginTop: "-7px"}}
-                                    value={godparent.isCatholic}>
+                                    sx={{ marginTop: "-7px" }}
+                                    value={godparent.isCatholic}
+                                  >
                                     <FormControlLabel
                                       value="1"
                                       control={<Radio />}
@@ -770,7 +780,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                           <Grid item sm={12}>
                             <Typography
                               variant="subtitle1"
-                              sx={{fontWeight: "bold"}}>
+                              sx={{ fontWeight: "bold" }}
+                            >
                               Requirements:
                             </Typography>
                           </Grid>
@@ -791,7 +802,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                                 />
                               }
                               label={
-                                <Typography sx={{fontSize: "13px"}}>
+                                <Typography sx={{ fontSize: "13px" }}>
                                   Photocopy of Birth Certificate
                                 </Typography>
                               }
@@ -815,7 +826,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                                 />
                               }
                               label={
-                                <Typography sx={{fontSize: "13px"}}>
+                                <Typography sx={{ fontSize: "13px" }}>
                                   Photocopy of Parent - Marriage Certificate
                                 </Typography>
                               }
@@ -824,7 +835,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                           <Grid item sm={12}>
                             <Typography
                               variant="subtitle1"
-                              sx={{display: "inline-block"}}>
+                              sx={{ display: "inline-block" }}
+                            >
                               Payment:
                             </Typography>
                             <Typography
@@ -833,7 +845,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                                 fontWeight: "bold",
                                 display: "inline-block",
                                 marginLeft: "10px",
-                              }}>
+                              }}
+                            >
                               ₱{parseFloat(formData.donation).toFixed(2)}
                             </Typography>
                           </Grid>
@@ -844,7 +857,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                               onChange={handleChange}
                               value={formData.payment_method}
                               sx={TextFieldStyle}
-                              select>
+                              select
+                            >
                               <MenuItem value="cash">Cash</MenuItem>
                               <MenuItem value="gcash">Gcash</MenuItem>
                             </TextField>
@@ -856,14 +870,15 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                               onChange={handleChange}
                               fullWidth
                               select
-                              sx={TextFieldStyle}>
+                              sx={TextFieldStyle}
+                            >
                               <MenuItem value="unpaid">unpaid</MenuItem>
                               <MenuItem value="paid">paid</MenuItem>
                             </TextField>
                           </Grid>
                           {formData && formData.payment_method === "gcash" && (
                             <>
-                              <Grid item sm={12} sx={{mt: 1}}>
+                              <Grid item sm={12} sx={{ mt: 1 }}>
                                 <Typography variant="subtitle1">
                                   GCash Reference No:
                                 </Typography>
@@ -896,7 +911,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                     name="priest_id"
                     select
                     onChange={handleChange}
-                    sx={TextFieldStyle}>
+                    sx={TextFieldStyle}
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name + " " + priest.last_name}
@@ -931,7 +947,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                   <label>Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
-                      timeSteps={{hours: 30, minutes: 30}}
+                      timeSteps={{ hours: 30, minutes: 30 }}
                       minTime={dayjs().set("hour", 6)}
                       maxTime={dayjs().set("hour", 19)}
                       type="time"
@@ -974,10 +990,11 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                       height: "30px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#4C74A5"},
+                      "&:hover": { bgcolor: "#4C74A5" },
                     }}
-                    disabled={available === "Unavailable"}>
-                    <EventAvailableIcon sx={{fontSize: "1.3em"}} />
+                    disabled={available === "Unavailable"}
+                  >
+                    <EventAvailableIcon sx={{ fontSize: "1.3em" }} />
                     Assign
                   </Button>
                 </Grid>
@@ -990,11 +1007,12 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}>
-                  <Typography variant="body2" sx={{marginRight: "5px"}}>
+                  }}
+                >
+                  <Typography variant="body2" sx={{ marginRight: "5px" }}>
                     Transaction Code:
                   </Typography>
-                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     {formData.transaction_no}
                   </Typography>
                 </Grid>
@@ -1008,7 +1026,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <Grid
                   item
                   xs={12}
@@ -1017,7 +1036,8 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                     margin: "-40px 0 10px 0",
                     justifyContent: "center",
                     gap: "20px",
-                  }}>
+                  }}
+                >
                   <Button
                     variant="contained"
                     onClick={() => handleOpenDialog("update")}
@@ -1027,8 +1047,9 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#A58228"},
-                    }}>
+                      "&:hover": { bgcolor: "#A58228" },
+                    }}
+                  >
                     UPDATE
                   </Button>
 
@@ -1041,8 +1062,9 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#f44336"},
-                    }}>
+                      "&:hover": { bgcolor: "#f44336" },
+                    }}
+                  >
                     CANCEL
                   </Button>
                 </Grid>
@@ -1051,7 +1073,7 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
           </>
         ) : (
           // Skeleton loading effect for the entire form
-          <Grid container spacing={2} sx={{padding: 4}}>
+          <Grid container spacing={2} sx={{ padding: 4 }}>
             <Grid item sm={12}>
               <Skeleton variant="text" width="80%" height={30} />
             </Grid>
@@ -1060,20 +1082,20 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
                 <Skeleton variant="rectangular" width="100%" height={40} />
               </Grid>
             ))}
-            <Grid item sm={12} sx={{mt: 2}}>
+            <Grid item sm={12} sx={{ mt: 2 }}>
               <Skeleton variant="rectangular" width="30%" height={40} />
             </Grid>
-            <Grid item sm={12} sx={{mt: 1}}>
+            <Grid item sm={12} sx={{ mt: 1 }}>
               <Skeleton variant="text" width="50%" height={30} />
               <Skeleton variant="rectangular" width="100%" height={150} />
             </Grid>
-            <Grid item sm={12} sx={{mt: 2}}>
+            <Grid item sm={12} sx={{ mt: 2 }}>
               <Skeleton variant="rectangular" width="30%" height={40} />
               <Skeleton
                 variant="rectangular"
                 width="30%"
                 height={40}
-                sx={{ml: 2}}
+                sx={{ ml: 2 }}
               />
             </Grid>
           </Grid>
