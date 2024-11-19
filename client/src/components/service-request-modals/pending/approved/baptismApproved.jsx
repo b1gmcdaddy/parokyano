@@ -77,6 +77,7 @@ const BaptismApproved = ({ open, data, handleClose, refreshList }) => {
     priest_id: "",
     payment_status: "",
     transaction_no: "",
+    gcashRefNo: "",
   });
 
   const fetchService = async () => {
@@ -114,6 +115,7 @@ const BaptismApproved = ({ open, data, handleClose, refreshList }) => {
         payment_status: data.payment_status || "",
         transaction_no: data.transaction_no || "",
         donation: data.donation || "",
+        gcashRefNo: data.gcashRefNo || "",
       });
     }
     setTimeout(() => {
@@ -740,7 +742,7 @@ const BaptismApproved = ({ open, data, handleClose, refreshList }) => {
                                   GCash Reference No:
                                 </Typography>
                                 <TextField
-                                  value={`gcash ref no. ${formData.gcashRefNo}`}
+                                  value={formData.gcashRefNo}
                                   name="gcashRefNo"
                                   onChange={handleChange}
                                   fullWidth

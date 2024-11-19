@@ -749,15 +749,13 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
   const [priests, setPriests] = useState([]);
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [weddingInfo, setWeddingInfo] = useState({});
   const [formData, setFormData] = useState({
     requestID: "",
     first_name: "",
     middle_name: "",
     last_name: "",
     relationship: "",
-    spouse_firstName: "",
-    spouse_middleName: "",
-    spouse_lastName: "",
     contact_no: "",
     interview_date: "",
     interview_time: "",
@@ -776,12 +774,11 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
       const weddingDetails = await fetchWeddingDetails(data.requestID);
 
       if (weddingDetails) {
-        setFormData((prevData) => ({
-          ...prevData,
+        setWeddingInfo({
           spouse_firstName: weddingDetails.spouse_firstName || "",
           spouse_middleName: weddingDetails.spouse_middleName || "",
           spouse_lastName: weddingDetails.spouse_lastName || "",
-        }));
+        });
 
         setCompleteRequirements(weddingDetails.isComplete || 0);
       }
@@ -845,9 +842,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
           transaction_no: data.transaction_no,
           payment_status: data.payment_status,
           service_id: data.service_id,
-          spouse_firstName: "",
-          spouse_middleName: "",
-          spouse_lastName: "",
           donation: data.donation,
         });
         fetchWeddingData();
@@ -863,9 +857,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
   }, [open, data]);
 
   useEffect(() => {
-    // console.log(formData.preferred_date);
-    // console.log(dayjs(formData.preferred_time, "HH:mm:ss").hour());
-    // console.log(dayjs(formData.preferred_date).get("day"));
     if (
       dayjs(formData.preferred_date).get("day") == 6 &&
       dayjs(formData.preferred_time, "HH:mm:ss").hour() == 6
@@ -951,7 +942,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
     formData.priest_id,
     open,
   ]);
-
   // END RETRIEVE WEDDING DETAILS
 
   // START FORM HANDLERS AND CONTROLS
@@ -1093,77 +1083,78 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
         break;
       case "approve": ///////////// APPROVE WEDDING ///////////
         try {
-          const response = await axios.get(
-            `${config.API}/priest/retrieve-schedule-by-params`,
-            {
-              params: {
-                priest: formData.priest_id,
-                date: formData.preferred_date,
-                start: formData.preferred_time,
-                end: endTime(formData.preferred_time, service.duration),
-              },
-            }
-          );
-          console.log(response);
-          if (Object.keys(response.data).length > 0 || response.data != "") {
-            setError({
-              message: response.data.message,
-              details: response.data?.details,
-            });
-            return;
-          } else {
-            if (available === "Unavailable") {
-              setError({
-                message: available,
-                details: "Church is unavailable",
-              });
-              return;
-            }
-            axios.put(`${config.API}/request/update-bulk`, {
+          if (formData.payment_status == "paid") {
+            const res = await axios.put(`${config.API}/request/update-bulk`, {
               formData,
               id: data.requestID,
-              user_id: currentUser.id,
             });
-            axios.put(`${config.API}/request/approve-service`, null, {
-              params: {
-                col: "status",
-                val: "approved",
-                col2: "payment_status",
-                val2: "paid",
-                col3: "preferred_date",
-                val3: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
-                col4: "preferred_time",
-                val4: formData.preferred_time,
-                col5: "requestID",
-                val5: formData.requestID,
-              },
-            });
-            axios.post(`${config.API}/priest/createPriestSched`, {
-              date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
-              activity: `Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
-              start_time: formData.preferred_time,
-              end_time: endTime(formData.preferred_time, service.duration),
-              priest_id: formData.priest_id,
-              request_id: formData.requestID,
+            await axios.put(`${config.API}/wedding/update-bulk`, {
+              weddingInfo,
+              id: data.requestID,
             });
 
-            axios.post(`${config.API}/logs/create`, {
-              activity: `Approved Wedding of ${formData.first_name} and ${formData.spouse_firstName}`,
-              user_id: currentUser.id,
-              request_id: formData.requestID,
+            const response = await axios.get(
+              `${config.API}/priest/retrieve-schedule-by-params`,
+              {
+                params: {
+                  priest: formData.priest_id,
+                  date: formData.preferred_date,
+                  start: formData.preferred_time,
+                  end: endTime(formData.preferred_time, service.duration),
+                },
+              }
+            );
+            // console.log(response);
+            if (response.status !== 200) {
+              setError({
+                message: response.data.message,
+                details: response.data?.details,
+              });
+            } else {
+              axios.put(`${config.API}/request/approve-service`, null, {
+                params: {
+                  col: "status",
+                  val: "approved",
+                  col2: "payment_status",
+                  val2: "paid",
+                  col3: "user_id",
+                  val3: currentUser.id,
+                  col4: "priest_id",
+                  val4: formData.priest_id,
+                  col5: "requestID",
+                  val5: formData.requestID,
+                },
+              });
+              axios.post(`${config.API}/priest/createPriestSched`, {
+                date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                activity: `Wedding of ${formData.first_name} and ${weddingInfo.spouse_firstName}`,
+                start_time: formData.preferred_time,
+                end_time: endTime(formData.preferred_time, service.duration),
+                priest_id: formData.priest_id,
+                request_id: formData.requestID,
+              });
+
+              axios.post(`${config.API}/logs/create`, {
+                activity: `Approved Wedding of ${formData.first_name} and ${weddingInfo.spouse_firstName}`,
+                user_id: currentUser.id,
+                request_id: formData.requestID,
+              });
+              // sendSMS(data.service_id, formData, "approve");
+              closeInfoModal("approve");
+              refreshList();
+            }
+          } else {
+            setError({
+              message: err.response.data.messsage,
+              details: err.response.data.details,
             });
-            // sendSMS(data.service_id, formData, "approve");
-            closeInfoModal("approve");
-            refreshList();
           }
         } catch (err) {
-          setError({
-            message: err.response.data.message,
-            details: err.response.data.details,
-          });
+          console.log("error submitting to server", err);
         } finally {
           refreshList();
         }
+        break;
       default:
         break;
     }
@@ -1249,7 +1240,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                   <label>Bride's First Name:</label>
                   <TextField
                     fullWidth
-                    value={formData?.spouse_firstName}
+                    value={weddingInfo?.spouse_firstName}
                     sx={TextFieldStyle}
                   />
                 </Grid>
@@ -1257,7 +1248,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                   <label>Bride's Middle Name:</label>
                   <TextField
                     fullWidth
-                    value={formData?.spouse_middleName}
+                    value={weddingInfo?.spouse_middleName}
                     sx={TextFieldStyle}
                   />
                 </Grid>
@@ -1265,7 +1256,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                   <label>Bride's Last Name:</label>
                   <TextField
                     fullWidth
-                    value={formData?.spouse_lastName}
+                    value={weddingInfo?.spouse_lastName}
                     sx={TextFieldStyle}
                   />
                 </Grid>

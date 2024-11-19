@@ -2,9 +2,9 @@ import NavParishioner from "../../components/NavParishioner";
 import Header from "../../components/Header";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Footer from "../../components/Footer";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
 import {
   MenuItem,
   Grid,
@@ -17,8 +17,13 @@ import {
   Container,
   FormHelperText,
   Box,
+  Tabs,
+  Tab,
+  Typography,
 } from "@mui/material";
-import { React, useEffect, useState } from "react";
+import {React, useEffect, useState} from "react";
+import MaleIcon from "@mui/icons-material/Male";
+import FemaleIcon from "@mui/icons-material/Female";
 import generateHash from "../../utils/GenerateHash";
 import config from "../../config";
 import axios from "axios";
@@ -55,6 +60,7 @@ const Wedding = () => {
   const id = 7; // sa database, sunday wedding ang gi list ra, since there is no way of securing a
   // date ahead of time without consulting the priest, default lang sah siya na sunday wedding(1000PHP).
   // change lang ang amount when date is changed to a non sunday date on admin side.
+  const [tabValue, setTabValue] = useState(1);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -66,13 +72,69 @@ const Wedding = () => {
       lastName: "",
       isCatholic: null,
     },
+
+    // EXTRA INFO NEEDED FOR MARRAIGE CERT
+    groomDetails: {
+      groomAddress: "",
+      groomBirthDate: "",
+      groomBirthPlace: "",
+      groomBaptismDate: "",
+      groomBaptismPlace: "",
+      groomFather: "",
+      groomMother: "",
+    },
+    brideDetails: {
+      brideAddress: "",
+      brideBirthDate: "",
+      brideBirthPlace: "",
+      brideBaptismDate: "",
+      brideBaptismPlace: "",
+      brideFather: "",
+      brideMother: "",
+    },
     contact_no: "",
-    relationship: "", // marital status ni
+    relationship: "", // MARITAL STATUS
     sponsors: [{}, {}, {}, {}],
     transaction_no: hash,
     service_id: id,
     isParishioner: "",
   });
+
+  const isFormValid = () => {
+    const isGroomValid = Object.values(formData.groomDetails).every(
+      (value) => value.trim() !== ""
+    );
+    const isBrideValid = Object.values(formData.brideDetails).every(
+      (value) => value.trim() !== ""
+    );
+    return isGroomValid && isBrideValid;
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  const handleMarriageInfo = (e, isGroom) => {
+    const {name, value} = e.target;
+
+    if (isGroom) {
+      setFormData((prevState) => ({
+        ...prevState,
+        groomDetails: {
+          ...prevState.groomDetails,
+          [name]: value,
+        },
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        brideDetails: {
+          ...prevState.brideDetails,
+          [name]: value,
+        },
+      }));
+    }
+  };
 
   const modalData = {
     message:
@@ -98,14 +160,14 @@ const Wedding = () => {
       } catch (err) {
         console.log(err);
       }
-      console.log(formData);
+      //console.log(formData);
     }
   };
 
   const handleSponsor = (e, index, field) => {
     const temp = [...formData.sponsors];
     temp[index][field] = e.target.value;
-    setFormData((prevState) => ({ ...prevState, sponsors: temp }));
+    setFormData((prevState) => ({...prevState, sponsors: temp}));
   };
 
   const addSponsor = (e) => {
@@ -113,7 +175,7 @@ const Wedding = () => {
       ...prevState,
       sponsors: [
         ...formData.sponsors,
-        { name: null, age: null, isMarried: null, isCatholic: null },
+        {name: null, age: null, isMarried: null, isCatholic: null},
       ],
     }));
   };
@@ -129,146 +191,425 @@ const Wedding = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
-
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
-
-  useEffect(() => {
-    if (open) {
-      console.log("Modal should open now");
-    }
-  }, [open]);
 
   return (
     <Box sx={containerStyle}>
       <NavParishioner />
       <Header backgroundImage={imageHeader} title="Wedding" />
-
       <div className="max-w-[1440px] mt-6">
         <Link to="/" className="mt-8 md:mb-10 items-center">
           <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
           <p className="hidden md:inline">Return to Home</p>
         </Link>
       </div>
-
-      <h1 align="center" className="font-bold text-md font-[Arial] mb-8">
-        Please Input the Following
-      </h1>
+      <Typography
+        sx={{
+          fontWeight: "bold",
+          marginBottom: "0.5rem",
+          textAlign: "center",
+        }}>
+        Kindly Input the Following:
+      </Typography>
+      <Typography
+        sx={{
+          fontStyle: "italic",
+          fontSize: "12px",
+          marginBottom: "2rem",
+          textAlign: "center",
+        }}>
+        Note: Make sure to fill up the forms for BOTH GROOM AND BRIDE.
+      </Typography>
 
       <NoPaymentModal open={open} data={modalData} />
-
-      <Container maxWidth="md" sx={{ marginBottom: "4em" }}>
+      <Container maxWidth="md" sx={{marginBottom: "4em"}}>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={4} className="mb-10">
+          <Grid container spacing={2} className="mb-10">
+            <Grid item xs={12} sx={{marginBottom: "1em"}}>
+              <Tabs value={tabValue} onChange={handleTabChange}>
+                <Tab
+                  value={1}
+                  icon={<MaleIcon />}
+                  iconPosition="start"
+                  label="Groom"
+                />
+                <Tab
+                  value={2}
+                  icon={<FemaleIcon />}
+                  iconPosition="start"
+                  label="Bride"
+                />
+              </Tabs>
+            </Grid>
+
+            {tabValue == 1 && (
+              <>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Groom's First Name:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>Groom's Middle Name:</label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    value={formData.middle_name}
+                    name="middle_name"
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Groom's Last Name:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    value={formData.last_name}
+                    name="last_name"
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>Contact
+                    Number:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="contact_no"
+                    value={formData.contact_no}
+                    inputProps={{maxLength: 11}}
+                    onChange={handleChange}
+                    required
+                  />
+                  {errors.contact_no != null && (
+                    <FormHelperText sx={{color: "red"}}>
+                      {errors.contact_no}
+                    </FormHelperText>
+                  )}
+                </Grid>
+                <Grid item xs={12} sm={8}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Address:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="groomAddress"
+                    value={formData.groomDetails.groomAddress}
+                    onChange={(e) => handleMarriageInfo(e, true)}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Date of Birth:
+                  </label>
+                  <TextField
+                    type="date"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="groomBirthDate"
+                    value={formData.groomDetails.groomBirthDate}
+                    onChange={(e) => handleMarriageInfo(e, true)}
+                    required
+                    inputProps={{
+                      max: new Date().toISOString().split("T")[0],
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={8}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Place of Birth:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    value={formData.groomDetails.groomBirthPlace}
+                    name="groomBirthPlace"
+                    onChange={(e) => handleMarriageInfo(e, true)}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Date of Baptism:
+                  </label>
+                  <TextField
+                    fullWidth
+                    type="date"
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    value={formData.groomDetails.groomBaptismDate}
+                    name="groomBaptismDate"
+                    onChange={(e) => handleMarriageInfo(e, true)}
+                    required
+                    inputProps={{
+                      max: new Date().toISOString().split("T")[0],
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={8}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Place of Baptism:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="groomBaptismPlace"
+                    value={formData.groomDetails.groomBaptismPlace}
+                    onChange={(e) => handleMarriageInfo(e, true)}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Father's Name:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="groomFather"
+                    value={formData.groomDetails.groomFather}
+                    onChange={(e) => handleMarriageInfo(e, true)}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Mother's Name:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    value={formData.groomDetails.groomMother}
+                    name="groomMother"
+                    onChange={(e) => handleMarriageInfo(e, true)}
+                    required
+                  />
+                </Grid>
+              </>
+            )}
+
+            {tabValue == 2 && (
+              <>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>Bride's
+                    First Name:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="firstName"
+                    value={formData.wedding_details.firstName}
+                    onChange={handleWeddingDetails}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold"></span>Bride's
+                    Middle Name:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="middleName"
+                    value={formData.wedding_details.middleName}
+                    onChange={handleWeddingDetails}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>Bride's
+                    Last Name:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="lastName"
+                    value={formData.wedding_details.lastName}
+                    onChange={handleWeddingDetails}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Address:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="brideAddress"
+                    value={formData.brideDetails.brideAddress}
+                    onChange={(e) => handleMarriageInfo(e, false)}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Date of Birth:
+                  </label>
+                  <TextField
+                    type="date"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="brideBirthDate"
+                    value={formData.brideDetails.brideBirthDate}
+                    onChange={(e) => handleMarriageInfo(e, false)}
+                    required
+                    inputProps={{
+                      max: new Date().toISOString().split("T")[0],
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={8}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Place of Birth:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="brideBirthPlace"
+                    value={formData.brideDetails.brideBirthPlace}
+                    onChange={(e) => handleMarriageInfo(e, false)}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Date of Baptism:
+                  </label>
+                  <TextField
+                    type="date"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="brideBaptismDate"
+                    value={formData.brideDetails.brideBaptismDate}
+                    onChange={(e) => handleMarriageInfo(e, false)}
+                    required
+                    inputProps={{
+                      max: new Date().toISOString().split("T")[0],
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={8}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Place of Baptism:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="brideBaptismPlace"
+                    value={formData.brideDetails.brideBaptismPlace}
+                    onChange={(e) => handleMarriageInfo(e, false)}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Father's Name:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="brideFather"
+                    value={formData.brideDetails.brideFather}
+                    onChange={(e) => handleMarriageInfo(e, false)}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <label>
+                    <span className="text-red-600 font-bold">*</span>
+                    Mother's Name:
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    sx={inputstlying}
+                    name="brideMother"
+                    value={formData.brideDetails.brideMother}
+                    onChange={(e) => handleMarriageInfo(e, false)}
+                    required
+                  />
+                </Grid>
+              </>
+            )}
             <Grid item xs={12} sm={4}>
               <label>
-                <span className="text-red-600 font-bold">*</span>First Name:
-              </label>
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                sx={inputstlying}
-                name="first_name"
-                onChange={handleChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <label>Middle Name:</label>
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                sx={inputstlying}
-                name="middle_name"
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <label>
-                <span className="text-red-600 font-bold">*</span>Last Name:
-              </label>
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                sx={inputstlying}
-                name="last_name"
-                onChange={handleChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <label>
-                <span className="text-red-600 font-bold">*</span>Partner's First
-                Name:
-              </label>
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                sx={inputstlying}
-                name="firstName"
-                onChange={handleWeddingDetails}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <label>
-                <span className="text-red-600 font-bold"></span>Partner's Middle
-                Name:
-              </label>
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                sx={inputstlying}
-                name="middleName"
-                onChange={handleWeddingDetails}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <label>
-                <span className="text-red-600 font-bold">*</span>Partner's Last
-                Name:
-              </label>
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                sx={inputstlying}
-                name="lastName"
-                onChange={handleWeddingDetails}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <label>
-                <span className="text-red-600 font-bold">*</span>Contact Number:
-              </label>
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                sx={inputstlying}
-                name="contact_no"
-                inputProps={{ maxLength: 11 }}
-                onChange={handleChange}
-                required
-              />
-              {errors.contact_no != null && (
-                <FormHelperText sx={{ color: "red" }}>
-                  {errors.contact_no}
-                </FormHelperText>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <label>
-                <span className="text-red-600 font-bold">*</span>Status:
+                <span className="text-red-600 font-bold">*</span>
+                Status:
               </label>
               <TextField
                 fullWidth
@@ -279,8 +620,7 @@ const Wedding = () => {
                 name="relationship"
                 onChange={handleChange}
                 value={formData.relationship}
-                required
-              >
+                required>
                 <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                 <MenuItem value="Live-in for under 4 years">
                   Live-in for under 4 years
@@ -292,14 +632,13 @@ const Wedding = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={7} md={3}>
+            <Grid item xs={7} md={3} sx={{marginTop: 2}}>
               <FormControl component="fieldset">
-                <label>Are both of you Catholic?</label>
+                <label>Both Catholic?</label>
                 <RadioGroup
                   row
                   name="isCatholic"
-                  onChange={handleWeddingDetails}
-                >
+                  onChange={handleWeddingDetails}>
                   <FormControlLabel
                     value="1"
                     control={<Radio size="small" />}
@@ -313,16 +652,15 @@ const Wedding = () => {
                 </RadioGroup>
               </FormControl>
             </Grid>
-            <Grid item xs={6} md={3}>
+            <Grid item xs={6} md={3} sx={{marginTop: 2}}>
               <FormControl component="fieldset">
-                <label className="ml-2">Parishioner?</label>
+                <label className="ml-2">Both Parishioners?</label>
                 <RadioGroup
                   row
                   className="ml-2"
                   name="isParishioner"
                   value={formData.isParishioner}
-                  onChange={handleChange}
-                >
+                  onChange={handleChange}>
                   <FormControlLabel
                     value="1"
                     control={<Radio size="small" />}
@@ -340,13 +678,12 @@ const Wedding = () => {
 
           <Container
             maxWidth="md"
-            className="bg-neutral-100 md:p-8 rounded-lg mb-5"
-          >
+            className="bg-neutral-100 md:p-8 rounded-lg mb-5">
             <Grid container spacing={3}>
               {formData.sponsors.map((s, index) => (
                 <>
                   <Grid item key={index} xs={9} md={4}>
-                    <span style={{ color: "red" }}>*</span>
+                    <span style={{color: "red"}}>*</span>
                     <label>Sponsor's Full Name:</label>
                     <TextField
                       fullWidth
@@ -361,7 +698,7 @@ const Wedding = () => {
                     />
                   </Grid>
                   <Grid item xs={3} md={2}>
-                    <span style={{ color: "red" }}>*</span>
+                    <span style={{color: "red"}}>*</span>
                     <label>Age:</label>
                     <TextField
                       fullWidth
@@ -376,7 +713,7 @@ const Wedding = () => {
                     />
                   </Grid>
                   <Grid item xs={6} md={3}>
-                    <span style={{ color: "red" }}>*</span>
+                    <span style={{color: "red"}}>*</span>
                     <label>Marital Status:</label>
                     <TextField
                       fullWidth
@@ -388,8 +725,7 @@ const Wedding = () => {
                       name="isMarried"
                       value={formData.sponsors.isMarried}
                       onChange={(e) => handleSponsor(e, index, "isMarried")}
-                      required
-                    >
+                      required>
                       <MenuItem value="1">Married</MenuItem>
                       <MenuItem value="0">Not Married</MenuItem>
                     </TextField>
@@ -403,8 +739,7 @@ const Wedding = () => {
                         name="isCatholic"
                         value={formData.sponsors.isCatholic}
                         onChange={(e) => handleSponsor(e, index, "isCatholic")}
-                        required
-                      >
+                        required>
                         <FormControlLabel
                           value="1"
                           control={<Radio size="small" />}
@@ -427,7 +762,7 @@ const Wedding = () => {
             </Grid>
           </Container>
 
-          {/* <Button
+          <Button
             type="button"
             onClick={addSponsor}
             variant="contained"
@@ -440,26 +775,23 @@ const Wedding = () => {
                 backgroundColor: "white",
                 color: "#355173",
               },
-            }}
-          >
+            }}>
             Add Sponsor
-          </Button> */}
+          </Button>
 
           <Grid
             item
-            sx={{ display: "flex", justifyContent: "center", marginTop: "5em" }}
-          >
+            sx={{display: "flex", justifyContent: "center", marginTop: "5em"}}>
             <Button
+              disabled={!isFormValid()}
               variant="contained"
               type="submit"
-              sx={{ backgroundColor: "#355173" }}
-            >
+              sx={{backgroundColor: "#355173"}}>
               Submit Request
             </Button>
           </Grid>
         </form>
       </Container>
-
       <Footer />
     </Box>
   );
