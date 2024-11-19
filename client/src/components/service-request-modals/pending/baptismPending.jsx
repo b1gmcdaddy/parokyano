@@ -234,6 +234,7 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
           date: date,
           start: start,
           end: end,
+          request_id: data.requestID,
         },
       }
     );
