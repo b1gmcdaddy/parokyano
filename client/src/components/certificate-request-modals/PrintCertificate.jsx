@@ -125,6 +125,15 @@ const PrintCertificate = ({open, data, close}) => {
           params: {
             col: "payment_status",
             val: "paid",
+            col2: "donation",
+            val2:
+              data.service_id == 2
+                ? "50"
+                : data.service_id == 3
+                ? "100"
+                : "150",
+            col3: "transaction_date",
+            val3: new Date().toISOString().slice(0, 19).replace("T", " "),
             col4: "requestID",
             val4: data.requestID,
           },

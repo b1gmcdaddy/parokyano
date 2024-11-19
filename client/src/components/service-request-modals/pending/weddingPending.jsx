@@ -1069,7 +1069,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
         break;
       case "approve": ///////////// APPROVE WEDDING ///////////
         try {
-          if (formData.payment_status == "paid") {
+          if (formData.payment_status == "paid" && completeRequirements == 1) {
             const res = await axios.put(`${config.API}/request/update-bulk`, {
               formData,
               id: data.requestID,
@@ -1131,12 +1131,15 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
             }
           } else {
             setError({
-              message: err.response.data.messsage,
-              details: err.response.data.details,
+              message: response.data?.message,
+              details: response.data?.details,
             });
           }
         } catch (err) {
-          console.log("error submitting to server", err);
+          setError({
+            message: err.response.data?.message,
+            details: err.response.data?.details,
+          });
         } finally {
           refreshList();
         }
@@ -1274,14 +1277,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   </TextField>
                 </Grid>
                 <Grid item sm={4}>
-                  <label>
-                    Payment:
-                    <strong>
-                      {formData.donation != null
-                        ? `₱ ${parseFloat(formData.donation).toFixed(2)}`
-                        : ""}
-                    </strong>
-                  </label>
+                  <label>Payment:</label>
                   <TextField
                     name="payment_status"
                     onChange={handleChange}
@@ -1314,6 +1310,9 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     {completeRequirements == 1 &&
                     formData.payment_status == "paid" ? (
                       <span className="font-bold">COMPLETE</span>
+                    ) : completeRequirements == 1 ||
+                      formData.payment_status == "paid" ? (
+                      <span className="font-bold">Lacking Payment</span>
                     ) : (
                       <span className="font-bold">INCOMPLETE</span>
                     )}
@@ -1413,7 +1412,8 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   <hr className="my-1" />
                 </Grid>
 
-                {completeRequirements == 1 ? (
+                {completeRequirements == 1 &&
+                formData.payment_status == "paid" ? (
                   <>
                     <Grid item xs={12} sm={3}>
                       <label>Wedding Priest:</label>
@@ -1435,6 +1435,11 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           fullWidth
+                          minDate={
+                            formData.interview_date
+                              ? dayjs(formData.interview_date).add(1, "day")
+                              : null
+                          }
                           name="preferred_date"
                           sx={TextFieldStyle}
                           value={
@@ -1491,7 +1496,11 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                       )}
                       <Button
                         fullWidth
-                        disabled={!available || available == "Unavailable"}
+                        disabled={
+                          !available ||
+                          (available == "Unavailable" &&
+                            formData.payment_status == "unpaid")
+                        }
                         variant="contained"
                         onClick={() => handleOpenDialog("approve")}
                         sx={{
