@@ -1664,7 +1664,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 >
                   Book No.{" "}
                   <span style={{ textDecoration: "underline" }}>
-                    {CertData.book_no}12
+                    {CertData.book_no}
                   </span>
                 </Typography>
               </Grid>
@@ -1693,7 +1693,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 >
                   Line No.{" "}
                   <span style={{ textDecoration: "underline" }}>
-                    {CertData.line_no}44
+                    {CertData.line_no}
                   </span>
                 </Typography>
               </Grid>
@@ -1721,7 +1721,7 @@ const PrintCertificate = ({ open, data, close }) => {
                 >
                   Page No.{" "}
                   <span style={{ textDecoration: "underline" }}>
-                    {CertData.page_no}33
+                    {CertData.page_no}
                   </span>
                 </Typography>
               </Grid>

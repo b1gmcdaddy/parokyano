@@ -1058,8 +1058,8 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         color="success"
                         focused
                         value={
-                          certData.details
-                            ? JSON.parse(certData.details).spouse_firstName
+                          certData.spouse_name
+                            ? JSON.parse(certData.spouse_name).firstName
                             : ""
                         }
                         slotProps={{
@@ -1078,8 +1078,8 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         color="success"
                         focused
                         value={
-                          certData.details
-                            ? JSON.parse(certData.details).spouse_lastName
+                          certData.spouse_name
+                            ? JSON.parse(certData.spouse_name).lastName
                             : ""
                         }
                         slotProps={{
