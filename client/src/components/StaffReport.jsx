@@ -9,11 +9,12 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import logo from "../assets/logo.png";
 import axios from "axios";
 import config from "../config";
-import { ReactToPrint } from "react-to-print";
+import {ReactToPrint} from "react-to-print";
+import util from "../utils/DateTimeFormatter";
 
 const formatDate = (date) => date.toISOString().split("T")[0];
 
@@ -23,7 +24,7 @@ const last = formatDate(new Date(now.getFullYear(), now.getMonth() + 1, 1));
 
 const start = formatDate(new Date(now.getFullYear(), now.getMonth(), 1));
 
-const StaffReport = ({ startDate, endDate, category }) => {
+const StaffReport = ({startDate, endDate, category}) => {
   const [reportInfo, setReportInfo] = useState({});
   const [baptismInfo, setBaptismInfo] = useState({});
   const [baptismGeneralInfo, setBaptismGeneralInfo] = useState({});
@@ -56,10 +57,10 @@ const StaffReport = ({ startDate, endDate, category }) => {
 
   return (
     <>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{display: "flex", alignItems: "center"}}>
         <img
           src={logo}
-          style={{ height: "auto", width: "10%", marginTop: "1em" }}
+          style={{height: "auto", width: "10%", marginTop: "1em"}}
           alt="Logo"
         />
         <Typography>
@@ -67,33 +68,38 @@ const StaffReport = ({ startDate, endDate, category }) => {
           Gethsemane Parish
         </Typography>
       </Box>
-      <Box sx={{ textAlign: "center", margin: "auto" }}>
+      <Box sx={{textAlign: "center", margin: "auto"}}>
         <Typography>Parokyano Generated Report</Typography>
-        <Typography sx={{ fontStyle: "italic", fontSize: "14px" }}>
-          {"Date Here"}
+        <Typography sx={{fontStyle: "italic", fontSize: "14px"}}>
+          {startDate && endDate ? (
+            <span>
+              {util.formatDate(startDate)} - {util.formatDate(endDate)}
+            </span>
+          ) : (
+            "Overall"
+          )}
         </Typography>
       </Box>
 
-      <Box sx={{ marginTop: "3em" }}>
+      <Box sx={{marginTop: "3em"}}>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 450 }} aria-label="simple table">
+          <Table sx={{minWidth: 450}} aria-label="simple table">
             <TableHead>
-              <TableRow sx={{ backgroundColor: "#D9D9D9" }}>
+              <TableRow sx={{backgroundColor: "#D9D9D9"}}>
                 <TableCell
-                  sx={{ fontWeight: "bold", textTransform: "uppercase" }}
-                >
+                  sx={{fontWeight: "bold", textTransform: "uppercase"}}>
                   Parish Service
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                <TableCell align="right" sx={{fontWeight: "bold"}}>
                   Pending Requests
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                <TableCell align="right" sx={{fontWeight: "bold"}}>
                   Approved Requests
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                <TableCell align="right" sx={{fontWeight: "bold"}}>
                   Cancelled Requests
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                <TableCell align="right" sx={{fontWeight: "bold"}}>
                   Fees Collected
                 </TableCell>
               </TableRow>
@@ -103,8 +109,7 @@ const StaffReport = ({ startDate, endDate, category }) => {
                 reportInfo.map((report, index) => (
                   <TableRow
                     key={index}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
+                    sx={{"&:last-child td, &:last-child th": {border: 0}}}>
                     <TableCell component="th" scope="row">
                       {report.name}
                       {baptismInfo && (
@@ -165,7 +170,7 @@ const StaffReport = ({ startDate, endDate, category }) => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} sx={{ textAlign: "center" }}>
+                  <TableCell colSpan={5} sx={{textAlign: "center"}}>
                     No data available
                   </TableCell>
                 </TableRow>

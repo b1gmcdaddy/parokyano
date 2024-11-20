@@ -23,8 +23,8 @@ import {
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState, useEffect} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState, useEffect } from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
 import config from "../../../config";
@@ -34,7 +34,7 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "40px"},
+  "& .MuiInputBase-root": { height: "40px" },
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -51,7 +51,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const OutsidePending = ({open, data, handleClose, refreshList}) => {
+const OutsidePending = ({ open, data, handleClose, refreshList }) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -163,17 +163,17 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
   };
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   const handleCloseDialog = () => {
@@ -181,8 +181,8 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
   };
 
   const handleRadioChange = (e) => {
-    const {value} = e.target;
-    setFormData((prevData) => ({...prevData, type: value}));
+    const { value } = e.target;
+    setFormData((prevData) => ({ ...prevData, type: value }));
     setRadioValue(value);
     if (e.target.value !== "others") {
       setOtherValue("");
@@ -319,11 +319,12 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -332,11 +333,12 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity={snackBarStyle} sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -346,27 +348,29 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {formData && priests ? (
           <>
-            <DialogTitle sx={{m: 0, p: 2, textAlign: "center"}}>
+            <DialogTitle sx={{ m: 0, p: 2, textAlign: "center" }}>
               <b>Outside Mass Request Information</b>
               <IconButton
                 aria-label="close"
                 onClick={handleClose}
-                sx={{position: "absolute", right: 8, top: 8}}>
+                sx={{ position: "absolute", right: 8, top: 8 }}
+              >
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
-              <Grid container spacing={2} sx={{padding: 3}}>
+              <Grid container spacing={2} sx={{ padding: 3 }}>
                 <Grid item xs={12} sm={12}>
                   <RadioGroup
                     row
                     name="type"
                     onChange={(e) => {
                       handleRadioChange(e);
-                      setFormData({...formData, type: e.target.value});
+                      setFormData({ ...formData, type: e.target.value });
                     }}
-                    sx={{marginTop: "-5px"}}
-                    value={formData.type}>
+                    sx={{ marginTop: "-5px" }}
+                    value={formData.type}
+                  >
                     <FormControlLabel
                       value="chapel"
                       control={<Radio size="small" />}
@@ -388,7 +392,7 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                       name="otherValue"
                       onChange={handleOtherChange}
                       sx={{
-                        "& .MuiInputBase-root": {height: "30px"},
+                        "& .MuiInputBase-root": { height: "30px" },
                         opacity: isOtherSelected ? 1 : 0.4,
                         marginTop: "5px",
                       }}
@@ -447,7 +451,8 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                     onChange={handleChange}
                     select
                     fullWidth
-                    size="small">
+                    size="small"
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name + " " + priest.last_name}
@@ -481,7 +486,7 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
                       fullWidth
-                      timeSteps={{hours: 30, minutes: 30}}
+                      timeSteps={{ hours: 30, minutes: 30 }}
                       minTime={dayjs().set("hour", 6)}
                       maxTime={dayjs().set("hour", 19)}
                       sx={TextFieldStyle}
@@ -511,9 +516,10 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#4C74A5"},
-                    }}>
-                    <EventAvailableIcon sx={{fontSize: "1.3em"}} />
+                      "&:hover": { bgcolor: "#4C74A5" },
+                    }}
+                  >
+                    <EventAvailableIcon sx={{ fontSize: "1.3em" }} />
                     Assign
                   </Button>
                 </Grid>
@@ -526,11 +532,12 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}>
-                  <Typography variant="body2" sx={{marginRight: "5px"}}>
+                  }}
+                >
+                  <Typography variant="body2" sx={{ marginRight: "5px" }}>
                     Transaction Code:
                   </Typography>
-                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     {formData.transaction_no}
                   </Typography>
                 </Grid>
@@ -544,7 +551,8 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <Grid
                   item
                   xs={12}
@@ -553,7 +561,8 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                     margin: "-40px 0 10px 0",
                     justifyContent: "center",
                     gap: "20px",
-                  }}>
+                  }}
+                >
                   <Button
                     variant="contained"
                     onClick={() => handleOpenDialog("update")}
@@ -563,8 +572,9 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#A58228"},
-                    }}>
+                      "&:hover": { bgcolor: "#A58228" },
+                    }}
+                  >
                     UPDATE
                   </Button>
 
@@ -577,8 +587,9 @@ const OutsidePending = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#f44336"},
-                    }}>
+                      "&:hover": { bgcolor: "#f44336" },
+                    }}
+                  >
                     CANCEL
                   </Button>
                 </Grid>

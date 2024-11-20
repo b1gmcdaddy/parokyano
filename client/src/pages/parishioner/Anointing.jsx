@@ -11,7 +11,7 @@ import {
   Radio,
   MenuItem,
   FormHelperText,
-  Box
+  Box,
 } from "@mui/material";
 import Footer from "../../components/Footer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,13 +33,13 @@ import dayjs from "dayjs";
 import ValidateForm from "../../utils/Validators";
 
 const containerStyle = {
-  margin: '0px',
-  padding: '0px',
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-  minWidth: '100%',
-}
+  margin: "0px",
+  padding: "0px",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
+  minWidth: "100%",
+};
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -148,10 +148,10 @@ const Anointing = () => {
       <NavParishioner />
       <Header backgroundImage={imageHeader} title="ANNOINTING OF THE SICK" />
       <div className="max-w-[1440px] mt-6">
-      <Link to='/' className="mt-8 md:mb-10 items-center">
-          <FontAwesomeIcon icon={faArrowLeftLong}  className="ml-8 md:mr-2"/>
+        <Link to="/" className="mt-8 md:mb-10 items-center">
+          <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
           <p className="hidden md:inline">Return to Home</p>
-      </Link>
+        </Link>
       </div>
 
       <h1 align="center" className="font-bold text-md font-[Arial] mb-8">
@@ -277,6 +277,11 @@ const Anointing = () => {
                   renderInput={(params) => <TextField {...params} required />}
                   required
                 />
+                {errors.preferred_date != null && (
+                  <FormHelperText sx={{ color: "red" }}>
+                    {errors.preferred_date}
+                  </FormHelperText>
+                )}
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -292,8 +297,8 @@ const Anointing = () => {
                   onChange={(time) => handleTimeChange("preferred_time", time)}
                   renderInput={(params) => <TextField {...params} required />}
                   timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
-                  minTime={dayjs().set("hour", 7)}
-                  maxTime={dayjs().set("hour", 16)}
+                  minTime={dayjs().set("hour", 5)}
+                  maxTime={dayjs().set("hour", 18)}
                   required
                 />
               </LocalizationProvider>

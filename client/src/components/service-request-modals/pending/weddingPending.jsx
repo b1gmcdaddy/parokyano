@@ -51,7 +51,7 @@ const boxModal = {
   transform: "translate(-50%, -50%)",
   maxWidth: "sm",
   bgcolor: "white",
-  borderRadius: "10px",
+  borderRadius: "5px",
   boxShadow: 3,
   px: 4,
   py: 3,
@@ -102,6 +102,7 @@ const fetchWeddingDetails = async (id) => {
 
 function RequirementsModal({ id, type, onClose }) {
   const [open, setOpen] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(null);
   const handleOpen = () => setOpen(true);
   const [tabValue, setTabValue] = useState(0);
   const [selectedWeddingId, setSelectedWeddingId] = useState(null);
@@ -112,13 +113,16 @@ function RequirementsModal({ id, type, onClose }) {
     spouse_baptismCert: 0,
     spouse_confirmationCert: 0,
     spouse_birthCert: 0,
+    groomMarriageLicense: 0,
+    brideMarriageLicense: 0,
+    groomCENOMAR: 0,
+    brideCENOMAR: 0,
+    groomCEDULA: 0,
+    brideCEDULA: 0,
     isParishPermit: 0,
     isPrenuptial: 0,
     isPreCana: 0,
-    isMarriageLicense: 0,
     isMarriageBann: 0,
-    isCENOMAR: 0,
-    isCEDULA: 0,
     isJointAffidavit: 0,
     isCivilContract: 0,
     isDeathCert: 0,
@@ -135,13 +139,16 @@ function RequirementsModal({ id, type, onClose }) {
           spouse_baptismCert: req.spouse_baptismCert ?? 0,
           spouse_confirmationCert: req.spouse_confirmationCert ?? 0,
           spouse_birthCert: req.spouse_birthCert ?? 0,
+          groomMarriageLicense: req.groomMarriageLicense ?? 0,
+          brideMarriageLicense: req.brideMarriageLicense ?? 0,
+          groomCENOMAR: req.groomCENOMAR ?? 0,
+          brideCENOMAR: req.brideCENOMAR ?? 0,
+          groomCEDULA: req.groomCEDULA ?? 0,
+          brideCEDULA: req.brideCEDULA ?? 0,
           isParishPermit: req.isParishPermit ?? 0,
           isPrenuptial: req.isPrenuptial ?? 0,
           isPreCana: req.isPreCana ?? 0,
-          isMarriageLicense: req.isMarriageLicense ?? 0,
           isMarriageBann: req.isMarriageBann ?? 0,
-          isCENOMAR: req.isCENOMAR ?? 0,
-          isCEDULA: req.isCEDULA ?? 0,
           isJointAffidavit: req.isJointAffidavit ?? 0,
           isCivilContract: req.isCivilContract ?? 0,
           isDeathCert: req.isDeathCert ?? 0,
@@ -171,9 +178,6 @@ function RequirementsModal({ id, type, onClose }) {
         { name: "Parish Permit", field: "isParishPermit" },
         { name: "Prenuptial Agreement", field: "isPrenuptial" },
         { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Marriage License", field: "isMarriageLicense" },
-        { name: "CENOMAR", field: "isCENOMAR" },
-        { name: "CEDULA", field: "isCEDULA" },
         { name: "Marriage Bann", field: "isMarriageBann" },
       ],
     },
@@ -184,8 +188,6 @@ function RequirementsModal({ id, type, onClose }) {
         { name: "Prenuptial Agreement", field: "isPrenuptial" },
         { name: "Pre-Cana Certificate", field: "isPreCana" },
         { name: "Joint Affidavit of Cohabitation", field: "isJointAffidavit" },
-        { name: "CENOMAR", field: "isCENOMAR" },
-        { name: "CEDULA", field: "isCEDULA" },
         { name: "Marriage Bann", field: "isMarriageBann" },
       ],
     },
@@ -195,9 +197,6 @@ function RequirementsModal({ id, type, onClose }) {
         { name: "Parish Permit", field: "isParishPermit" },
         { name: "Prenuptial Agreement", field: "isPrenuptial" },
         { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Marriage License", field: "isMarriageLicense" },
-        { name: "CENOMAR", field: "isCENOMAR" },
-        { name: "CEDULA", field: "isCEDULA" },
         { name: "Marriage Bann", field: "isMarriageBann" },
         { name: "Partner's Death Certificate", field: "isDeathCert" },
       ],
@@ -229,7 +228,10 @@ function RequirementsModal({ id, type, onClose }) {
         `${config.API}/wedding/requirements/${selectedWeddingId}`,
         reqs
       );
-      alert("Successfully Updated Requirements!");
+      setSaveSuccess({
+        message: "Update Success!",
+        details: "Successfully updated requirement.",
+      });
       fetchWeddingDetails(id);
     } catch (error) {
       alert("FAILED to Update Requirements...");
@@ -253,6 +255,7 @@ function RequirementsModal({ id, type, onClose }) {
       >
         Requirements
       </Button>
+
       <Modal open={open} onClose={handleClose}>
         <Box sx={boxModal}>
           <Grid container justifyContent={"flex-end"}>
@@ -266,7 +269,11 @@ function RequirementsModal({ id, type, onClose }) {
             <Grid item sm={12}>
               <Typography
                 variant="subtitle1"
-                sx={{ textAlign: "center", fontWeight: "bold" }}
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: "1.2em",
+                }}
               >
                 Wedding Requirements Information
               </Typography>
@@ -358,6 +365,75 @@ function RequirementsModal({ id, type, onClose }) {
                             }
                           />
                         </Grid>
+                        {type !== "Civilly Married" ? (
+                          <>
+                            {" "}
+                            <Grid item sm={12}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={requirements.groomCENOMAR === 1}
+                                    onChange={(e) =>
+                                      setRequirements((prev) => ({
+                                        ...prev,
+                                        groomCENOMAR: e.target.checked ? 1 : 0,
+                                      }))
+                                    }
+                                  />
+                                }
+                                label={
+                                  <Typography sx={{ fontSize: "15px" }}>
+                                    CENOMAR
+                                  </Typography>
+                                }
+                              />
+                            </Grid>
+                            <Grid item sm={12}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={requirements.groomCEDULA === 1}
+                                    onChange={(e) =>
+                                      setRequirements((prev) => ({
+                                        ...prev,
+                                        groomCEDULA: e.target.checked ? 1 : 0,
+                                      }))
+                                    }
+                                  />
+                                }
+                                label={
+                                  <Typography sx={{ fontSize: "15px" }}>
+                                    CEDULA
+                                  </Typography>
+                                }
+                              />
+                            </Grid>
+                            <Grid item sm={12}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      requirements.groomMarriageLicense === 1
+                                    }
+                                    onChange={(e) =>
+                                      setRequirements((prev) => ({
+                                        ...prev,
+                                        groomMarriageLicense: e.target.checked
+                                          ? 1
+                                          : 0,
+                                      }))
+                                    }
+                                  />
+                                }
+                                label={
+                                  <Typography sx={{ fontSize: "15px" }}>
+                                    Marriage License
+                                  </Typography>
+                                }
+                              />
+                            </Grid>
+                          </>
+                        ) : null}
                       </>
                     )}
                     {tabValue === 1 && (
@@ -428,6 +504,75 @@ function RequirementsModal({ id, type, onClose }) {
                             }
                           />
                         </Grid>
+                        {type !== "Civilly Married" ? (
+                          <>
+                            {" "}
+                            <Grid item sm={12}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={requirements.brideCENOMAR === 1}
+                                    onChange={(e) =>
+                                      setRequirements((prev) => ({
+                                        ...prev,
+                                        brideCENOMAR: e.target.checked ? 1 : 0,
+                                      }))
+                                    }
+                                  />
+                                }
+                                label={
+                                  <Typography sx={{ fontSize: "15px" }}>
+                                    CENOMAR
+                                  </Typography>
+                                }
+                              />
+                            </Grid>
+                            <Grid item sm={12}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={requirements.brideCEDULA === 1}
+                                    onChange={(e) =>
+                                      setRequirements((prev) => ({
+                                        ...prev,
+                                        brideCEDULA: e.target.checked ? 1 : 0,
+                                      }))
+                                    }
+                                  />
+                                }
+                                label={
+                                  <Typography sx={{ fontSize: "15px" }}>
+                                    CEDULA
+                                  </Typography>
+                                }
+                              />
+                            </Grid>
+                            <Grid item sm={12}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      requirements.brideMarriageLicense === 1
+                                    }
+                                    onChange={(e) =>
+                                      setRequirements((prev) => ({
+                                        ...prev,
+                                        brideMarriageLicense: e.target.checked
+                                          ? 1
+                                          : 0,
+                                      }))
+                                    }
+                                  />
+                                }
+                                label={
+                                  <Typography sx={{ fontSize: "15px" }}>
+                                    Marriage License
+                                  </Typography>
+                                }
+                              />
+                            </Grid>
+                          </>
+                        ) : null}
                       </>
                     )}
                   </Box>
@@ -442,9 +587,7 @@ function RequirementsModal({ id, type, onClose }) {
             </Grid>
 
             <Box>
-              {/* Static groom and spouse certificates (these are common for all types) */}
-
-              {/* Render dynamic requirements based on the wedding type */}
+              {/* dynamic requirements based on the wedding type */}
               {selectedRequirements.map((req) => (
                 <Grid item sm={12} key={req.field}>
                   <FormControlLabel
@@ -475,17 +618,31 @@ function RequirementsModal({ id, type, onClose }) {
                 variant="contained"
                 sx={{ bgcolor: "#355173" }}
               >
-                Save
+                confirm
               </Button>
             </Grid>
           </Grid>
         </Box>
       </Modal>
+
+      {saveSuccess && (
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={true}
+          autoHideDuration={5000}
+          onClose={() => setSaveSuccess(null)}
+        >
+          <Alert severity="info" sx={{ width: "100%" }}>
+            <AlertTitle>{saveSuccess.message}</AlertTitle>
+            {saveSuccess.details}
+          </Alert>
+        </Snackbar>
+      )}
     </React.Fragment>
   );
 }
 
-function SponsorsModal({ id, setExcess }) {
+function SponsorsModal({ id }) {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({
     name: "",
@@ -900,10 +1057,9 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
       }
       resolve();
     });
-    // setTimeout(() => {
-
-    setIsLoading(false);
-    // }, "500");
+    setTimeout(() => {
+      setIsLoading(false);
+    }, "500");
   }, [open, data]);
 
   useEffect(() => {
@@ -917,7 +1073,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
         donation: data.donation + 1000.0,
       }));
     } else {
-      data.isParishioner && data.donation == 0
+      data.isParishioner && data.donation == null
         ? setFormData((prevState) => ({
             ...prevState,
             donation: data.donation + 3000.0,
@@ -1362,7 +1518,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                     Payment:
                     <strong>
                       {formData.donation != null
-                        ? `₱ ${parseFloat(formData.donation).toLocaleString(
+                        ? ` ₱${parseFloat(formData.donation).toLocaleString(
                             undefined,
                             {
                               minimumFractionDigits: 2,
@@ -1406,9 +1562,12 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                     {completeRequirements == 1 &&
                     formData.payment_status == "paid" ? (
                       <span className="font-bold">COMPLETE</span>
-                    ) : completeRequirements == 1 ||
-                      formData.payment_status == "paid" ? (
+                    ) : completeRequirements == 1 &&
+                      formData.payment_status == "unpaid" ? (
                       <span className="font-bold">Lacking Payment</span>
+                    ) : completeRequirements == 0 &&
+                      formData.payment_status == "paid" ? (
+                      <span className="font-bold">INCOMPLETE</span>
                     ) : (
                       <span className="font-bold">INCOMPLETE</span>
                     )}
@@ -1597,8 +1756,8 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                         fullWidth
                         disabled={
                           !available ||
-                          (available == "Unavailable" &&
-                            formData.payment_status == "unpaid")
+                          available == "Unavailable" ||
+                          formData.payment_status == "unpaid"
                         }
                         variant="contained"
                         onClick={() => handleOpenDialog("approve")}

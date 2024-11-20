@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -20,14 +20,14 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import formatDate from "../utils/DateTimeFormatter";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "40px"},
+  "& .MuiInputBase-root": { height: "40px" },
 };
 
-const AddSchedulesModal = ({open, close}) => {
+const AddSchedulesModal = ({ open, close }) => {
   const [priests, setPriests] = useState([]);
   const [error, setError] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -40,11 +40,11 @@ const AddSchedulesModal = ({open, close}) => {
   });
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   const handleClose = () => {
@@ -70,7 +70,7 @@ const AddSchedulesModal = ({open, close}) => {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const addSchedule = async () => {
@@ -128,12 +128,12 @@ const AddSchedulesModal = ({open, close}) => {
     <>
       {snackbarOpen && (
         <Snackbar
-          sx={{backgroundColor: "white"}}
+          sx={{ backgroundColor: "white" }}
           open={true}
           autoHideDuration={5000}
           message={
             <>
-              <span style={{fontWeight: "bold", fontSize: "18px"}}>
+              <span style={{ fontWeight: "bold", fontSize: "18px" }}>
                 Schedule successfully added!
               </span>
             </>
@@ -147,26 +147,29 @@ const AddSchedulesModal = ({open, close}) => {
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
+        aria-describedby="alert-dialog-description"
+      >
         <DialogContent>
-          <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
             <Grid
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
                 margin: "5px",
-              }}>
+              }}
+            >
               <Typography
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
                   marginBottom: "10px",
-                }}>
+                }}
+              >
                 Add New Activity
               </Typography>
 
-              <Grid container spacing={2} sx={{padding: "0px 8px"}}>
+              <Grid container spacing={2} sx={{ padding: "0px 8px" }}>
                 <Grid item xs={12} sm={12}>
                   <label>Select Priest: </label>
                   <Select
@@ -176,7 +179,8 @@ const AddSchedulesModal = ({open, close}) => {
                     size="small"
                     value={formData.priest_id}
                     onChange={handleChange}
-                    id="demo-simple-select">
+                    id="demo-simple-select"
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name} {priest.last_name}
@@ -200,7 +204,7 @@ const AddSchedulesModal = ({open, close}) => {
                   <label>Date: </label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      slotProps={{textField: {fullWidth: true}}}
+                      slotProps={{ textField: { fullWidth: true } }}
                       variant="outlined"
                       size="small"
                       sx={TextFieldStyle}
@@ -219,7 +223,7 @@ const AddSchedulesModal = ({open, close}) => {
                   <label>Start Time: </label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
-                      slotProps={{textField: {fullWidth: true}}}
+                      slotProps={{ textField: { fullWidth: true } }}
                       variant="outlined"
                       sx={TextFieldStyle}
                       name="start_time"
@@ -227,8 +231,8 @@ const AddSchedulesModal = ({open, close}) => {
                       renderInput={(params) => (
                         <TextField {...params} required />
                       )}
-                      timeSteps={{hours: 30, minutes: 30}} // if mabuang, delete hours
-                      minTime={dayjs().set("hour", 7)}
+                      timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
+                      minTime={dayjs().set("hour", 5)}
                       maxTime={dayjs().set("hour", 20)}
                       required
                     />
@@ -239,7 +243,7 @@ const AddSchedulesModal = ({open, close}) => {
                   <label>End Time: </label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
-                      slotProps={{textField: {fullWidth: true}}}
+                      slotProps={{ textField: { fullWidth: true } }}
                       variant="outlined"
                       sx={TextFieldStyle}
                       name="end_time"
@@ -247,8 +251,8 @@ const AddSchedulesModal = ({open, close}) => {
                       renderInput={(params) => (
                         <TextField {...params} required />
                       )}
-                      timeSteps={{hours: 30, minutes: 30}} // if mabuang, delete hours
-                      minTime={dayjs().set("hour", 7)}
+                      timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
+                      minTime={dayjs().set("hour", 5)}
                       maxTime={dayjs().set("hour", 20)}
                       required
                     />
@@ -257,7 +261,7 @@ const AddSchedulesModal = ({open, close}) => {
               </Grid>
 
               {error && (
-                <Typography sx={{textAlign: "center", color: "red"}}>
+                <Typography sx={{ textAlign: "center", color: "red" }}>
                   {error.message}.&nbsp;{error.details}
                 </Typography>
               )}
@@ -270,7 +274,8 @@ const AddSchedulesModal = ({open, close}) => {
                     justifyContent: "center",
                     alignItems: "center",
                     marginTop: "18px",
-                  }}>
+                  }}
+                >
                   <Grid
                     item
                     xs={12}
@@ -279,16 +284,19 @@ const AddSchedulesModal = ({open, close}) => {
                       display: "flex",
                       justifyContent: "center",
                       gap: "20px",
-                    }}>
+                    }}
+                  >
                     <Button
                       variant="contained"
-                      sx={{backgroundColor: "#355173"}}
-                      onClick={addSchedule}>
+                      sx={{ backgroundColor: "#355173" }}
+                      onClick={addSchedule}
+                    >
                       Add Activity
                     </Button>
                     <Button
-                      sx={{backgroundColor: "#D9D9D9", color: "black"}}
-                      onClick={handleClose}>
+                      sx={{ backgroundColor: "#D9D9D9", color: "black" }}
+                      onClick={handleClose}
+                    >
                       Close
                     </Button>
                   </Grid>
@@ -302,7 +310,7 @@ const AddSchedulesModal = ({open, close}) => {
   );
 };
 
-const EditSchedulesModal = ({open, close, activity, priestList}) => {
+const EditSchedulesModal = ({ open, close, activity, priestList }) => {
   if (!activity) {
     return null;
   }
@@ -316,15 +324,15 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
   }, [activity]);
 
   const handleDateChange = (date) => {
-    setEditedActivity({...editedActivity, date: date.format("YYYY-MM-DD")});
+    setEditedActivity({ ...editedActivity, date: date.format("YYYY-MM-DD") });
   };
 
   const handleTimeChange = (name, time) => {
-    setEditedActivity({...editedActivity, [name]: time.format("HH:mm:ss")});
+    setEditedActivity({ ...editedActivity, [name]: time.format("HH:mm:ss") });
   };
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     setEditedActivity((prev) => ({
       ...prev,
       [name]: value,
@@ -362,11 +370,11 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
     <>
       {snackbarOpen && (
         <Snackbar
-          sx={{backgroundColor: "white"}}
+          sx={{ backgroundColor: "white" }}
           open={true}
           autoHideDuration={5000}
           message={
-            <span style={{fontWeight: "bold", fontSize: "18px"}}>
+            <span style={{ fontWeight: "bold", fontSize: "18px" }}>
               Schedule successfully updated!
             </span>
           }
@@ -379,26 +387,29 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
+        aria-describedby="alert-dialog-description"
+      >
         <DialogContent>
-          <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
             <Grid
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
                 margin: "5px",
-              }}>
+              }}
+            >
               <Typography
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
                   marginBottom: "10px",
-                }}>
+                }}
+              >
                 Edit Activity
               </Typography>
 
-              <Grid container spacing={2} sx={{padding: "0px 8px"}}>
+              <Grid container spacing={2} sx={{ padding: "0px 8px" }}>
                 <Grid item xs={12}>
                   <label>Select Priest: </label>
                   <Select
@@ -408,7 +419,8 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
                     size="small"
                     value={editedActivity.priest_id}
                     onChange={handleChange}
-                    id="demo-simple-select">
+                    id="demo-simple-select"
+                  >
                     {priestList.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
                         {priest.first_name} {priest.last_name}
@@ -433,7 +445,7 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
                   <label>Date: </label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      slotProps={{textField: {fullWidth: true}}}
+                      slotProps={{ textField: { fullWidth: true } }}
                       variant="outlined"
                       size="small"
                       sx={TextFieldStyle}
@@ -452,7 +464,7 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
                   <label>Start Time: </label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
-                      slotProps={{textField: {fullWidth: true}}}
+                      slotProps={{ textField: { fullWidth: true } }}
                       variant="outlined"
                       sx={TextFieldStyle}
                       name="start_time"
@@ -461,7 +473,7 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
                       renderInput={(params) => (
                         <TextField {...params} required />
                       )}
-                      timeSteps={{hours: 1, minutes: 30}}
+                      timeSteps={{ hours: 1, minutes: 30 }}
                       minTime={dayjs().set("hour", 7)}
                       maxTime={dayjs().set("hour", 20)}
                       required
@@ -473,7 +485,7 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
                   <label>End Time: </label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
-                      slotProps={{textField: {fullWidth: true}}}
+                      slotProps={{ textField: { fullWidth: true } }}
                       variant="outlined"
                       sx={TextFieldStyle}
                       name="end_time"
@@ -482,7 +494,7 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
                       renderInput={(params) => (
                         <TextField {...params} required />
                       )}
-                      timeSteps={{hours: 1, minutes: 30}}
+                      timeSteps={{ hours: 1, minutes: 30 }}
                       minTime={dayjs().set("hour", 7)}
                       maxTime={dayjs().set("hour", 20)}
                       required
@@ -492,7 +504,7 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
               </Grid>
 
               {error && (
-                <Typography sx={{textAlign: "center", color: "red"}}>
+                <Typography sx={{ textAlign: "center", color: "red" }}>
                   {error.message}.&nbsp;{error.details}
                 </Typography>
               )}
@@ -505,7 +517,8 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
                     justifyContent: "center",
                     alignItems: "center",
                     marginTop: "18px",
-                  }}>
+                  }}
+                >
                   <Grid
                     item
                     xs={12}
@@ -513,16 +526,19 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
                       display: "flex",
                       justifyContent: "center",
                       gap: "20px",
-                    }}>
+                    }}
+                  >
                     <Button
                       variant="contained"
-                      sx={{backgroundColor: "#355173"}}
-                      onClick={updateSchedule}>
+                      sx={{ backgroundColor: "#355173" }}
+                      onClick={updateSchedule}
+                    >
                       Edit
                     </Button>
                     <Button
-                      sx={{backgroundColor: "#D9D9D9", color: "black"}}
-                      onClick={handleClose}>
+                      sx={{ backgroundColor: "#D9D9D9", color: "black" }}
+                      onClick={handleClose}
+                    >
                       Close
                     </Button>
                   </Grid>
@@ -536,4 +552,4 @@ const EditSchedulesModal = ({open, close, activity, priestList}) => {
   );
 };
 
-export default {AddSchedulesModal, EditSchedulesModal};
+export default { AddSchedulesModal, EditSchedulesModal };

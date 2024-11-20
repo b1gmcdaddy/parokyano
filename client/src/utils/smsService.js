@@ -45,13 +45,10 @@ const sendSMS = async (serviceId, data, action) => {
 
   // FOR THE GREETING IN GHE MSG
   let recipientName =
-    serviceId === 2 ||
-    serviceId === 3 ||
-    serviceId === 4 ||
-    serviceId === 5 ||
-    serviceId === 6 ||
-    serviceId === 7
+    serviceId === 2 || serviceId === 3 || serviceId === 4 || serviceId === 7
       ? data.first_name
+      : serviceId === 5 || serviceId === 6
+      ? data.father_name
       : data.requested_by;
 
   switch (action) {

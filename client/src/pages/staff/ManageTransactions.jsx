@@ -315,7 +315,10 @@ const ManageTransactions = () => {
                               >
                                 {row.service_id == 5 || row.service_id == 6
                                   ? row.father_name
-                                  : row.service_id == 7
+                                  : row.service_id == 7 ||
+                                    row.service_id == 2 ||
+                                    row.service_id == 3 ||
+                                    row.service_id == 4
                                   ? row.first_name
                                   : row.requested_by}
                               </TableCell>

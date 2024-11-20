@@ -250,8 +250,8 @@ const WakeMass = () => {
                   size="small"
                   sx={inputstlying}
                   timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
-                  minTime={dayjs().set("hour", 7)}
-                  maxTime={dayjs().set("hour", 16)}
+                  minTime={dayjs().set("hour", 5)}
+                  maxTime={dayjs().set("hour", 18)}
                   name="preferred_time"
                   onChange={(time) => handleTimeChange("preferred_time", time)}
                   renderInput={(params) => <TextField {...params} required />}
