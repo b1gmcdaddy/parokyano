@@ -695,7 +695,7 @@ function SponsorsModal({ id }) {
       newErrors.age = "Age is required";
       hasErrors = true;
     }
-    if (newSponsor.age < 1) {
+    if (newSponsor.age !== "" && newSponsor.age < 1) {
       newErrors.age = "Invalid number";
       hasErrors = true;
     }

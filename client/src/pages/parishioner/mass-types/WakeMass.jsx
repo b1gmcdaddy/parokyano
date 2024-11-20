@@ -234,11 +234,11 @@ const WakeMass = () => {
                 />
               </LocalizationProvider>
 
-              {errors.preferred_date != null && (
-                <FormHelperText sx={{ color: "red" }}>
-                  {errors.preferred_date}
-                </FormHelperText>
-              )}
+              {/* {errors.preferred_date != null && ( */}
+              <FormHelperText sx={{ color: "red" }}>
+                Date must be atleast 2 days from now to allow for processing
+                time
+              </FormHelperText>
             </Grid>
             <Grid item xs={12} sm={3}>
               <span style={{ color: "red" }}>*</span>

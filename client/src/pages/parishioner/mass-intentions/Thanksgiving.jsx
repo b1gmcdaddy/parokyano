@@ -335,11 +335,10 @@ const Thanksgiving = () => {
                   required
                 />
               </LocalizationProvider>
-              {errors.mass_date != null && (
-                <FormHelperText sx={{ color: "red" }}>
-                  {errors.mass_date}
-                </FormHelperText>
-              )}
+              {/* {errors.mass_date != null && ( */}
+              <FormHelperText sx={{ color: "red" }}>
+                Date must be atleast 1 day from now to allow for processing time
+              </FormHelperText>
             </Grid>
 
             <Grid item xs={12} sm={3} sx={{ marginTop: { md: "18px" } }}>

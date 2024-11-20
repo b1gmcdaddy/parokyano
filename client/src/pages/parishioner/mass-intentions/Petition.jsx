@@ -210,11 +210,10 @@ const Petition = () => {
                   renderInput={(params) => <TextField {...params} required />}
                 />
               </LocalizationProvider>
-              {errors.mass_date != null && (
-                <FormHelperText sx={{ color: "red" }}>
-                  {errors.mass_date}
-                </FormHelperText>
-              )}
+              {/* {errors.mass_date != null && ( */}
+              <FormHelperText sx={{ color: "red" }}>
+                Date must be atleast 1 day from now to allow for processing time
+              </FormHelperText>
             </Grid>
 
             <Grid item xs={12} sm={4}>

@@ -217,12 +217,25 @@ const Baptism = () => {
   };
 
   const handleSubmit = async (e) => {
+    setErrors({});
     e.preventDefault();
     console.log(formData);
     let validate = ValidateForm(formData);
     setErrors(validate);
     console.log(validate);
-    if (Object.keys(validate).length == 0 && validate.constructor == Object) {
+    if (formData.details.father_age < 0) {
+      errors.father_age = "Invalid number";
+    }
+    if (formData.details.mother_age < 0) {
+      errors.mother_age = "Invalid number";
+    }
+    console.log(errors);
+    if (
+      Object.keys(validate).length == 0 &&
+      validate.constructor == Object &&
+      errors.father_age == null &&
+      errors.mother_age == null
+    ) {
       try {
         await axios.post(`${config.API}/request/create-baptism`, formData);
 
@@ -371,6 +384,11 @@ const Baptism = () => {
                 size="small"
                 required
               />
+              {errors.father_age != "" && errors.father_age != null && (
+                <FormHelperText sx={{ color: "red" }}>
+                  Invalid number
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12} sm={9}>
               <span style={{ color: "red" }}>*</span>
@@ -397,6 +415,11 @@ const Baptism = () => {
                 size="small"
                 required
               />
+              {errors.mother_age != "" && errors.mother_age != null && (
+                <FormHelperText sx={{ color: "red" }}>
+                  Invalid number
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12} sm={6}>
               <span style={{ color: "red" }}>*</span>
@@ -624,11 +647,11 @@ const Baptism = () => {
                   renderInput={(params) => <TextField {...params} required />}
                   required
                 />
-                {errors.preferred_date != null && (
-                  <FormHelperText sx={{ color: "red" }}>
-                    {errors.preferred_date}
-                  </FormHelperText>
-                )}
+                {/* {errors.preferred_date != "" && ( */}
+                <FormHelperText sx={{ color: "red" }}>
+                  Date must be atleast 2 days from now to allow for processing
+                  time
+                </FormHelperText>
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={4}>

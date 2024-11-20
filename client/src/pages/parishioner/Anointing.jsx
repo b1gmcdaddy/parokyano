@@ -277,11 +277,11 @@ const Anointing = () => {
                   renderInput={(params) => <TextField {...params} required />}
                   required
                 />
-                {errors.preferred_date != null && (
-                  <FormHelperText sx={{ color: "red" }}>
-                    {errors.preferred_date}
-                  </FormHelperText>
-                )}
+                {/* {errors.preferred_date != null && ( */}
+                <FormHelperText sx={{ color: "red" }}>
+                  Date must be atleast 2 days from today to allow for processing
+                  time
+                </FormHelperText>
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={4}>
