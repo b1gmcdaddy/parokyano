@@ -55,9 +55,7 @@ const ManageAccounts = () => {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const res = await axios.get(
-          `${config.API}/user/retrieveUsersWithActivity`
-        );
+        const res = await axios.get(`${config.API}/user/retrieveUsers`);
         setUser(res.data);
       } catch (err) {
         console.error("error retrieving user", err);
@@ -78,7 +76,7 @@ const ManageAccounts = () => {
 
   const handleFormSave = async () => {
     handleFormClose();
-    const res = await axios.get(`${config.API}/user/retrieveUsersWithActivity`);
+    const res = await axios.get(`${config.API}/user/retrieveUsers`);
     setUser(res.data);
   };
 
@@ -121,7 +119,7 @@ const ManageAccounts = () => {
                   <StyledTableCell>Username</StyledTableCell>
                   <StyledTableCell>Status</StyledTableCell>
                   <StyledTableCell>Created On</StyledTableCell>
-                  <StyledTableCell>Last Activity</StyledTableCell>
+                  {/* <StyledTableCell>Last Activity</StyledTableCell> */}
                   <StyledTableCell>Action</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -139,7 +137,7 @@ const ManageAccounts = () => {
                         year: "numeric",
                       })}
                     </StyledTableCell>
-                    <StyledTableCell>{user.activity}</StyledTableCell>
+                    {/* <StyledTableCell>{user?.activity}</StyledTableCell> */}
                     <StyledTableCell onClick={() => handleFormOpen(user)}>
                       <FontAwesomeIcon
                         icon={faPenToSquare}
