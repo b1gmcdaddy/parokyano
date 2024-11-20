@@ -116,7 +116,7 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
         user_id: currentUser.id,
         request_id: data.requestID,
       });
-      // sendSMS(data.service_id, data, "cancel-cert");
+      sendSMS(data.service_id, data, "cancel-cert");
       console.log("logs success!");
       setSuccess({
         message: "Cancelation Success",
