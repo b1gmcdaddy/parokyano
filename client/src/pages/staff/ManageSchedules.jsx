@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import {Button, Typography, TextField, Divider} from "@mui/material";
+import { Button, Typography, TextField, Divider } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,9 +15,9 @@ import dayjs from "dayjs";
 import axios from "axios";
 import util from "../../utils/DateTimeFormatter";
 import all from "../../components/SchedulesModal";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
-import {jwtDecode} from "jwt-decode";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { jwtDecode } from "jwt-decode";
 import priestModals from "../../components/ManagePriestsModal";
 
 const ManageSchedules = () => {
@@ -76,6 +76,7 @@ const ManageSchedules = () => {
   };
 
   const timeSlots = [
+    "05:30 AM - 06:00 AM",
     "06:00 AM - 06:30 AM",
     "06:30 AM - 07:00 AM",
     "07:00 AM - 07:30 AM",
@@ -102,6 +103,8 @@ const ManageSchedules = () => {
     "05:30 PM - 06:00 PM",
     "06:00 PM - 06:30 PM",
     "06:30 PM - 07:00 PM",
+    "07:00 PM - 07:30 PM",
+    "07:30 PM - 08:00 PM",
   ];
 
   const handleDateChange = (e) => {
@@ -135,11 +138,12 @@ const ManageSchedules = () => {
 
   return (
     <>
-      <Box sx={{display: "flex", mx: {md: "30px"}}}>
+      <Box sx={{ display: "flex", mx: { md: "30px" } }}>
         <NavStaff />
         <Box
           component="main"
-          sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
+          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
+        >
           <Toolbar />
 
           <Box
@@ -148,13 +152,15 @@ const ManageSchedules = () => {
               justifyContent: "space-between",
               margin: "8px",
               alignItems: "center",
-            }}>
+            }}
+          >
             <Typography
               sx={{
                 fontSize: "1.25rem",
                 lineHeight: "1.75rem",
                 fontWeight: 600,
-              }}>
+              }}
+            >
               Priest Schedule
             </Typography>
             <span>
@@ -169,7 +175,8 @@ const ManageSchedules = () => {
                     "&:hover": {
                       backgroundColor: "white",
                     },
-                  }}>
+                  }}
+                >
                   Manage Priests
                 </Button>
               )}
@@ -177,7 +184,8 @@ const ManageSchedules = () => {
                 variant="contained"
                 type="button"
                 onClick={openScheduleModal}
-                sx={{backgroundColor: "#355173", marginLeft: 2}}>
+                sx={{ backgroundColor: "#355173", marginLeft: 2 }}
+              >
                 ADD ACTIVITY
               </Button>
             </span>
@@ -200,19 +208,21 @@ const ManageSchedules = () => {
 
           <Divider />
 
-          <Box sx={{p: 2}}>
+          <Box sx={{ p: 2 }}>
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-              }}>
+              }}
+            >
               <Typography
                 sx={{
                   fontWeight: "bold",
                   fontSize: "1.3em",
                   marginBottom: "1em",
-                }}>
+                }}
+              >
                 {util.formatDate(selectedDate)}
               </Typography>
               <TextField
@@ -224,13 +234,14 @@ const ManageSchedules = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                sx={{my: 3, boxShadow: "1px 3px 1px #D9D9D9"}}
+                sx={{ my: 3, boxShadow: "1px 3px 1px #D9D9D9" }}
               />
             </Box>
 
             <TableContainer
               component={Paper}
-              sx={{maxHeight: 600, overflowY: "auto"}}>
+              sx={{ maxHeight: 600, overflowY: "auto" }}
+            >
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
@@ -238,7 +249,8 @@ const ManageSchedules = () => {
                       width="20%"
                       sx={{
                         fontWeight: "bold",
-                      }}>
+                      }}
+                    >
                       Time
                     </TableCell>
                     {priestList.map((priest) => (
@@ -247,7 +259,8 @@ const ManageSchedules = () => {
                           sx={{
                             fontWeight: "bold",
                             textTransform: "uppercase",
-                          }}>
+                          }}
+                        >
                           {priest.first_name} {priest.last_name}
                         </Typography>
                       </TableCell>
@@ -277,7 +290,8 @@ const ManageSchedules = () => {
                               border: activity
                                 ? "none"
                                 : "1px solid rgba((232, 232, 232)",
-                            }}>
+                            }}
+                          >
                             {isStart ? (
                               <>
                                 {activity.activity}
