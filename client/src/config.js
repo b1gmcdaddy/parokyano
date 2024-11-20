@@ -1,7 +1,7 @@
 export default {
   // CLEVER CLOUD
-  API: "http://localhost:20998",
+ // API: "http://localhost:20998",
 
   // DEPLOYED
-  //  API: "https://apiparok.info",
+  API: "https://apiparok.info",
 };
