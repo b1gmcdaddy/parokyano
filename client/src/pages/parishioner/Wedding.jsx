@@ -2,9 +2,9 @@ import NavParishioner from "../../components/NavParishioner";
 import Header from "../../components/Header";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Footer from "../../components/Footer";
-import {Link} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import {
   MenuItem,
   Grid,
@@ -21,7 +21,7 @@ import {
   Tab,
   Typography,
 } from "@mui/material";
-import {React, useEffect, useState} from "react";
+import { React, useEffect, useState } from "react";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
 import generateHash from "../../utils/GenerateHash";
@@ -115,7 +115,7 @@ const Wedding = () => {
   };
 
   const handleMarriageInfo = (e, isGroom) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
 
     if (isGroom) {
       setFormData((prevState) => ({
@@ -201,7 +201,7 @@ const Wedding = () => {
   const handleSponsor = (e, index, field) => {
     const temp = [...formData.sponsors];
     temp[index][field] = e.target.value;
-    setFormData((prevState) => ({...prevState, sponsors: temp}));
+    setFormData((prevState) => ({ ...prevState, sponsors: temp }));
   };
 
   const addSponsor = (e) => {
@@ -209,7 +209,7 @@ const Wedding = () => {
       ...prevState,
       sponsors: [
         ...formData.sponsors,
-        {name: null, age: null, isMarried: null, isCatholic: null},
+        { name: null, age: null, isMarried: null, isCatholic: null },
       ],
     }));
   };
@@ -225,7 +225,7 @@ const Wedding = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -243,7 +243,8 @@ const Wedding = () => {
           fontWeight: "bold",
           marginBottom: "0.5rem",
           textAlign: "center",
-        }}>
+        }}
+      >
         Kindly Input the Following:
       </Typography>
       <Typography
@@ -252,15 +253,16 @@ const Wedding = () => {
           fontSize: "12px",
           marginBottom: "2rem",
           textAlign: "center",
-        }}>
+        }}
+      >
         Note: Make sure to fill up the forms for BOTH GROOM AND BRIDE.
       </Typography>
 
       <NoPaymentModal open={open} data={modalData} />
-      <Container maxWidth="md" sx={{marginBottom: "4em"}}>
+      <Container maxWidth="md" sx={{ marginBottom: "4em" }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2} className="mb-10">
-            <Grid item xs={12} sx={{marginBottom: "1em"}}>
+            <Grid item xs={12} sx={{ marginBottom: "1em" }}>
               <Tabs value={tabValue} onChange={handleTabChange}>
                 <Tab
                   value={1}
@@ -336,12 +338,12 @@ const Wedding = () => {
                     sx={inputstlying}
                     name="contact_no"
                     value={formData.contact_no}
-                    inputProps={{maxLength: 11}}
+                    inputProps={{ maxLength: 11 }}
                     onChange={handleChange}
                     required
                   />
                   {errors.contact_no != null && (
-                    <FormHelperText sx={{color: "red"}}>
+                    <FormHelperText sx={{ color: "red" }}>
                       {errors.contact_no}
                     </FormHelperText>
                   )}
@@ -654,7 +656,8 @@ const Wedding = () => {
                 name="relationship"
                 onChange={handleChange}
                 value={formData.relationship}
-                required>
+                required
+              >
                 <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                 <MenuItem value="Live-in for under 4 years">
                   Live-in for under 4 years
@@ -666,13 +669,14 @@ const Wedding = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={7} md={3} sx={{marginTop: 2}}>
+            <Grid item xs={7} md={3} sx={{ marginTop: 2 }}>
               <FormControl component="fieldset">
                 <label>Both Catholic?</label>
                 <RadioGroup
                   row
                   name="isCatholic"
-                  onChange={handleWeddingDetails}>
+                  onChange={handleWeddingDetails}
+                >
                   <FormControlLabel
                     value="1"
                     control={<Radio size="small" />}
@@ -686,7 +690,7 @@ const Wedding = () => {
                 </RadioGroup>
               </FormControl>
             </Grid>
-            <Grid item xs={6} md={3} sx={{marginTop: 2}}>
+            <Grid item xs={6} md={3} sx={{ marginTop: 2 }}>
               <FormControl component="fieldset">
                 <label className="ml-2">Both Parishioners?</label>
                 <RadioGroup
@@ -694,7 +698,8 @@ const Wedding = () => {
                   className="ml-2"
                   name="isParishioner"
                   value={formData.isParishioner}
-                  onChange={handleChange}>
+                  onChange={handleChange}
+                >
                   <FormControlLabel
                     value="1"
                     control={<Radio size="small" />}
@@ -712,12 +717,13 @@ const Wedding = () => {
 
           <Container
             maxWidth="md"
-            className="bg-neutral-100 md:p-8 rounded-lg mb-5">
+            className="bg-neutral-100 md:p-8 rounded-lg mb-5"
+          >
             <Grid container spacing={3}>
               {formData.sponsors.map((s, index) => (
                 <>
                   <Grid item key={index} xs={9} md={4}>
-                    <span style={{color: "red"}}>*</span>
+                    <span style={{ color: "red" }}>*</span>
                     <label>Sponsor's Full Name:</label>
                     <TextField
                       fullWidth
@@ -732,7 +738,7 @@ const Wedding = () => {
                     />
                   </Grid>
                   <Grid item xs={3} md={2}>
-                    <span style={{color: "red"}}>*</span>
+                    <span style={{ color: "red" }}>*</span>
                     <label>Age:</label>
                     <TextField
                       fullWidth
@@ -747,7 +753,7 @@ const Wedding = () => {
                     />
                   </Grid>
                   <Grid item xs={6} md={3}>
-                    <span style={{color: "red"}}>*</span>
+                    <span style={{ color: "red" }}>*</span>
                     <label>Marital Status:</label>
                     <TextField
                       fullWidth
@@ -759,7 +765,8 @@ const Wedding = () => {
                       name="isMarried"
                       value={formData.sponsors.isMarried}
                       onChange={(e) => handleSponsor(e, index, "isMarried")}
-                      required>
+                      required
+                    >
                       <MenuItem value="1">Married</MenuItem>
                       <MenuItem value="0">Not Married</MenuItem>
                     </TextField>
@@ -773,7 +780,8 @@ const Wedding = () => {
                         name="isCatholic"
                         value={formData.sponsors.isCatholic}
                         onChange={(e) => handleSponsor(e, index, "isCatholic")}
-                        required>
+                        required
+                      >
                         <FormControlLabel
                           value="1"
                           control={<Radio size="small" />}
@@ -796,7 +804,7 @@ const Wedding = () => {
             </Grid>
           </Container>
 
-          <Button
+          {/* <Button
             type="button"
             onClick={addSponsor}
             variant="contained"
@@ -811,16 +819,18 @@ const Wedding = () => {
               },
             }}>
             Add Sponsor
-          </Button>
+          </Button> */}
 
           <Grid
             item
-            sx={{display: "flex", justifyContent: "center", marginTop: "5em"}}>
+            sx={{ display: "flex", justifyContent: "center", marginTop: "5em" }}
+          >
             <Button
               disabled={!isFormValid()}
               variant="contained"
               type="submit"
-              sx={{backgroundColor: "#355173"}}>
+              sx={{ backgroundColor: "#355173" }}
+            >
               Submit Request
             </Button>
           </Grid>

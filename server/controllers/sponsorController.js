@@ -27,6 +27,12 @@ const retrieveByParams = (req, res) => {
 const addSponsor = async (req, res) => {
   const { name, age, isMarried, isCatholic, request_id } = req.body;
 
+  if (name == "" || age == "" || isMarried == "" || isCatholic == "") {
+    return res.status(200).json({
+      message: "All fields are required",
+    });
+  }
+
   try {
     const query = `INSERT INTO sponsor (name, age, isMarried, isCatholic, request_id) VALUES (?, ?, ?, ?, ?)`;
 
