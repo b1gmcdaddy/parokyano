@@ -639,6 +639,12 @@ function SponsorsModal({ id }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [errors, setErrors] = useState({
+    name: "",
+    age: "",
+    isMarried: "",
+    isCatholic: "",
+  });
   const [service] = useState("wedding");
   const [sponsors, setSponsors] = useState([]);
   const [newSponsor, setNewSponsor] = useState({
@@ -672,6 +678,41 @@ function SponsorsModal({ id }) {
   };
 
   const handleAddSponsor = async () => {
+    setErrors({
+      name: "",
+      age: "",
+      isMarried: "",
+      isCatholic: "",
+    });
+
+    let hasErrors = false;
+    const newErrors = {};
+
+    if (!newSponsor.name.trim()) {
+      newErrors.name = "Name is required";
+      hasErrors = true;
+    }
+
+    if (!newSponsor.age) {
+      newErrors.age = "Age is required";
+      hasErrors = true;
+    }
+
+    if (newSponsor.isMarried === "") {
+      newErrors.isMarried = "Marital status is required";
+      hasErrors = true;
+    }
+
+    if (newSponsor.isCatholic === "") {
+      newErrors.isCatholic = "Required";
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      setErrors(newErrors);
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${config.API}/sponsor/create-sponsor`,
@@ -680,6 +721,11 @@ function SponsorsModal({ id }) {
           request_id: id,
         }
       );
+      if (response && sponsors.length >= 4) {
+        await axios.put(`${config.API}/request/add-sponsor-fee`, {
+          requestID: id,
+        });
+      }
       const newSponsorData = {
         ...newSponsor,
       };
@@ -700,6 +746,11 @@ function SponsorsModal({ id }) {
         await axios.delete(
           `${config.API}/sponsor/delete-sponsor/${sponsor.sponsorID}`
         );
+        if (sponsors.length >= 4) {
+          await axios.put(`${config.API}/request/remove-sponsor-fee`, {
+            requestID: id,
+          });
+        }
         fetchSponsors();
         alert("Sponsor deleted successfully!");
       } catch (err) {
@@ -743,7 +794,7 @@ function SponsorsModal({ id }) {
                 Wedding Sponsors Information
               </Typography>
             </Grid>
-            <Grid item sm={4.5}>
+            <Grid item sm={5}>
               <label>Full Name:</label>
               <TextField
                 name="name"
@@ -751,16 +802,21 @@ function SponsorsModal({ id }) {
                 fullWidth
                 onChange={handleInputChange}
                 sx={TextFieldStyle}
+                error={Boolean(errors.name)}
+                helperText={errors.name}
               />
             </Grid>
-            <Grid item sm={1.5}>
+            <Grid item sm={2}>
               <label>Age:</label>
               <TextField
                 name="age"
+                type="number"
                 value={newSponsor.age}
                 onChange={handleInputChange}
                 fullWidth
                 sx={TextFieldStyle}
+                error={Boolean(errors.age)}
+                helperText={errors.age}
               />
             </Grid>
             <Grid item sm={3}>
@@ -772,12 +828,14 @@ function SponsorsModal({ id }) {
                 onChange={handleInputChange}
                 fullWidth
                 sx={TextFieldStyle}
+                error={Boolean(errors.isMarried)}
+                helperText={errors.isMarried}
               >
                 <MenuItem value="1">Married</MenuItem>
                 <MenuItem value="0">Not Married</MenuItem>
               </TextField>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2}>
               <label>Catholic?:</label>
               <TextField
                 select
@@ -786,6 +844,8 @@ function SponsorsModal({ id }) {
                 onChange={handleInputChange}
                 fullWidth
                 sx={TextFieldStyle}
+                error={Boolean(errors.isCatholic)}
+                helperText={errors.isCatholic}
               >
                 <MenuItem value="1">Yes</MenuItem>
                 <MenuItem value="0">No</MenuItem>

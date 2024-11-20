@@ -636,6 +636,12 @@ function RequirementsModal({ id, type, onClose }) {
 
 function SponsorsModal({ id }) {
   const [open, setOpen] = useState(false);
+  const [errors, setErrors] = useState({
+    name: "",
+    age: "",
+    isMarried: "",
+    isCatholic: "",
+  });
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [sponsors, setSponsors] = useState([]);
@@ -670,6 +676,41 @@ function SponsorsModal({ id }) {
   };
 
   const handleAddSponsor = async () => {
+    setErrors({
+      name: "",
+      age: "",
+      isMarried: "",
+      isCatholic: "",
+    });
+
+    let hasErrors = false;
+    const newErrors = {};
+
+    if (!newSponsor.name.trim()) {
+      newErrors.name = "Name is required";
+      hasErrors = true;
+    }
+
+    if (!newSponsor.age) {
+      newErrors.age = "Age is required";
+      hasErrors = true;
+    }
+
+    if (newSponsor.isMarried === "") {
+      newErrors.isMarried = "Marital status is required";
+      hasErrors = true;
+    }
+
+    if (newSponsor.isCatholic === "") {
+      newErrors.isCatholic = "Required";
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      setErrors(newErrors);
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${config.API}/sponsor/create-sponsor`,
@@ -766,6 +807,8 @@ function SponsorsModal({ id }) {
                 fullWidth
                 onChange={handleInputChange}
                 sx={TextFieldStyle}
+                error={Boolean(errors.name)}
+                helperText={errors.name}
               />
             </Grid>
             <Grid item sm={2}>
@@ -777,6 +820,8 @@ function SponsorsModal({ id }) {
                 onChange={handleInputChange}
                 fullWidth
                 sx={TextFieldStyle}
+                error={Boolean(errors.age)}
+                helperText={errors.age}
               />
             </Grid>
             <Grid item sm={3}>
@@ -788,6 +833,8 @@ function SponsorsModal({ id }) {
                 onChange={handleInputChange}
                 fullWidth
                 sx={TextFieldStyle}
+                error={Boolean(errors.isMarried)}
+                helperText={errors.isMarried}
               >
                 <MenuItem value="1">Married</MenuItem>
                 <MenuItem value="0">Not Married</MenuItem>
@@ -802,6 +849,8 @@ function SponsorsModal({ id }) {
                 onChange={handleInputChange}
                 fullWidth
                 sx={TextFieldStyle}
+                error={Boolean(errors.isCatholic)}
+                helperText={errors.isCatholic}
               >
                 <MenuItem value="1">Yes</MenuItem>
                 <MenuItem value="0">No</MenuItem>
@@ -810,7 +859,7 @@ function SponsorsModal({ id }) {
             <Grid item sm={12} sx={{ textAlign: "center" }}>
               <Button
                 variant="contained"
-                onClick={handleAddSponsor}
+                onClick={() => handleAddSponsor()}
                 sx={{
                   bgcolor: "#355173",
 
@@ -1028,6 +1077,16 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
         : "";
     }
   }, [formData.preferred_date, formData.preferred_time]);
+
+  // const [excess, setExcess] = useState(false);
+  // const [fee, setFee] = useState(formData.donation);
+
+  // useEffect(() => {
+  //   console.log(excess);
+  //   setFee(fee + parseFloat(50));
+  //   console.log(fee);
+  //   setExcess(false);
+  // }, [setExcess, excess]);
 
   const closeInfoModal = (action) => {
     if (action == "approve") {
