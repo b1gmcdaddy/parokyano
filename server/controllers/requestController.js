@@ -719,8 +719,8 @@ const searchRequests = (req, res) => {
   const { col, val, status, page, limit } = req.query;
   const enhancedVal = "%" + val + "%";
   const offset = Number(page - 1) * parseInt(limit);
-  const query = `SELECT r.*, s.name AS 'service_name' FROM request r INNER JOIN service s ON r.service_id = s.serviceID WHERE (r.requested_by LIKE '${enhancedVal}' OR r.transaction_no LIKE '${enhancedVal}') AND r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 AND r.status = ? ORDER BY r.date_requested DESC LIMIT ? OFFSET ?`;
-  const countQuery = `SELECT COUNT(*) as count FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}') AND service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = ?`;
+  const query = `SELECT r.*, s.name AS 'service_name' FROM request r INNER JOIN service s ON r.service_id = s.serviceID WHERE (r.requested_by LIKE '${enhancedVal}' OR r.transaction_no LIKE '${enhancedVal}' OR r.first_name LIKE '${enhancedVal}') AND r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 AND r.status = ? ORDER BY r.date_requested DESC LIMIT ? OFFSET ?`;
+  const countQuery = `SELECT COUNT(*) as count FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}' OR first_name LIKE '${enhancedVal}') AND service_id != 1 AND service_id != 2 AND service_id != 3 AND service_id != 4 AND status = ?`;
 
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {
@@ -1107,7 +1107,9 @@ const updateMarriageCert = (req, res) => {
   }
 
   const { spouse_name, details, ...mainFields } = marriageData;
-  const columns = Object.keys(mainFields).map((key) => `${key} = ?`).join(", ");
+  const columns = Object.keys(mainFields)
+    .map((key) => `${key} = ?`)
+    .join(", ");
   const values = Object.values(mainFields);
 
   const spouseUpdate = `
@@ -1141,21 +1143,25 @@ const updateMarriageCert = (req, res) => {
     details.line_no || null,
     details.record_id || null,
   ];
-  
+
   const query = `
     UPDATE request 
     SET ${columns}, spouse_name = ${spouseUpdate} ,
         details = ${detailsUpdate} 
     WHERE requestID = ?
   `;
-  
-  db.query(query, [...values, ...spouseValues, ...detailsValues, id], (err, result) => {
-    if (err) {
-      console.error("Error updating request", err);
-      return res.status(500).json({ message: "Error updating request" });
+
+  db.query(
+    query,
+    [...values, ...spouseValues, ...detailsValues, id],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating request", err);
+        return res.status(500).json({ message: "Error updating request" });
+      }
+      return res.status(200).json({ message: "Update successful" });
     }
-    return res.status(200).json({ message: "Update successful" });
-  });
+  );
 };
 
 const addSponsorFee = (req, res) => {

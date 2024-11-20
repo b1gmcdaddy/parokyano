@@ -1403,7 +1403,7 @@ const WeddingApproved = ({ open, data, handleClose, refreshList }) => {
                   <hr className="my-1" />
                 </Grid>
 
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <label>Selected Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -1421,7 +1421,7 @@ const WeddingApproved = ({ open, data, handleClose, refreshList }) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2.5}>
                   <label>Selected Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -1442,7 +1442,7 @@ const WeddingApproved = ({ open, data, handleClose, refreshList }) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2.5}>
                   <label>Selected Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
@@ -1466,8 +1466,14 @@ const WeddingApproved = ({ open, data, handleClose, refreshList }) => {
                   </LocalizationProvider>
                 </Grid>
 
+                <Grid item sm={2}>
+                  <label>Church:</label>
+                  <TextField value={available} size="small" fullWidth />
+                </Grid>
+
                 <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
                   <Button
+                    variant="contained"
                     onClick={() => handleOpenDialog("reschedule")}
                     sx={{
                       bgcolor: "#247E38",
@@ -1475,16 +1481,13 @@ const WeddingApproved = ({ open, data, handleClose, refreshList }) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#578A62" },
+                      "&:hover": { bgcolor: "green" },
                     }}
                   >
                     Reschedule
                   </Button>
                 </Grid>
-                {/* <Grid item sm={4}>
-              <label>Church:</label>
-              <TextField value={available} size="small" fullWidth />
-            </Grid> */}
+
                 <Grid item xs={6}>
                   <label>Approved by:</label>
                   <TextField

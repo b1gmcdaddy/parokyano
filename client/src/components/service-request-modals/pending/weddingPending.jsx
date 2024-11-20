@@ -1023,7 +1023,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
         donation: data.donation + 1000.0,
       }));
     } else {
-      data.isParishioner && data.donation == 0
+      data.isParishioner && data.donation == null
         ? setFormData((prevState) => ({
             ...prevState,
             donation: data.donation + 3000.0,

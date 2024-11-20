@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Footer from "../../components/Footer";
-import {Typography, Grid, Container, Box, Paper} from "@mui/material";
-import {DefaultCopyField} from "@eisberg-labs/mui-copy-field";
-import {Link} from "react-router-dom";
-import {useLocation} from "react-router-dom";
+import { Typography, Grid, Container, Box, Paper } from "@mui/material";
+import { DefaultCopyField } from "@eisberg-labs/mui-copy-field";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import config from "../../config";
 import axios from "axios";
 
@@ -87,10 +87,10 @@ const TrackRequest = () => {
 
   const statusStyling =
     request.status === "approved"
-      ? {color: "green"}
+      ? { color: "green" }
       : request.status === "cancelled"
-      ? {color: "red"}
-      : {color: "orange"};
+      ? { color: "red" }
+      : { color: "orange" };
 
   return (
     <>
@@ -105,14 +105,16 @@ const TrackRequest = () => {
           flexDirection: "column",
           paddingTop: 8,
           paddingBottom: 8,
-        }}>
+        }}
+      >
         <Container maxWidth="lg">
           <Grid container spacing={4} justifyContent="center">
             <Grid item xs={12} md={5}>
-              <Paper elevation={3} sx={{padding: 4}}>
+              <Paper elevation={3} sx={{ padding: 4 }}>
                 <Typography
                   gutterBottom
-                  sx={{textAlign: "center", fontSize: "18px"}}>
+                  sx={{ textAlign: "center", fontSize: "18px" }}
+                >
                   Transaction No.
                 </Typography>
                 <DefaultCopyField
@@ -121,7 +123,7 @@ const TrackRequest = () => {
                   value={request.transaction_no}
                   sx={inputstyling}
                   inputProps={{
-                    style: {textAlign: "center"},
+                    style: { textAlign: "center" },
                   }}
                 />
 
@@ -131,7 +133,8 @@ const TrackRequest = () => {
                     marginTop: "40px",
                     marginBottom: "10px",
                     fontWeight: "bold",
-                  }}>
+                  }}
+                >
                   Request Information
                 </Typography>
 
@@ -144,7 +147,14 @@ const TrackRequest = () => {
                   <div className="flex justify-between md:mb-3">
                     <Typography variant="body1">Requested By:</Typography>
                     <Typography variant="body1">
-                      {request.requested_by}
+                      {request.service_id == 2 ||
+                      request.service_id == 3 ||
+                      request.service_id == 4 ||
+                      request.service_id == 7
+                        ? request.first_name + " " + request.last_name
+                        : request.service_id == 5 || request.service_id == 6
+                        ? request.father_name
+                        : request.requested_by}
                     </Typography>
                   </div>
 
@@ -159,7 +169,7 @@ const TrackRequest = () => {
             </Grid>
 
             <Grid item xs={12} md={7}>
-              <Paper elevation={3} sx={{padding: 4}}>
+              <Paper elevation={3} sx={{ padding: 4 }}>
                 <Typography
                   variant="h5"
                   gutterBottom
@@ -167,7 +177,8 @@ const TrackRequest = () => {
                     fontWeight: "bold",
                     fontSize: "28px",
                     ...statusStyling,
-                  }}>
+                  }}
+                >
                   {request.status.toLowerCase() == "approved"
                     ? "APPROVED"
                     : request.status.toLowerCase() == "pending"
@@ -189,7 +200,8 @@ const TrackRequest = () => {
                     {activity.map((item) => (
                       <div
                         key={item.logID}
-                        className="md:mt-8 md:flex justify-between p-8">
+                        className="md:mt-8 md:flex justify-between p-8"
+                      >
                         <Typography>{item.date.substring(0, 10)}</Typography>
                         <Typography>{item.activity.split("-")[0]}</Typography>
                       </div>
