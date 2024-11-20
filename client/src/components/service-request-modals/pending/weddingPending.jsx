@@ -102,7 +102,7 @@ const fetchWeddingDetails = async (id) => {
 
 function RequirementsModal({ id, type, onClose }) {
   const [open, setOpen] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(null);
+  const [saveSuccess, setSaveSuccess] = useState("");
   const handleOpen = () => setOpen(true);
   const [tabValue, setTabValue] = useState(0);
   const [selectedWeddingId, setSelectedWeddingId] = useState(null);
@@ -208,8 +208,10 @@ function RequirementsModal({ id, type, onClose }) {
 
   const handleClose = () => {
     setOpen(false);
+    setSaveSuccess("");
     if (onClose) {
       onClose();
+      setSaveSuccess("");
     }
   };
 
@@ -228,13 +230,10 @@ function RequirementsModal({ id, type, onClose }) {
         `${config.API}/wedding/requirements/${selectedWeddingId}`,
         reqs
       );
-      setSaveSuccess({
-        message: "Update Success!",
-        details: "Successfully updated requirement.",
-      });
+      setSaveSuccess("Update Requirements Successful!");
       fetchWeddingDetails(id);
     } catch (error) {
-      alert("FAILED to Update Requirements...");
+      setSaveSuccess("Update Failed");
       fetchWeddingDetails(id);
     }
     console.log(selectedWeddingId);
@@ -611,6 +610,13 @@ function RequirementsModal({ id, type, onClose }) {
                 </Grid>
               ))}
             </Box>
+            <Grid item sm={12} sx={{ marginTop: "10px", textAlign: "center" }}>
+              {saveSuccess == "Update Requirements Successful!" ? (
+                <Typography sx={{ color: "green" }}>{saveSuccess}</Typography>
+              ) : (
+                <Typography>{saveSuccess}</Typography>
+              )}
+            </Grid>
 
             <Grid item sm={12} sx={{ marginTop: "10px", textAlign: "center" }}>
               <Button
@@ -624,20 +630,6 @@ function RequirementsModal({ id, type, onClose }) {
           </Grid>
         </Box>
       </Modal>
-
-      {saveSuccess && (
-        <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          open={true}
-          autoHideDuration={5000}
-          onClose={() => setSaveSuccess(null)}
-        >
-          <Alert severity="info" sx={{ width: "100%" }}>
-            <AlertTitle>{saveSuccess.message}</AlertTitle>
-            {saveSuccess.details}
-          </Alert>
-        </Snackbar>
-      )}
     </React.Fragment>
   );
 }
