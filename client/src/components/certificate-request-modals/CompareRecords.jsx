@@ -28,7 +28,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
   const [success, setSuccess] = useState(null);
   const [modalSize, setModalSize] = useState("");
   const [priests, setPriests] = useState([]);
-  const bookDetails = JSON.parse(recordData.details || '{}');
+  const bookDetails = JSON.parse(recordData.details || "{}");
   const [baptismData, setBaptismData] = useState({
     first_name: "",
     middle_name: "",
@@ -58,7 +58,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
     spouse_name: {
       firstName: "",
       middleName: "",
-      lastName: ""
+      lastName: "",
     },
     preferred_date_date: "",
     priest_id: "",
@@ -66,7 +66,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
 
   useEffect(() => {
     if (open && recordData) {
-      if (certData.service_id == 3){
+      if (certData.service_id == 3) {
         const details = {
           book_no: bookDetails.book_no || null,
           page_no: bookDetails.page_no || null,
@@ -83,11 +83,16 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
           preferred_date: formatDate(recordData.preferred_date),
           birth_date: formatDate(recordData.birth_date),
           priest_id: recordData.priest_id,
-          ...(details.book_no || details.page_no || details.line_no || details.record_id? { details } : {}),
+          ...(details.book_no ||
+          details.page_no ||
+          details.line_no ||
+          details.record_id
+            ? {details}
+            : {}),
         });
       }
 
-      if (certData.service_id == 2){
+      if (certData.service_id == 2) {
         const details = {
           book_no: bookDetails.book_no || null,
           page_no: bookDetails.page_no || null,
@@ -104,11 +109,17 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
           mother_name: recordData.mother_name,
           preferred_date: recordData.confirmation_date_date,
           priest_id: recordData.officiating_priest,
-          ...(details.book_no || details.page_no || details.line_no || details.sponsor_no1 || details.sponsor_no2 ? { details } : {}),
+          ...(details.book_no ||
+          details.page_no ||
+          details.line_no ||
+          details.sponsor_no1 ||
+          details.sponsor_no2
+            ? {details}
+            : {}),
         });
       }
 
-      if (certData.service_id == 4){
+      if (certData.service_id == 4) {
         const details = {
           book_no: bookDetails.book_no || null,
           page_no: bookDetails.page_no || null,
@@ -122,14 +133,18 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
           last_name: recordData.last_name,
           preferred_date: formatDate(recordData.preferred_date),
           priest_id: recordData.priest_id,
-          ...(details.book_no || details.page_no || details.line_no || details.record_id? { details } : {}),
+          ...(details.book_no ||
+          details.page_no ||
+          details.line_no ||
+          details.record_id
+            ? {details}
+            : {}),
         });
-        fetchWeddingData()
+        fetchWeddingData();
       }
     }
     console.log(recordData);
   }, [open, recordData]);
-
 
   useEffect(() => {
     // console.log(recordData);
@@ -155,7 +170,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
           },
         });
         setPriests(response.data);
-        console.log(response.data); 
+        console.log(response.data);
       } catch (err) {
         console.error(err);
       }
@@ -169,7 +184,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
       const response = await axios.get(`${config.API}/wedding/retrieve`, {
         params: {reqID: id},
       });
-  
+
       return response.data?.result[0];
     } catch (err) {
       console.error(err);
@@ -213,26 +228,26 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
       );
 
       // UPDATE Cert Request Data
-      if(certData.service_id == 3){
+      if (certData.service_id == 3) {
         await axios.put(`${config.API}/request/update-certificate`, {
           baptismData,
           id: certData.requestID,
         });
-        }
-    
-      if(certData.service_id == 2){
+      }
+
+      if (certData.service_id == 2) {
         await axios.put(`${config.API}/request/update-confirmation-cert`, {
           confirmationData,
           id: certData.requestID,
         });
-        }
+      }
 
-        if(certData.service_id == 4){
-          await axios.put(`${config.API}/request/update-marriage-cert`, {
-            marriageData,
-            id: certData.requestID,
-          });
-          }
+      if (certData.service_id == 4) {
+        await axios.put(`${config.API}/request/update-marriage-cert`, {
+          marriageData,
+          id: certData.requestID,
+        });
+      }
 
       // INSERT to LoGS
       axios.post(`${config.API}/logs/create`, {
@@ -241,7 +256,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
         request_id: certData.requestID,
       });
       console.log("logs success!");
-      // sendSMS(certData.service_id, certData, "approve-cert");
+      sendSMS(certData.service_id, certData, "approve-cert");
       setSuccess({
         message: "Approval Success",
         details: "Certificate Request successfully approved.",
@@ -528,7 +543,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         size="small"
                         fullWidth
                         variant="filled"
-                        value= {marriageData?.spouse_name?.firstName || ""}
+                        value={marriageData?.spouse_name?.firstName || ""}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -542,7 +557,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         size="small"
                         fullWidth
                         variant="filled"
-                        value= {marriageData?.spouse_name?.lastName || ""}
+                        value={marriageData?.spouse_name?.lastName || ""}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -591,27 +606,21 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         variant="filled"
                         value={
                           recordData.child_name
-                          ? (
-                              (typeof recordData.child_name === "string"
+                            ? ((typeof recordData.child_name === "string"
                                 ? JSON.parse(recordData.child_name)
                                 : recordData.child_name
-                              ).first_name || ""
-                            ) +
-                            " " +
-                            (
-                              (typeof recordData.child_name === "string"
+                              ).first_name || "") +
+                              " " +
+                              ((typeof recordData.child_name === "string"
                                 ? JSON.parse(recordData.child_name)
                                 : recordData.child_name
-                              ).middle_name || ""
-                            ) +
-                            " " +
-                            (
-                              (typeof recordData.child_name === "string"
+                              ).middle_name || "") +
+                              " " +
+                              ((typeof recordData.child_name === "string"
                                 ? JSON.parse(recordData.child_name)
                                 : recordData.child_name
-                              ).last_name || ""
-                            )
-                          : ""
+                              ).last_name || "")
+                            : ""
                         }
                         slotProps={{
                           inputLabel: {
@@ -668,11 +677,13 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         variant="filled"
                         value={
                           priests.find(
-                            (priest) => priest.priestID === recordData.officiating_priest
+                            (priest) =>
+                              priest.priestID === recordData.officiating_priest
                           )?.first_name +
                           " " +
                           priests.find(
-                            (priest) => priest.priestID === recordData.officiating_priest
+                            (priest) =>
+                              priest.priestID === recordData.officiating_priest
                           )?.last_name
                         }
                         slotProps={{
@@ -939,7 +950,13 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         variant="filled"
                         color="success"
                         focused
-                        value={certData.first_name + " " + certData.middle_name + " " + certData.last_name}
+                        value={
+                          certData.first_name +
+                          " " +
+                          certData.middle_name +
+                          " " +
+                          certData.last_name
+                        }
                         slotProps={{
                           inputLabel: {
                             shrink: true,

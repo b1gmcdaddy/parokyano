@@ -243,7 +243,7 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
               request_id: formData.requestID,
             }),
             console.log("logs success!"),
-            // sendSMS(data.service_id, formData, "approve");
+            sendSMS(data.service_id, formData, "approve"),
             closeInfoModal("approve"),
             refreshList(),
           ]);
@@ -289,7 +289,7 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
         });
 
         console.log("request cancelled!");
-        // sendSMS(data.service_id, formData, "cancel");
+        sendSMS(data.service_id, formData, "cancel");
         await axios.post(`${config.API}/logs/create`, {
           activity: `Cancelled Anointing Request - Transaction number: ${data.transaction_no}`,
           user_id: currentUser.id,

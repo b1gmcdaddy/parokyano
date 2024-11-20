@@ -244,7 +244,7 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
               user_id: currentUser.id,
               request_id: data.requestID,
             }),
-            // sendSMS(data.service_id, formData, "cancel");
+            sendSMS(data.service_id, formData, "cancel"),
             closeInfoModal("cancel"),
           ]);
         } catch (err) {
@@ -299,7 +299,7 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
               user_id: currentUser.id,
               request_id: data.requestID,
             }),
-            // sendSMS(data.service_id, formData, "reschedule"),
+            sendSMS(data.service_id, formData, "reschedule"),
             closeInfoModal("reschedule"),
           ]);
         } catch (err) {
