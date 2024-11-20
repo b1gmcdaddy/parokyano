@@ -29,13 +29,13 @@ import dayjs from "dayjs";
 import ValidateForm from "../../utils/Validators";
 
 const containerStyle = {
-  margin: '0px',
-  padding: '0px',
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-  minWidth: '100%',
-}
+  margin: "0px",
+  padding: "0px",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
+  minWidth: "100%",
+};
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -156,10 +156,10 @@ const Blessing = () => {
       <Header backgroundImage={imageHeader} title="REQUEST FOR BLESSING" />
 
       <div className="max-w-[1440px] mt-6">
-      <Link to='/' className="mt-8 md:mb-10 items-center">
-          <FontAwesomeIcon icon={faArrowLeftLong}  className="ml-8 md:mr-2"/>
+        <Link to="/" className="mt-8 md:mb-10 items-center">
+          <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
           <p className="hidden md:inline">Return to Home</p>
-      </Link>
+        </Link>
       </div>
 
       <h1 align="center" className="font-bold text-md font-[Arial] mb-8">
@@ -280,7 +280,7 @@ const Blessing = () => {
 
             <Grid item xs={12} sm={3}>
               <span style={{ color: "red" }}>*</span>
-              <label>Preferred Date:</label>
+              <label>Preferred Date: </label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   slotProps={{ textField: { fullWidth: true } }}
@@ -293,6 +293,11 @@ const Blessing = () => {
                   renderInput={(params) => <TextField {...params} required />}
                   required
                 />
+                {errors.preferred_date != null && (
+                  <FormHelperText sx={{ color: "red" }}>
+                    {errors.preferred_date}
+                  </FormHelperText>
+                )}
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -308,8 +313,8 @@ const Blessing = () => {
                   onChange={(time) => handleTimeChange("preferred_time", time)}
                   renderInput={(params) => <TextField {...params} required />}
                   timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
-                  minTime={dayjs().set("hour", 7)}
-                  maxTime={dayjs().set("hour", 16)}
+                  minTime={dayjs().set("hour", 5)}
+                  maxTime={dayjs().set("hour", 18)}
                   required
                 />
               </LocalizationProvider>
