@@ -729,7 +729,6 @@ function SponsorsModal({ id }) {
       );
 
       if (response && sponsors.length >= 4) {
-        setExcess(true);
         await axios.put(`${config.API}/request/add-sponsor-fee`, {
           requestID: id,
         });
