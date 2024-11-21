@@ -1,6 +1,6 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import { Navigate } from "react-router-dom";
+import {Routes, Route} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 
 import Home from "./pages/parishioner/Home";
 import Certificates from "./pages/parishioner/Certificate";
@@ -21,7 +21,7 @@ import CertificateBaptism from "./pages/parishioner/certs-types/Certificate-Bapt
 import CertificateConfirmation from "./pages/parishioner/certs-types/Certificate-Confirmation";
 import CertificateWedding from "./pages/parishioner/certs-types/Certificate-Wedding";
 import Wedding from "./pages/parishioner/Wedding";
-import TrackStatus from "./pages/parishioner/TrackStatus";
+
 import FAQ from "./pages/parishioner/FAQ";
 import TrackRequest from "./pages/parishioner/TrackRequest";
 import Login from "./pages/staff/Login";
@@ -36,7 +36,7 @@ import ManageTransactions from "./pages/staff/ManageTransactions";
 import ForgotPassword from "./pages/staff/ForgotPassword";
 import CertificateRequests from "./pages/staff/CertificateRequests";
 import Settings from "./pages/staff/Settings";
-import { StaffRoute, AdminRoute } from "./utils/LoginRedirect";
+import {StaffRoute, AdminRoute} from "./utils/LoginRedirect";
 
 function App() {
   return (
@@ -65,7 +65,7 @@ function App() {
         <Route path="/mass-intention-petition" element={<Petition />} />
         <Route path="/mass-intention-souls" element={<Souls />} />
         <Route path="/wedding" element={<Wedding />} />
-        <Route path="/track-status" element={<TrackStatus />} />
+
         <Route path="/track-request" element={<TrackRequest />} />
         <Route path="/frequently-asked" element={<FAQ />} />
 
