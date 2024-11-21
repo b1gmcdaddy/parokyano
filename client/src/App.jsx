@@ -36,7 +36,7 @@ import ManageTransactions from "./pages/staff/ManageTransactions";
 import ForgotPassword from "./pages/staff/ForgotPassword";
 import CertificateRequests from "./pages/staff/CertificateRequests";
 import Settings from "./pages/staff/Settings";
-import {StaffRoute, AdminRoute} from "./utils/LoginRedirect";
+import {StaffRoute, AdminRoute, LoggedInRoute} from "./utils/LoginRedirect";
 
 function App() {
   return (
@@ -71,7 +71,14 @@ function App() {
 
         {/*  unya na nani e lahi2 og routes ang parishioner & staff... diri lang sa tanan  */}
         {/*  -----------STAFF-----------  */}
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={
+            <LoggedInRoute>
+              <Login />
+            </LoggedInRoute>
+          }
+        />
         <Route
           path="/dashboard"
           element={

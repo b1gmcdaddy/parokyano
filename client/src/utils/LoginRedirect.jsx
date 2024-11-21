@@ -27,6 +27,14 @@ export const AdminRoute = ({children}) => {
     }
     return <Navigate to="/login" replace />;
   }
+  return children;
+};
 
+export const LoggedInRoute = ({children}) => {
+  const {token} = getUserData();
+
+  if (token) {
+    return <Navigate to="/dashboard" replace />;
+  }
   return children;
 };
