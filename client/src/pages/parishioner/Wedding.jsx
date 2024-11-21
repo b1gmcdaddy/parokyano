@@ -19,6 +19,7 @@ import {
   Box,
   Tabs,
   Tab,
+  Divider,
   Typography,
 } from "@mui/material";
 import { React, useEffect, useState } from "react";
@@ -669,7 +670,11 @@ const Wedding = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={7} md={3} sx={{ marginTop: 2 }}>
+            <Grid item xs={12} md={12} sx={{ margin: "2" }}>
+              <Divider sx={{ padding: 2 }} />
+            </Grid>
+
+            <Grid item xs={7} md={3} sx={{ marginTop: 1 }}>
               <FormControl component="fieldset">
                 <label>Both Catholic?</label>
                 <RadioGroup
@@ -690,7 +695,7 @@ const Wedding = () => {
                 </RadioGroup>
               </FormControl>
             </Grid>
-            <Grid item xs={6} md={3} sx={{ marginTop: 2 }}>
+            <Grid item xs={6} md={3} sx={{ marginTop: 1 }}>
               <FormControl component="fieldset">
                 <label className="ml-2">Both Parishioners?</label>
                 <RadioGroup

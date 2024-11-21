@@ -25,6 +25,7 @@ import ValidateForm from "../../../utils/Validators";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import GCashQR from "../../../components/GCashQR";
+import util from "../../../utils/DateTimeFormatter";
 
 const containerStyle = {
   margin: "0px",
@@ -354,11 +355,12 @@ const Thanksgiving = () => {
                 onChange={handleChange}
                 value={formData.mass_time}
                 required
+                disabled={formData.mass_date == ""}
               >
                 {schedule.slots.map((time, index) => {
                   return (
                     <MenuItem key={index} value={time}>
-                      {time}
+                      {util.formatTime(time)}
                     </MenuItem>
                   );
                 })}

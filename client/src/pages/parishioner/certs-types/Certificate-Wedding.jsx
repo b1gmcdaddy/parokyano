@@ -1,10 +1,10 @@
-import {React, useEffect, useState} from "react";
+import { React, useEffect, useState } from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from "../../../assets/imageHeader.jpg";
 import Footer from "../../../components/Footer";
-import {Link} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import {
   TextField,
   Grid,
@@ -14,27 +14,27 @@ import {
   RadioGroup,
   Button,
   FormHelperText,
-  Box
+  Box,
 } from "@mui/material";
-import {DatePicker} from "@mui/x-date-pickers";
-import {LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Header from "../../../components/Header";
 import generateHash from "../../../utils/GenerateHash";
 import axios from "axios";
 import config from "../../../config";
 import all from "../../../components/PaymentModal";
 import ValidateForm from "../../../utils/Validators";
-import {validateDate} from "@mui/x-date-pickers/internals";
+import { validateDate } from "@mui/x-date-pickers/internals";
 
 const containerStyle = {
-  margin: '0px',
-  padding: '0px',
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-  minWidth: '100%',
-}
+  margin: "0px",
+  padding: "0px",
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
+  minWidth: "100%",
+};
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -45,7 +45,7 @@ const inputstlying = {
       borderColor: "#355173",
       borderWidth: "0.5px",
     },
-    height: "40px"
+    height: "40px",
   },
 };
 
@@ -104,24 +104,27 @@ const CertificateWedding = () => {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
   };
 
   const handleSpouse = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      spouse_name: {...formData.spouse_name, [e.target.name]: e.target.value},
+      spouse_name: { ...formData.spouse_name, [e.target.name]: e.target.value },
     }));
   };
 
   const handleArchive = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      archive_info: {...formData.archive_info, [e.target.name]: e.target.value},
+      archive_info: {
+        ...formData.archive_info,
+        [e.target.name]: e.target.value,
+      },
     }));
   };
 
@@ -154,7 +157,8 @@ const CertificateWedding = () => {
 
       <Link
         to="/certificates"
-        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center">
+        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center"
+      >
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <p className="xs:hidden md:flex">Return to Selection</p>
       </Link>
@@ -165,7 +169,7 @@ const CertificateWedding = () => {
 
       <all.CashPaymentModal open={open} data={modalData} />
 
-      <Container maxWidth="lg" sx={{marginBottom: "60px"}}>
+      <Container maxWidth="lg" sx={{ marginBottom: "60px" }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={4}>
@@ -258,7 +262,7 @@ const CertificateWedding = () => {
               </label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  slotProps={{ textField: { fullWidth: true }}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   size="small"
                   disableFuture
@@ -278,13 +282,13 @@ const CertificateWedding = () => {
                 variant="outlined"
                 size="small"
                 sx={inputstlying}
-                inputProps={{maxLength: 11}}
+                inputProps={{ maxLength: 11 }}
                 name="contact_no"
                 onChange={handleChange}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
@@ -294,7 +298,8 @@ const CertificateWedding = () => {
           <Grid
             container
             spacing={4}
-            sx={{marginTop: "8px", marginBottom: "60px"}}>
+            sx={{ marginTop: "8px", marginBottom: "60px" }}
+          >
             <Grid item xs={12}>
               <label>
                 <span className="text-red-600 font-bold">*</span>Purpose:
@@ -304,24 +309,25 @@ const CertificateWedding = () => {
                 name="purpose"
                 className=""
                 onChange={handleChange}
-                required>
+                required
+              >
                 <FormControlLabel
                   value="passport"
                   control={<Radio size="small" />}
                   label="Passport"
-                  sx={{marginRight: "2em"}}
+                  sx={{ marginRight: "2em" }}
                 />
                 <FormControlLabel
                   value="school"
                   control={<Radio size="small" />}
                   label="School"
-                  sx={{marginRight: "2em"}}
+                  sx={{ marginRight: "2em" }}
                 />
                 <FormControlLabel
                   value="sss"
                   control={<Radio size="small" />}
                   label="SSS"
-                  sx={{marginRight: "2em"}}
+                  sx={{ marginRight: "2em" }}
                 />
                 <FormControlLabel
                   value="others"
@@ -337,13 +343,13 @@ const CertificateWedding = () => {
                 )}
               </RadioGroup>
               {formData.purpose === "" && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   Pleas choose a purpose
                 </FormHelperText>
               )}
             </Grid>
 
-            <Grid item xs={12} sm={4}>
+            {/* <Grid item xs={12} sm={4}>
               <label>Book No.</label>
               <TextField
                 fullWidth
@@ -375,16 +381,22 @@ const CertificateWedding = () => {
                 name="line_no"
                 onChange={handleArchive}
               />
-            </Grid>
+            </Grid> */}
           </Grid>
 
           <Grid
             item
-            sx={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "10px",
+            }}
+          >
             <Button
               variant="contained"
               type="submit"
-              sx={{backgroundColor: "#355173"}}>
+              sx={{ backgroundColor: "#355173" }}
+            >
               Submit Request
             </Button>
           </Grid>

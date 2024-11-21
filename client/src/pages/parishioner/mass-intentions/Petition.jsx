@@ -23,6 +23,7 @@ import ValidateForm from "../../../utils/Validators";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import GCashQR from "../../../components/GCashQR";
+import util from "../../../utils/DateTimeFormatter";
 
 const containerStyle = {
   margin: "0px",
@@ -234,7 +235,7 @@ const Petition = () => {
                 {schedule.slots.map((time, index) => {
                   return (
                     <MenuItem key={index} value={time}>
-                      {time}
+                      {util.formatTime(time)}
                     </MenuItem>
                   );
                 })}

@@ -9,12 +9,12 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const pages = [
-  {name: "Services", path: "/"},
-  {name: "About", path: "/about"},
-  {name: "Events", path: "/events"},
+  { name: "Services", path: "/" },
+  { name: "About", path: "/about" },
+  { name: "Events", path: "/events" },
 ];
 
 function NavParishioner() {
@@ -29,7 +29,7 @@ function NavParishioner() {
   };
 
   return (
-    <AppBar position="static" sx={{bgcolor: "#E8E8E8"}}>
+    <AppBar position="static" sx={{ bgcolor: "#E8E8E8" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -39,23 +39,25 @@ function NavParishioner() {
             href="/"
             sx={{
               mr: 6,
-              display: {xs: "none", md: "flex"},
+              display: { xs: "none", md: "flex" },
               fontFamily: "arial",
               fontWeight: 700,
               letterSpacing: ".1rem",
-              color: "black",
+              color: "rgb(15, 23, 42)",
               textDecoration: "none",
-            }}>
+            }}
+          >
             PAROKYANO
           </Typography>
 
-          <Box sx={{flexGrow: 1, display: {xs: "flex", md: "none"}}}>
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="#000000">
+              color="#000000"
+            >
               <MenuIcon />
             </IconButton>
             <Menu
@@ -73,9 +75,10 @@ function NavParishioner() {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: {xs: "block", md: "none"},
+                display: { xs: "block", md: "none" },
                 color: "#000000",
-              }}>
+              }}
+            >
               {pages.map((page, index) => (
                 <MenuItem key={index} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
@@ -92,17 +95,18 @@ function NavParishioner() {
             href="/"
             sx={{
               mr: 4,
-              display: {xs: "flex", md: "none"},
+              display: { xs: "flex", md: "none" },
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".1rem",
               color: "black",
               textDecoration: "none",
-            }}>
+            }}
+          >
             PAROKYANO
           </Typography>
-          <Box sx={{flexGrow: 1, display: {xs: "none", md: "flex"}}}>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page, index) => (
               <Button
                 key={index}
@@ -112,7 +116,8 @@ function NavParishioner() {
                   color: "#000000",
                   display: "block",
                   textTransform: "none",
-                }}>
+                }}
+              >
                 <Link to={page.path}>{page.name}</Link>
               </Button>
             ))}
