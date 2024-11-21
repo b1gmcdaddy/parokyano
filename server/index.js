@@ -1,7 +1,6 @@
 //this file is mostly for server and db connectivity
 
 const mysql = require("mysql2");
-const bp = require("body-parser");
 const app = require("./routes");
 const cors = require("cors");
 require("dotenv").config();
