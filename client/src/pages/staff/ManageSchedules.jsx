@@ -18,7 +18,7 @@ import all from "../../components/SchedulesModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { jwtDecode } from "jwt-decode";
-import priestModals from "../../components/ManagePriestsModal";
+import priestModals from "../../components/configurations-modals/ManagePriestsModal";
 
 const ManageSchedules = () => {
   const [openModal, setOpenModal] = useState(false);

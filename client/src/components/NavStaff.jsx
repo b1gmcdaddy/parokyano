@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 //all icons are temporary
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -11,7 +11,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import BadgeIcon from "@mui/icons-material/Badge";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {Avatar} from "@mui/material";
+import { Avatar } from "@mui/material";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -27,13 +27,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const sideBarWidth = 240;
 
 const staffSideBarItems = [
-  {icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard"},
-  {icon: <CampaignIcon />, label: "Announcements", path: "/staff-events"},
+  { icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard" },
+  { icon: <CampaignIcon />, label: "Announcements", path: "/staff-events" },
   {
     icon: <AssignmentIcon />,
     label: "Service Requests",
@@ -62,13 +62,8 @@ const staffSideBarItems = [
 ];
 
 const adminSideBarItems = [
-  {icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard"},
-  {
-    icon: <PersonAddAlt1Icon />,
-    label: "Manage Staff",
-    path: "/manage-accounts",
-  },
-  {icon: <CampaignIcon />, label: "Announcements", path: "/staff-events"},
+  { icon: <DashboardIcon />, label: "Dashboard", path: "/dashboard" },
+  { icon: <CampaignIcon />, label: "Announcements", path: "/staff-events" },
   {
     icon: <AssignmentIcon />,
     label: "Service Requests",
@@ -94,10 +89,15 @@ const adminSideBarItems = [
     label: "Schedules",
     path: "/manage-schedules",
   },
+  {
+    icon: <PersonAddAlt1Icon />,
+    label: "Configurations",
+    path: "/manage-configurations",
+  },
 ];
 
 const NavStaff = (props) => {
-  const {window} = props;
+  const { window } = props;
   const user = JSON.parse(localStorage.getItem("user"));
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
@@ -134,14 +134,16 @@ const NavStaff = (props) => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-      }}>
+      }}
+    >
       <Box
         justifyContent="center"
         alignItems="center"
-        sx={{display: "flex", flexDirection: "column", margin: 2}}>
+        sx={{ display: "flex", flexDirection: "column", margin: 2 }}
+      >
         <div>
-          <Avatar sx={{width: 100, height: 100}}>
-            <PersonIcon sx={{width: 70, height: 70}} />
+          <Avatar sx={{ width: 100, height: 100 }}>
+            <PersonIcon sx={{ width: 70, height: 70 }} />
           </Avatar>
         </div>
         <div>
@@ -151,7 +153,8 @@ const NavStaff = (props) => {
               marginTop: "8px",
               color: "whitesmoke",
               textAlign: "center",
-            }}>
+            }}
+          >
             {user.name}
           </Typography>
           <Typography
@@ -160,13 +163,14 @@ const NavStaff = (props) => {
               marginTop: "4px",
               color: "whitesmoke",
               textAlign: "center",
-            }}>
+            }}
+          >
             {decoded.role == "admin" ? "Admin" : "Staff"}
           </Typography>
         </div>
       </Box>
 
-      <List sx={{color: "whitesmoke", paddingTop: 3}}>
+      <List sx={{ color: "whitesmoke", paddingTop: 3 }}>
         {" "}
         {(decoded.role === "staff" ? staffSideBarItems : adminSideBarItems).map(
           (items, index) => (
@@ -177,9 +181,12 @@ const NavStaff = (props) => {
                 "&:hover": {
                   backgroundColor: "rgba(255, 255, 255, 0.3)",
                 },
-              }}>
+              }}
+            >
               <ListItemButton component={Link} to={items.path}>
-                <ListItemIcon sx={{color: "white"}}>{items.icon}</ListItemIcon>
+                <ListItemIcon sx={{ color: "white" }}>
+                  {items.icon}
+                </ListItemIcon>
                 <ListItemText primary={items.label} />
               </ListItemButton>
             </ListItem>
@@ -193,7 +200,8 @@ const NavStaff = (props) => {
           padding: "1em 0",
           backgroundColor: drawerColor,
           marginTop: "auto",
-        }}>
+        }}
+      >
         <List>
           <ListItem
             sx={{
@@ -202,14 +210,15 @@ const NavStaff = (props) => {
               },
               width: "100%",
             }}
-            disablePadding>
+            disablePadding
+          >
             <ListItemButton>
-              <ListItemIcon sx={{color: "white", paddingLeft: ".2em"}}>
+              <ListItemIcon sx={{ color: "white", paddingLeft: ".2em" }}>
                 <LogoutIcon />
               </ListItemIcon>
               <ListItemText
                 primary="Logout"
-                sx={{color: "white"}}
+                sx={{ color: "white" }}
                 onClick={() => {
                   localStorage.removeItem("accessToken");
                   localStorage.removeItem("refreshToken");
@@ -229,22 +238,24 @@ const NavStaff = (props) => {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{display: "flex"}}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
-          width: {sm: `calc(100% - ${sideBarWidth}px)`},
-          ml: {sm: `${sideBarWidth}px`},
+          width: { sm: `calc(100% - ${sideBarWidth}px)` },
+          ml: { sm: `${sideBarWidth}px` },
           backgroundColor: "#D9D9D9",
-        }}>
+        }}
+      >
         <Toolbar>
           <IconButton
             color="black"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{mr: 2, display: {sm: "none"}}}>
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
             <MenuIcon />
           </IconButton>
           <Typography
@@ -255,8 +266,9 @@ const NavStaff = (props) => {
               letterSpacing: "3px",
               color: "#00000e",
               flexGrow: 1,
-              mx: {md: "30px"},
-            }}>
+              mx: { md: "30px" },
+            }}
+          >
             Parokyano
           </Typography>
 
@@ -264,15 +276,16 @@ const NavStaff = (props) => {
             <SettingsRoundedIcon
               on
               className="md:mr-8 text-neutral-950"
-              sx={{mx: {md: "30px"}}}
+              sx={{ mx: { md: "30px" } }}
             />
           </IconButton>
         </Toolbar>
       </AppBar>
       <Box
         component="nav"
-        sx={{width: {sm: sideBarWidth}, flexShrink: {sm: 0}}}
-        aria-label="mailbox folders">
+        sx={{ width: { sm: sideBarWidth }, flexShrink: { sm: 0 } }}
+        aria-label="mailbox folders"
+      >
         <Drawer
           container={container}
           variant="temporary"
@@ -283,24 +296,26 @@ const NavStaff = (props) => {
             keepMounted: true,
           }}
           sx={{
-            display: {xs: "block", sm: "none"},
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: sideBarWidth,
-            },
-          }}>
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: {xs: "none", sm: "block"},
+            display: { xs: "block", sm: "none" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: sideBarWidth,
             },
           }}
-          open>
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: sideBarWidth,
+            },
+          }}
+          open
+        >
           {drawer}
         </Drawer>
       </Box>

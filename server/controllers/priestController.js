@@ -13,9 +13,9 @@ const retrieveByParams = (req, res) => {
       console.error("error retrieving from db", err);
       return res.status(500);
     }
-    for (const i in result) {
-      result[i].first_name = "Fr. " + result[i].first_name;
-    }
+    // for (const i in result) {
+    //   result[i].first_name = "Fr. " + result[i].first_name;
+    // }
     return res.status(200).send(result);
   });
 };

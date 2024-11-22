@@ -29,7 +29,7 @@ import StaffDashboard from "./pages/staff/StaffDashboard";
 import ServiceRequests from "./pages/staff/ServiceRequests";
 import ManageEvents from "./pages/staff/ManageEvents";
 import ManageIntentions from "./pages/staff/ManageIntentions";
-import ManageAccounts from "./pages/admin/ManageAccounts";
+import Configurations from "./pages/admin/Configurations";
 import GenerateReports from "./pages/staff/GenerateReports";
 import ManageSchedules from "./pages/staff/ManageSchedules";
 import ManageTransactions from "./pages/staff/ManageTransactions";
@@ -148,14 +148,14 @@ function App() {
 
         {/*  -----------ADMIN-----------  */}
         <Route
-          path="/manage-accounts"
+          path="/manage-configurations"
           element={
             <AdminRoute>
-              <ManageAccounts />
+              <Configurations />
             </AdminRoute>
           }
         />
-        {<Route path="/manage-accounts" element={<ManageAccounts />} />}
+        {<Route path="/manage-configurations" element={<Configurations />} />}
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

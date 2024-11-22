@@ -9,6 +9,7 @@ const retrieveAll = (req, res) => {
       console.log(err);
     } else {
       console.log(result);
+      res.status(200).send(result);
     }
   });
 };
@@ -62,8 +63,25 @@ const retrieveSchedule = (req, res) => {
   );
 };
 
+const updateService = (req, res) => {
+  const { col, val, serviceID } = req.body;
+
+  db.query(
+    `UPDATE service SET ${col} = ? WHERE serviceID = ?`,
+    [val, serviceID],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(200).send(result);
+      }
+    }
+  );
+};
+
 module.exports = {
   retrieveAll,
   retrieveByParams,
   retrieveSchedule,
+  updateService,
 };
