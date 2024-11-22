@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
   Box,
   Table,
@@ -30,7 +30,7 @@ import WakeApproved from "../../../components/service-request-modals/pending/app
 import WeddingApproved from "../../../components/service-request-modals/pending/approved/weddingApproved";
 import ConfirmationDialog from "../../../components/ConfirmationModal";
 
-const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
+const ApprovedRequests = ({filter, page, totalItems, handlePageChange}) => {
   const [tableData, setTableData] = useState([]);
   const [tableDataPriests, setTableDataPriests] = useState([]);
   const [modalData, setModalData] = useState(null);
@@ -94,7 +94,6 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
         },
       });
       setTableData(res.data.result);
-      console.log(res.data.result);
     } catch (err) {
       console.error("error retrieving pending reqs", err);
     }
@@ -109,7 +108,6 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
         },
       });
       setTableDataPriests(res.data);
-      console.log(res.data);
     } catch (err) {
       console.error("error retrieving pending reqs", err);
     }
@@ -134,7 +132,6 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
   useEffect(() => {
     if (filter && filter?.length > 0) {
       setTableData(filter);
-      console.log(filter);
     } else {
       fetchRequests();
     }
@@ -228,12 +225,11 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-        >
-          <Alert severity="error" sx={{ width: "100%" }}>
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -242,36 +238,33 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}
-        >
-          <Alert severity="info" sx={{ width: "100%" }}>
+          onClose={() => setSuccess(null)}>
+          <Alert severity="info" sx={{width: "100%"}}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
         </Snackbar>
       )}
 
-      <div style={{ margin: "0 auto" }}>
+      <div style={{margin: "0 auto"}}>
         <TableContainer
           sx={{
             display: "flex",
             borderRadius: "16px",
             overflowX: "auto",
             border: "none",
-          }}
-        >
+          }}>
           <Table
             stickyHeader
             aria-label="custom table"
             sx={{
               borderCollapse: "separate",
               borderSpacing: 0,
-              sm: { minWidth: 650 },
-            }}
-          >
+              sm: {minWidth: 650},
+            }}>
             <TableHead>
               <TableRow>
                 <TableCell
@@ -280,8 +273,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                     border: "none",
                     fontSize: "0.85rem",
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   SERVICE
                 </TableCell>
                 <TableCell
@@ -290,8 +282,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                     border: "none",
                     fontSize: "0.85rem",
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   SCHEDULED DATE
                 </TableCell>
                 <TableCell
@@ -300,8 +291,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                     border: "none",
                     fontSize: "0.85rem",
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   PRIEST ASSIGNED
                 </TableCell>
                 <TableCell
@@ -310,8 +300,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                     border: "none",
                     fontSize: "0.85rem",
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   REQUESTED BY
                 </TableCell>
                 <TableCell
@@ -320,8 +309,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                     border: "none",
                     fontSize: "0.85rem",
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   CONTACT NO.
                 </TableCell>
                 <TableCell
@@ -330,8 +318,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                     border: "none",
                     fontSize: "0.85rem",
                     fontWeight: "bold",
-                  }}
-                >
+                  }}>
                   ACTIONS
                 </TableCell>
               </TableRow>
@@ -348,9 +335,8 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                           backgroundColor: "#ffffff",
                           padding: 0,
                           border: "none",
-                        }}
-                      >
-                        <Box sx={{ height: "5px", backgroundColor: "white" }} />
+                        }}>
+                        <Box sx={{height: "5px", backgroundColor: "white"}} />
                       </TableCell>
                     </TableRow>
 
@@ -361,8 +347,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                         "& > *": {
                           borderBottom: "none",
                         },
-                      }}
-                    >
+                      }}>
                       <TableCell
                         sx={{
                           border: "none",
@@ -370,8 +355,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                           textAlign: "center",
                           borderRadius: "15px 0 0 15px",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {req?.service_name?.length > 20
                           ? req.service_name.substring(0, 20) + "..."
                           : req.service_name}
@@ -382,8 +366,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {util.formatDate(req.preferred_date)}
                       </TableCell>
                       <TableCell
@@ -392,8 +375,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {tableDataPriests.find(
                           (p) => p.priestID == req.priest_id
                         )?.first_name +
@@ -408,8 +390,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {req.service_id == 5 || req.service_id == 6
                           ? req.father_name
                           : req.service_id == 7
@@ -422,8 +403,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                           padding: "16px",
                           textAlign: "center",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         {req.contact_no}
                       </TableCell>
                       <TableCell
@@ -433,8 +413,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                           textAlign: "center",
                           borderRadius: "0 15px 15px 0",
                           backgroundColor: "#e0e0e0",
-                        }}
-                      >
+                        }}>
                         <Button
                           variant="contained"
                           type="button"
@@ -451,8 +430,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                             setModalData(req);
                             setModalType(req.service_name);
                             setModalOpen(true);
-                          }}
-                        >
+                          }}>
                           INFO
                         </Button>
                         <Button
@@ -468,8 +446,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
                           }}
                           onClick={() => {
                             handleOpenDialog("cancel", req);
-                          }}
-                        >
+                          }}>
                           CANCEL
                         </Button>
                       </TableCell>
@@ -493,8 +470,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
             justifyContent: "center",
             alignItems: "center",
             marginTop: 2,
-          }}
-        >
+          }}>
           <IconButton
             onClick={() => handlePageChange(page - 1)}
             disabled={page === 0} // Disable on the first page
@@ -502,12 +478,11 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
               backgroundColor: page === 0 ? "grey.300" : "black",
               color: page === 0 ? "grey.600" : "white",
               marginRight: "10px",
-            }}
-          >
+            }}>
             <KeyboardArrowLeft />
           </IconButton>
 
-          <Typography sx={{ margin: "0 10px", fontWeight: "bold" }}>
+          <Typography sx={{margin: "0 10px", fontWeight: "bold"}}>
             Page {page + 1} of {totalPages}
           </Typography>
 
@@ -518,8 +493,7 @@ const ApprovedRequests = ({ filter, page, totalItems, handlePageChange }) => {
               backgroundColor: page === totalPages - 1 ? "grey.300" : "black",
               color: page === totalPages - 1 ? "grey.600" : "white",
               marginLeft: "10px",
-            }}
-          >
+            }}>
             <KeyboardArrowRight />
           </IconButton>
         </Box>

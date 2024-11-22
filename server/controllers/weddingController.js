@@ -6,7 +6,10 @@ const retrieveByParams = (req, res) => {
   const {reqID} = req.query;
 
   db.query(
-    `SELECT * FROM wedding WHERE request_id = ?`,
+    `SELECT wedding.*, request.donation
+     FROM wedding
+     JOIN request ON wedding.request_id = request.requestID
+     WHERE wedding.request_id = ?`,
     [reqID],
     (err, result) => {
       if (err) {
@@ -17,7 +20,7 @@ const retrieveByParams = (req, res) => {
         });
       }
       return res.status(200).json({
-        message: "Retrieved wedding for request_id: " + reqID,
+        message: "Retrieved wedding and donation for request_id: " + reqID,
         result,
       });
     }

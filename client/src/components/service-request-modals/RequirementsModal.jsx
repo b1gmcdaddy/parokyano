@@ -1,12 +1,9 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   Dialog,
-  DialogContent,
   DialogTitle,
-  DialogActions,
-  Modal,
   Box,
   Button,
   Grid,
@@ -17,18 +14,15 @@ import {
   Tab,
   FormControlLabel,
   Checkbox,
-  MenuItem,
   TableContainer,
-  Paper,
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
-  Skeleton,
 } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import React from "react";
 import axios from "axios";
 import Alert from "@mui/material/Alert";
@@ -39,7 +33,7 @@ import ConfirmationDialog from "../ConfirmationModal";
 const fetchWeddingDetails = async (id) => {
   try {
     const response = await axios.get(`${config.API}/wedding/retrieve`, {
-      params: { reqID: id },
+      params: {reqID: id},
     });
 
     return response.data?.result[0];
@@ -49,7 +43,7 @@ const fetchWeddingDetails = async (id) => {
   }
 };
 
-const RequirementsModal = ({ id, type, onClose }) => {
+const RequirementsModal = ({id, type, onClose}) => {
   const [open, setOpen] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState("");
   const handleOpen = () => setOpen(true);
@@ -108,8 +102,8 @@ const RequirementsModal = ({ id, type, onClose }) => {
   }, []);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewSponsor((prev) => ({ ...prev, [name]: value }));
+    const {name, value} = e.target;
+    setNewSponsor((prev) => ({...prev, [name]: value}));
   };
 
   const handleAddSponsor = async () => {
@@ -171,7 +165,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
         ...newSponsor,
       };
       fetchSponsors();
-      setNewSponsor({ name: "", age: "", isMarried: "", isCatholic: "" });
+      setNewSponsor({name: "", age: "", isMarried: "", isCatholic: ""});
     } catch (err) {
       console.error("Error adding sponsor", err);
     }
@@ -194,7 +188,6 @@ const RequirementsModal = ({ id, type, onClose }) => {
           });
         }
         await fetchSponsors();
-        // alert("Sponsor deleted successfully!");
       } catch (err) {
         console.error("Error deleting sponsor", err);
         await fetchSponsors();
@@ -239,40 +232,40 @@ const RequirementsModal = ({ id, type, onClose }) => {
     {
       type: "Civilly Married",
       requirements: [
-        { name: "Civil Marriage Contract", field: "isCivilContract" },
-        { name: "Parish Permit", field: "isParishPermit" },
-        { name: "Prenuptial Agreement", field: "isPrenuptial" },
-        { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Marriage Bann", field: "isMarriageBann" },
+        {name: "Civil Marriage Contract", field: "isCivilContract"},
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
       ],
     },
     {
       type: "Live-in for under 4 years",
       requirements: [
-        { name: "Parish Permit", field: "isParishPermit" },
-        { name: "Prenuptial Agreement", field: "isPrenuptial" },
-        { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Marriage Bann", field: "isMarriageBann" },
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
       ],
     },
     {
       type: "Live-in for more than 4 years",
       requirements: [
-        { name: "Parish Permit", field: "isParishPermit" },
-        { name: "Prenuptial Agreement", field: "isPrenuptial" },
-        { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Joint Affidavit of Cohabitation", field: "isJointAffidavit" },
-        { name: "Marriage Bann", field: "isMarriageBann" },
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Joint Affidavit of Cohabitation", field: "isJointAffidavit"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
       ],
     },
     {
       type: "Widow",
       requirements: [
-        { name: "Parish Permit", field: "isParishPermit" },
-        { name: "Prenuptial Agreement", field: "isPrenuptial" },
-        { name: "Pre-Cana Certificate", field: "isPreCana" },
-        { name: "Marriage Bann", field: "isMarriageBann" },
-        { name: "Partner's Death Certificate", field: "isDeathCert" },
+        {name: "Parish Permit", field: "isParishPermit"},
+        {name: "Prenuptial Agreement", field: "isPrenuptial"},
+        {name: "Pre-Cana Certificate", field: "isPreCana"},
+        {name: "Marriage Bann", field: "isMarriageBann"},
+        {name: "Partner's Death Certificate", field: "isDeathCert"},
       ],
     },
   ];
@@ -299,7 +292,6 @@ const RequirementsModal = ({ id, type, onClose }) => {
         ...requirements,
         type,
       };
-
       axios.put(
         `${config.API}/wedding/requirements/${selectedWeddingId}`,
         reqs
@@ -310,7 +302,6 @@ const RequirementsModal = ({ id, type, onClose }) => {
       setSaveSuccess("Update Failed");
       fetchWeddingDetails(id);
     }
-    console.log(selectedWeddingId);
   };
 
   return (
@@ -323,44 +314,40 @@ const RequirementsModal = ({ id, type, onClose }) => {
           height: "30px",
           color: "#355173",
           fontSize: 12,
-          "&:hover": { bgcolor: "#E5E4E2" },
-        }}
-      >
+          "&:hover": {bgcolor: "#E5E4E2"},
+        }}>
         Requirements
       </Button>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ mt: 3, p: 2, textAlign: "center" }}>
+        <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
           <b>Manage Wedding Requirements</b>
           <IconButton
             aria-label="close"
             onClick={handleClose}
-            sx={{ position: "absolute", right: 8, top: 8 }}
-          >
+            sx={{position: "absolute", right: 8, top: 8}}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
 
-        <Tabs
-          sx={{ margin: "20px" }}
-          value={tabValue}
-          onChange={handleTabChange}
-        >
+        <Tabs sx={{margin: "20px"}} value={tabValue} onChange={handleTabChange}>
           <Tab label="Requirements" />
           <Tab label="Sponsors" />
         </Tabs>
 
-        <Box sx={{ padding: "20px", borderRadius: "0px 0px 5px 5px" }}>
+        <Box sx={{padding: "20px", borderRadius: "0px 0px 5px 5px"}}>
           <Grid container spacing={2}>
             {tabValue === 0 && (
               <>
                 {/* Groom and Bride Requirements Section */}
                 <Grid item sm={12}>
                   <Typography
-                    variant="h6"
-                    sx={{ marginBottom: "10px", fontWeight: "bold" }}
-                  >
-                    Groom Requirements
+                    sx={{
+                      marginBottom: "10px",
+                      fontWeight: "bold",
+                      fontSize: "18px",
+                    }}>
+                    Groom's Requirements
                   </Typography>
                   <Grid container spacing={1}>
                     {/* Groom Birth Certificate */}
@@ -378,7 +365,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                           />
                         }
                         label={
-                          <Typography sx={{ fontSize: "15px" }}>
+                          <Typography sx={{fontSize: "14px"}}>
                             Birth Certificate
                           </Typography>
                         }
@@ -400,7 +387,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                           />
                         }
                         label={
-                          <Typography sx={{ fontSize: "15px" }}>
+                          <Typography sx={{fontSize: "14px"}}>
                             Baptismal Certificate
                           </Typography>
                         }
@@ -424,7 +411,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                           />
                         }
                         label={
-                          <Typography sx={{ fontSize: "15px" }}>
+                          <Typography sx={{fontSize: "14px"}}>
                             Confirmation Certificate
                           </Typography>
                         }
@@ -448,7 +435,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "14px"}}>
                                 CENOMAR
                               </Typography>
                             }
@@ -468,7 +455,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "14px"}}>
                                 CEDULA
                               </Typography>
                             }
@@ -492,7 +479,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "14px"}}>
                                 Marriage License
                               </Typography>
                             }
@@ -505,10 +492,12 @@ const RequirementsModal = ({ id, type, onClose }) => {
 
                 <Grid item sm={12}>
                   <Typography
-                    variant="h6"
-                    sx={{ marginBottom: "10px", fontWeight: "bold" }}
-                  >
-                    Bride Requirements
+                    sx={{
+                      marginBottom: "10px",
+                      fontWeight: "bold",
+                      fontSize: "18px",
+                    }}>
+                    Bride's Requirements
                   </Typography>
                   <Grid container spacing={1}>
                     {/* Bride Birth Certificate */}
@@ -526,7 +515,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                           />
                         }
                         label={
-                          <Typography sx={{ fontSize: "15px" }}>
+                          <Typography sx={{fontSize: "14px"}}>
                             Birth Certificate
                           </Typography>
                         }
@@ -548,7 +537,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                           />
                         }
                         label={
-                          <Typography sx={{ fontSize: "15px" }}>
+                          <Typography sx={{fontSize: "14px"}}>
                             Baptismal Certificate
                           </Typography>
                         }
@@ -572,7 +561,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                           />
                         }
                         label={
-                          <Typography sx={{ fontSize: "15px" }}>
+                          <Typography sx={{fontSize: "14px"}}>
                             Confirmation Certificate
                           </Typography>
                         }
@@ -596,7 +585,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "14px"}}>
                                 CENOMAR
                               </Typography>
                             }
@@ -616,7 +605,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "14px"}}>
                                 CEDULA
                               </Typography>
                             }
@@ -640,7 +629,7 @@ const RequirementsModal = ({ id, type, onClose }) => {
                               />
                             }
                             label={
-                              <Typography sx={{ fontSize: "15px" }}>
+                              <Typography sx={{fontSize: "14px"}}>
                                 Marriage License
                               </Typography>
                             }
@@ -654,12 +643,11 @@ const RequirementsModal = ({ id, type, onClose }) => {
                 {/* Dynamic Requirements Section */}
                 <Grid item sm={12}>
                   <Typography
-                    variant="h6"
                     sx={{
                       marginBottom: "10px",
                       fontWeight: "bold",
-                    }}
-                  >
+                      fontSize: "18px",
+                    }}>
                     Joint Requirements
                   </Typography>
                   <Grid container spacing={1}>
@@ -678,13 +666,36 @@ const RequirementsModal = ({ id, type, onClose }) => {
                             />
                           }
                           label={
-                            <Typography sx={{ fontSize: "15px" }}>
+                            <Typography sx={{fontSize: "14px"}}>
                               {req.name}
                             </Typography>
                           }
                         />
                       </Grid>
                     ))}
+                  </Grid>
+                  {/* Actions */}
+                  <Grid
+                    item
+                    sm={12}
+                    sx={{marginTop: "50px", textAlign: "center"}}>
+                    <Button
+                      onClick={updateRequirements}
+                      variant="contained"
+                      sx={{padding: "10px 20px"}}>
+                      Confirm
+                    </Button>
+                    <Button
+                      onClick={() => handleClose()}
+                      variant="contained"
+                      sx={{
+                        padding: "10px 20px",
+                        marginLeft: 2,
+                        backgroundColor: "#D9D9D9",
+                        color: "black",
+                      }}>
+                      Close
+                    </Button>
                   </Grid>
                 </Grid>
               </>
@@ -714,65 +725,61 @@ const RequirementsModal = ({ id, type, onClose }) => {
                   <TextField fullWidth variant="filled" size="small" />
                 </Grid>
                 <Grid item sm={12} display={"flex"} justifyContent={"flex-end"}>
-                  <Button variant="outlined">Add Sponsor</Button>
+                  <Button variant="outlined" onClick={handleAddSponsor}>
+                    Add Sponsor
+                  </Button>
                 </Grid>
 
                 {/* Table */}
                 <Grid item sm={12} marginTop={3}>
-                  <TableContainer sx={{ overflowY: "auto", maxHeight: "30vh" }}>
-                    <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+                  <TableContainer sx={{overflowY: "auto", maxHeight: "30vh"}}>
+                    <Table sx={{tableLayout: "fixed", width: "100%"}}>
                       <TableHead>
                         <TableRow>
                           <TableCell
-                            sx={{ fontWeight: "bold", width: "35%" }}
-                            align="left"
-                          >
+                            sx={{fontWeight: "bold", width: "35%"}}
+                            align="left">
                             Full Name
                           </TableCell>
                           <TableCell
-                            sx={{ fontWeight: "bold", width: "10" }}
-                            align="left"
-                          >
+                            sx={{fontWeight: "bold", width: "10"}}
+                            align="left">
                             Age
                           </TableCell>
                           <TableCell
-                            sx={{ fontWeight: "bold", width: "20%" }}
-                            align="left"
-                          >
+                            sx={{fontWeight: "bold", width: "20%"}}
+                            align="left">
                             M. Status
                           </TableCell>
                           <TableCell
-                            sx={{ fontWeight: "bold", width: "20%" }}
-                            align="left"
-                          >
+                            sx={{fontWeight: "bold", width: "20%"}}
+                            align="left">
                             Catholic?
                           </TableCell>
                           <TableCell
-                            sx={{ fontWeight: "bold", width: "10%" }}
-                          ></TableCell>
+                            sx={{fontWeight: "bold", width: "10%"}}></TableCell>
                         </TableRow>
                       </TableHead>
 
                       <TableBody>
                         {sponsors.map((sponsor) => (
                           <TableRow key={sponsor.sponsorID}>
-                            <TableCell sx={{ width: "35%" }}>
+                            <TableCell sx={{width: "35%"}}>
                               {sponsor.name}
                             </TableCell>
-                            <TableCell sx={{ width: "10%" }}>
+                            <TableCell sx={{width: "10%"}}>
                               {sponsor.age}
                             </TableCell>
-                            <TableCell sx={{ width: "20%" }}>
+                            <TableCell sx={{width: "20%"}}>
                               {sponsor.isMarried === 1 ? "Yes" : "No"}
                             </TableCell>
-                            <TableCell sx={{ width: "20%" }}>
+                            <TableCell sx={{width: "20%"}}>
                               {sponsor.isCatholic === 1 ? "Yes" : "No"}
                             </TableCell>
-                            <TableCell sx={{ width: "10%" }}>
+                            <TableCell sx={{width: "10%"}}>
                               <IconButton
                                 size="small"
-                                onClick={() => handleDeleteSponsor(sponsor)}
-                              >
+                                onClick={() => handleDeleteSponsor(sponsor)}>
                                 <FontAwesomeIcon icon={faXmark} />
                               </IconButton>
                             </TableCell>
@@ -787,35 +794,12 @@ const RequirementsModal = ({ id, type, onClose }) => {
           </Grid>
 
           {/* Success Message */}
-          <Grid item sm={12} sx={{ marginTop: "10px", textAlign: "center" }}>
+          <Grid item sm={12} sx={{marginTop: "10px", textAlign: "center"}}>
             {saveSuccess === "Update Requirements Successful!" ? (
-              <Typography sx={{ color: "green" }}>{saveSuccess}</Typography>
+              <Typography sx={{color: "green"}}>{saveSuccess}</Typography>
             ) : (
               <Typography>{saveSuccess}</Typography>
             )}
-          </Grid>
-
-          {/* Actions */}
-          <Grid item sm={12} sx={{ marginTop: "50px", textAlign: "center" }}>
-            <Button
-              onClick={updateRequirements}
-              variant="contained"
-              sx={{ padding: "10px 20px" }}
-            >
-              Confirm
-            </Button>
-            <Button
-              onClick={() => handleClose()}
-              variant="contained"
-              sx={{
-                padding: "10px 20px",
-                marginLeft: 2,
-                backgroundColor: "#D9D9D9",
-                color: "black",
-              }}
-            >
-              Close
-            </Button>
           </Grid>
         </Box>
       </Dialog>

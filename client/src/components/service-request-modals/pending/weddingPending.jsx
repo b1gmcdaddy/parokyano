@@ -1,30 +1,15 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogActions,
-  Modal,
-  Box,
   Button,
   Grid,
   Typography,
   IconButton,
   TextField,
-  Tabs,
-  Tab,
-  FormControlLabel,
-  Checkbox,
   MenuItem,
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   Skeleton,
 } from "@mui/material";
 import {
@@ -33,8 +18,8 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState, useEffect } from "react";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useState, useEffect} from "react";
 import React from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
@@ -45,33 +30,8 @@ import AlertTitle from "@mui/material/AlertTitle";
 import sendSMS from "../../../utils/smsService";
 import RequirementsModal from "../RequirementsModal";
 
-const boxModal = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "sm",
-  bgcolor: "white",
-  borderRadius: "5px",
-  boxShadow: 3,
-  px: 4,
-  py: 3,
-  maxHeight: "97vh",
-  overflowY: "auto",
-  scrollbarWidth: "none",
-  "&::-webkit-scrollbar": {
-    display: "none",
-  },
-};
-
 const TextFieldStyle = {
-  "& .MuiInputBase-root": { height: "40px", bgcolor: "white" },
-};
-
-const tabStyle = {
-  fontWeight: "bold",
-  color: "black",
-  bgcolor: "#D9D9D9",
+  "& .MuiInputBase-root": {height: "40px", bgcolor: "white"},
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -91,7 +51,7 @@ const endTime = (timeString, hoursToAdd) => {
 const fetchWeddingDetails = async (id) => {
   try {
     const response = await axios.get(`${config.API}/wedding/retrieve`, {
-      params: { reqID: id },
+      params: {reqID: id},
     });
 
     return response.data?.result[0];
@@ -101,7 +61,7 @@ const fetchWeddingDetails = async (id) => {
   }
 };
 
-const WeddingPending = ({ open, data, handleClose, refreshList }) => {
+const WeddingPending = ({open, data, handleClose, refreshList}) => {
   const [available, setAvailable] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completeRequirements, setCompleteRequirements] = useState(0);
@@ -113,23 +73,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [weddingInfo, setWeddingInfo] = useState({});
-  const [formData, setFormData] = useState({
-    requestID: "",
-    first_name: "",
-    middle_name: "",
-    last_name: "",
-    relationship: "",
-    contact_no: "",
-    interview_date: "",
-    interview_time: "",
-    priest_id: "",
-    preferred_date: "",
-    preferred_time: "",
-    transaction_no: "",
-    payment_status: "",
-    service_id: "",
-    donation: "",
-  });
+  const [formData, setFormData] = useState(null);
 
   // START RETRIEVE WEDDING DETAILS
   const fetchWeddingData = async () => {
@@ -159,7 +103,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
         },
       });
       setPriests(response.data);
-      console.log(response.data);
     } catch (err) {
       console.error(err);
     }
@@ -175,7 +118,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
           },
         }
       );
-      console.log(response.data);
       setService(response.data);
     } catch (err) {
       console.error(err);
@@ -184,35 +126,35 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
 
   useEffect(() => {
     setIsLoading(true);
-    new Promise((resolve) => {
-      if (open && data) {
+    if (open && data) {
+      new Promise((resolve) => {
         setFormData({
-          requestID: data.requestID,
-          first_name: data.first_name,
-          middle_name: data.middle_name,
-          last_name: data.last_name,
-          contact_no: data.contact_no,
-          relationship: data.relationship,
+          requestID: data.requestID || "",
+          first_name: data.first_name || "",
+          middle_name: data.middle_name || "",
+          last_name: data.last_name || "",
+          contact_no: data.contact_no || "",
+          relationship: data.relationship || "",
           interview_date: data.interview_date
             ? dayjs(data.interview_date).format("YYYY-MM-DD")
             : null,
-          interview_time: data.interview_time || null,
-          priest_id: data.priest_id || null,
-          preferred_date: data.preferred_date
-            ? dayjs(data.preferred_date).format("YYYY-MM-DD")
+          interview_time: data.interview_time || "",
+          priest_id: data.priest_id || "",
+          preferred_date: data?.preferred_date
+            ? dayjs(data?.preferred_date).format("YYYY-MM-DD")
             : null,
-          preferred_time: data.preferred_time || null,
-          transaction_no: data.transaction_no,
-          payment_status: data.payment_status,
-          service_id: data.service_id,
-          donation: data.donation,
+          preferred_time: data.preferred_time || "",
+          transaction_no: data.transaction_no || "",
+          payment_status: data.payment_status || "",
+          service_id: data.service_id || "",
+          donation: data.donation || 0,
         });
         fetchWeddingData();
         fetchPriest();
         fetchService();
-      }
-      resolve();
-    });
+        resolve();
+      });
+    }
     setTimeout(() => {
       setIsLoading(false);
     }, "500");
@@ -220,8 +162,8 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
 
   useEffect(() => {
     if (
-      dayjs(formData.preferred_date).get("day") == 6 &&
-      dayjs(formData.preferred_time, "HH:mm:ss").hour() == 6 &&
+      dayjs(formData?.preferred_date).get("day") == 6 &&
+      dayjs(formData?.preferred_time, "HH:mm:ss").hour() == 6 &&
       data.donation == 0
     ) {
       setFormData((prevState) => ({
@@ -229,7 +171,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
         donation: data.donation + 1000.0,
       }));
     } else {
-      data.isParishioner && data.donation == null
+      data.isParishioner && data.donation == 0
         ? setFormData((prevState) => ({
             ...prevState,
             donation: data.donation + 3000.0,
@@ -241,17 +183,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
           }))
         : "";
     }
-  }, [formData.preferred_date, formData.preferred_time]);
-
-  // const [excess, setExcess] = useState(false);
-  // const [fee, setFee] = useState(formData.donation);
-
-  // useEffect(() => {
-  //   console.log(excess);
-  //   setFee(fee + parseFloat(50));
-  //   console.log(fee);
-  //   setExcess(false);
-  // }, [setExcess, excess]);
+  }, [formData?.preferred_date, formData?.preferred_time]);
 
   const closeInfoModal = (action) => {
     if (action == "approve") {
@@ -299,38 +231,37 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
         },
       }
     );
-    console.log(avail.data.message);
     setAvailable(avail.data.message);
   };
 
   useEffect(() => {
-    if (formData.preferred_date && formData.preferred_time) {
+    if (formData?.preferred_date && formData?.preferred_time) {
       fetchAvailability(
-        formData.preferred_date,
-        formData.preferred_time,
-        endTime(formData.preferred_time, service.duration)
+        formData?.preferred_date,
+        formData?.preferred_time,
+        endTime(formData?.preferred_time, service.duration)
       );
     }
   }, [
-    formData.preferred_date,
-    formData.preferred_time,
-    formData.priest_id,
+    formData?.preferred_date,
+    formData?.preferred_time,
+    formData?.priest_id,
     open,
   ]);
   // END RETRIEVE WEDDING DETAILS
 
   // START FORM HANDLERS AND CONTROLS
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
+    setFormData({...formData, [name]: time.format("HH:mm:ss")});
   };
 
   const handleOpenDialog = (action) => {
@@ -427,14 +358,11 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
             details: res.data?.details,
           });
         } else {
-          console.log("request updated!");
-
           axios.post(`${config.API}/logs/create`, {
             activity: `Updated Wedding Request - Transaction number: ${data.transaction_no}`,
             user_id: currentUser.id,
             request_id: data.requestID,
           });
-          console.log("logs success!");
           closeInfoModal("update");
         }
         break;
@@ -446,8 +374,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
             id: formData.requestID,
           },
         });
-
-        console.log("request cancelled!");
         sendSMS(data.service_id, formData, "cancel");
         await axios.post(`${config.API}/logs/create`, {
           activity: `Cancelled Wedding Request - Transaction number: ${data.transaction_no}`,
@@ -479,7 +405,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                 },
               }
             );
-            // console.log(response);
             if (response.status !== 200) {
               setError({
                 message: response.data.message,
@@ -542,12 +467,11 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-        >
-          <Alert severity="error" sx={{ width: "100%" }}>
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -556,12 +480,11 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}
-        >
-          <Alert severity={snackBarStyle} sx={{ width: "100%" }}>
+          onClose={() => setSuccess(null)}>
+          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -571,18 +494,17 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {!isLoading ? (
           <>
-            <DialogTitle sx={{ mt: 3, p: 2, textAlign: "center" }}>
+            <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
               <b>Wedding Request Information</b>
               <IconButton
                 aria-label="close"
                 onClick={handleClose}
-                sx={{ position: "absolute", right: 8, top: 8 }}
-              >
+                sx={{position: "absolute", right: 8, top: 8}}>
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
-              <Grid container spacing={2} sx={{ padding: 3 }}>
+              <Grid container spacing={2} sx={{padding: 3}}>
                 <Grid item xs={12} sm={4}>
                   <label>Groom's First Name:</label>
                   <TextField
@@ -657,8 +579,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                     value={formData.relationship}
                     fullWidth
                     select
-                    sx={TextFieldStyle}
-                  >
+                    sx={TextFieldStyle}>
                     <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                     <MenuItem value="Live-in for under 4 years">
                       Live-in for under 4 years
@@ -690,15 +611,14 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                     value={formData?.payment_status}
                     select
                     fullWidth
-                    sx={TextFieldStyle}
-                  >
+                    sx={TextFieldStyle}>
                     <MenuItem value="unpaid">Unpaid</MenuItem>
                     <MenuItem value="paid">Paid</MenuItem>
                   </TextField>
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-                  <Typography sx={{ display: "inline-block" }}>
+                  <Typography sx={{display: "inline-block"}}>
                     Requirements:
                   </Typography>
                   <Typography
@@ -713,8 +633,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                         formData.payment_status == "paid"
                           ? "green"
                           : "red",
-                    }}
-                  >
+                    }}>
                     {completeRequirements == 1 &&
                     formData.payment_status == "paid" ? (
                       <span className="font-bold">COMPLETE</span>
@@ -749,8 +668,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                     name="priest_id"
                     sx={TextFieldStyle}
                     value={formData.priest_id}
-                    onChange={handleChange}
-                  >
+                    onChange={handleChange}>
                     {priests.map((priest) => (
                       <MenuItem key={priest.id} value={priest.priestID}>
                         {`${priest.first_name} ${priest.last_name}`}
@@ -785,7 +703,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
                       fullWidth
-                      timeSteps={{ hours: 30, minutes: 30 }}
+                      timeSteps={{hours: 30, minutes: 30}}
                       minTime={dayjs().set("hour", 6)}
                       maxTime={dayjs().set("hour", 19)}
                       name="interview_time"
@@ -814,9 +732,8 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                       marginTop: "24px",
                       height: "40px",
                       color: "white",
-                      "&:hover": { bgcolor: "#4C74A5" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#4C74A5"},
+                    }}>
                     Assign INTERVIEW
                   </Button>
                 </Grid>
@@ -835,8 +752,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                         fullWidth
                         sx={TextFieldStyle}
                         value={formData.priest_id}
-                        onChange={handleChange}
-                      >
+                        onChange={handleChange}>
                         {priests.map((priest) => (
                           <MenuItem key={priest.id} value={priest.priestID}>
                             {`${priest.first_name} ${priest.last_name}`}
@@ -876,7 +792,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
                           fullWidth
-                          timeSteps={{ hours: 30, minutes: 30 }}
+                          timeSteps={{hours: 30, minutes: 30}}
                           minTime={dayjs().set("hour", 6)}
                           maxTime={dayjs().set("hour", 19)}
                           name="preferred_time"
@@ -922,9 +838,8 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                           height: "40px",
                           fontWeight: "bold",
                           color: "#355173",
-                          "&:hover": { bgcolor: "#f9f9f9" },
-                        }}
-                      >
+                          "&:hover": {bgcolor: "#f9f9f9"},
+                        }}>
                         CONFIRM WEDDING
                       </Button>
                     </Grid>
@@ -939,12 +854,11 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}
-                >
-                  <Typography variant="body2" sx={{ marginRight: "5px" }}>
+                  }}>
+                  <Typography variant="body2" sx={{marginRight: "5px"}}>
                     Transaction Code:
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
                     {formData.transaction_no}
                   </Typography>
                 </Grid>
@@ -958,8 +872,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <Grid
                   item
                   xs={12}
@@ -968,8 +881,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                     margin: "-40px 0 10px 0",
                     justifyContent: "center",
                     gap: "20px",
-                  }}
-                >
+                  }}>
                   <Button
                     variant="contained"
                     onClick={() => handleOpenDialog("update")}
@@ -979,9 +891,8 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#A58228" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#A58228"},
+                    }}>
                     UPDATE
                   </Button>
 
@@ -994,9 +905,8 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": { bgcolor: "#f44336" },
-                    }}
-                  >
+                      "&:hover": {bgcolor: "#f44336"},
+                    }}>
                     CANCEL
                   </Button>
                 </Grid>
@@ -1005,7 +915,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
           </>
         ) : (
           // Skeleton loading effect for the entire form
-          <Grid container spacing={2} sx={{ padding: 8 }}>
+          <Grid container spacing={2} sx={{padding: 8}}>
             <Grid item sm={12}>
               <Skeleton variant="text" width="80%" height={30} />
             </Grid>
@@ -1014,20 +924,20 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                 <Skeleton variant="rectangular" width="100%" height={40} />
               </Grid>
             ))}
-            <Grid item sm={12} sx={{ mt: 2 }}>
+            <Grid item sm={12} sx={{mt: 2}}>
               <Skeleton variant="rectangular" width="30%" height={40} />
             </Grid>
-            <Grid item sm={12} sx={{ mt: 1 }}>
+            <Grid item sm={12} sx={{mt: 1}}>
               <Skeleton variant="text" width="50%" height={30} />
               <Skeleton variant="rectangular" width="100%" height={150} />
             </Grid>
-            <Grid item sm={12} sx={{ mt: 2 }}>
+            <Grid item sm={12} sx={{mt: 2}}>
               <Skeleton variant="rectangular" width="30%" height={40} />
               <Skeleton
                 variant="rectangular"
                 width="30%"
                 height={40}
-                sx={{ ml: 2 }}
+                sx={{ml: 2}}
               />
             </Grid>
           </Grid>
