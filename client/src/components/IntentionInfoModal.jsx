@@ -63,11 +63,11 @@ const SoulsInfoModal = ({open, data, close, refreshList}) => {
     " ,  " +
     formatDate(data.preferred_date.slice(0, 10));
 
-  const updatePayment = async (id, close) => {
+  const updatePayment = (id, close) => {
     const currentUser = JSON.parse(localStorage.getItem("user"));
     try {
       if (currentUser) {
-        await axios.put(`${config.API}/request/approve-intention`, null, {
+        axios.put(`${config.API}/request/approve-intention`, null, {
           params: {
             col: "payment_status",
             val: "paid",
@@ -79,14 +79,14 @@ const SoulsInfoModal = ({open, data, close, refreshList}) => {
             val4: id,
           },
         });
-        console.log("approved intention");
-        await axios.post(`${config.API}/logs/create`, {
+        sendSMS(data.service_id, data, "approve");
+        axios.post(`${config.API}/logs/create`, {
           activity: `Approved Mass Intention - Transaction number: ${data.transaction_no}`,
           user_id: currentUser.id,
           request_id: data.requestID,
         });
+
         console.log("logs success");
-        sendSMS(data.service_id, data, "approve");
         setSuccess({
           message: "Successfully Marked as Paid",
           details: "Mass Intention approved.",
@@ -107,7 +107,7 @@ const SoulsInfoModal = ({open, data, close, refreshList}) => {
   };
 
   useEffect(() => {
-    fetchUser(data.user_id, setApprover);
+    console.log(currentUser);
   }, [open, data]);
 
   return (

@@ -70,7 +70,7 @@ const Home = () => {
           <button
             className="rounded-md border-0 border-gray-300 shadow-md shadow-slate-300 
           px-4 py-1 hover:bg-slate-100 xs:text-center"
-            onClick={() => navigateToPage("track-status")}>
+            onClick={() => navigateToPage("track-request")}>
             Track Status of Request
           </button>
         </div>
