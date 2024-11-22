@@ -65,5 +65,47 @@ export default function ValidateForm(data) {
     }
   }
 
+  //For Wedding Birth Date
+  const validateLegalAge = (birthDate, fieldName) => {
+    if (birthDate) {
+      const birth = new Date(birthDate);
+      const today = new Date();
+      const legalAge = 18;
+
+      const age = today.getFullYear() - birth.getFullYear();
+      const monthDiff = today.getMonth() - birth.getMonth();
+      const dayDiff = today.getDate() - birth.getDate();
+
+      if (
+        age < legalAge ||
+        (age === legalAge && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
+      ) {
+        return `The ${fieldName} must be at least 18 years old.`;
+      }
+    }
+    return null;
+  };
+
+  if(data.groomDetails != null){
+  const groomAgeError = validateLegalAge(data.groomDetails.groomBirthDate, "groom");
+  if (groomAgeError) errors.groomBirthDate = groomAgeError;
+  }
+
+  if(data.brideDetails != null){
+  const brideAgeError = validateLegalAge(data.brideDetails.brideBirthDate, "bride");
+  if (brideAgeError) errors.brideBirthDate = brideAgeError;
+}
+
+  //for Wedding Sponsors
+  if (data.sponsors != null) {
+    data.sponsors.forEach((sponsor, index) => {
+        if (!validator.isInt(String(sponsor.age))) {
+          errors[`sponsor_${index}_age`] = `Invalid sponsor age.`;
+        } else if (parseInt(sponsor.age, 10) < 18) {
+          errors[`sponsor_${index}_age`] = `Sponsor must be at least 18 years old.`;
+        }
+    });
+  }
+
   return errors;
 }

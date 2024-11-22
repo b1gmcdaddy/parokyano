@@ -384,6 +384,11 @@ const Wedding = () => {
                       max: new Date().toISOString().split("T")[0],
                     }}
                   />
+                  {errors.groomBirthDate != null && (
+                    <FormHelperText sx={{ color: "red" }}>
+                      {errors.groomBirthDate}
+                    </FormHelperText>
+                  )}
                 </Grid>
                 <Grid item xs={12} sm={8}>
                   <label>
@@ -556,6 +561,11 @@ const Wedding = () => {
                       max: new Date().toISOString().split("T")[0],
                     }}
                   />
+                  {errors.brideBirthDate != null && (
+                    <FormHelperText sx={{ color: "red" }}>
+                      {errors.brideBirthDate}
+                    </FormHelperText>
+                  )}
                 </Grid>
                 <Grid item xs={12} sm={8}>
                   <label>
@@ -751,11 +761,16 @@ const Wedding = () => {
                       size="small"
                       sx={inputstlying}
                       name="age"
-                      value={formData.sponsors.age}
+                      value={formData.sponsors[index]?.age}
                       onChange={(e) => handleSponsor(e, index, "age")}
                       className="bg-white"
                       required
                     />
+                    {errors[`sponsor_${index}_age`] && (
+                      <FormHelperText sx={{ color: "red" }}>
+                        {errors[`sponsor_${index}_age`]}
+                      </FormHelperText>
+                    )}
                   </Grid>
                   <Grid item xs={6} md={3}>
                     <span style={{ color: "red" }}>*</span>
