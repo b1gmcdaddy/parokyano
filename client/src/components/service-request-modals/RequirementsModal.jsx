@@ -20,6 +20,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  MenuItem,
 } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import {useState, useEffect} from "react";
@@ -705,7 +706,16 @@ const RequirementsModal = ({id, type, onClose}) => {
               <>
                 <Grid item sm={12} md={4}>
                   <label>Name:</label>
-                  <TextField fullWidth variant="filled" size="small" />
+                  <TextField
+                    fullWidth
+                    variant="filled"
+                    size="small"
+                    name="name"
+                    value={newSponsor.name}
+                    onChange={handleInputChange}
+                    error={Boolean(errors.name)}
+                    helperText={errors.name}
+                  />
                 </Grid>
                 <Grid item sm={12} md={2}>
                   <label>Age:</label>
@@ -714,15 +724,44 @@ const RequirementsModal = ({id, type, onClose}) => {
                     fullWidth
                     variant="filled"
                     size="small"
+                    name="age"
+                    value={newSponsor.age}
+                    onChange={handleInputChange}
+                    error={Boolean(errors.age)}
+                    helperText={errors.age}
                   />
                 </Grid>
                 <Grid item sm={12} md={3}>
                   <label>Marital Status:</label>
-                  <TextField fullWidth variant="filled" size="small" />
+                  <TextField
+                    fullWidth
+                    select
+                    variant="filled"
+                    size="small"
+                    name="isMarried"
+                    value={newSponsor.isMarried}
+                    onChange={handleInputChange}
+                    error={Boolean(errors.isMarried)}
+                    helperText={errors.isMarried}>
+                    <MenuItem value="1">Married</MenuItem>
+                    <MenuItem value="0">Not Married</MenuItem>
+                  </TextField>
                 </Grid>
                 <Grid item sm={12} md={3}>
                   <label>Catholic?:</label>
-                  <TextField fullWidth variant="filled" size="small" />
+                  <TextField
+                    fullWidth
+                    variant="filled"
+                    size="small"
+                    select
+                    name="isCatholic"
+                    value={newSponsor.isCatholic}
+                    onChange={handleInputChange}
+                    error={Boolean(errors.isMarried)}
+                    helperText={errors.isMarried}>
+                    <MenuItem value="1">Yes</MenuItem>
+                    <MenuItem value="0">No</MenuItem>
+                  </TextField>
                 </Grid>
                 <Grid item sm={12} display={"flex"} justifyContent={"flex-end"}>
                   <Button variant="outlined" onClick={handleAddSponsor}>
@@ -806,182 +845,5 @@ const RequirementsModal = ({id, type, onClose}) => {
     </React.Fragment>
   );
 };
-
-// function SponsorsModal({ id }) {
-
-//   return (
-//     <React.Fragment>
-//       <Button
-//         onClick={handleOpen}
-//         variant="contained"
-//         sx={{
-//           backgroundColor: "white",
-//           height: "30px",
-//           marginLeft: 1,
-//           fontSize: 12,
-//           color: "#355173",
-//           "&:hover": { bgcolor: "#E5E4E2" },
-//         }}
-//       >
-//         Sponsors
-//       </Button>
-//       <Modal open={open}>
-//         <Box sx={boxModal}>
-//           <Grid container justifyContent={"flex-end"}>
-//             <Grid item>
-//               <IconButton onClick={handleClose} size="small">
-//                 <FontAwesomeIcon icon={faXmark} />
-//               </IconButton>
-//             </Grid>
-//           </Grid>
-//           <Grid container justifyContent={"center"} spacing={1}>
-//             <Grid item sm={12}>
-//               <Typography
-//                 variant="subtitle1"
-//                 sx={{
-//                   textAlign: "center",
-//                   fontWeight: "bold",
-//                   marginBottom: "1em",
-//                 }}
-//               >
-//                 Manage Wedding Sponsors
-//               </Typography>
-//             </Grid>
-//             <Grid item sm={5}>
-//               <label>Full Name:</label>
-//               <TextField
-//                 name="name"
-//                 value={newSponsor.name}
-//                 fullWidth
-//                 onChange={handleInputChange}
-//                 sx={TextFieldStyle}
-//                 error={Boolean(errors.name)}
-//                 helperText={errors.name}
-//               />
-//             </Grid>
-//             <Grid item sm={2}>
-//               <label>Age:</label>
-//               <TextField
-//                 name="age"
-//                 type="number"
-//                 value={newSponsor.age}
-//                 onChange={handleInputChange}
-//                 fullWidth
-//                 sx={TextFieldStyle}
-//                 error={Boolean(errors.age)}
-//                 helperText={errors.age}
-//               />
-//             </Grid>
-//             <Grid item sm={3}>
-//               <label>Marital Status:</label>
-//               <TextField
-//                 value={newSponsor.isMarried}
-//                 select
-//                 name="isMarried"
-//                 onChange={handleInputChange}
-//                 fullWidth
-//                 sx={TextFieldStyle}
-//                 error={Boolean(errors.isMarried)}
-//                 helperText={errors.isMarried}
-//               >
-//                 <MenuItem value="1">Married</MenuItem>
-//                 <MenuItem value="0">Not Married</MenuItem>
-//               </TextField>
-//             </Grid>
-//             <Grid item sm={2}>
-//               <label>Catholic?:</label>
-//               <TextField
-//                 select
-//                 name="isCatholic"
-//                 value={newSponsor.isCatholic}
-//                 onChange={handleInputChange}
-//                 fullWidth
-//                 sx={TextFieldStyle}
-//                 error={Boolean(errors.isCatholic)}
-//                 helperText={errors.isCatholic}
-//               >
-//                 <MenuItem value="1">Yes</MenuItem>
-//                 <MenuItem value="0">No</MenuItem>
-//               </TextField>
-//             </Grid>
-//             <Grid item sm={12} sx={{ textAlign: "center" }}>
-//               <Button
-//                 variant="contained"
-//                 onClick={() => handleAddSponsor()}
-//                 sx={{
-//                   bgcolor: "#355173",
-
-//                   width: "150px",
-//                   fontWeight: "bold",
-//                   color: "white",
-//                   "&:hover": { bgcolor: "#4C74A5" },
-//                 }}
-//               >
-//                 Add Sponsor
-//               </Button>
-//             </Grid>
-
-//             <Grid item sm={12}>
-//               <TableContainer>
-//                 <Table sx={{ tableLayout: "fixed" }}>
-//                   <TableHead>
-//                     <TableRow>
-//                       <TableCell align="center">Full Name</TableCell>
-//                       <TableCell align="center">Age</TableCell>
-//                       <TableCell align="center">Marital Status</TableCell>
-//                       <TableCell align="center">Catholic?</TableCell>
-//                       <TableCell
-//                         align="center"
-//                         sx={{ width: "50px" }}
-//                       ></TableCell>
-//                     </TableRow>
-//                   </TableHead>
-//                 </Table>
-//               </TableContainer>
-//               <div
-//                 style={{
-//                   maxHeight: "35vh",
-//                   overflowY: "auto",
-//                   width: "100%",
-//                   scrollbarWidth: "none",
-//                   "&::-webkit-scrollbar": {
-//                     display: "none",
-//                   },
-//                 }}
-//               >
-//                 <Table sx={{ tableLayout: "fixed", width: "100%" }}>
-//                   <TableBody>
-//                     {sponsors.map((sponsor) => (
-//                       <TableRow key={sponsor.sponsorID}>
-//                         <TableCell align="center" component="th">
-//                           {sponsor.name}
-//                         </TableCell>
-//                         <TableCell align="center">{sponsor.age}</TableCell>
-//                         <TableCell align="center">
-//                           {sponsor.isMarried == 1 ? "Yes" : "No"}
-//                         </TableCell>
-//                         <TableCell align="center">
-//                           {sponsor.isCatholic == 1 ? "Yes" : "No"}
-//                         </TableCell>
-//                         <TableCell align="center" sx={{ width: "50px" }}>
-//                           <IconButton
-//                             size="small"
-//                             onClick={() => handleDeleteSponsor(sponsor)}
-//                           >
-//                             <FontAwesomeIcon icon={faXmark} />
-//                           </IconButton>
-//                         </TableCell>
-//                       </TableRow>
-//                     ))}
-//                   </TableBody>
-//                 </Table>
-//               </div>
-//             </Grid>
-//           </Grid>
-//         </Box>
-//       </Modal>
-//     </React.Fragment>
-//   );
-// }
 
 export default RequirementsModal;

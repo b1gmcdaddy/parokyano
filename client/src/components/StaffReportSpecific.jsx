@@ -13,7 +13,6 @@ import React, {useState, useEffect} from "react";
 import logo from "../assets/logo.png";
 import axios from "axios";
 import config from "../config";
-import {ReactToPrint} from "react-to-print";
 import dayjs from "dayjs";
 import util from "../utils/DateTimeFormatter";
 
@@ -54,7 +53,7 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
       ? "Blessing"
       : "";
 
-  console.log(serviceType);
+  // console.log(serviceType);
 
   const getSummaryReport = async () => {
     console.log("clicked!");
@@ -70,7 +69,7 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
       setApproved(res.data.approved);
       setCancelled(res.data.cancelled);
       setPending(res.data.pending);
-      console.log("query", res.data);
+      // console.log("query", res.data);
     } catch (err) {
       console.error("error retrieving summary", err);
     }
@@ -184,6 +183,35 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
                     </TableCell>
                   </TableRow>
                 ))}
+
+              {approved && approved.length > 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={4}
+                    align="right"
+                    sx={{fontWeight: 900, fontSize: "18px"}}>
+                    <strong>TOTAL</strong>
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{fontWeight: 900, fontSize: "18px"}}>
+                    <strong>
+                      ₱{" "}
+                      {approved
+                        .reduce((total, data) => {
+                          return (
+                            total +
+                            (data.donation ? parseFloat(data.donation) : 0)
+                          );
+                        }, 0)
+                        .toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                    </strong>
+                  </TableCell>
+                </TableRow>
+              )}
 
               <TableRow>
                 <TableCell
