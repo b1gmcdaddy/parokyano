@@ -79,9 +79,38 @@ const updateService = (req, res) => {
   );
 };
 
+// for dashboard bar chart
+const getCountReq = (req, res) => {
+  const query = `
+    SELECT 
+      COUNT(CASE WHEN status = 'pending' THEN 1 END) AS pendingCount,
+      COUNT(CASE WHEN status = 'approved' THEN 1 END) AS approvedCount,
+      COUNT(CASE WHEN status = 'cancelled' THEN 1 END) AS cancelledCount,
+      COUNT(CASE WHEN status = 'finished' THEN 1 END) AS finishedCount
+    FROM request
+    WHERE YEAR(date_requested) = YEAR(CURDATE())
+  `;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error retrieving request counts", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    const counts = result[0];
+    res.status(200).json({
+      pending: counts.pendingCount,
+      approved: counts.approvedCount,
+      cancelled: counts.cancelledCount,
+      finished: counts.finishedCount,
+    });
+  });
+};
+
 module.exports = {
   retrieveAll,
   retrieveByParams,
   retrieveSchedule,
   updateService,
+  getCountReq,
 };
