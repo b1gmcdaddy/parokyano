@@ -511,7 +511,7 @@ const PrintCertificate = ({ open, data, close }) => {
                   <span
                     style={{ textDecoration: "underline", fontWeight: "bold" }}
                   >
-                    {CertData.preffered_day}
+                    {util.addOrdinalSuffix(CertData.preffered_day)}
                   </span>{" "}
                   day of{" "}
                   <span
@@ -872,7 +872,7 @@ const PrintCertificate = ({ open, data, close }) => {
                   <span
                     style={{ textDecoration: "underline", fontWeight: "bold" }}
                   >
-                    {CertData.birth_day}
+                    {util.addOrdinalSuffix(CertData.birth_day)}
                   </span>{" "}
                   day of{" "}
                   <span
@@ -902,7 +902,7 @@ const PrintCertificate = ({ open, data, close }) => {
                   <span
                     style={{ textDecoration: "underline", fontWeight: "bold" }}
                   >
-                    {CertData.preffered_day}
+                    {util.addOrdinalSuffix(CertData.preffered_day)}
                   </span>{" "}
                   day of{" "}
                   <span
@@ -1615,7 +1615,7 @@ const PrintCertificate = ({ open, data, close }) => {
                   <br />
                   on the{" "}
                   <span style={{ textDecoration: "underline" }}>
-                    {CertData.marriage_day}
+                    {util.addOrdinalSuffix(CertData.marriage_day)}
                   </span>{" "}
                   day of{" "}
                   <span style={{ textDecoration: "underline" }}>
