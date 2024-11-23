@@ -96,9 +96,7 @@ const StaffReport = ({startDate, endDate, category}) => {
                 <TableCell align="right" sx={{fontWeight: "bold"}}>
                   Approved Requests
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
-                  Cancelled Requests
-                </TableCell>
+
                 <TableCell align="right" sx={{fontWeight: "bold"}}>
                   Fees Collected
                 </TableCell>
@@ -106,68 +104,107 @@ const StaffReport = ({startDate, endDate, category}) => {
             </TableHead>
             <TableBody>
               {reportInfo.length > 0 ? (
-                reportInfo.map((report, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{"&:last-child td, &:last-child th": {border: 0}}}>
-                    <TableCell component="th" scope="row">
-                      {report.name}
-                      {baptismInfo && (
-                        <>
-                          <div className="ml-4 mt-2">
-                            {report.name == "Baptism - Appointment" &&
-                              baptismInfo.map((baptism, index) => (
-                                <li key={index}>
-                                  {baptism.first_name} {baptism.last_name}
-                                </li>
-                              ))}
-                          </div>
-                        </>
-                      )}
-                      {baptismGeneralInfo && (
-                        <>
-                          <div className="ml-4 mt-2">
-                            {report.name == "Baptism - General" &&
-                              baptismGeneralInfo.map((baptism, index) => (
-                                <li key={index}>
-                                  {baptism.first_name} {baptism.last_name}
-                                </li>
-                              ))}
-                          </div>
-                        </>
-                      )}
-                      {weddingInfo && (
-                        <>
-                          <div className="ml-4 mt-2">
-                            {report.name.includes("Wedding") &&
-                              weddingInfo.map((wedding, index) => (
-                                <li key={index}>
-                                  {wedding.first_name} {wedding.last_name} and{" "}
-                                  {wedding.spouse_firstName}{" "}
-                                  {wedding.spouse_lastName}
-                                </li>
-                              ))}
-                          </div>
-                        </>
-                      )}
+                <>
+                  {reportInfo.map((report, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{"&:last-child td, &:last-child th": {border: 0}}}>
+                      <TableCell component="th" scope="row">
+                        {report.name}
+                        {baptismInfo && (
+                          <>
+                            <div className="ml-4 mt-2">
+                              {report.name === "Baptism - Appointment" &&
+                                baptismInfo.map((baptism, index) => (
+                                  <li key={index}>
+                                    {baptism.first_name} {baptism.last_name}
+                                  </li>
+                                ))}
+                            </div>
+                          </>
+                        )}
+                        {baptismGeneralInfo && (
+                          <>
+                            <div className="ml-4 mt-2">
+                              {report.name === "Baptism - General" &&
+                                baptismGeneralInfo.map((baptism, index) => (
+                                  <li key={index}>
+                                    {baptism.first_name} {baptism.last_name}
+                                  </li>
+                                ))}
+                            </div>
+                          </>
+                        )}
+                        {weddingInfo && (
+                          <>
+                            <div className="ml-4 mt-2">
+                              {report.name.includes("Wedding") &&
+                                weddingInfo.map((wedding, index) => (
+                                  <li key={index}>
+                                    {wedding.first_name} {wedding.last_name} and{" "}
+                                    {wedding.spouse_firstName}{" "}
+                                    {wedding.spouse_lastName}
+                                  </li>
+                                ))}
+                            </div>
+                          </>
+                        )}
+                      </TableCell>
+                      <TableCell align="right">{report.pending}</TableCell>
+                      <TableCell align="right">{report.approved}</TableCell>
+                      <TableCell align="right">
+                        {report.totalFee != null && report.totalFee > 0
+                          ? ` ₱ ${parseFloat(report.totalFee).toLocaleString(
+                              undefined,
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }
+                            )}`
+                          : ""}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+
+                  {/* Add Total Row */}
+                  <TableRow>
+                    <TableCell colSpan={1} sx={{textAlign: "right"}}>
+                      <Typography sx={{fontWeight: "bold", fontSize: "18px"}}>
+                        TOTAL
+                      </Typography>
                     </TableCell>
-                    <TableCell align="right">{report.pending}</TableCell>
-                    <TableCell align="right">{report.approved}</TableCell>
-                    <TableCell align="right">{report.cancelled}</TableCell>
                     <TableCell align="right">
-                      {" "}
-                      {report.totalFee != null && report.totalFee > 0
-                        ? ` ₱ ${parseFloat(report.totalFee).toLocaleString(
-                            undefined,
-                            {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }
-                          )}`
-                        : ""}
+                      <strong>
+                        {reportInfo.reduce(
+                          (total, report) => total + report.pending,
+                          0
+                        )}
+                      </strong>
+                    </TableCell>
+                    <TableCell align="right">
+                      <strong>
+                        {reportInfo.reduce(
+                          (total, report) => total + report.approved,
+                          0
+                        )}
+                      </strong>
+                    </TableCell>
+                    <TableCell align="right">
+                      <strong>
+                        {"₱ "}
+                        {reportInfo
+                          .reduce(
+                            (total, report) => total + (report.totalFee || 0),
+                            0
+                          )
+                          .toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                      </strong>
                     </TableCell>
                   </TableRow>
-                ))
+                </>
               ) : (
                 <TableRow>
                   <TableCell colSpan={5} sx={{textAlign: "center"}}>

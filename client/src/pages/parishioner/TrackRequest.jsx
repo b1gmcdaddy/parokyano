@@ -352,7 +352,8 @@ const TrackRequest = () => {
 
                         <div
                           className={`relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-gray-300 ${
-                            request.status.toLowerCase() === "pending"
+                            request.status.toLowerCase() === "pending" &&
+                            activity == null
                               ? "after:hidden"
                               : ""
                           }`}>
@@ -408,10 +409,6 @@ const TrackRequest = () => {
                               }}>
                               {item.activity.split("-")[0]}
                             </Typography>
-
-                            <p className="mt-1 text-sm text-gray-600">
-                              {item.activity.split("-")[1]}
-                            </p>
                           </div>
                         </div>
                       ))}

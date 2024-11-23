@@ -15,7 +15,14 @@ const formatDate = (rawDate) => {
   return formatted;
 };
 
+const addOrdinalSuffix = (day) => {
+  const suffixes = ["th", "st", "nd", "rd"];
+  const value = day % 100;
+  return day + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
+};
+
 export default {
   formatTime,
   formatDate,
+  addOrdinalSuffix
 };

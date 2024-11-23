@@ -11,7 +11,7 @@ const pool = mysql.createPool({
   user: process.env.MYSQL_ADDON_USER,
   password: process.env.MYSQL_ADDON_PASSWORD,
   database: process.env.MYSQL_ADDON_DB,
-  connectTimeout: 30000,
+  // connectTimeout: 30000,
   timezone: "+08:00",
   port: process.env.PORT,
 });

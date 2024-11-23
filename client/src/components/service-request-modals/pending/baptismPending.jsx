@@ -261,9 +261,9 @@ const BaptismPending = ({open, data, handleClose, refreshList}) => {
     open,
   ]);
 
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+  // useEffect(() => {
+  //   console.log(formData);
+  // }, [formData]);
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
