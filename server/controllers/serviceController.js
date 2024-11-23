@@ -73,7 +73,7 @@ const updateService = (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.status(200).send(result);
+        res.status(200).send({ message: "Fee successfuly updated!" });
       }
     }
   );

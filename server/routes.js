@@ -28,6 +28,7 @@ const confirmationRoute = require("./routes/confirmationRoute");
 const logsRoute = require("./routes/logsRoutes");
 const authRoute = require("./routes/authRoute");
 const smsRoute = require("./routes/smsRoute");
+const configurationRoute = require("./routes/configurationRoute");
 
 app.use("/auth", authRoute);
 app.use("/request", requestRoute);
@@ -41,7 +42,7 @@ app.use("/baptism", baptismRoute);
 app.use("/confirmation", confirmationRoute);
 app.use("/logs", logsRoute);
 app.use("/sms", smsRoute);
-
+app.use("/configuration", configurationRoute);
 //debugging purposes
 app.use((err, req, res, next) => {
   console.error(err.stack);

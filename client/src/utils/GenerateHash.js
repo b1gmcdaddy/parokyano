@@ -1,8 +1,21 @@
-import CryptoJS from 'crypto-js'
+import axios from "axios";
+import config from "../config"; // Assuming you have a config file for API URLs
 
-// function for generating a unique transaction number
-// just make sure to page refresh to avoid duplicating hash since formData.transaction_no will not update until window is refreshed
-export default function generateHash() {
-    const input = Date.now()    // Date.now() returns a unique number, this returns a milisecond
-    return CryptoJS.SHA256(input.toString()).toString(CryptoJS.enc.Hex)
+export default async function generateHash() {
+  try {
+    const response = await axios.get(
+      `${config.API}/configuration/intentionCount`
+    );
+
+    if (response.status === 200) {
+      const intentionCount = response.data.intentionCount;
+      return intentionCount;
+    } else {
+      console.error("Failed to fetch intention count");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching intention count:", error);
+    return null;
+  }
 }

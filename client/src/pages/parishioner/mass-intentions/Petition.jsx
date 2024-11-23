@@ -55,7 +55,7 @@ const Petition = () => {
   const [modalData, setModalData] = useState({});
   const id = 1;
   var dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
+  const hash = dateToday + generateHash();
   const [errors, setErrors] = useState({});
 
   // form data layout
