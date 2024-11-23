@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
+const db = require("./db");
 
 const API_KEY = process.env.SEMAPHORE_API_KEY;
 
@@ -15,6 +16,14 @@ const sendSMS = (req, res) => {
   }
 
   try {
+    const [row] = db.query("SELECT SMS FROM configuration LIMIT 1");
+
+    if (!row || row.SMS !== 1) {
+      return res.status(200).json({
+        message: "sms is disabled in config..",
+      });
+    }
+
     const response = axios.post("https://api.semaphore.co/api/v4/messages", {
       apikey: API_KEY,
       number: recipient,
