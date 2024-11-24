@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import NavStaff from "../../components/NavStaff";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -18,12 +18,12 @@ import {
   InputAdornment,
   Divider,
 } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { styled } from "@mui/material/styles";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
+import {styled} from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell, {tableCellClasses} from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
@@ -32,17 +32,17 @@ import config from "../../config";
 import axios from "axios";
 import ManageUserForm from "../../components/ManageUserForm";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { FormControlLabel, Switch } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import {FormControlLabel, Switch} from "@mui/material";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { Grid, TextField } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { IconButton } from "@mui/material";
+import {Grid, TextField} from "@mui/material";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {IconButton} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ManagePriestsModal from "../../components/configurations-modals/ManagePriestsModal";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "rgb(15 23 42)",
     color: theme.palette.common.white,
@@ -59,7 +59,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(({theme}) => ({
   // "&:nth-of-type(odd)": {
   //   backgroundColor: theme.palette.action.hover,
   // },
@@ -84,16 +84,15 @@ const Configurations = () => {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   // const [addPriest, setAddPriest] = useState(false);
-
-  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [smsEnabled, setSmsEnabled] = useState(0);
 
   const fetchPriests = async () => {
     try {
       const activeResponse = await axios(`${config.API}/priest/retrieve`, {
-        params: { col: "status", val: "active" },
+        params: {col: "status", val: "active"},
       });
       const inactiveResponse = await axios(`${config.API}/priest/retrieve`, {
-        params: { col: "status", val: "inactive" },
+        params: {col: "status", val: "inactive"},
       });
       const combinedPriests = [
         ...activeResponse.data,
@@ -105,11 +104,22 @@ const Configurations = () => {
     }
   };
 
+  const fetchSmsState = async () => {
+    try {
+      const response = await axios.get(
+        `${config.API}/configuration/getCurrentSMS`
+      );
+      // console.log("Fetched SMS state:", response.data[0].SMS);
+      setSmsEnabled(response.data[0].SMS === 1);
+    } catch (error) {
+      console.error("Error fetching SMS state:", error);
+    }
+  };
+
   const fetchServices = async () => {
     try {
       console.log("fetching services");
       const response = await axios.get(`${config.API}/service/retrieve-all`);
-      console.log(response.data);
       setServiceList(response.data);
     } catch (err) {
       console.error(err);
@@ -127,6 +137,7 @@ const Configurations = () => {
     };
     getUsers();
     fetchPriests();
+    fetchSmsState();
     fetchServices();
   }, []);
 
@@ -138,7 +149,7 @@ const Configurations = () => {
   const handleServiceFeeChange = (serviceID, newFee) => {
     setServiceList((prevServices) =>
       prevServices.map((service) =>
-        service.serviceID === serviceID ? { ...service, fee: newFee } : service
+        service.serviceID === serviceID ? {...service, fee: newFee} : service
       )
     );
   };
@@ -197,18 +208,32 @@ const Configurations = () => {
   //   setIsAddPriest(true);
   // };
 
+  const handleSMSToggle = async () => {
+    try {
+      const newSmsEnabled = !smsEnabled;
+
+      await axios.put(`${config.API}/configuration/toggleSMS`, {
+        smsEnabled: newSmsEnabled ? 1 : 0,
+      });
+      setSmsEnabled(newSmsEnabled);
+      setSuccess("Successfully updated SMS Notifcations");
+    } catch (e) {
+      console.error("Error toggling SMS state", e);
+      setError("Error updating SMS Notifcation");
+    }
+  };
+
   return (
     <>
       {success && (
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
           onClose={() => {
             setSuccess(null);
-          }}
-        >
-          <Alert severity="success" sx={{ width: "100%" }}>
+          }}>
+          <Alert severity="success" sx={{width: "100%"}}>
             <AlertTitle>{success}</AlertTitle>
           </Alert>
         </Snackbar>
@@ -216,23 +241,21 @@ const Configurations = () => {
 
       {error && (
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{vertical: "top", horizontal: "center"}}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}
-        >
-          <Alert severity="error" sx={{ width: "100%" }}>
+          onClose={() => setError(null)}>
+          <Alert severity="error" sx={{width: "100%"}}>
             <AlertTitle>{error}</AlertTitle>
           </Alert>
         </Snackbar>
       )}
 
-      <Box sx={{ display: "flex", mx: { md: "30px" } }}>
+      <Box sx={{display: "flex", mx: {md: "30px"}}}>
         <NavStaff />
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${240}px)` } }}
-        >
+          sx={{flexGrow: 1, p: 3, width: {sm: `calc(100% - ${240}px)`}}}>
           <Toolbar />
           <Box
             sx={{
@@ -240,15 +263,13 @@ const Configurations = () => {
               justifyContent: "space-between",
               marginTop: "8px",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Typography
               sx={{
                 fontSize: "1.25rem",
                 lineHeight: "1.75rem",
                 fontWeight: 600,
-              }}
-            >
+              }}>
               Configurations
             </Typography>
             {/* <Button
@@ -261,7 +282,7 @@ const Configurations = () => {
           </Button> */}
           </Box>
 
-          <Accordion sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}>
+          <Accordion sx={{borderRadius: 2, backgroundColor: "#f5f5f5"}}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
@@ -269,16 +290,15 @@ const Configurations = () => {
               sx={{
                 minHeight: 70,
                 marginTop: "1em",
-              }}
-            >
+              }}>
               Service Fees
             </AccordionSummary>
             <AccordionDetails>
               <Box sx={{}}>
-                <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
-                  <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <TableContainer component={Paper} sx={{overflowX: "auto"}}>
+                  <Table sx={{minWidth: 700}} aria-label="customized table">
                     <TableHead>
-                      <TableRow sx={{ height: 40 }}>
+                      <TableRow sx={{height: 40}}>
                         <StyledTableCell>Service</StyledTableCell>
                         <StyledTableCell>Fee</StyledTableCell>
                         <StyledTableCell>Action</StyledTableCell>
@@ -293,8 +313,7 @@ const Configurations = () => {
                               {service.name}
                             </StyledTableCell>
                             <StyledTableCell
-                              sx={{ textAlign: "center", width: "200px" }}
-                            >
+                              sx={{textAlign: "center", width: "200px"}}>
                               <TextField
                                 fullWidth
                                 InputProps={{
@@ -315,12 +334,11 @@ const Configurations = () => {
                                 }
                               />
                             </StyledTableCell>
-                            <StyledTableCell sx={{ textAlign: "center" }}>
+                            <StyledTableCell sx={{textAlign: "center"}}>
                               <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={() => handleEditService(service)}
-                              >
+                                onClick={() => handleEditService(service)}>
                                 Edit
                               </Button>
                             </StyledTableCell>
@@ -333,24 +351,23 @@ const Configurations = () => {
             </AccordionDetails>
           </Accordion>
 
-          <Accordion sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}>
+          <Accordion sx={{borderRadius: 2, backgroundColor: "#f5f5f5"}}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
               id="panel1-header"
-              sx={{ minHeight: 70, borderRadius: 2, marginTop: "1em" }}
-            >
+              sx={{minHeight: 70, borderRadius: 2, marginTop: "1em"}}>
               Manage Priests
             </AccordionSummary>
             <AccordionDetails>
               <Box sx={{}}>
-                <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
-                  <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <TableContainer component={Paper} sx={{overflowX: "auto"}}>
+                  <Table sx={{minWidth: 700}} aria-label="customized table">
                     <TableHead>
                       <TableRow>
                         <StyledTableCell>Priest Name</StyledTableCell>
                         <StyledTableCell>Contact Number</StyledTableCell>
-                        {/* <StyledTableCell>Status</StyledTableCell> */}
+                        <StyledTableCell>Status</StyledTableCell>
                         {/* <StyledTableCell>Last Activity</StyledTableCell> */}
                         <StyledTableCell>Action</StyledTableCell>
                       </TableRow>
@@ -361,13 +378,22 @@ const Configurations = () => {
                           <StyledTableCell>
                             {`${priest.first_name} ${priest.last_name}`}
                           </StyledTableCell>
-                          <StyledTableCell sx={{ textAlign: "center" }}>
+
+                          <StyledTableCell sx={{textAlign: "center"}}>
                             {priest.contact_no}
                           </StyledTableCell>
+
+                          <StyledTableCell sx={{textAlign: "center"}}>
+                            {priest.status == "active" ? (
+                              <span className="text-green-600">Active</span>
+                            ) : (
+                              <span className="text-red-700">Inactive</span>
+                            )}
+                          </StyledTableCell>
+
                           <StyledTableCell
-                            sx={{ textAlign: "center" }}
-                            onClick={() => handleEditPriest(priest)}
-                          >
+                            sx={{textAlign: "center"}}
+                            onClick={() => handleEditPriest(priest)}>
                             <FontAwesomeIcon
                               icon={faPenToSquare}
                               className="cursor-pointer"
@@ -387,26 +413,24 @@ const Configurations = () => {
                 variant="contained"
                 color="primary"
                 onClick={() => setIsAddPriest(true)}
-                sx={{ marginRight: 1, marginBottom: 1, width: "80px" }}
-              >
+                sx={{marginRight: 1, marginBottom: 1, width: "80px"}}>
                 Add
               </Button>
             </AccordionActions>
           </Accordion>
 
-          <Accordion sx={{ borderRadius: 2, backgroundColor: "#f5f5f5" }}>
+          <Accordion sx={{borderRadius: 2, backgroundColor: "#f5f5f5"}}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
               id="panel1-header"
-              sx={{ minHeight: 70, borderRadius: 2, marginTop: "1em" }}
-            >
+              sx={{minHeight: 70, borderRadius: 2, marginTop: "1em"}}>
               Manage Staff
             </AccordionSummary>
             <AccordionDetails>
               <Box sx={{}}>
-                <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
-                  <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <TableContainer component={Paper} sx={{overflowX: "auto"}}>
+                  <Table sx={{minWidth: 700}} aria-label="customized table">
                     <TableHead>
                       <TableRow>
                         <StyledTableCell>Name</StyledTableCell>
@@ -422,10 +446,14 @@ const Configurations = () => {
                           <StyledTableCell>
                             {`${user.first_name} ${user.last_name}`}
                           </StyledTableCell>
-                          <StyledTableCell sx={{ textAlign: "center" }}>
-                            {capitalize(user.status)}
+                          <StyledTableCell sx={{textAlign: "center"}}>
+                            {user.status == "active" ? (
+                              <span className="text-green-500">Active</span>
+                            ) : (
+                              <span className="text-red-700">Inactive</span>
+                            )}
                           </StyledTableCell>
-                          <StyledTableCell sx={{ textAlign: "center" }}>
+                          <StyledTableCell sx={{textAlign: "center"}}>
                             {new Date(user.date_started).toLocaleDateString(
                               "en-US",
                               {
@@ -437,9 +465,8 @@ const Configurations = () => {
                           </StyledTableCell>
                           {/* <StyledTableCell>{user?.activity}</StyledTableCell> */}
                           <StyledTableCell
-                            sx={{ textAlign: "center" }}
-                            onClick={() => handleFormOpen(user)}
-                          >
+                            sx={{textAlign: "center"}}
+                            onClick={() => handleFormOpen(user)}>
                             <FontAwesomeIcon
                               icon={faPenToSquare}
                               className="cursor-pointer"
@@ -459,8 +486,7 @@ const Configurations = () => {
                 variant="contained"
                 color="primary"
                 onClick={() => handleFormOpen()}
-                sx={{ marginRight: 1, marginBottom: 1, width: "80px" }}
-              >
+                sx={{marginRight: 1, marginBottom: 1, width: "80px"}}>
                 Add
               </Button>
             </AccordionActions>
@@ -472,21 +498,24 @@ const Configurations = () => {
               marginTop: "1em",
               backgroundColor: "#f5f5f5",
               borderRadius: 2,
-            }}
-          >
-            <Box sx={{ padding: "1em" }}>
+            }}>
+            <Box sx={{padding: "1em"}}>
               <Typography>SMS Notifications</Typography>
               <FormControlLabel
-                sx={{ margin: "1em" }}
+                sx={{margin: "1em"}}
                 control={
                   <Switch
-                    checked={true}
-                    // onChange={handleSmsToggle}
-                    name="smsNotifications"
+                    checked={smsEnabled}
+                    onChange={handleSMSToggle}
+                    name="smsEnabled"
                     color="primary"
                   />
                 }
-                label="Enable SMS Notifications"
+                label={
+                  smsEnabled
+                    ? "SMS Notifications Enabled"
+                    : "SMS Notifcations Disabled"
+                }
               />
             </Box>
           </Paper>
@@ -496,8 +525,7 @@ const Configurations = () => {
           open={openForm}
           onClose={handleFormClose}
           fullWidth
-          maxWidth="sm"
-        >
+          maxWidth="sm">
           <DialogTitle>
             {currentUser ? "Edit Staff Account" : "Create New Staff Account"}
           </DialogTitle>

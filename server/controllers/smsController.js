@@ -15,29 +15,41 @@ const sendSMS = (req, res) => {
     });
   }
 
-  try {
-    const [row] = db.query("SELECT SMS FROM configuration LIMIT 1");
+  db.query(
+    "SELECT SMS FROM configuration WHERE configurationID = 1",
+    (err, rows) => {
+      if (err) {
+        console.error("Error fetching SMS configuration", err);
+        return res.status(500).json({error: "Database error", status: "500"});
+      }
 
-    if (!row || row.SMS !== 1) {
-      return res.status(200).json({
-        message: "sms is disabled in config..",
-      });
+      if (!rows || rows.length === 0 || rows[0].SMS !== 1) {
+        return res.status(200).json({
+          message: "SMS is disabled in configuration.",
+        });
+      }
+
+      axios
+        .post("https://api.semaphore.co/api/v4/messages", {
+          apikey: API_KEY,
+          number: recipient,
+          message: message,
+          sendername: "Gethsemane",
+        })
+        .then((response) => {
+          return res.status(200).json({
+            message: "SMS sent successfully",
+            data: response.data,
+          });
+        })
+        .catch((error) => {
+          console.error("Error sending SMS", error);
+          return res
+            .status(500)
+            .json({error: "Error sending SMS", status: "500"});
+        });
     }
-
-    const response = axios.post("https://api.semaphore.co/api/v4/messages", {
-      apikey: API_KEY,
-      number: recipient,
-      message: message,
-      sendername: "Gethsemane",
-    });
-    return res.status(200).json({
-      message: "SMS sent successfully",
-      data: response.data,
-    });
-  } catch (error) {
-    console.error("Error sending SMS", error);
-    return res.status(500);
-  }
+  );
 };
 
 module.exports = {
