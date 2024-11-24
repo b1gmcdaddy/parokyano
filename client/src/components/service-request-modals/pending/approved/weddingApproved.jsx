@@ -43,34 +43,10 @@ import axios from "axios";
 import config from "../../../../config";
 import dayjs from "dayjs";
 import sendSMS from "../../../../utils/smsService";
-
-const boxModal = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: "sm",
-  bgcolor: "white",
-  borderRadius: "10px",
-  boxShadow: 3,
-  px: 4,
-  py: 3,
-  maxHeight: "97vh",
-  overflowY: "auto",
-  scrollbarWidth: "none",
-  "&::-webkit-scrollbar": {
-    display: "none",
-  },
-};
+import RequirementsModal from "../../RequirementsModal";
 
 const TextFieldStyle = {
   "& .MuiInputBase-root": {height: "40px", bgcolor: "white"},
-};
-
-const tabStyle = {
-  fontWeight: "bold",
-  color: "black",
-  bgcolor: "#D9D9D9",
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -87,6 +63,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
+// retrieve w fee
 const fetchWeddingDetails = async (id) => {
   try {
     const response = await axios.get(`${config.API}/wedding/retrieve`, {
@@ -100,827 +77,6 @@ const fetchWeddingDetails = async (id) => {
   }
 };
 
-function RequirementsModal({id, type, onClose}) {
-  const [open, setOpen] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState("");
-  const handleOpen = () => setOpen(true);
-  const [tabValue, setTabValue] = useState(0);
-  const [selectedWeddingId, setSelectedWeddingId] = useState(null);
-  const [requirements, setRequirements] = useState({
-    groom_baptismCert: 0,
-    groom_confirmationCert: 0,
-    groom_birthCert: 0,
-    spouse_baptismCert: 0,
-    spouse_confirmationCert: 0,
-    spouse_birthCert: 0,
-    groomMarriageLicense: 0,
-    brideMarriageLicense: 0,
-    groomCENOMAR: 0,
-    brideCENOMAR: 0,
-    groomCEDULA: 0,
-    brideCEDULA: 0,
-    isParishPermit: 0,
-    isPrenuptial: 0,
-    isPreCana: 0,
-    isMarriageBann: 0,
-    isJointAffidavit: 0,
-    isCivilContract: 0,
-    isDeathCert: 0,
-  });
-
-  useEffect(() => {
-    const fetchAndSetRequirements = async () => {
-      const req = await fetchWeddingDetails(id);
-      if (req) {
-        setRequirements({
-          groom_baptismCert: req.groom_baptismCert ?? 0,
-          groom_confirmationCert: req.groom_confirmationCert ?? 0,
-          groom_birthCert: req.groom_birthCert ?? 0,
-          spouse_baptismCert: req.spouse_baptismCert ?? 0,
-          spouse_confirmationCert: req.spouse_confirmationCert ?? 0,
-          spouse_birthCert: req.spouse_birthCert ?? 0,
-          groomMarriageLicense: req.groomMarriageLicense ?? 0,
-          brideMarriageLicense: req.brideMarriageLicense ?? 0,
-          groomCENOMAR: req.groomCENOMAR ?? 0,
-          brideCENOMAR: req.brideCENOMAR ?? 0,
-          groomCEDULA: req.groomCEDULA ?? 0,
-          brideCEDULA: req.brideCEDULA ?? 0,
-          isParishPermit: req.isParishPermit ?? 0,
-          isPrenuptial: req.isPrenuptial ?? 0,
-          isPreCana: req.isPreCana ?? 0,
-          isMarriageBann: req.isMarriageBann ?? 0,
-          isJointAffidavit: req.isJointAffidavit ?? 0,
-          isCivilContract: req.isCivilContract ?? 0,
-          isDeathCert: req.isDeathCert ?? 0,
-        });
-        setSelectedWeddingId(req.wedding_id);
-      }
-    };
-    if (open) {
-      fetchAndSetRequirements();
-    }
-  }, [open, id]);
-
-  const dynamicRequirements = [
-    {
-      type: "Civilly Married",
-      requirements: [
-        {name: "Civil Marriage Contract", field: "isCivilContract"},
-        {name: "Parish Permit", field: "isParishPermit"},
-        {name: "Prenuptial Agreement", field: "isPrenuptial"},
-        {name: "Pre-Cana Certificate", field: "isPreCana"},
-        {name: "Marriage Bann", field: "isMarriageBann"},
-      ],
-    },
-    {
-      type: "Live-in for under 4 years",
-      requirements: [
-        {name: "Parish Permit", field: "isParishPermit"},
-        {name: "Prenuptial Agreement", field: "isPrenuptial"},
-        {name: "Pre-Cana Certificate", field: "isPreCana"},
-        {name: "Marriage Bann", field: "isMarriageBann"},
-      ],
-    },
-    {
-      type: "Live-in for more than 4 years",
-      requirements: [
-        {name: "Parish Permit", field: "isParishPermit"},
-        {name: "Prenuptial Agreement", field: "isPrenuptial"},
-        {name: "Pre-Cana Certificate", field: "isPreCana"},
-        {name: "Joint Affidavit of Cohabitation", field: "isJointAffidavit"},
-        {name: "Marriage Bann", field: "isMarriageBann"},
-      ],
-    },
-    {
-      type: "Widow",
-      requirements: [
-        {name: "Parish Permit", field: "isParishPermit"},
-        {name: "Prenuptial Agreement", field: "isPrenuptial"},
-        {name: "Pre-Cana Certificate", field: "isPreCana"},
-        {name: "Marriage Bann", field: "isMarriageBann"},
-        {name: "Partner's Death Certificate", field: "isDeathCert"},
-      ],
-    },
-  ];
-
-  const selectedRequirements =
-    dynamicRequirements.find((req) => req.type === type)?.requirements || [];
-
-  const handleClose = () => {
-    setOpen(false);
-    setSaveSuccess("");
-    if (onClose) {
-      onClose();
-      setSaveSuccess("");
-    }
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const updateRequirements = () => {
-    try {
-      const reqs = {
-        ...requirements,
-        type,
-      };
-
-      axios.put(
-        `${config.API}/wedding/requirements/${selectedWeddingId}`,
-        reqs
-      );
-      setSaveSuccess("Update Requirements Successful!");
-      fetchWeddingDetails(id);
-    } catch (error) {
-      setSaveSuccess("Update Failed");
-      fetchWeddingDetails(id);
-    }
-    console.log(selectedWeddingId);
-  };
-
-  return (
-    <React.Fragment>
-      <Button
-        onClick={handleOpen}
-        variant="contained"
-        sx={{
-          backgroundColor: "white",
-          height: "30px",
-          color: "#355173",
-          fontSize: 12,
-          "&:hover": {bgcolor: "#E5E4E2"},
-        }}>
-        Requirements
-      </Button>
-
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={boxModal}>
-          <Grid container justifyContent={"flex-end"}>
-            <Grid item>
-              <IconButton onClick={handleClose} size="small">
-                <FontAwesomeIcon icon={faXmark} />
-              </IconButton>
-            </Grid>
-          </Grid>
-          <Grid container justifyContent={"center"} spacing={2}>
-            <Grid item sm={12}>
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: "1.2em",
-                }}>
-                Wedding Requirements Information
-              </Typography>
-            </Grid>
-            <Grid item sm={12}>
-              <Tabs
-                centered
-                variant="fullWidth"
-                value={tabValue}
-                onChange={handleTabChange}
-                sx={{borderRadius: "10px 10px 0px 0px"}}>
-                <Tab label="Groom" sx={tabStyle} />
-                <Tab label="Bride" sx={tabStyle} />
-              </Tabs>
-              <Box
-                fullWidth
-                sx={{
-                  bgcolor: "#D9D9D9",
-                  padding: "10px",
-                  borderRadius: "0px 0px 5px 5px",
-                }}>
-                <Grid container justifyContent={"center"}>
-                  <Box>
-                    {tabValue === 0 && (
-                      <>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={requirements.groom_birthCert === 1}
-                                onChange={(e) =>
-                                  setRequirements((prev) => ({
-                                    ...prev,
-                                    groom_birthCert: e.target.checked ? 1 : 0,
-                                  }))
-                                }
-                              />
-                            }
-                            label={
-                              <Typography sx={{fontSize: "15px"}}>
-                                Birth Certificate
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={requirements.groom_baptismCert === 1}
-                                onChange={(e) =>
-                                  setRequirements((prev) => ({
-                                    ...prev,
-                                    groom_baptismCert: e.target.checked ? 1 : 0,
-                                  }))
-                                }
-                              />
-                            }
-                            label={
-                              <Typography sx={{fontSize: "15px"}}>
-                                Baptismal Certificate
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={
-                                  requirements.groom_confirmationCert === 1
-                                }
-                                onChange={(e) =>
-                                  setRequirements((prev) => ({
-                                    ...prev,
-                                    groom_confirmationCert: e.target.checked
-                                      ? 1
-                                      : 0,
-                                  }))
-                                }
-                              />
-                            }
-                            label={
-                              <Typography sx={{fontSize: "15px"}}>
-                                Confirmation Certificate
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                        {type !== "Civilly Married" ? (
-                          <>
-                            {" "}
-                            <Grid item sm={12}>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={requirements.groomCENOMAR === 1}
-                                    onChange={(e) =>
-                                      setRequirements((prev) => ({
-                                        ...prev,
-                                        groomCENOMAR: e.target.checked ? 1 : 0,
-                                      }))
-                                    }
-                                  />
-                                }
-                                label={
-                                  <Typography sx={{fontSize: "15px"}}>
-                                    CENOMAR
-                                  </Typography>
-                                }
-                              />
-                            </Grid>
-                            <Grid item sm={12}>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={requirements.groomCEDULA === 1}
-                                    onChange={(e) =>
-                                      setRequirements((prev) => ({
-                                        ...prev,
-                                        groomCEDULA: e.target.checked ? 1 : 0,
-                                      }))
-                                    }
-                                  />
-                                }
-                                label={
-                                  <Typography sx={{fontSize: "15px"}}>
-                                    CEDULA
-                                  </Typography>
-                                }
-                              />
-                            </Grid>
-                            <Grid item sm={12}>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={
-                                      requirements.groomMarriageLicense === 1
-                                    }
-                                    onChange={(e) =>
-                                      setRequirements((prev) => ({
-                                        ...prev,
-                                        groomMarriageLicense: e.target.checked
-                                          ? 1
-                                          : 0,
-                                      }))
-                                    }
-                                  />
-                                }
-                                label={
-                                  <Typography sx={{fontSize: "15px"}}>
-                                    Marriage License
-                                  </Typography>
-                                }
-                              />
-                            </Grid>
-                          </>
-                        ) : null}
-                      </>
-                    )}
-                    {tabValue === 1 && (
-                      <>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={requirements.spouse_birthCert === 1}
-                                onChange={(e) =>
-                                  setRequirements((prev) => ({
-                                    ...prev,
-                                    spouse_birthCert: e.target.checked ? 1 : 0,
-                                  }))
-                                }
-                              />
-                            }
-                            label={
-                              <Typography sx={{fontSize: "15px"}}>
-                                Birth Certificate
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={requirements.spouse_baptismCert === 1}
-                                onChange={(e) =>
-                                  setRequirements((prev) => ({
-                                    ...prev,
-                                    spouse_baptismCert: e.target.checked
-                                      ? 1
-                                      : 0,
-                                  }))
-                                }
-                              />
-                            }
-                            label={
-                              <Typography sx={{fontSize: "15px"}}>
-                                Baptismal Certificate
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                        <Grid item sm={12}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={
-                                  requirements.spouse_confirmationCert === 1
-                                }
-                                onChange={(e) =>
-                                  setRequirements((prev) => ({
-                                    ...prev,
-                                    spouse_confirmationCert: e.target.checked
-                                      ? 1
-                                      : 0,
-                                  }))
-                                }
-                              />
-                            }
-                            label={
-                              <Typography sx={{fontSize: "15px"}}>
-                                Confirmation Certificate
-                              </Typography>
-                            }
-                          />
-                        </Grid>
-                        {type !== "Civilly Married" ? (
-                          <>
-                            {" "}
-                            <Grid item sm={12}>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={requirements.brideCENOMAR === 1}
-                                    onChange={(e) =>
-                                      setRequirements((prev) => ({
-                                        ...prev,
-                                        brideCENOMAR: e.target.checked ? 1 : 0,
-                                      }))
-                                    }
-                                  />
-                                }
-                                label={
-                                  <Typography sx={{fontSize: "15px"}}>
-                                    CENOMAR
-                                  </Typography>
-                                }
-                              />
-                            </Grid>
-                            <Grid item sm={12}>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={requirements.brideCEDULA === 1}
-                                    onChange={(e) =>
-                                      setRequirements((prev) => ({
-                                        ...prev,
-                                        brideCEDULA: e.target.checked ? 1 : 0,
-                                      }))
-                                    }
-                                  />
-                                }
-                                label={
-                                  <Typography sx={{fontSize: "15px"}}>
-                                    CEDULA
-                                  </Typography>
-                                }
-                              />
-                            </Grid>
-                            <Grid item sm={12}>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={
-                                      requirements.brideMarriageLicense === 1
-                                    }
-                                    onChange={(e) =>
-                                      setRequirements((prev) => ({
-                                        ...prev,
-                                        brideMarriageLicense: e.target.checked
-                                          ? 1
-                                          : 0,
-                                      }))
-                                    }
-                                  />
-                                }
-                                label={
-                                  <Typography sx={{fontSize: "15px"}}>
-                                    Marriage License
-                                  </Typography>
-                                }
-                              />
-                            </Grid>
-                          </>
-                        ) : null}
-                      </>
-                    )}
-                  </Box>
-                </Grid>
-              </Box>
-            </Grid>
-
-            <Grid item sm={12} sx={{marginTop: "5px"}}>
-              <div
-                style={{flex: 0.1, height: "1.8px", backgroundColor: "black"}}
-              />
-            </Grid>
-
-            <Box>
-              {/* dynamic requirements based on the wedding type */}
-              {selectedRequirements.map((req) => (
-                <Grid item sm={12} key={req.field}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={requirements[req.field] === 1}
-                        onChange={(e) =>
-                          setRequirements((prev) => ({
-                            ...prev,
-                            [req.field]: e.target.checked ? 1 : 0,
-                          }))
-                        }
-                      />
-                    }
-                    label={
-                      <Typography sx={{fontSize: "15px"}}>
-                        {req.name}
-                      </Typography>
-                    }
-                  />
-                </Grid>
-              ))}
-            </Box>
-
-            <Grid item sm={12} sx={{marginTop: "10px", textAlign: "center"}}>
-              {saveSuccess == "Update Requirements Successful!" ? (
-                <Typography sx={{color: "green"}}>{saveSuccess}</Typography>
-              ) : (
-                <Typography>{saveSuccess}</Typography>
-              )}
-            </Grid>
-
-            <Grid item sm={12} sx={{marginTop: "10px", textAlign: "center"}}>
-              <Button
-                onClick={updateRequirements}
-                variant="contained"
-                sx={{bgcolor: "#355173"}}>
-                confirm
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </Modal>
-    </React.Fragment>
-  );
-}
-
-function SponsorsModal({id}) {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const [errors, setErrors] = useState({
-    name: "",
-    age: "",
-    isMarried: "",
-    isCatholic: "",
-  });
-  const [service] = useState("wedding");
-  const [sponsors, setSponsors] = useState([]);
-  const [newSponsor, setNewSponsor] = useState({
-    name: "",
-    age: "",
-    isMarried: "",
-    isCatholic: "",
-  });
-  const [sponsorid, setsponsorid] = useState(null);
-
-  const fetchSponsors = async () => {
-    try {
-      const response = await axios.get(`${config.API}/sponsor/retrieve`, {
-        params: {
-          reqID: id,
-        },
-      });
-      setSponsors(response.data.result);
-    } catch (err) {
-      console.error("error retrieving sponsors", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchSponsors();
-  }, []);
-
-  const handleInputChange = (e) => {
-    const {name, value} = e.target;
-    setNewSponsor((prev) => ({...prev, [name]: value}));
-  };
-
-  const handleAddSponsor = async () => {
-    setErrors({
-      name: "",
-      age: "",
-      isMarried: "",
-      isCatholic: "",
-    });
-
-    let hasErrors = false;
-    const newErrors = {};
-
-    if (!newSponsor.name.trim()) {
-      newErrors.name = "Name is required";
-      hasErrors = true;
-    }
-
-    if (!newSponsor.age) {
-      newErrors.age = "Age is required";
-      hasErrors = true;
-    }
-    if (newSponsor.age !== "" && newSponsor.age < 1) {
-      newErrors.age = "Invalid number";
-      hasErrors = true;
-    }
-
-    if (newSponsor.isMarried === "") {
-      newErrors.isMarried = "Marital status is required";
-      hasErrors = true;
-    }
-
-    if (newSponsor.isCatholic === "") {
-      newErrors.isCatholic = "Required";
-      hasErrors = true;
-    }
-
-    if (hasErrors) {
-      setErrors(newErrors);
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `${config.API}/sponsor/create-sponsor`,
-        {
-          ...newSponsor,
-          request_id: id,
-        }
-      );
-      if (response && sponsors.length >= 4) {
-        await axios.put(`${config.API}/request/add-sponsor-fee`, {
-          requestID: id,
-        });
-      }
-      const newSponsorData = {
-        ...newSponsor,
-      };
-      fetchSponsors();
-      setNewSponsor({name: "", age: "", isMarried: "", isCatholic: ""});
-    } catch (err) {
-      console.error("Error adding sponsor", err);
-    }
-  };
-
-  const handleDeleteSponsor = async (sponsor) => {
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${sponsor.name}?`
-    );
-
-    if (confirmDelete) {
-      try {
-        await axios.delete(
-          `${config.API}/sponsor/delete-sponsor/${sponsor.sponsorID}`
-        );
-        if (sponsors.length >= 4) {
-          await axios.put(`${config.API}/request/remove-sponsor-fee`, {
-            requestID: id,
-          });
-        }
-        fetchSponsors();
-        alert("Sponsor deleted successfully!");
-      } catch (err) {
-        console.error("Error deleting sponsor", err);
-        alert("Failed to delete sponsor.");
-      }
-    }
-  };
-
-  return (
-    <React.Fragment>
-      <Button
-        onClick={handleOpen}
-        variant="contained"
-        sx={{
-          backgroundColor: "white",
-          height: "30px",
-          marginLeft: 1,
-          fontSize: 12,
-          color: "#355173",
-          "&:hover": {bgcolor: "#E5E4E2"},
-        }}>
-        Sponsors
-      </Button>
-      <Modal open={open}>
-        <Box sx={boxModal}>
-          <Grid container justifyContent={"flex-end"}>
-            <Grid item>
-              <IconButton onClick={handleClose} size="small">
-                <FontAwesomeIcon icon={faXmark} />
-              </IconButton>
-            </Grid>
-          </Grid>
-          <Grid container justifyContent={"center"} spacing={1}>
-            <Grid item sm={12}>
-              <Typography
-                variant="subtitle1"
-                sx={{textAlign: "center", fontWeight: "bold"}}>
-                Wedding Sponsors Information
-              </Typography>
-            </Grid>
-            <Grid item sm={5}>
-              <label>Full Name:</label>
-              <TextField
-                name="name"
-                value={newSponsor.name}
-                fullWidth
-                onChange={handleInputChange}
-                sx={TextFieldStyle}
-                error={Boolean(errors.name)}
-                helperText={errors.name}
-              />
-            </Grid>
-            <Grid item sm={2}>
-              <label>Age:</label>
-              <TextField
-                name="age"
-                type="number"
-                value={newSponsor.age}
-                onChange={handleInputChange}
-                fullWidth
-                sx={TextFieldStyle}
-                error={Boolean(errors.age)}
-                helperText={errors.age}
-              />
-            </Grid>
-            <Grid item sm={3}>
-              <label>Marital Status:</label>
-              <TextField
-                value={newSponsor.isMarried}
-                select
-                name="isMarried"
-                onChange={handleInputChange}
-                fullWidth
-                sx={TextFieldStyle}
-                error={Boolean(errors.isMarried)}
-                helperText={errors.isMarried}>
-                <MenuItem value="1">Married</MenuItem>
-                <MenuItem value="0">Not Married</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item sm={2}>
-              <label>Catholic?:</label>
-              <TextField
-                select
-                name="isCatholic"
-                value={newSponsor.isCatholic}
-                onChange={handleInputChange}
-                fullWidth
-                sx={TextFieldStyle}
-                error={Boolean(errors.isCatholic)}
-                helperText={errors.isCatholic}>
-                <MenuItem value="1">Yes</MenuItem>
-                <MenuItem value="0">No</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item sm={12} sx={{textAlign: "center"}}>
-              <Button
-                onClick={handleAddSponsor}
-                sx={{
-                  bgcolor: "#355173",
-                  height: "28px",
-                  width: "150px",
-                  fontWeight: "bold",
-                  color: "white",
-                  "&:hover": {bgcolor: "#4C74A5"},
-                }}>
-                Add Sponsor
-              </Button>
-            </Grid>
-
-            <Grid item sm={12}>
-              <TableContainer component={Paper}>
-                <Table sx={{tableLayout: "fixed"}}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center">Full Name</TableCell>
-                      <TableCell align="center">Age</TableCell>
-                      <TableCell align="center">Marital Status</TableCell>
-                      <TableCell align="center">Catholic?</TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{width: "50px"}}></TableCell>
-                    </TableRow>
-                  </TableHead>
-                </Table>
-              </TableContainer>
-              <div
-                style={{
-                  maxHeight: "35vh",
-                  overflowY: "auto",
-                  width: "100%",
-                  scrollbarWidth: "none",
-                  "&::-webkit-scrollbar": {
-                    display: "none",
-                  },
-                }}>
-                <Table sx={{tableLayout: "fixed", width: "100%"}}>
-                  <TableBody>
-                    {sponsors.map((sponsor) => (
-                      <TableRow key={sponsor.sponsorID}>
-                        <TableCell align="center" component="th">
-                          {sponsor.name}
-                        </TableCell>
-                        <TableCell align="center">{sponsor.age}</TableCell>
-                        <TableCell align="center">
-                          {sponsor.isMarried == 1 ? "Yes" : "No"}
-                        </TableCell>
-                        <TableCell align="center">
-                          {sponsor.isCatholic == 1 ? "Yes" : "No"}
-                        </TableCell>
-                        <TableCell align="center" sx={{width: "50px"}}>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleDeleteSponsor(sponsor)}>
-                            <FontAwesomeIcon icon={faXmark} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </Grid>
-          </Grid>
-        </Box>
-      </Modal>
-    </React.Fragment>
-  );
-}
-
 const WeddingApproved = ({open, data, handleClose, refreshList}) => {
   const [available, setAvailable] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -933,25 +89,7 @@ const WeddingApproved = ({open, data, handleClose, refreshList}) => {
   const [snackBarStyle, setSnackBarStyle] = useState(null);
   const [priests, setPriests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [formData, setFormData] = useState({
-    requestID: "",
-    first_name: "",
-    middle_name: "",
-    last_name: "",
-    relationship: "",
-    spouse_firstName: "",
-    spouse_middleName: "",
-    spouse_lastName: "",
-    contact_no: "",
-    interview_date: "",
-    interview_time: "",
-    priest_id: "",
-    preferred_date: "",
-    preferred_time: "",
-    transaction_no: "",
-    payment_status: "",
-    service_id: "",
-  });
+  const [formData, setFormData] = useState(null);
 
   // START RETRIEVE WEDDING DETAILS
   const fetchWeddingData = async () => {
@@ -965,7 +103,6 @@ const WeddingApproved = ({open, data, handleClose, refreshList}) => {
           spouse_middleName: weddingDetails.spouse_middleName || "",
           spouse_lastName: weddingDetails.spouse_lastName || "",
         }));
-
         setCompleteRequirements(weddingDetails.isComplete || 0);
       }
     } catch (err) {
@@ -1016,9 +153,10 @@ const WeddingApproved = ({open, data, handleClose, refreshList}) => {
         spouse_lastName: "",
         donation: data.donation || "",
       });
-      console.log(data);
       fetchWeddingData();
       fetchUser(data.user_id);
+      fetchPriest();
+      fetchService();
     }
     setTimeout(() => {
       setIsLoading(false);
@@ -1042,15 +180,17 @@ const WeddingApproved = ({open, data, handleClose, refreshList}) => {
   };
 
   useEffect(() => {
-    fetchAvailability(
-      formData.preferred_date,
-      formData.preferred_time,
-      endTime(formData.preferred_time, service.duration)
-    );
+    if (formData?.preferred_date && formData?.preferred_time) {
+      fetchAvailability(
+        formData?.preferred_date,
+        formData?.preferred_time,
+        endTime(formData?.preferred_time, service.duration)
+      );
+    }
   }, [
-    formData.preferred_date,
-    formData.preferred_time,
-    formData.priest_id,
+    formData?.preferred_date,
+    formData?.preferred_time,
+    formData?.priest_id,
     open,
   ]);
 
@@ -1095,24 +235,21 @@ const WeddingApproved = ({open, data, handleClose, refreshList}) => {
     }
   };
 
-  useEffect(() => {
-    const fetchPriest = async () => {
-      try {
-        const response = await axios.get(`${config.API}/priest/retrieve`, {
-          params: {
-            col: "status",
-            val: "active",
-          },
-        });
-        setPriests(response.data);
-        console.log(response.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchPriest();
-    fetchService();
-  }, []);
+  const fetchPriest = async () => {
+    try {
+      const response = await axios.get(`${config.API}/priest/retrieve`, {
+        params: {
+          col: "status",
+          val: "active",
+        },
+      });
+      setPriests(response.data);
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // END RETRIEVE WEDDING DETAILS
 
   // START FORM HANDLERS AND CONTROLS
@@ -1424,6 +561,12 @@ const WeddingApproved = ({open, data, handleClose, refreshList}) => {
                     {completeRequirements == 1 &&
                     formData.payment_status == "paid" ? (
                       <span className="font-bold">COMPLETE</span>
+                    ) : completeRequirements == 1 &&
+                      formData.payment_status == "unpaid" ? (
+                      <span className="font-bold">Lacking Payment</span>
+                    ) : completeRequirements == 0 &&
+                      formData.payment_status == "paid" ? (
+                      <span className="font-bold">INCOMPLETE</span>
                     ) : (
                       <span className="font-bold">INCOMPLETE</span>
                     )}
@@ -1434,7 +577,6 @@ const WeddingApproved = ({open, data, handleClose, refreshList}) => {
                     type={data.relationship}
                     onClose={handleCloseRequirementsDialog}
                   />
-                  <SponsorsModal id={data.requestID} />
                 </Grid>
 
                 <Grid item xs={12}>

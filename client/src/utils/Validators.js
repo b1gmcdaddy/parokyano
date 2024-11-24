@@ -59,9 +59,10 @@ export default function ValidateForm(data) {
     }
   }
 
-  if (data.donation != null) {
-    if (isNaN(Number(data.donation))) {
-      errors.amount = "Not a valid amount";
+  // DONATION VALIDATION
+  if (data.donation_amount != null) {
+    if (isNaN(Number(data.donation_amount))) {
+      errors.donation_amount = "Not a valid amount";
     }
   }
 
@@ -78,7 +79,8 @@ export default function ValidateForm(data) {
 
       if (
         age < legalAge ||
-        (age === legalAge && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
+        (age === legalAge &&
+          (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
       ) {
         return `The ${fieldName} must be at least 18 years old.`;
       }
@@ -86,24 +88,32 @@ export default function ValidateForm(data) {
     return null;
   };
 
-  if(data.groomDetails != null){
-  const groomAgeError = validateLegalAge(data.groomDetails.groomBirthDate, "groom");
-  if (groomAgeError) errors.groomBirthDate = groomAgeError;
+  if (data.groomDetails != null) {
+    const groomAgeError = validateLegalAge(
+      data.groomDetails.groomBirthDate,
+      "groom"
+    );
+    if (groomAgeError) errors.groomBirthDate = groomAgeError;
   }
 
-  if(data.brideDetails != null){
-  const brideAgeError = validateLegalAge(data.brideDetails.brideBirthDate, "bride");
-  if (brideAgeError) errors.brideBirthDate = brideAgeError;
-}
+  if (data.brideDetails != null) {
+    const brideAgeError = validateLegalAge(
+      data.brideDetails.brideBirthDate,
+      "bride"
+    );
+    if (brideAgeError) errors.brideBirthDate = brideAgeError;
+  }
 
   //for Wedding Sponsors
   if (data.sponsors != null) {
     data.sponsors.forEach((sponsor, index) => {
-        if (!validator.isInt(String(sponsor.age))) {
-          errors[`sponsor_${index}_age`] = `Invalid sponsor age.`;
-        } else if (parseInt(sponsor.age, 10) < 18) {
-          errors[`sponsor_${index}_age`] = `Sponsor must be at least 18 years old.`;
-        }
+      if (!validator.isInt(String(sponsor.age))) {
+        errors[`sponsor_${index}_age`] = `Invalid sponsor age.`;
+      } else if (parseInt(sponsor.age, 10) < 18) {
+        errors[
+          `sponsor_${index}_age`
+        ] = `Sponsor must be at least 18 years old.`;
+      }
     });
   }
 

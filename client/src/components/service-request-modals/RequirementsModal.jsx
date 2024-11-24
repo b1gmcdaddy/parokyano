@@ -155,13 +155,11 @@ const RequirementsModal = ({id, type, onClose}) => {
           request_id: id,
         }
       );
-
       if (response && sponsors.length >= 4) {
         await axios.put(`${config.API}/request/add-sponsor-fee`, {
           requestID: id,
         });
       }
-
       const newSponsorData = {
         ...newSponsor,
       };

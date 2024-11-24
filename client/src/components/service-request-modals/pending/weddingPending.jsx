@@ -53,7 +53,6 @@ const fetchWeddingDetails = async (id) => {
     const response = await axios.get(`${config.API}/wedding/retrieve`, {
       params: {reqID: id},
     });
-
     return response.data?.result[0];
   } catch (err) {
     console.error(err);
@@ -74,8 +73,9 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [weddingInfo, setWeddingInfo] = useState({});
   const [formData, setFormData] = useState(null);
+  const [paymentFee, setPaymentFee] = useState(0);
 
-  // START RETRIEVE WEDDING DETAILS
+  // START RETRIEVE WEDDING DETAILS WITH FEE
   const fetchWeddingData = async () => {
     try {
       const weddingDetails = await fetchWeddingDetails(data.requestID);
@@ -86,7 +86,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
           spouse_middleName: weddingDetails.spouse_middleName || "",
           spouse_lastName: weddingDetails.spouse_lastName || "",
         });
-
+        setPaymentFee(weddingDetails.donation);
         setCompleteRequirements(weddingDetails.isComplete || 0);
       }
     } catch (err) {
@@ -127,33 +127,30 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
   useEffect(() => {
     setIsLoading(true);
     if (open && data) {
-      new Promise((resolve) => {
-        setFormData({
-          requestID: data.requestID || "",
-          first_name: data.first_name || "",
-          middle_name: data.middle_name || "",
-          last_name: data.last_name || "",
-          contact_no: data.contact_no || "",
-          relationship: data.relationship || "",
-          interview_date: data.interview_date
-            ? dayjs(data.interview_date).format("YYYY-MM-DD")
-            : null,
-          interview_time: data.interview_time || "",
-          priest_id: data.priest_id || "",
-          preferred_date: data?.preferred_date
-            ? dayjs(data?.preferred_date).format("YYYY-MM-DD")
-            : null,
-          preferred_time: data.preferred_time || "",
-          transaction_no: data.transaction_no || "",
-          payment_status: data.payment_status || "",
-          service_id: data.service_id || "",
-          donation: data.donation || 0,
-        });
-        fetchWeddingData();
-        fetchPriest();
-        fetchService();
-        resolve();
+      setFormData({
+        requestID: data.requestID || "",
+        first_name: data.first_name || "",
+        middle_name: data.middle_name || "",
+        last_name: data.last_name || "",
+        contact_no: data.contact_no || "",
+        relationship: data.relationship || "",
+        interview_date: data.interview_date
+          ? dayjs(data.interview_date).format("YYYY-MM-DD")
+          : null,
+        interview_time: data.interview_time || "",
+        priest_id: data.priest_id || "",
+        preferred_date: data?.preferred_date
+          ? dayjs(data?.preferred_date).format("YYYY-MM-DD")
+          : null,
+        preferred_time: data.preferred_time || "",
+        transaction_no: data.transaction_no || "",
+        payment_status: data.payment_status || "",
+        service_id: data.service_id || "",
+        donation: data.donation || 0,
       });
+      fetchWeddingData();
+      fetchPriest();
+      fetchService();
     }
     setTimeout(() => {
       setIsLoading(false);
@@ -162,27 +159,26 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
 
   useEffect(() => {
     if (
-      dayjs(formData?.preferred_date).get("day") == 6 &&
-      dayjs(formData?.preferred_time, "HH:mm:ss").hour() == 6 &&
-      data.donation == 0
+      dayjs(formData?.preferred_date).get("day") === 0 && // 0 means Sunday
+      dayjs(formData?.preferred_time, "HH:mm:ss").hour() === 6
     ) {
       setFormData((prevState) => ({
         ...prevState,
-        donation: data.donation + 1000.0,
+        donation: paymentFee + 1000.0,
       }));
     } else {
       data.isParishioner && data.donation == 0
         ? setFormData((prevState) => ({
             ...prevState,
-            donation: data.donation + 3000.0,
+            donation: paymentFee + 3000.0,
           }))
-        : data.donation == 0
-        ? setFormData((prevState) => ({
+        : setFormData((prevState) => ({
             ...prevState,
-            donation: data.donation + 3500.0,
-          }))
-        : "";
+            donation: paymentFee + 3500.0,
+          }));
     }
+    console.log("Base Fee:", formData?.donation);
+    console.log("Additional:", paymentFee);
   }, [formData?.preferred_date, formData?.preferred_time]);
 
   const closeInfoModal = (action) => {
@@ -293,7 +289,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
           },
         }
       );
-      console.log(response);
+      // console.log(response);
       if (Object.keys(response.data).length > 0 || response.data != "") {
         setError({
           message: response.data.message,
@@ -352,7 +348,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
           formData
         );
         if (res.status !== 200) {
-          console.log("error updating request");
+          // console.log("error updating request");
           setError({
             message: res.data.message,
             details: res.data?.details,
@@ -386,9 +382,13 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
         try {
           if (formData.payment_status == "paid" && completeRequirements == 1) {
             const res = await axios.put(`${config.API}/request/update-bulk`, {
-              formData,
-              id: data.requestID,
+              formData: {
+                ...formData, // Spread the existing form data
+                donation: formData.donation + paymentFee, // Update the donation field
+              },
+              id: data.requestID, // Include the request ID
             });
+
             await axios.put(`${config.API}/wedding/update-bulk`, {
               weddingInfo,
               id: data.requestID,
@@ -594,14 +594,13 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   <label>
                     Payment:
                     <strong>
-                      {formData.donation != null
-                        ? ` ₱${parseFloat(formData.donation).toLocaleString(
-                            undefined,
-                            {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            }
-                          )}`
+                      {paymentFee != null
+                        ? ` ₱${parseFloat(
+                            paymentFee + formData?.donation
+                          ).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}`
                         : ""}
                     </strong>
                   </label>
@@ -653,7 +652,6 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     type={data.relationship}
                     onClose={handleCloseRequirementsDialog}
                   />
-                  {/* <SponsorsModal id={data.requestID} /> */}
                 </Grid>
 
                 <Grid item xs={12}>
