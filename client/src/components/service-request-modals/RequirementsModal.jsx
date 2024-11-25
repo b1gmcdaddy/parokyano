@@ -126,9 +126,11 @@ const RequirementsModal = ({id, type, onClose}) => {
     if (!newSponsor.age) {
       newErrors.age = "Age is required";
       hasErrors = true;
-    }
-    if (newSponsor.age !== "" && newSponsor.age < 1) {
-      newErrors.age = "Invalid number";
+    } else if (newSponsor.age <= 0) {
+      newErrors.age = "Age must be a positive number.";
+      hasErrors = true;
+    } else if (newSponsor.age < 18) {
+      newErrors.age = "Sponsor must be at least 18 years old.";
       hasErrors = true;
     }
 

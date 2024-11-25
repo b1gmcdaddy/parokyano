@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import config from "../../config";
-import generateHash from "../../utils/GenerateHash";
+//import generateHash from "../../utils/GenerateHash";
 import {
   DatePicker,
   LocalizationProvider,
@@ -56,8 +56,8 @@ const inputstlying = {
 };
 
 const Baptism = () => {
-  const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
+  //const dateToday = new Date().toJSON().slice(0, 10);
+  //const hash = dateToday + generateHash().slice(0, 20);
   // const [captchaValue, setCaptchaValue] = useState(null);
   const [modalData, setModalData] = useState({});
   const [openCash, setOpenCash] = useState(false);
@@ -93,7 +93,7 @@ const Baptism = () => {
     priest_id: "",
     payment_method: "",
     gcashRefNo: "",
-    transaction_no: hash,
+    //transaction_no: hash,
     service_id: 5,
     sponsors: [
       {
@@ -217,25 +217,11 @@ const Baptism = () => {
   };
 
   const handleSubmit = async (e) => {
-    setErrors({});
     e.preventDefault();
     console.log(formData);
-    let validate = ValidateForm(formData);
+    const validate = ValidateForm(formData);
     setErrors(validate);
-    console.log(validate);
-    if (formData.details.father_age < 0) {
-      errors.father_age = "Invalid number";
-    }
-    if (formData.details.mother_age < 0) {
-      errors.mother_age = "Invalid number";
-    }
-    console.log(errors);
-    if (
-      Object.keys(validate).length == 0 &&
-      validate.constructor == Object &&
-      errors.father_age == null &&
-      errors.mother_age == null
-    ) {
+    if (Object.keys(validate).length == 0 && validate.constructor == Object ) {
       try {
         await axios.post(`${config.API}/request/create-baptism`, formData);
 
@@ -386,7 +372,7 @@ const Baptism = () => {
               />
               {errors.father_age != "" && errors.father_age != null && (
                 <FormHelperText sx={{ color: "red" }}>
-                  Invalid number
+                  {errors.father_age}
                 </FormHelperText>
               )}
             </Grid>
@@ -417,7 +403,7 @@ const Baptism = () => {
               />
               {errors.mother_age != "" && errors.mother_age != null && (
                 <FormHelperText sx={{ color: "red" }}>
-                  Invalid number
+                  {errors.mother_age}
                 </FormHelperText>
               )}
             </Grid>
