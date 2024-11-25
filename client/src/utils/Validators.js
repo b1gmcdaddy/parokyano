@@ -105,11 +105,21 @@ export default function ValidateForm(data) {
   }
 
   //for Wedding Sponsors
+  // if (data.sponsors != null) {
+  //   data.sponsors.forEach((sponsor, index) => {
+  //     if (!validator.isInt(String(sponsor.age))) {
+  //       errors[`sponsor_${index}_age`] = `Invalid sponsor age.`;
+  //     } else if (parseInt(sponsor.age, 10) < 18) {
+  //       errors[
+  //         `sponsor_${index}_age`
+  //       ] = `Sponsor must be at least 18 years old.`;
+  //     }
+  //   });
+  // } change kay i.uniform sa uban age field nga number ang type
+
   if (data.sponsors != null) {
     data.sponsors.forEach((sponsor, index) => {
-      if (!validator.isInt(String(sponsor.age))) {
-        errors[`sponsor_${index}_age`] = `Invalid sponsor age.`;
-      } else if (parseInt(sponsor.age, 10) < 18) {
+      if (sponsor.age < 18) {
         errors[
           `sponsor_${index}_age`
         ] = `Sponsor must be at least 18 years old.`;

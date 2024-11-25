@@ -753,6 +753,7 @@ const Wedding = () => {
                       fullWidth
                       variant="outlined"
                       size="small"
+                      type="number"
                       sx={inputstlying}
                       name="age"
                       value={formData.sponsors[index]?.age}
