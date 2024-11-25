@@ -34,6 +34,7 @@ import {
   LineElement,
   Title,
   Legend,
+  ArcElement,
   defaults,
 } from "chart.js";
 
@@ -41,6 +42,7 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
+  ArcElement,
   LineElement,
   Title,
   Tooltip,

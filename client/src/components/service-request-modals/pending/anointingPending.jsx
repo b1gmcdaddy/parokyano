@@ -83,8 +83,12 @@ const AnointingPending = ({open, data, handleClose, refreshList}) => {
         age: data.age,
         patient_status: data.patient_status,
         contact_no: data.contact_no,
-        preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
-        preferred_time: data.preferred_time,
+        preferred_date: data.preferred_date
+          ? dayjs(data.preferred_date).format("YYYY-MM-DD")
+          : "",
+        preferred_time: data.preferred_time
+          ? dayjs(data.preferred_time, "HH:mm:ss")
+          : "",
         priest_id: data.priest_id,
         isParishioner: data.isParishioner,
         transaction_no: data.transaction_no,

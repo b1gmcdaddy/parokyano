@@ -198,6 +198,7 @@ const Configurations = () => {
   const handleFormSave = async () => {
     handleFormClose();
     const res = await axios.get(`${config.API}/user/retrieveUsers`);
+    setSuccess("Successfully updated users");
     setUser(res.data);
   };
 
