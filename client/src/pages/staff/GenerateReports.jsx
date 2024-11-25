@@ -184,10 +184,11 @@ const GenerateReports = () => {
               />
             </Box>
 
-            <Box
-              sx={isPrinting ? PrintStyle : NotPrintStyle}
-              ref={componentRef2}>
-              <Container maxWidth="lg" sx={{backgroundColor: "white"}}>
+            <Box sx={isPrinting ? PrintStyle : NotPrintStyle}>
+              <Container
+                maxWidth="lg"
+                sx={{backgroundColor: "white"}}
+                ref={componentRef2}>
                 <StaffReport
                   startDate={reportDetails.startDate}
                   endDate={reportDetails.endDate}
@@ -230,10 +231,11 @@ const GenerateReports = () => {
                 onAfterPrint={handleAfterPrint}
               />
             </Box>
-            <Box
-              sx={isPrinting ? PrintStyle : NotPrintStyle}
-              ref={componentRef}>
-              <Container maxWidth="lg" sx={{backgroundColor: "white"}}>
+            <Box sx={isPrinting ? PrintStyle : NotPrintStyle}>
+              <Container
+                maxWidth="lg"
+                ref={componentRef}
+                sx={{backgroundColor: "white"}}>
                 <StaffReportSpecific
                   startDate={reportDetails.startDate}
                   endDate={reportDetails.endDate}

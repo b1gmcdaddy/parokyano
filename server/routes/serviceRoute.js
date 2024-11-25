@@ -13,6 +13,6 @@ router.get("/retrieve-all", retrieveAll);
 router.get("/retrieveByParams", retrieveByParams);
 router.get("/retrieve-schedule", retrieveSchedule);
 router.put("/update-service", updateService);
-router.get("/getCountPerStatus", getCountReq);
+router.get("/getCountReqPerMonth", getCountReq);
 
 module.exports = router;
