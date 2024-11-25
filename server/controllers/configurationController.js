@@ -11,7 +11,7 @@ const getIntentionCount = (req, res) => {
     `SELECT intentionCount FROM configuration WHERE configurationID = 1`,
 
     (err, result) => {
-      const count = result[0].intentionCount;
+      const count = result[0]?.intentionCount;
       console.log(count);
       if (err) {
         return res.status(500).json({message: "Internal server error"});
@@ -22,7 +22,7 @@ const getIntentionCount = (req, res) => {
           if (err) {
             return res.status(500).json({message: "Internal server error"});
           }
-          return res.status(200).send(count);
+          return res.status(200).json({intentionCount: count});
         }
       );
     }
