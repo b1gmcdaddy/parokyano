@@ -960,14 +960,69 @@ const searchCertRecords = (req, res) => {
     }
   }
 
-  db.query(query, queryParams, (err, result) => {
+  db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Error retrieving matching records", err);
       return res
         .status(500)
         .json({ error: "Error retrieving matching records" });
     }
-    res.status(200).json({ result });
+
+    const parsedResults = results.map((record) => {
+      if (record.child_name) {
+        try {
+          record.child_name = JSON.parse(record.child_name);
+        } catch (e) {
+          console.error("Error parsing child_name", e);
+        }
+      }
+
+      // Create an object of matching fields for the current record
+      const matchingFields = {};
+      if (record.first_name && record.first_name.includes(first_name)) {
+        matchingFields.first_name = first_name;
+      }
+      if (record.last_name && record.last_name.includes(last_name)) {
+        matchingFields.last_name = last_name;
+      }
+      if (record.contact_no && record.contact_no.includes(contact_no)) {
+        matchingFields.contact_no = contact_no;
+      }
+      if (record.mother_name && record.mother_name.includes(mother_name)) {
+        matchingFields.mother_name = mother_name;
+      }
+      if (record.father_name && record.father_name.includes(father_name)) {
+        matchingFields.father_name = father_name;
+      }
+      if (record.birth_place && record.birth_place.includes(birth_place)) {
+        matchingFields.birth_place = birth_place;
+      }
+      if (
+        record.spouse_firstName &&
+        record.spouse_firstName.includes(spouse_firstName)
+      ) {
+        matchingFields.spouse_firstName = spouse_firstName;
+      }
+      if (
+        record.spouse_lastName &&
+        record.spouse_lastName.includes(spouse_lastName)
+      ) {
+        matchingFields.spouse_lastName = spouse_lastName;
+      }
+      if (
+        record.preferred_date &&
+        record.preferred_date.includes(preferred_date)
+      ) {
+        matchingFields.preferred_date = preferred_date;
+      }
+
+      // Add the matching fields to the record
+      record.Matches = matchingFields;
+
+      return record;
+    });
+
+    res.status(200).json({ results: parsedResults });
   });
 };
 

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Box,
@@ -12,6 +12,8 @@ import {
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import Chip from "@mui/material/Chip";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -21,8 +23,17 @@ import config from "../../config";
 import CompareRecords from "./CompareRecords";
 import ConfirmationDialog from "../ConfirmationModal";
 import sendSMS from "../../utils/smsService";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import { styled } from "@mui/material/styles";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
-const SearchCertRecords = ({open, data, close, refreshList}) => {
+const SearchCertRecords = ({ open, data, close, refreshList }) => {
   const [certType, setCertType] = useState(null);
   const [confirmationData, setConfirmationData] = useState([]);
   const [confirmationID, setConfirmationID] = useState(null);
@@ -34,18 +45,31 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
 
-  // const fetchConfirmation = async (confID) => {
-  //   try {
-  //     const response = await axios.get(`${config.API}/confirmation/retrieve`, {
-  //       params: {confID},
-  //     });
-  //     setConfirmationData(response.data.result);
-  //   } catch (err) {
-  //     console.error("Error fetching confirmation data", err);
-  //     setError("Failed to retrieve confirmation record");
-  //   }
-  // };
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: "rgb(15 23 42)",
+      color: theme.palette.common.white,
+      fontSize: 18,
+      height: 50,
+      textAlign: "center",
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 16,
+      textAlign: "center",
+    },
+    "&:first-of-type": {
+      textAlign: "left",
+    },
+  }));
 
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    // "&:nth-of-type(odd)": {
+    //   backgroundColor: theme.palette.action.hover,
+    // },
+    "&:last-child td, &:last-child th": {
+      border: 0,
+    },
+  }));
   useEffect(() => {
     console.log(data);
     const searchRecords = async () => {
@@ -72,9 +96,9 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
             spouse_lastName: JSON.parse(data.spouse_name) || "",
           },
         });
-        setRecords(res.data.result);
-
-        console.log(res.data.result);
+        setRecords(res.data.results);
+        console.log("matchingFields", res.data.matchingFields);
+        console.log("results", res.data.results);
       } catch (err) {
         console.error("Error retrieving matching records", err);
       }
@@ -137,11 +161,12 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -150,11 +175,12 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity="info" sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity="info" sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -163,156 +189,58 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
 
       <Dialog
         fullWidth
-        maxWidth="xs"
+        maxWidth="lg"
         open={open}
         onClose={close}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
+        aria-describedby="alert-dialog-description"
+      >
         <DialogContent>
-          {/* START COMPARISON OF CERTIFICATE MODAL */}
-          <CompareRecords
-            open={openCompareModal}
-            close={closeCompareModal}
-            certData={data}
-            recordData={recordData}
-            refreshList={refreshList}
-          />
-          {/* END COMPARISON OF CERTIFICATE MODAL */}
-          <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
-            <Grid
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                margin: "10px",
-              }}>
-              <Typography
-                sx={{
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  marginBottom: "10px",
-                }}>
-                SEARCH RESULT
-              </Typography>
-              <IconButton
-                aria-label="close"
-                onClick={close}
-                sx={(theme) => ({
-                  position: "absolute",
-                  right: 8,
-                  top: 8,
-                  color: theme.palette.grey[500],
-                })}>
-                <CloseIcon />
-              </IconButton>
-
-              <Grid
-                container
-                spacing={2}
-                sx={{
-                  height: "auto",
-                  overflowY: "auto",
-                }}>
-                <Grid
-                  item
-                  xs={12}
-                  sx={{display: "flex", justifyContent: "center"}}>
-                  {records.length > 0 ? (
-                    <CheckCircleIcon sx={{color: "green", fontSize: "5em"}} />
+          <Box>
+            <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
+              <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>Name</StyledTableCell>
+                    <StyledTableCell>Matching Fields</StyledTableCell>
+                    {/* <StyledTableCell>Created On</StyledTableCell> */}
+                    {/* <StyledTableCell>Last Activity</StyledTableCell> */}
+                    <StyledTableCell>Action</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {records && records.length > 0 ? (
+                    records.map((rec) => (
+                      <StyledTableRow key={rec.requestID}>
+                        <StyledTableCell>
+                          {data.service_id == 2
+                            ? `${rec.child_name.first_name} ${rec.child_name.last_name}`
+                            : `${rec.first_name} ${rec.last_name}`}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {/* {JSON.stringify(Object.values(rec.Matches))} */}
+                          {Object.entries(rec.Matches).map(([key, value]) => (
+                            <Chip
+                              key={key}
+                              label={`${key}: ${value}`}
+                              sx={{ margin: "2px" }}
+                            />
+                          ))}
+                        </StyledTableCell>
+                        <StyledTableCell sx={{ textAlign: "center" }}>
+                          <VisibilityIcon className="cursor-pointer" />
+                          &nbsp;<span className="cursor-pointer">View</span>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))
                   ) : (
-                    <CancelIcon sx={{color: "#C34444", fontSize: "5em"}} />
+                    <StyledTableRow>
+                      <StyledTableCell>No records found</StyledTableCell>
+                    </StyledTableRow>
                   )}
-                </Grid>
-                <Grid item xs={12} sx={{textAlign: "center"}}>
-                  <Typography sx={{fontWeight: "bold"}}>
-                    {records.length} {records.length > 1 ? "RECORDS" : "RECORD"}{" "}
-                    FOUND
-                  </Typography>
-                </Grid>
-
-                {records.length > 0 ? (
-                  <Grid item xs={12}>
-                    {records.map((rec) => (
-                      <Paper
-                        key={rec.requestID}
-                        elevation={3}
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "14px 14px",
-                          backgroundColor: "#D9D9D9",
-                          marginBottom: "8px",
-                        }}>
-                        <Typography>
-                          {data.service_id == 3 || data.service_id == 4
-                            ? rec.first_name + " " + rec.last_name
-                            : rec.father_name}
-                        </Typography>
-
-                        {/* Container for buttons */}
-                        <Box sx={{display: "flex", gap: 1}}>
-                          <Button
-                            variant="contained"
-                            sx={{
-                              backgroundColor: "#355173",
-                              color: "white",
-                              borderRadius: "4px",
-                              "&:hover": {
-                                backgroundColor: "#0036B1",
-                              },
-                            }}
-                            onClick={() => handleOpenCompareModal(rec)}>
-                            View
-                          </Button>
-                        </Box>
-                      </Paper>
-                    ))}
-                  </Grid>
-                ) : null}
-              </Grid>
-
-              <DialogActions>
-                <Grid
-                  container
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: "10px",
-                  }}>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    sx={{display: "flex", justifyContent: "center"}}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={() => handleOpenDialog("cancel")}
-                      sx={{
-                        backgroundColor: "#C34444",
-                        color: "white",
-                        paddingX: "12px",
-                        "&:hover": {
-                          backgroundColor: "maroon",
-                        },
-                      }}>
-                      NOTIFY AND CANCEL REQUEST
-                    </Button>
-                  </Grid>
-                </Grid>
-              </DialogActions>
-            </Grid>
-            {/* START Confirmation Dialog */}
-            <ConfirmationDialog
-              open={dialogOpen}
-              onClose={() => setDialogOpen(false)}
-              action={currentAction}
-              onConfirm={cancelCertRequest}
-              service={"certificate"}
-            />
-            {/* END Confirmation Dialog */}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Box>
         </DialogContent>
       </Dialog>
