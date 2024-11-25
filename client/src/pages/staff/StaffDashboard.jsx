@@ -285,8 +285,8 @@ const StaffDashboard = () => {
           </Paper>
         </Box>
 
-        <Grid container spacing={0.1} marginTop={"2em"}>
-          <Grid item xs={12} sm={4.3} sx={{padding: 5}}>
+        <Grid container spacing={1.1} marginTop={"2em"}>
+          <Grid item xs={12} sm={4} sx={{padding: 2}}>
             <Paper elevation={4} sx={{padding: 3}}>
               <Typography
                 sx={{paddingBottom: 3, fontSize: "1.2em", fontWeight: "bold"}}>
@@ -341,7 +341,7 @@ const StaffDashboard = () => {
             </Paper>
           </Grid>
 
-          <Grid item xs={12} sm={7.7}>
+          <Grid item xs={12} sm={8} sx={{padding: 0.1}}>
             <Paper elevation={4} sx={{padding: 3}}>
               <Typography
                 sx={{paddingBottom: 3, fontSize: "1.2em", fontWeight: "bold"}}>

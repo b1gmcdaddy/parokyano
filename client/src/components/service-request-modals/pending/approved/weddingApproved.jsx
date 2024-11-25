@@ -652,6 +652,10 @@ const WeddingApproved = ({open, data, handleClose, refreshList}) => {
 
                 <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
                   <Button
+                    disabled={
+                      !completeRequirements ||
+                      formData.payment_status == "unpaid"
+                    }
                     variant="contained"
                     onClick={() => handleOpenDialog("reschedule")}
                     sx={{

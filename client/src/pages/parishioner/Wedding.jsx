@@ -57,7 +57,7 @@ const Wedding = () => {
   const [open, setOpen] = useState(false);
   const dateToday = new Date().toJSON().slice(0, 10);
   const [errors, setErrors] = useState({});
-  const hash = dateToday + generateHash().slice(0, 20);
+  // const hash = dateToday + generateHash().slice(0, 20);
   const id = 7; // sa database, sunday wedding ang gi list ra, since there is no way of securing a
   // date ahead of time without consulting the priest, default lang sah siya na sunday wedding(1000PHP).
   // change lang ang amount when date is changed to a non sunday date on admin side.
@@ -96,7 +96,7 @@ const Wedding = () => {
     contact_no: "",
     relationship: "", // MARITAL STATUS
     sponsors: [{}, {}, {}, {}],
-    transaction_no: hash,
+    transaction_no: "",
     service_id: id,
     isParishioner: "",
   });
