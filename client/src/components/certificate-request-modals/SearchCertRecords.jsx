@@ -203,36 +203,104 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
                   <TableRow>
                     <StyledTableCell>Name</StyledTableCell>
                     <StyledTableCell>Matching Fields</StyledTableCell>
-                    {/* <StyledTableCell>Created On</StyledTableCell> */}
+                    <StyledTableCell>Percentage</StyledTableCell>
                     {/* <StyledTableCell>Last Activity</StyledTableCell> */}
                     <StyledTableCell>Action</StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {records && records.length > 0 ? (
-                    records.map((rec) => (
-                      <StyledTableRow key={rec.requestID}>
-                        <StyledTableCell>
-                          {data.service_id == 2
-                            ? `${rec.child_name.first_name} ${rec.child_name.last_name}`
-                            : `${rec.first_name} ${rec.last_name}`}
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          {/* {JSON.stringify(Object.values(rec.Matches))} */}
-                          {Object.entries(rec.Matches).map(([key, value]) => (
-                            <Chip
-                              key={key}
-                              label={`${key}: ${value}`}
-                              sx={{ margin: "2px" }}
-                            />
-                          ))}
-                        </StyledTableCell>
-                        <StyledTableCell sx={{ textAlign: "center" }}>
-                          <VisibilityIcon className="cursor-pointer" />
-                          &nbsp;<span className="cursor-pointer">View</span>
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    ))
+                    records.map((rec) => {
+                      // Determine the fields to compare based on service_id
+                      const fieldsToCompare = Object.keys(rec).filter(
+                        (key) => key !== "Matches"
+                      );
+
+                      // Count the number of matching fields
+                      const matchingFieldsCount = fieldsToCompare.reduce(
+                        (count, field) => {
+                          if (data.service_id === 2) {
+                            // Special handling for service_id 2
+                            if (field === "child_name") {
+                              const childNameMatches = [
+                                "first_name",
+                                "last_name",
+                              ].reduce((childCount, nameField) => {
+                                return data[nameField] ===
+                                  rec.child_name[nameField]
+                                  ? childCount + 1
+                                  : childCount;
+                              }, 0);
+                              return count + childNameMatches;
+                            }
+                          } else {
+                            // General case for other service_ids
+                            if (
+                              data[field] &&
+                              rec[field] &&
+                              data[field] === rec[field]
+                            ) {
+                              return count + 1;
+                            }
+                          }
+                          return count;
+                        },
+                        0
+                      );
+
+                      // Calculate the matching percentage
+                      const totalFields =
+                        fieldsToCompare.length +
+                        (data.service_id === 2 ? 2 : 0); // Add 2 for child_name fields
+                      const matchingPercentage = (
+                        (matchingFieldsCount / totalFields) *
+                        100
+                      ).toFixed(2);
+
+                      return (
+                        <StyledTableRow key={rec.requestID}>
+                          <StyledTableCell>
+                            {data.service_id == 2
+                              ? `${rec.child_name.first_name} ${rec.child_name.last_name}`
+                              : `${rec.first_name} ${rec.last_name}`}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            {Object.entries(rec.Matches).map(([key, value]) => (
+                              <Chip
+                                key={key}
+                                label={`${key}: ${value}`}
+                                sx={{ margin: "2px" }}
+                              />
+                            ))}
+                            {data.service_id === 2 && (
+                              <>
+                                {data.first_name ===
+                                  rec.child_name.first_name && (
+                                  <Chip
+                                    label={`first_name: ${rec.child_name.first_name}`}
+                                    sx={{ margin: "2px" }}
+                                  />
+                                )}
+                                {data.last_name ===
+                                  rec.child_name.last_name && (
+                                  <Chip
+                                    label={`last_name: ${rec.child_name.last_name}`}
+                                    sx={{ margin: "2px" }}
+                                  />
+                                )}
+                              </>
+                            )}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            {`Matching: ${matchingPercentage}%`}
+                          </StyledTableCell>
+                          <StyledTableCell sx={{ textAlign: "center" }}>
+                            <VisibilityIcon className="cursor-pointer" />
+                            &nbsp;<span className="cursor-pointer">View</span>
+                          </StyledTableCell>
+                        </StyledTableRow>
+                      );
+                    })
                   ) : (
                     <StyledTableRow>
                       <StyledTableCell>No records found</StyledTableCell>
