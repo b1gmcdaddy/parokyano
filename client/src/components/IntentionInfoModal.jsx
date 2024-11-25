@@ -106,10 +106,6 @@ const SoulsInfoModal = ({open, data, close, refreshList}) => {
     setDialogOpen(true);
   };
 
-  useEffect(() => {
-    console.log(currentUser);
-  }, [open, data]);
-
   return (
     <>
       {error && (

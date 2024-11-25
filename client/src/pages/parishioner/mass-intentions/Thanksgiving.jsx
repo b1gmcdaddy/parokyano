@@ -60,11 +60,11 @@ const Thanksgiving = () => {
   });
   const id = 1;
   const dateToday = new Date().toJSON().slice(0, 10);
+  const [hash, setHash] = useState("");
   const [schedule, setSchedule] = useState({slots: ["00:00:00"]});
   const [modalData, setModalData] = useState({});
   const [openCash, setOpenCash] = useState(false);
   const [openGCash, setOpenGCash] = useState(false);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [errors, setErrors] = useState({});
 
   // form data
@@ -86,7 +86,7 @@ const Thanksgiving = () => {
     type: "Thanksgiving",
     contact_no: "",
     service_id: id,
-    transaction_no: hash,
+    transaction_no: "",
   });
 
   useEffect(() => {
@@ -132,16 +132,6 @@ const Thanksgiving = () => {
     console.log(formData.mass_date);
   };
 
-  const paymentInfo = {
-    transaction_no: formData.transaction_no,
-    fee: formData.donation_amount,
-    requirements: null,
-    message:
-      formData.payment_method === "cash"
-        ? "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!"
-        : "Your request has been received. You will receive a text once your payment has been verified! Thank you and God bless!",
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     let validate = ValidateForm(formData);
@@ -149,7 +139,24 @@ const Thanksgiving = () => {
 
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
-        await axios.post(`${config.API}/request/create-intention`, formData);
+        const intentionCount = await generateHash();
+        const generatedHash = dateToday + id + intentionCount;
+        setHash(generatedHash);
+        const updatedFormData = {...formData, transaction_no: generatedHash};
+        await axios.post(
+          `${config.API}/request/create-intention`,
+          updatedFormData
+        );
+
+        const paymentInfo = {
+          transaction_no: updatedFormData.transaction_no,
+          fee: updatedFormData.donation_amount,
+          requirements: null,
+          message:
+            updatedFormData.payment_method === "cash"
+              ? "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!"
+              : "Your request has been received. You will receive a text once your payment has been verified! Thank you and God bless!",
+        };
         setModalData(paymentInfo);
         setOpenCash(true);
       } catch (err) {

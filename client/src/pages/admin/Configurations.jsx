@@ -362,7 +362,7 @@ const Configurations = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Box sx={{}}>
-                <TableContainer component={Paper} sx={{overflowX: "auto"}}>
+                <TableContainer component={Paper} sx={{overflow: "auto"}}>
                   <Table sx={{minWidth: 700}} aria-label="customized table">
                     <TableHead>
                       <TableRow>
@@ -430,7 +430,7 @@ const Configurations = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Box sx={{}}>
-                <TableContainer component={Paper} sx={{overflowX: "auto"}}>
+                <TableContainer component={Paper} sx={{overflow: "auto"}}>
                   <Table sx={{minWidth: 700}} aria-label="customized table">
                     <TableHead>
                       <TableRow>

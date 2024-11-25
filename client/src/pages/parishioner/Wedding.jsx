@@ -57,12 +57,10 @@ const Wedding = () => {
   const [open, setOpen] = useState(false);
   const dateToday = new Date().toJSON().slice(0, 10);
   const [errors, setErrors] = useState({});
-  // const hash = dateToday + generateHash().slice(0, 20);
-  const id = 7; // sa database, sunday wedding ang gi list ra, since there is no way of securing a
-  // date ahead of time without consulting the priest, default lang sah siya na sunday wedding(1000PHP).
-  // change lang ang amount when date is changed to a non sunday date on admin side.
+  const id = 7;
   const [tabValue, setTabValue] = useState(1);
-
+  const [hash, setHash] = useState("");
+  const [modalData, setModalData] = useState({});
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
@@ -175,13 +173,6 @@ const Wedding = () => {
     ];
   }
 
-  const modalData = {
-    message:
-      "Please wait for the parish to communicate for further instructions. You may call us at (032) 346-9560 / +63969-021-7771 to follow-up after 2 days",
-    req: requirements,
-    transaction_no: formData.transaction_no,
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validate = ValidateForm(formData);
@@ -189,7 +180,22 @@ const Wedding = () => {
     console.log(validate);
     if (Object.keys(validate) == 0 && validate.constructor == Object) {
       try {
-        axios.post(`${config.API}/request/create-wedding`, formData);
+        const intentionCount = await generateHash();
+        const generatedHash = dateToday + id + intentionCount;
+        setHash(generatedHash);
+        const updatedFormData = {...formData, transaction_no: generatedHash};
+        await axios.post(
+          `${config.API}/request/create-wedding`,
+          updatedFormData
+        );
+
+        const modalData = {
+          message:
+            "Please wait for the parish to communicate for further instructions. You may call us at (032) 346-9560 / +63969-021-7771 to follow-up after 2 days",
+          req: requirements,
+          transaction_no: updatedFormData.transaction_no,
+        };
+        setModalData(modalData);
         setOpen(true);
         console.log(open);
       } catch (err) {
