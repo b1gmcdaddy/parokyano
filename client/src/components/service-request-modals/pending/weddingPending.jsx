@@ -164,17 +164,17 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
     ) {
       setFormData((prevState) => ({
         ...prevState,
-        donation: paymentFee + 1000.0,
+        donation: 1000.0,
       }));
     } else {
-      data.isParishioner && data.donation == 0
+      data.isParishioner
         ? setFormData((prevState) => ({
             ...prevState,
-            donation: paymentFee + 3000.0,
+            donation: 3000.0,
           }))
         : setFormData((prevState) => ({
             ...prevState,
-            donation: paymentFee + 3500.0,
+            donation: 3500.0,
           }));
     }
     console.log("Base Fee:", formData?.donation);
@@ -297,17 +297,9 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
         });
       } else {
         await Promise.all([
-          axios.put(`${config.API}/request/approve-dynamic`, null, {
-            params: {
-              col: "interview_date",
-              val: dayjs(formData.interview_date).format("YYYY-MM-DD"),
-              col2: "interview_time",
-              val2: formData.interview_time,
-              col3: "priest_id",
-              val3: formData.priest_id,
-              col4: "requestID",
-              val4: formData.requestID,
-            },
+          axios.put(`${config.API}/request/update-bulk`, {
+            formData,
+            id: data.requestID,
           }),
 
           axios.post(`${config.API}/priest/createPriestSched`, {
@@ -328,6 +320,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
           refreshList(),
         ]);
       }
+      refreshList();
     } catch (err) {
       setError({
         message: err.response?.data?.message,
@@ -740,8 +733,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   <hr className="my-1" />
                 </Grid>
 
-                {completeRequirements == 1 &&
-                formData.payment_status == "paid" ? (
+                {completeRequirements == 1 ? (
                   <>
                     <Grid item xs={12} sm={3}>
                       <label>Wedding Priest:</label>
@@ -827,7 +819,8 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                         disabled={
                           !available ||
                           available == "Unavailable" ||
-                          formData.payment_status == "unpaid"
+                          formData.payment_status == "unpaid" ||
+                          completeRequirements != 1
                         }
                         variant="contained"
                         onClick={() => handleOpenDialog("approve")}
