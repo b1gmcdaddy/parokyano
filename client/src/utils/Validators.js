@@ -119,13 +119,30 @@ export default function ValidateForm(data) {
 
   if (data.sponsors != null) {
     data.sponsors.forEach((sponsor, index) => {
-      if (sponsor.age < 18) {
-        errors[
-          `sponsor_${index}_age`
-        ] = `Sponsor must be at least 18 years old.`;
+      if (sponsor.age <= 0) {
+        errors[`sponsor_${index}_age`] = "Age must be a positive number.";
+      } else if (sponsor.age < 18) {
+        errors[`sponsor_${index}_age`] = "Sponsor must be at least 18 years old.";
       }
     });
   }
 
+    // Validate father and mother age
+    if (data?.details?.father_age != null) {
+      if (data.details.father_age <= 0) {
+        errors.father_age = "Age must be a positive number.";
+      } else if (data.details.father_age < 12) {
+        errors.father_age = "Age must be realistic.";
+      }
+    }
+  
+    if (data?.details?.mother_age != null) {
+      if (data.details.mother_age <= 0) {
+        errors.mother_age = "Age must be a positive number.";
+      } else if (data.details.mother_age < 12) {
+        errors.mother_age = "Age must be realistic.";
+      }
+    }
+    
   return errors;
 }
