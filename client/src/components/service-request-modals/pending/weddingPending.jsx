@@ -157,8 +157,6 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
     }, "500");
   }, [open, data]);
 
-  // ... existing code ...
-
   useEffect(() => {
     if (!formData?.preferred_date || !formData?.preferred_time) return;
 
@@ -188,7 +186,6 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
       });
     } catch (error) {
       console.error("Error calculating donation amount:", error);
-      // Fallback to default amount if there's an error
       setFormData((prevState) => ({
         ...prevState,
         donation: 3500.0,
@@ -391,10 +388,10 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
           if (formData.payment_status == "paid" && completeRequirements == 1) {
             const res = await axios.put(`${config.API}/request/update-bulk`, {
               formData: {
-                ...formData, // Spread the existing form data
-                donation: formData.donation + paymentFee, // Update the donation field
+                ...formData,
+                donation: formData.donation + paymentFee, // fee + additional from sponsors
               },
-              id: data.requestID, // Include the request ID
+              id: data.requestID,
             });
 
             await axios.put(`${config.API}/wedding/update-bulk`, {
@@ -688,6 +685,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     <DatePicker
                       fullWidth
                       name="interview_date"
+                      disablePast
                       sx={TextFieldStyle}
                       value={
                         formData.interview_date
@@ -770,6 +768,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           fullWidth
+                          disablePast
                           minDate={
                             formData.interview_date
                               ? dayjs(formData.interview_date).add(1, "day")
