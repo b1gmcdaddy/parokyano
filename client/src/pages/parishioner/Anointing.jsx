@@ -32,15 +32,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ValidateForm from "../../utils/Validators";
 
-const containerStyle = {
-  margin: "0px",
-  padding: "0px",
-  display: "flex",
-  flexDirection: "column",
-  minHeight: "100vh",
-  minWidth: "100%",
-};
-
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
@@ -59,9 +50,35 @@ const Anointing = () => {
   const [captchaValue, setCaptchaValue] = useState(null);
   const [open, setOpen] = useState(false);
   const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [priestList, setPriestList] = useState([]);
   const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    first_name: "",
+    age: "",
+    contact_no: "",
+    requested_by: "",
+    address: "",
+    relationship: "",
+    patient_status: "",
+    preferred_date: "",
+    preferred_time: "",
+    preferred_priest: "",
+    isParishioner: "",
+    transaction_no: "",
+    service_id: id,
+  });
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
 
   useEffect(() => {
     const fetchPriest = async () => {
@@ -78,23 +95,8 @@ const Anointing = () => {
       }
     };
     fetchPriest();
+    createTransactionNo();
   }, []);
-
-  const [formData, setFormData] = useState({
-    first_name: "",
-    age: "",
-    contact_no: "",
-    requested_by: "",
-    address: "",
-    relationship: "",
-    patient_status: "",
-    preferred_date: "",
-    preferred_time: null,
-    preferred_priest: null,
-    isParishioner: "",
-    transaction_no: hash,
-    service_id: id,
-  });
 
   const modalData = {
     message:
@@ -104,10 +106,9 @@ const Anointing = () => {
   };
 
   const handlesubmit = (e) => {
-    e.preventDefault;
+    e.preventDefault();
     const validate = ValidateForm(formData);
     setErrors(validate);
-    console.log(validate);
     if (Object.keys(validate) == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-anointing`, formData);
@@ -117,7 +118,6 @@ const Anointing = () => {
         console.log("error submitting to server", err);
       }
     }
-    return;
   };
 
   const handleChange = (e) => {
@@ -132,10 +132,6 @@ const Anointing = () => {
   const handleTimeChange = (name, time) => {
     setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
-
-  useEffect(() => {
-    console.log(formData.preferred_time);
-  }, [formData.preferred_time]);
 
   const handleCaptchaChange = (value) => {
     setCaptchaValue(value);

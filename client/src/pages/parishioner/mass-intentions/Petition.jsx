@@ -53,9 +53,9 @@ const Petition = () => {
   const [captchaValue, setCaptchaValue] = useState(null);
   const [schedule, setSchedule] = useState({ slots: ["00:00:00"] });
   const [modalData, setModalData] = useState({});
+  const [hash, setHash] = useState("");
   const id = 1;
   var dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + id + generateHash();
   const [errors, setErrors] = useState({});
 
   // form data layout
@@ -78,7 +78,22 @@ const Petition = () => {
     setOpenGCash(true);
   };
 
-  // getters
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
+
+  useEffect(() => {
+    createTransactionNo();
+  }, []);
+
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
@@ -92,8 +107,6 @@ const Petition = () => {
           }
         );
         setSchedule(response.data);
-        // console.log(formData.mass_date);
-        // console.log(schedule);
       } catch (error) {
         console.error("error fetching schedule", error);
       }
@@ -124,7 +137,6 @@ const Petition = () => {
     e.preventDefault();
     let validate = ValidateForm(formData);
     setErrors(validate);
-
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
         await axios.post(`${config.API}/request/create-intention`, formData);

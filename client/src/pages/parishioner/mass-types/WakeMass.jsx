@@ -58,9 +58,34 @@ const WakeMass = () => {
   const [open, setOpen] = useState(false);
   const [captchaValue, setCaptchaValue] = useState(null);
   const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [priestList, setPriestList] = useState([]);
   const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    first_name: "", // full name ni sa deceased
+    contact_no: "",
+    requested_by: "",
+    relationship: "",
+    preferred_date: "",
+    preferred_time: "",
+    preferred_priest: null,
+    isParishioner: "",
+    transaction_no: "",
+    service_id: id,
+    type: null,
+    mass_date: null, // DO NOT DELETE
+  });
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
 
   useEffect(() => {
     const fetchPriest = async () => {
@@ -77,22 +102,8 @@ const WakeMass = () => {
       }
     };
     fetchPriest();
+    createTransactionNo();
   }, []);
-
-  const [formData, setFormData] = useState({
-    first_name: "", // full name ni sa deceased
-    contact_no: "",
-    requested_by: "",
-    relationship: "",
-    preferred_date: "",
-    preferred_time: "",
-    preferred_priest: null,
-    isParishioner: "",
-    transaction_no: hash,
-    service_id: id,
-    type: null,
-    mass_date: null, // DO NOT DELETE
-  });
 
   const modalData = {
     message:
@@ -103,7 +114,6 @@ const WakeMass = () => {
 
   const handlesubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
     const validate = ValidateForm(formData);
     setErrors(validate);
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {

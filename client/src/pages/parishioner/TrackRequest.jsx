@@ -148,7 +148,7 @@ const TrackRequest = () => {
         sx={{
           backgroundSize: "cover",
           backgroundPosition: "center",
-          minHeight: "85vh",
+          minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
         }}>
@@ -318,7 +318,7 @@ const TrackRequest = () => {
                       alignItems: "center",
                       padding: {xs: 2, sm: 4}, // Adjust padding for small screens
                       height: "400px",
-                      overflowY: "auto",
+
                       position: "relative",
                     }}>
                     <Typography
@@ -340,10 +340,13 @@ const TrackRequest = () => {
                         : "FINISHED"}
                     </Typography>
 
-                    <div className="mt-5">
+                    <div className="mt-5 w-full h-3/4 overflow-y-auto">
                       <div
                         className="flex gap-x-3"
-                        style={{flexDirection: {xs: "column", sm: "row"}}}>
+                        style={{
+                          flexDirection: {xs: "column", sm: "row"},
+                          overflowY: "auto",
+                        }}>
                         <div className="w-28 text-end">
                           <Typography>
                             {request.date_requested.substring(0, 10)}
@@ -352,7 +355,7 @@ const TrackRequest = () => {
 
                         <div
                           className={`relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-gray-300 ${
-                            request.status.toLowerCase() === "pending" &&
+                            request.status.toLowerCase() === "pending" ||
                             activity == null
                               ? "after:hidden"
                               : ""

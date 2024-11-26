@@ -24,6 +24,7 @@
     "@mui/x-date-pickers": "^7.11.0",
     "axios": "^1.7.2",
     "chart.js": "^4.4.6",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "crypto": "^1.0.1",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.12",

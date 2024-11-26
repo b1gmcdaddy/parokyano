@@ -61,7 +61,7 @@ export default function ValidateForm(data) {
 
   // DONATION VALIDATION
   if (data.donation_amount != null) {
-    if (isNaN(Number(data.donation_amount))) {
+    if (isNaN(Number(data.donation_amount)) || data.donation_amount < 1) {
       errors.donation_amount = "Not a valid amount";
     }
   }

@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import config from "../../config";
-//import generateHash from "../../utils/GenerateHash";
+import generateHash from "../../utils/GenerateHash";
 import {
   DatePicker,
   LocalizationProvider,
@@ -56,15 +56,13 @@ const inputstlying = {
 };
 
 const Baptism = () => {
-  //const dateToday = new Date().toJSON().slice(0, 10);
-  //const hash = dateToday + generateHash().slice(0, 20);
+  const dateToday = new Date().toJSON().slice(0, 10);
   // const [captchaValue, setCaptchaValue] = useState(null);
   const [modalData, setModalData] = useState({});
   const [openCash, setOpenCash] = useState(false);
   const [openGCash, setOpenGCash] = useState(false);
   const [priests, setPriests] = useState([]);
   const [errors, setErrors] = useState({});
-
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
@@ -93,7 +91,7 @@ const Baptism = () => {
     priest_id: "",
     payment_method: "",
     gcashRefNo: "",
-    //transaction_no: hash,
+    transaction_no: "",
     service_id: 5,
     sponsors: [
       {
@@ -103,10 +101,6 @@ const Baptism = () => {
     ],
     donation: 1600.0,
   });
-
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
 
   useEffect(() => {
     if (
@@ -144,8 +138,21 @@ const Baptism = () => {
     }
   };
 
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + 5 + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
+
   useEffect(() => {
     getPriests();
+    createTransactionNo();
   }, []);
 
   const openQR = () => {
@@ -163,17 +170,11 @@ const Baptism = () => {
 
   const handleDateChange = (name, date) => {
     setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
-    console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    console.log(time);
     setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
-
-  useEffect(() => {
-    getPriests();
-  }, [formData]);
 
   const handleDetails = (e) => {
     setFormData((prevState) => ({
@@ -218,10 +219,9 @@ const Baptism = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     const validate = ValidateForm(formData);
     setErrors(validate);
-    if (Object.keys(validate).length == 0 && validate.constructor == Object ) {
+    if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
         await axios.post(`${config.API}/request/create-baptism`, formData);
 
@@ -231,7 +231,6 @@ const Baptism = () => {
         console.log(error);
       }
     }
-    return;
   };
 
   return (

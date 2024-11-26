@@ -1,25 +1,16 @@
 import axios from "axios";
-import config from "../config"; // Assuming you have a config file for API URLs
+import config from "../config";
 
-export default function generateHash() {
-  const fetchIntentionCount = async () => {
+const generateHash = async () => {
+  try {
     const response = await axios.get(
       `${config.API}/configuration/intentionCount`
     );
-    console.log(response.data);
+    return response.data.count;
+  } catch (error) {
+    console.error("Error fetching intention count:", error);
+    throw new Error("Failed to generate hash");
+  }
+};
 
-    if (response.status === 200) {
-      const intentionCount = response.data;
-      console.log(response.data);
-      return intentionCount;
-    } else {
-      console.error("Failed to fetch intention count");
-      return null;
-    }
-    // } catch (error) {
-    //   console.error("Error fetching intention count:", error);
-    //   return null;
-    // }
-  };
-  fetchIntentionCount();
-}
+export default generateHash;

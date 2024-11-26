@@ -157,29 +157,44 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
     }, "500");
   }, [open, data]);
 
+  // ... existing code ...
+
   useEffect(() => {
-    if (
-      dayjs(formData?.preferred_date).get("day") === 0 && // 0 means Sunday
-      dayjs(formData?.preferred_time, "HH:mm:ss").hour() === 6
-    ) {
+    if (!formData?.preferred_date || !formData?.preferred_time) return;
+
+    try {
+      const isSpecialSchedule =
+        dayjs(formData.preferred_date).isValid() &&
+        dayjs(formData.preferred_time, "HH:mm:ss").isValid() &&
+        dayjs(formData.preferred_date).day() === 0 && // Sunday
+        dayjs(formData.preferred_time, "HH:mm:ss").hour() === 6; // 6 AM
+
+      // Set donation amount based on conditions
       setFormData((prevState) => ({
         ...prevState,
-        donation: 1000.0,
+        donation: isSpecialSchedule
+          ? 1000.0 // Special schedule price
+          : data?.isParishioner
+          ? 3000.0 // Parishioner price
+          : 3500.0, // Non-parishioner price
       }));
-    } else {
-      data.isParishioner
-        ? setFormData((prevState) => ({
-            ...prevState,
-            donation: 3000.0,
-          }))
-        : setFormData((prevState) => ({
-            ...prevState,
-            donation: 3500.0,
-          }));
+
+      // Optional: Log for debugging
+      console.log({
+        isSpecialSchedule,
+        isParishioner: data?.isParishioner,
+        baseFee: formData?.donation,
+        additionalFee: paymentFee,
+      });
+    } catch (error) {
+      console.error("Error calculating donation amount:", error);
+      // Fallback to default amount if there's an error
+      setFormData((prevState) => ({
+        ...prevState,
+        donation: 3500.0,
+      }));
     }
-    console.log("Base Fee:", formData?.donation);
-    console.log("Additional:", paymentFee);
-  }, [formData?.preferred_date, formData?.preferred_time]);
+  }, [formData?.preferred_date, formData?.preferred_time, data?.isParishioner]);
 
   const closeInfoModal = (action) => {
     if (action == "approve") {

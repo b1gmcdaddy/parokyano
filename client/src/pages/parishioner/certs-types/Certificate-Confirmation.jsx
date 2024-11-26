@@ -52,7 +52,6 @@ const inputstlying = {
 const CertificateConfirmation = () => {
   const id = 2;
   const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [open, setOpen] = useState(false);
   const [modalData, setModalData] = useState({});
   const [serviceInfo, setServiceInfo] = useState({});
@@ -75,10 +74,22 @@ const CertificateConfirmation = () => {
       line_no: "",
     },
     service_id: id,
-    transaction_no: hash,
+    transaction_no: "",
     date_requested: dateToday,
     purpose: "",
   });
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
 
   useEffect(() => {
     const fetchServiceInfo = async () => {
@@ -98,6 +109,7 @@ const CertificateConfirmation = () => {
       }
     };
     fetchServiceInfo();
+    createTransactionNo();
   }, []);
 
   // event handlers
@@ -124,8 +136,7 @@ const CertificateConfirmation = () => {
     e.preventDefault();
     const validate = ValidateForm(formData);
     setErrors(validate);
-    console.log(validate);
-    console.log(formData);
+
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-certificate`, formData);

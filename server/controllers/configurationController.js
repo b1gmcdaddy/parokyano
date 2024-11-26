@@ -5,24 +5,50 @@ const _ = require("lodash");
 const { parse } = require("dotenv");
 const dayjs = require("dayjs");
 
+// const getIntentionCount = (req, res) => {
+//   console.log("api1");
+//   db.query(
+//     `SELECT intentionCount FROM configuration WHERE configurationID = 1`,
+
+//     (err, result) => {
+//       const count = result[0]?.intentionCount;
+//       console.log(count);
+//       if (err) {
+//         return res.status(500).json({message: "Internal server error"});
+//       }
+//       db.query(
+//         `UPDATE configuration SET intentionCount = intentionCount + 1 WHERE configurationID = 1`,
+//         (err, updateResult) => {
+//           if (err) {
+//             return res.status(500).json({message: "Internal server error"});
+//           }
+//           return res.status(200).json({intentionCount: count});
+//         }
+//       );
+//     }
+//   );
+// };
+
 const getIntentionCount = (req, res) => {
-  console.log("api1");
   db.query(
     `SELECT intentionCount FROM configuration WHERE configurationID = 1`,
-
     (err, result) => {
-      const count = result[0]?.intentionCount;
-      console.log(count);
       if (err) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: "server error" });
       }
+
+      const count = result[0]?.intentionCount;
+      if (count === undefined || count === null) {
+        return res.status(404).json({ message: "count not found" });
+      }
+      // Step 4: Increment the count for the next transaction
       db.query(
         `UPDATE configuration SET intentionCount = intentionCount + 1 WHERE configurationID = 1`,
         (err, updateResult) => {
           if (err) {
             return res.status(500).json({ message: "Internal server error" });
           }
-          return res.status(200).send(count);
+          return res.status(200).json({ count });
         }
       );
     }

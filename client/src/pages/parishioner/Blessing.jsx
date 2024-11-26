@@ -56,9 +56,34 @@ const Blessing = () => {
   // const [otherValue, setOtherValue] = useState("");
   const [open, setOpen] = useState(false);
   const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [priestList, setPriestList] = useState([]);
   const [errors, setErrors] = useState({});
+  const id = 13;
+  const [formData, setFormData] = useState({
+    type: "",
+    first_name: "",
+    address: "",
+    requested_by: "",
+    contact_no: "",
+    preferred_date: "",
+    preferred_time: "",
+    preferred_priest: "",
+    isParishioner: "",
+    transaction_no: "",
+    service_id: id,
+  });
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
 
   useEffect(() => {
     const fetchPriest = async () => {
@@ -70,27 +95,13 @@ const Blessing = () => {
           },
         });
         setPriestList(response.data);
-        console.log(response.data);
       } catch (err) {
         console.error(err);
       }
     };
     fetchPriest();
+    createTransactionNo();
   }, []);
-
-  const [formData, setFormData] = useState({
-    type: "",
-    first_name: "",
-    address: "",
-    requested_by: "",
-    contact_no: "",
-    preferred_date: "",
-    preferred_time: "",
-    preferred_priest: null,
-    isParishioner: "",
-    transaction_no: hash,
-    service_id: 13,
-  });
 
   const modalData = {
     message:
@@ -111,10 +122,6 @@ const Blessing = () => {
   const handleTimeChange = (name, time) => {
     setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
-
-  useEffect(() => {
-    console.log(formData.preferred_time);
-  }, [formData.preferred_time]);
 
   const handlesubmit = (e) => {
     e.preventDefault();

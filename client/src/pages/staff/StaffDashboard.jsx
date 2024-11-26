@@ -25,6 +25,7 @@ import axios from "axios";
 import config from "../../config";
 import util from "../../utils/DateTimeFormatter";
 import {Pie, Line} from "react-chartjs-2";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -44,6 +45,7 @@ ChartJS.register(
   PointElement,
   ArcElement,
   LineElement,
+  ChartDataLabels,
   Title,
   Tooltip,
   Legend
@@ -150,10 +152,33 @@ const StaffDashboard = () => {
     plugins: {
       legend: {
         display: true,
-        position: "left",
+        position: "right",
         align: "center",
+        overflowX: "auto",
         labels: {
           boxWidth: 10,
+          font: {
+            size: 14,
+          },
+          padding: 20,
+          generateLabels: (chart) => {
+            const datasets = chart.data.datasets[0];
+            return chart.data.labels.map((label, index) => ({
+              text: `${label}: ${datasets.data[index]}`,
+              fillStyle: datasets.backgroundColor[index],
+              hidden: false,
+              index: index,
+            }));
+          },
+        },
+      },
+      datalabels: {
+        color: "white", // Set the color of the labels inside the pie chart
+        font: {
+          size: 16,
+        },
+        formatter: (value, context) => {
+          return value; // Return the data value (requests) as the label
         },
       },
     },
@@ -218,8 +243,10 @@ const StaffDashboard = () => {
               backgroundColor: "#e8e8e8",
             }}>
             <Box sx={{display: "flex", alignItems: "center"}}>
-              <FontAwesomeIcon icon={faChurch} />
-              <Typography sx={{marginLeft: "8px", fontWeight: "bold"}}>
+              <FontAwesomeIcon icon={faChurch} className="text-2xl" />
+              <Typography
+                variant="h6"
+                sx={{marginLeft: "16px", fontWeight: "bold"}}>
                 Service Requests
               </Typography>
             </Box>
@@ -243,8 +270,10 @@ const StaffDashboard = () => {
               width: {md: "35%"},
             }}>
             <Box sx={{display: "flex", alignItems: "center"}}>
-              <FontAwesomeIcon icon={faStamp} />
-              <Typography sx={{marginLeft: "8px", fontWeight: "bold"}}>
+              <FontAwesomeIcon icon={faStamp} className="text-2xl" />
+              <Typography
+                variant="h6"
+                sx={{marginLeft: "16px", fontWeight: "bold"}}>
                 Certificate Requests
               </Typography>
             </Box>
@@ -268,8 +297,10 @@ const StaffDashboard = () => {
               backgroundColor: "#e8e8e8",
             }}>
             <Box sx={{display: "flex", alignItems: "center"}}>
-              <FontAwesomeIcon icon={faHandsPraying} />
-              <Typography sx={{marginLeft: "8px", fontWeight: "bold"}}>
+              <FontAwesomeIcon icon={faHandsPraying} className="text-2xl" />
+              <Typography
+                variant="h6"
+                sx={{marginLeft: "16px", fontWeight: "bold"}}>
                 Mass Intentions
               </Typography>
             </Box>
@@ -301,7 +332,7 @@ const StaffDashboard = () => {
               massIntentions === 0 ? (
                 <div
                   style={{
-                    height: "200px",
+                    height: "250px",
                   }}>
                   <Typography
                     variant="body2"
@@ -313,7 +344,7 @@ const StaffDashboard = () => {
                   </Typography>
                 </div>
               ) : (
-                <div style={{height: "200px"}}>
+                <div style={{height: "250px"}}>
                   <Pie
                     data={{
                       labels: [
@@ -325,16 +356,17 @@ const StaffDashboard = () => {
                         {
                           label: "# of Requests",
                           data: [serviceRequests, certRequests, massIntentions],
-                          backgroundColor: ["#355173", "#247E38", "#D9D9D9"],
+                          backgroundColor: ["#355173", "#247E38", "#899499"],
                           hoverBackgroundColor: [
                             "#355173",
                             "#247E38",
-                            "#D9D9D9",
+                            "#899499",
                           ],
                         },
                       ],
                     }}
                     options={pieOptions}
+                    plugins={[ChartDataLabels]}
                   />
                 </div>
               )}
@@ -347,7 +379,7 @@ const StaffDashboard = () => {
                 sx={{paddingBottom: 3, fontSize: "1.2em", fontWeight: "bold"}}>
                 Number of Requests Received for {currentYear}
               </Typography>
-              <div style={{height: "200px"}}>
+              <div style={{height: "250px"}}>
                 {loading ? (
                   <p>Loading data...</p>
                 ) : (
@@ -360,6 +392,19 @@ const StaffDashboard = () => {
                           legend: {
                             display: false,
                             position: "top",
+                          },
+                          tooltip: {
+                            enabled: true,
+                          },
+                          datalabels: {
+                            display: true,
+                            align: "top",
+                            anchor: "end",
+                            font: {
+                              weight: "bold",
+                              size: 12,
+                            },
+                            formatter: (value) => value,
                           },
                         },
                         scales: {
