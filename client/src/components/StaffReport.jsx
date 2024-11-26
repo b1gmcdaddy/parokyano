@@ -8,6 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Grid,
 } from "@mui/material";
 import React, {useState, useEffect} from "react";
 import logo from "../assets/logo.png";
@@ -19,9 +20,7 @@ import util from "../utils/DateTimeFormatter";
 const formatDate = (date) => date.toISOString().split("T")[0];
 
 const now = new Date();
-//   const lastMonth =
 const last = formatDate(new Date(now.getFullYear(), now.getMonth() + 1, 1));
-
 const start = formatDate(new Date(now.getFullYear(), now.getMonth(), 1));
 
 const StaffReport = ({startDate, endDate, category}) => {
@@ -29,6 +28,7 @@ const StaffReport = ({startDate, endDate, category}) => {
   const [baptismInfo, setBaptismInfo] = useState({});
   const [baptismGeneralInfo, setBaptismGeneralInfo] = useState({});
   const [weddingInfo, setWeddingInfo] = useState({});
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   const getSummaryReport = async () => {
     console.log("clicked!");
@@ -60,17 +60,29 @@ const StaffReport = ({startDate, endDate, category}) => {
       <Box sx={{display: "flex", alignItems: "center"}}>
         <img
           src={logo}
-          style={{height: "auto", width: "10%", marginTop: "1em"}}
+          style={{height: "auto", width: "10%", paddingTop: "1.5em"}}
           alt="Logo"
         />
-        <Typography>
+        <Typography sx={{paddingTop: "1.5em"}}>
           Catholic Church of Christ of the Agony <br />
           Gethsemane Parish
         </Typography>
       </Box>
-      <Box sx={{textAlign: "center", margin: "auto"}}>
-        <Typography>Parokyano Generated Report</Typography>
+      <Box sx={{textAlign: "center", margin: "auto", marginTop: "1.5em"}}>
+        <Typography
+          sx={{
+            fontWeight: "bold",
+            letterSpacing: 1.5,
+            fontSize: "1rem",
+            textTransform: "uppercase",
+          }}>
+          Parokyano Generated Report
+        </Typography>
         <Typography sx={{fontStyle: "italic", fontSize: "14px"}}>
+          Generated on: {util.formatDate(new Date())}
+          <br />
+          Created by: {currentUser.name}
+          <br />
           {startDate && endDate ? (
             <span>
               {util.formatDate(startDate)} - {util.formatDate(endDate)}
@@ -166,7 +178,6 @@ const StaffReport = ({startDate, endDate, category}) => {
                     </TableRow>
                   ))}
 
-                  {/* Add Total Row */}
                   <TableRow>
                     <TableCell colSpan={1} sx={{textAlign: "right"}}>
                       <Typography sx={{fontWeight: "bold", fontSize: "18px"}}>
