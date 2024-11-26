@@ -859,6 +859,8 @@ const approveDynamic = (req, res) => {
   }
 };
 
+const levenshtein = require("fastest-levenshtein");
+
 const searchCertRecords = (req, res) => {
   const {
     first_name,
@@ -879,6 +881,7 @@ const searchCertRecords = (req, res) => {
 
   let query = "";
   const queryParams = [];
+
   if (parseInt(serviceId) === 14) {
     // For confirmation records
     query = `
@@ -895,65 +898,54 @@ const searchCertRecords = (req, res) => {
       `%${father_name || ""}%`,
       `%${mother_name || ""}%`,
       `%${preferred_date ? preferred_date.slice(0, 10) : ""}%`,
-      `%${contact_no || ""}%`,
-      `%${birth_date ? birth_date.slice(0, 10) : ""}%`
+      `%${contact_no || ""}%`
     );
   } else if (parseInt(serviceId) === 7) {
     // For wedding records
     query = `
-       SELECT r.*, w.spouse_firstName, w.spouse_middleName, w.spouse_lastName
-    FROM request r
-    JOIN wedding w ON r.requestID = w.request_id
-    WHERE r.service_id = ? 
-      AND (r.status = 'approved' OR r.status = 'finished')
-      AND (
-        r.first_name LIKE ? 
-        OR r.last_name LIKE ? 
-        OR r.middle_name LIKE ? 
-        OR r.contact_no LIKE ?
-        OR w.spouse_firstName LIKE ? 
-        OR w.spouse_lastName LIKE ? 
-        OR w.spouse_middleName LIKE ? 
-        OR r.preferred_date LIKE ?
-      )`;
-    queryParams.push(serviceId);
-    if (
-      first_name ||
-      last_name ||
-      middle_name ||
-      contact_no ||
-      firstName ||
-      lastName ||
-      middleName ||
-      preferred_date
-    ) {
-      // query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.middle_name LIKE ? OR r.contact_no LIKE ? OR w.spouse_firstName LIKE ? OR w.spouse_lastName LIKE ? OR w.spouse_middleName LIKE ? OR r.preferred_date LIKE ?)`;
-      queryParams.push(
-        `%${first_name}%`,
-        `%${last_name}%`,
-        `%${middle_name}%`,
-        `%${contact_no}%`,
-        `%${firstName}%`,
-        `%${lastName}%`,
-        `%${middleName}%`,
-        `%${preferred_date.slice(0, 10)}%`
-      );
-    }
+      SELECT r.*, w.spouse_firstName, w.spouse_middleName, w.spouse_lastName
+      FROM request r
+      JOIN wedding w ON r.requestID = w.request_id
+      WHERE r.service_id = ? 
+        AND (r.status = 'approved' OR r.status = 'finished')
+        AND (
+          (r.first_name IS NOT NULL AND r.first_name LIKE ?) 
+          OR (r.last_name IS NOT NULL AND r.last_name LIKE ?) 
+          OR (r.middle_name IS NOT NULL AND r.middle_name LIKE ?) 
+          OR (r.contact_no IS NOT NULL AND r.contact_no LIKE ?)
+          OR (w.spouse_firstName IS NOT NULL AND w.spouse_firstName LIKE ?) 
+          OR (w.spouse_lastName IS NOT NULL AND w.spouse_lastName LIKE ?) 
+          OR (w.spouse_middleName IS NOT NULL AND w.spouse_middleName LIKE ?) 
+          OR (r.preferred_date IS NOT NULL AND r.preferred_date LIKE ?)
+        )`;
+    queryParams.push(
+      serviceId,
+      `%${first_name || ""}%`,
+      `%${last_name || ""}%`,
+      `%${middle_name || ""}%`,
+      `%${contact_no || ""}%`,
+      `%${firstName || ""}%`,
+      `%${lastName || ""}%`,
+      `%${middleName || ""}%`,
+      `%${preferred_date ? preferred_date.slice(0, 10) : ""}%`
+    );
   } else {
     query = `SELECT r.* FROM request r WHERE r.service_id = ? AND (r.status = 'approved' OR r.status = 'finished')`;
     queryParams.push(serviceId);
     if (
       first_name ||
       last_name ||
+      middle_name ||
       contact_no ||
       mother_name ||
       father_name ||
       birth_place
     ) {
-      query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
+      query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.middle_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
       queryParams.push(
         `%${first_name || ""}%`,
         `%${last_name || ""}%`,
+        `%${middle_name || ""}%`,
         `%${contact_no || ""}%`,
         `%${mother_name || ""}%`,
         `%${father_name || ""}%`,
@@ -961,6 +953,7 @@ const searchCertRecords = (req, res) => {
       );
     }
   }
+
   console.log(query);
   db.query(query, queryParams, (err, results) => {
     if (err) {
@@ -969,7 +962,7 @@ const searchCertRecords = (req, res) => {
         .status(500)
         .json({ error: "Error retrieving matching records" });
     }
-    // console.log("results", results);
+
     const parsedResults = results.map((record) => {
       if (record.child_name) {
         try {
@@ -979,43 +972,68 @@ const searchCertRecords = (req, res) => {
         }
       }
 
-      // console.log(record);
       const matchingFields = {};
-      console.log("rec", record.spouse_firstName);
-      console.log("spouse", firstName);
+      console.log("rec", record);
+
+      const calculateLevenshtein = (a, b) =>
+        levenshtein.distance(a || "", b || "");
+
       if (record.child_name) {
         if (
           record.child_name.first_name &&
-          record.child_name.first_name.includes(first_name)
+          calculateLevenshtein(first_name, record.child_name.first_name) <= 2
         ) {
           matchingFields.first_name = first_name;
         }
         if (
           record.child_name.middle_name &&
-          record.child_name.middle_name.includes(middle_name)
+          middle_name &&
+          calculateLevenshtein(middle_name, record.child_name.middle_name) <= 2
         ) {
           matchingFields.middle_name = middle_name;
         }
         if (
           record.child_name.last_name &&
-          record.child_name.last_name.includes(last_name)
+          calculateLevenshtein(last_name, record.child_name.last_name) <= 2
         ) {
           matchingFields.last_name = last_name;
         }
       }
-      if (record.first_name && record.first_name.includes(first_name)) {
+      if (
+        record.first_name &&
+        calculateLevenshtein(first_name, record.first_name) <= 2
+      ) {
         matchingFields.first_name = first_name;
       }
-      if (record.last_name && record.last_name.includes(last_name)) {
+      if (
+        record.last_name &&
+        calculateLevenshtein(last_name, record.last_name) <= 2
+      ) {
         matchingFields.last_name = last_name;
       }
-      if (record.contact_no && record.contact_no.includes(contact_no)) {
+      if (
+        record.middle_name &&
+        middle_name &&
+        calculateLevenshtein(middle_name, record.middle_name) <= 2
+      ) {
+        matchingFields.middle_name = middle_name;
+      }
+      if (
+        record.contact_no &&
+        calculateLevenshtein(contact_no, record.contact_no) <= 2
+      ) {
         matchingFields.contact_no = contact_no;
       }
-      if (record.mother_name && record.mother_name.includes(mother_name)) {
+      if (
+        record.mother_name &&
+        calculateLevenshtein(mother_name, record.mother_name) <= 2
+      ) {
         matchingFields.mother_name = mother_name;
       }
-      if (record.father_name && record.father_name.includes(father_name)) {
+      if (
+        record.father_name &&
+        calculateLevenshtein(father_name, record.father_name) <= 2
+      ) {
         matchingFields.father_name = father_name;
       }
       if (
@@ -1023,30 +1041,38 @@ const searchCertRecords = (req, res) => {
         record.birth_date
           .toJSON()
           .slice(0, 10)
-          .includes(birth_date.slice(0, 10))
+          .includes(birth_date ? birth_date.slice(0, 10) : "")
       ) {
-        matchingFields.birth_date = birth_date.slice(0, 10);
+        matchingFields.birth_date = birth_date ? birth_date.slice(0, 10) : "";
       }
-      if (record.birth_place && record.birth_place.includes(birth_place)) {
+      if (
+        record.birth_place &&
+        calculateLevenshtein(birth_place, record.birth_place) <= 2
+      ) {
         matchingFields.birth_place = birth_place;
       }
       if (
         record.spouse_firstName &&
-        record.spouse_firstName.includes(firstName)
+        calculateLevenshtein(firstName, record.spouse_firstName) <= 2
       ) {
         matchingFields.spouse_firstName = firstName;
       }
-      if (record.spouse_lastName && record.spouse_lastName.includes(lastName)) {
+      if (
+        record.spouse_lastName &&
+        calculateLevenshtein(lastName, record.spouse_lastName) <= 2
+      ) {
         matchingFields.spouse_lastName = lastName;
       }
       if (
         record.spouse_middleName &&
-        record.spouse_middleName.includes(middleName)
+        middleName &&
+        calculateLevenshtein(middleName, record.spouse_middleName) <= 2
       ) {
         matchingFields.spouse_middleName = middleName;
       }
       if (
         record.preferred_date &&
+        preferred_date &&
         record.preferred_date
           .toJSON()
           .slice(0, 10)
@@ -1056,7 +1082,6 @@ const searchCertRecords = (req, res) => {
       }
 
       record.Matches = matchingFields;
-      // console.log(record);
       return record;
     });
     res.status(200).json({ results: parsedResults });

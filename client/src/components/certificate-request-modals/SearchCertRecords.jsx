@@ -100,7 +100,7 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
           },
         });
         setRecords(res.data.results);
-        console.log("data", data);
+        // console.log("data", data);
         console.log("results", res.data.results);
       } catch (err) {
         console.error("Error retrieving matching records", err);
@@ -160,10 +160,12 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
     }
   };
 
-  const filteredRecords = records.filter((rec) => {
-    const fullName = `${rec.first_name} ${rec.last_name}`.toLowerCase();
-    return fullName.includes(searchQuery.toLowerCase());
-  });
+  const filteredRecords = records
+    .filter((rec) => Object.keys(rec.Matches).length > 0)
+    .sort(
+      (a, b) => Object.keys(b.Matches).length - Object.keys(a.Matches).length
+    )
+    .slice(0, 10);
 
   return (
     <>

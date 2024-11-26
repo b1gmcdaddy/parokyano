@@ -64,6 +64,10 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
     priest_id: "",
   });
 
+  const matches = recordData.Matches;
+  console.log(matches);
+  // console.log(certData);
+
   useEffect(() => {
     if (open && recordData) {
       if (certData.service_id == 3) {
@@ -379,6 +383,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         size="small"
                         fullWidth
                         variant="filled"
+                        sx={{
+                          backgroundColor: matches?.first_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         value={recordData.first_name}
                         slotProps={{
                           inputLabel: {
@@ -394,6 +403,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={recordData.middle_name}
+                        sx={{
+                          backgroundColor: matches?.middle_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -408,6 +422,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={recordData.last_name}
+                        sx={{
+                          backgroundColor: matches?.last_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -422,6 +441,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={util.formatDate(recordData.birth_date)}
+                        sx={{
+                          backgroundColor: matches?.birth_date
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -446,6 +470,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                           recordData.preferred_date ||
                             recordData.confirmation_date
                         )}
+                        sx={{
+                          backgroundColor: matches?.preferred_date
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -460,6 +489,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={recordData.contact_no}
+                        sx={{
+                          backgroundColor: matches?.contact_no
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -474,6 +508,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={recordData.birth_place}
+                        sx={{
+                          backgroundColor: matches?.birth_place
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -488,6 +527,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={recordData.father_name}
+                        sx={{
+                          backgroundColor: matches?.father_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -502,6 +546,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={recordData.mother_name}
+                        sx={{
+                          backgroundColor: matches?.mother_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -523,6 +572,30 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={recordData.first_name}
+                        sx={{
+                          backgroundColor: matches?.first_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Middle Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={recordData.middle_name}
+                        sx={{
+                          backgroundColor: matches?.middle_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -537,6 +610,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={recordData.last_name}
+                        sx={{
+                          backgroundColor: matches?.last_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -551,6 +629,30 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={marriageData?.spouse_name?.firstName || ""}
+                        sx={{
+                          backgroundColor: matches?.spouse_firstName
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Spouse's Middle Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        value={marriageData?.spouse_name?.middleName || ""}
+                        sx={{
+                          backgroundColor: matches?.spouse_middleName
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -565,6 +667,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={marriageData?.spouse_name?.lastName || ""}
+                        sx={{
+                          backgroundColor: matches?.spouse_lastName
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -579,6 +686,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={util.formatDate(recordData.preferred_date)}
+                        sx={{
+                          backgroundColor: matches?.preferred_date
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -593,6 +705,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         fullWidth
                         variant="filled"
                         value={recordData.contact_no}
+                        sx={{
+                          backgroundColor: matches?.contact_no
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -605,28 +722,72 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                   //////// END WEDDING RECORD /////////////
                   /////// START CONFIRMATION RECORD //////////
                   <>
-                    <Grid item xs={12}>
-                      <label>Child's Name: </label>
+                    <Grid item xs={6}>
+                      <label>Child's First Name: </label>
                       <TextField
                         size="small"
                         fullWidth
                         variant="filled"
+                        sx={{
+                          backgroundColor: matches?.first_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         value={
                           recordData.child_name
-                            ? ((typeof recordData.child_name === "string"
-                                ? JSON.parse(recordData.child_name)
-                                : recordData.child_name
-                              ).first_name || "") +
-                              " " +
-                              ((typeof recordData.child_name === "string"
-                                ? JSON.parse(recordData.child_name)
-                                : recordData.child_name
-                              ).middle_name || "") +
-                              " " +
-                              ((typeof recordData.child_name === "string"
-                                ? JSON.parse(recordData.child_name)
-                                : recordData.child_name
-                              ).last_name || "")
+                            ? (typeof recordData.child_name === "string"
+                                ? JSON.parse(recordData.child_name).first_name
+                                : recordData.child_name.first_name) || ""
+                            : ""
+                        }
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Child's Middle Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        sx={{
+                          backgroundColor: matches?.middle_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
+                        value={
+                          recordData.child_name
+                            ? (typeof recordData.child_name === "string"
+                                ? JSON.parse(recordData.child_name).middle_name
+                                : recordData.child_name.middle_name) || ""
+                            : ""
+                        }
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Child's Last Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        sx={{
+                          backgroundColor: matches?.last_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
+                        value={
+                          recordData.child_name
+                            ? (typeof recordData.child_name === "string"
+                                ? JSON.parse(recordData.child_name).last_name
+                                : recordData.child_name.last_name) || ""
                             : ""
                         }
                         slotProps={{
@@ -637,7 +798,7 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                       />
                     </Grid>
 
-                    <Grid item xs={4}>
+                    {/* <Grid item xs={4}>
                       <label>Gender: </label>
                       <TextField
                         size="small"
@@ -650,8 +811,8 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                           },
                         }}
                       />
-                    </Grid>
-                    <Grid item xs={4}>
+                    </Grid> */}
+                    <Grid item xs={6}>
                       {recordData.service_id == 5 ||
                       recordData.service_id == 6 ? (
                         <label>Date of Baptism:</label>
@@ -664,6 +825,11 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         size="small"
                         fullWidth
                         variant="filled"
+                        sx={{
+                          backgroundColor: matches?.preferred_date
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
                         value={util.formatDate(
                           recordData.preferred_date ||
                             recordData.confirmation_date
@@ -676,7 +842,45 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                       />
                     </Grid>
 
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
+                      <label>Father's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        sx={{
+                          backgroundColor: matches?.father_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
+                        value={recordData.father_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Mother's Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        sx={{
+                          backgroundColor: matches?.mother_name
+                            ? "rgba(0, 255, 31, 0.5)"
+                            : "inherit",
+                        }}
+                        value={recordData.mother_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    {/* <Grid item xs={12}>
                       <label>Ministered by: </label>
                       <TextField
                         size="small"
@@ -699,35 +903,7 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                           },
                         }}
                       />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <label>Father's Name: </label>
-                      <TextField
-                        size="small"
-                        fullWidth
-                        variant="filled"
-                        value={recordData.father_name}
-                        slotProps={{
-                          inputLabel: {
-                            shrink: true,
-                          },
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <label>Mother's Name: </label>
-                      <TextField
-                        size="small"
-                        fullWidth
-                        variant="filled"
-                        value={recordData.mother_name}
-                        slotProps={{
-                          inputLabel: {
-                            shrink: true,
-                          },
-                        }}
-                      />
-                    </Grid>
+                    </Grid> */}
                   </>
                   /////// END CONFIRMATION RECORD //////////
                 )}
@@ -824,6 +1000,22 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         color="success"
                         focused
                         value={certData.first_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <label>Middle Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.middle_name}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -951,21 +1143,47 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                 ) : /////////// CONFIRMATION CERTIFICATE ////////////
                 certData.service_id == 2 ? (
                   <>
-                    <Grid item xs={12}>
-                      <label>Child's Name: </label>
+                    <Grid item xs={4}>
+                      <label>First Name: </label>
                       <TextField
                         size="small"
                         fullWidth
                         variant="filled"
                         color="success"
                         focused
-                        value={
-                          certData.first_name +
-                          " " +
-                          certData.middle_name +
-                          " " +
-                          certData.last_name
-                        }
+                        value={certData.first_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <label>Middle Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.middle_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <label>Last Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.last_name}
                         slotProps={{
                           inputLabel: {
                             shrink: true,
@@ -1060,6 +1278,23 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                       />
                     </Grid>
                     <Grid item xs={6}>
+                      <label>Middle Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={certData.middle_name}
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                        readOnly
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
                       <label>Last Name: </label>
                       <TextField
                         size="small"
@@ -1096,6 +1331,26 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                       />
                     </Grid>
                     <Grid item xs={6}>
+                      <label>Spouse's Middle Name: </label>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        variant="filled"
+                        color="success"
+                        focused
+                        value={
+                          certData.spouse_name
+                            ? JSON.parse(certData.spouse_name).middleName
+                            : ""
+                        }
+                        slotProps={{
+                          inputLabel: {
+                            shrink: true,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
                       <label>Spouse's Last Name: </label>
                       <TextField
                         size="small"
@@ -1115,7 +1370,7 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                       <label>Contact Number: </label>
                       <TextField
                         size="small"
@@ -1131,8 +1386,8 @@ const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={12}>
-                      <label>Date of Marriage: </label>
+                    <Grid item xs={6}>
+                      <label>Date of Wedding: </label>
                       <TextField
                         size="small"
                         fullWidth

@@ -21,6 +21,7 @@
     "emailjs": "^4.0.3",
     "emailjs-com": "^3.2.0",
     "express": "^4.19.2",
+    "fastest-levenshtein": "^1.0.16",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
