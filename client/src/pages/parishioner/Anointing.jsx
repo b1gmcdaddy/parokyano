@@ -179,11 +179,17 @@ const Anointing = () => {
                 fullWidth
                 variant="outlined"
                 size="small"
+                type="number"
                 sx={inputstlying}
                 name="age"
                 onChange={handleChange}
                 required
               />
+              {errors.age != null && (
+                <FormHelperText sx={{ color: "red" }}>
+                  {errors.age}
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={9} sm={3}>
               <span style={{ color: "red" }}>*</span>
