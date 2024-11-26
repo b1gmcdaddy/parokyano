@@ -543,10 +543,15 @@ const Configurations = () => {
           open={editPriest}
           close={() => setEditPriest(false)}
           priest={selectedItem}
+          setSuccess={setSuccess}
+          setError={setError}
+          fetchPriests={fetchPriests}
         />
         <ManagePriestsModal.AddPriestModal
           open={isAddPriest}
           close={() => setIsAddPriest(false)}
+          setSuccess={setSuccess}
+          fetchPriests={fetchPriests}
         />
       </Box>
     </>

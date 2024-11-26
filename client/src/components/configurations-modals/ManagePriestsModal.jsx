@@ -117,7 +117,7 @@ const TextFieldStyle = {
 //   );
 // };
 
-const AddPriestModal = ({ open, close }) => {
+const AddPriestModal = ({ open, close, setSuccess, fetchPriests}) => {
   const currentYear = dayjs();
   const [priestList, setPriestList] = useState([]);
   const [formData, setFormData] = useState({
@@ -135,8 +135,9 @@ const AddPriestModal = ({ open, close }) => {
 
   const handleAddPriest = () => {
     axios.post(`${config.API}/priest/createPriest`, formData);
-    alert("Priest successfully added");
-    window.location.reload();
+    fetchPriests();
+    setSuccess("Priest successfully added");
+    close();
   };
 
   return (
@@ -234,7 +235,7 @@ const AddPriestModal = ({ open, close }) => {
   );
 };
 
-const EditPriestModal = ({ open, close, priest }) => {
+const EditPriestModal = ({ open, close, priest, setSuccess, setError, fetchPriests }) => {
   const currentYear = dayjs();
   const [formData, setFormData] = useState({ ...priest });
   const [isLoading, setIsLoading] = useState(false);
@@ -256,10 +257,12 @@ const EditPriestModal = ({ open, close, priest }) => {
     axios
       .put(`${config.API}/priest/editPriest/${priest.priestID}`, formData)
       .then(() => {
-        alert("Priest successfully updated");
-        window.location.reload();
+        fetchPriests();
+        setSuccess("Priest successfully updated");
+        close();
       })
       .catch((err) => {
+        setError("Error while updating priest.")
         console.error("Error updating priest:", err);
       })
       .finally(() => {
