@@ -863,103 +863,105 @@ const searchCertRecords = (req, res) => {
   const {
     first_name,
     last_name,
+    middle_name,
     contact_no,
     mother_name,
     father_name,
     birth_place,
-    status,
-    spouse_firstName,
-    spouse_lastName,
+    spouse_name = {},
     preferred_date,
+    birth_date,
   } = req.query;
+  const { firstName, middleName, lastName } = spouse_name;
+  console.log(req.query);
 
   const serviceId = req.query.service_id;
+
   let query = "";
   const queryParams = [];
-
   if (parseInt(serviceId) === 14) {
     // For confirmation records
     query = `
       SELECT c.* 
       FROM confirmation c 
-      WHERE c.child_name LIKE ? 
+      WHERE (c.child_name LIKE ? 
       OR c.father_name LIKE ? 
-      OR c.mother_name LIKE ?`;
+      OR c.mother_name LIKE ? 
+      OR c.preferred_date LIKE ?
+      OR c.contact_no LIKE ?
+      )`;
     queryParams.push(
       `%${first_name || ""}%`,
       `%${father_name || ""}%`,
-      `%${mother_name || ""}%`
+      `%${mother_name || ""}%`,
+      `%${preferred_date ? preferred_date.slice(0, 10) : ""}%`,
+      `%${contact_no || ""}%`,
+      `%${birth_date ? birth_date.slice(0, 10) : ""}%`
     );
   } else if (parseInt(serviceId) === 7) {
     // For wedding records
     query = `
-      SELECT r.*, w.* 
-      FROM request r 
-      JOIN wedding w ON r.requestID = w.request_id
-      WHERE r.service_id = ? AND r.status = ?`;
-    queryParams.push(serviceId, status);
-
-    if (first_name || last_name || contact_no) {
-      query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR w.spouse_firstName LIKE ? OR w.spouse_lastName LIKE ? OR r.preferred_date LIKE ?)`;
+       SELECT r.*, w.spouse_firstName, w.spouse_middleName, w.spouse_lastName
+    FROM request r
+    JOIN wedding w ON r.requestID = w.request_id
+    WHERE r.service_id = ? 
+      AND (r.status = 'approved' OR r.status = 'finished')
+      AND (
+        r.first_name LIKE ? 
+        OR r.last_name LIKE ? 
+        OR r.middle_name LIKE ? 
+        OR r.contact_no LIKE ?
+        OR w.spouse_firstName LIKE ? 
+        OR w.spouse_lastName LIKE ? 
+        OR w.spouse_middleName LIKE ? 
+        OR r.preferred_date LIKE ?
+      )`;
+    queryParams.push(serviceId);
+    if (
+      first_name ||
+      last_name ||
+      middle_name ||
+      contact_no ||
+      firstName ||
+      lastName ||
+      middleName ||
+      preferred_date
+    ) {
+      // query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.middle_name LIKE ? OR r.contact_no LIKE ? OR w.spouse_firstName LIKE ? OR w.spouse_lastName LIKE ? OR w.spouse_middleName LIKE ? OR r.preferred_date LIKE ?)`;
+      queryParams.push(
+        `%${first_name}%`,
+        `%${last_name}%`,
+        `%${middle_name}%`,
+        `%${contact_no}%`,
+        `%${firstName}%`,
+        `%${lastName}%`,
+        `%${middleName}%`,
+        `%${preferred_date.slice(0, 10)}%`
+      );
+    }
+  } else {
+    query = `SELECT r.* FROM request r WHERE r.service_id = ? AND (r.status = 'approved' OR r.status = 'finished')`;
+    queryParams.push(serviceId);
+    if (
+      first_name ||
+      last_name ||
+      contact_no ||
+      mother_name ||
+      father_name ||
+      birth_place
+    ) {
+      query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
       queryParams.push(
         `%${first_name || ""}%`,
         `%${last_name || ""}%`,
         `%${contact_no || ""}%`,
-        `%${spouse_firstName || ""}%`,
-        `%${spouse_lastName || ""}%`,
-        `%${preferred_date.slice(0, 10) || ""}%`
+        `%${mother_name || ""}%`,
+        `%${father_name || ""}%`,
+        `%${birth_place || ""}%`
       );
     }
-  } else {
-    // For other records
-    query = `SELECT r.* FROM request r WHERE r.service_id = ? AND r.status = ?`;
-    queryParams.push(serviceId, status);
-
-    switch (parseInt(serviceId)) {
-      case 5: // Baptismal
-        if (
-          first_name ||
-          last_name ||
-          contact_no ||
-          mother_name ||
-          father_name ||
-          birth_place
-        ) {
-          query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
-          queryParams.push(
-            `%${first_name || ""}%`,
-            `%${last_name || ""}%`,
-            `%${contact_no || ""}%`,
-            `%${mother_name || ""}%`,
-            `%${father_name || ""}%`,
-            `%${birth_place || ""}%`
-          );
-        }
-        break;
-
-      default: // Other service_ids
-        if (
-          first_name ||
-          last_name ||
-          contact_no ||
-          mother_name ||
-          father_name ||
-          birth_place
-        ) {
-          query += ` AND (r.first_name LIKE ? OR r.last_name LIKE ? OR r.contact_no LIKE ? OR r.mother_name LIKE ? OR r.father_name LIKE ? OR r.birth_place LIKE ?)`;
-          queryParams.push(
-            `%${first_name || ""}%`,
-            `%${last_name || ""}%`,
-            `%${contact_no || ""}%`,
-            `%${mother_name || ""}%`,
-            `%${father_name || ""}%`,
-            `%${birth_place || ""}%`
-          );
-        }
-        break;
-    }
   }
-
+  console.log(query);
   db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Error retrieving matching records", err);
@@ -967,7 +969,7 @@ const searchCertRecords = (req, res) => {
         .status(500)
         .json({ error: "Error retrieving matching records" });
     }
-
+    // console.log("results", results);
     const parsedResults = results.map((record) => {
       if (record.child_name) {
         try {
@@ -977,8 +979,30 @@ const searchCertRecords = (req, res) => {
         }
       }
 
-      // Create an object of matching fields for the current record
+      // console.log(record);
       const matchingFields = {};
+      console.log("rec", record.spouse_firstName);
+      console.log("spouse", firstName);
+      if (record.child_name) {
+        if (
+          record.child_name.first_name &&
+          record.child_name.first_name.includes(first_name)
+        ) {
+          matchingFields.first_name = first_name;
+        }
+        if (
+          record.child_name.middle_name &&
+          record.child_name.middle_name.includes(middle_name)
+        ) {
+          matchingFields.middle_name = middle_name;
+        }
+        if (
+          record.child_name.last_name &&
+          record.child_name.last_name.includes(last_name)
+        ) {
+          matchingFields.last_name = last_name;
+        }
+      }
       if (record.first_name && record.first_name.includes(first_name)) {
         matchingFields.first_name = first_name;
       }
@@ -994,34 +1018,47 @@ const searchCertRecords = (req, res) => {
       if (record.father_name && record.father_name.includes(father_name)) {
         matchingFields.father_name = father_name;
       }
+      if (
+        record.birth_date &&
+        record.birth_date
+          .toJSON()
+          .slice(0, 10)
+          .includes(birth_date.slice(0, 10))
+      ) {
+        matchingFields.birth_date = birth_date.slice(0, 10);
+      }
       if (record.birth_place && record.birth_place.includes(birth_place)) {
         matchingFields.birth_place = birth_place;
       }
       if (
         record.spouse_firstName &&
-        record.spouse_firstName.includes(spouse_firstName)
+        record.spouse_firstName.includes(firstName)
       ) {
-        matchingFields.spouse_firstName = spouse_firstName;
+        matchingFields.spouse_firstName = firstName;
+      }
+      if (record.spouse_lastName && record.spouse_lastName.includes(lastName)) {
+        matchingFields.spouse_lastName = lastName;
       }
       if (
-        record.spouse_lastName &&
-        record.spouse_lastName.includes(spouse_lastName)
+        record.spouse_middleName &&
+        record.spouse_middleName.includes(middleName)
       ) {
-        matchingFields.spouse_lastName = spouse_lastName;
+        matchingFields.spouse_middleName = middleName;
       }
       if (
         record.preferred_date &&
-        record.preferred_date.includes(preferred_date)
+        record.preferred_date
+          .toJSON()
+          .slice(0, 10)
+          .includes(preferred_date.slice(0, 10))
       ) {
-        matchingFields.preferred_date = preferred_date;
+        matchingFields.preferred_date = preferred_date.slice(0, 10);
       }
 
-      // Add the matching fields to the record
       record.Matches = matchingFields;
-
+      // console.log(record);
       return record;
     });
-
     res.status(200).json({ results: parsedResults });
   });
 };
@@ -1172,7 +1209,7 @@ const updateMarriageCert = (req, res) => {
     JSON_SET(
       spouse_name,
       '$.firstName', ?,
-      '$.middleName', ?,
+      '$.middle_name', ?,
       '$.lastName', ?
     )
   `;

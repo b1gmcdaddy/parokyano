@@ -8,6 +8,7 @@ import {
   Paper,
   Typography,
   DialogActions,
+  TextField,
 } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -44,6 +45,7 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
   const [recordData, setRecordData] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -85,19 +87,20 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
                 ? 14
                 : null,
             first_name: data.first_name || "",
+            middle_name: data.middle_name || "",
             last_name: data.last_name || "",
             contact_no: data.contact_no || "",
             mother_name: data.mother_name || "",
             father_name: data.father_name || "",
             birth_place: data.birth_place || "",
-            status: "approved", // should be finished
+            // status: "approved", // should be finished
             preferred_date: data.preferred_date || "",
-            spouse_firstName: JSON.parse(data.spouse_name) || "",
-            spouse_lastName: JSON.parse(data.spouse_name) || "",
+            spouse_name: JSON.parse(data.spouse_name) || "",
+            birth_date: data.birth_date || "",
           },
         });
         setRecords(res.data.results);
-        console.log("matchingFields", res.data.matchingFields);
+        console.log("data", data);
         console.log("results", res.data.results);
       } catch (err) {
         console.error("Error retrieving matching records", err);
@@ -157,6 +160,11 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
     }
   };
 
+  const filteredRecords = records.filter((rec) => {
+    const fullName = `${rec.first_name} ${rec.last_name}`.toLowerCase();
+    return fullName.includes(searchQuery.toLowerCase());
+  });
+
   return (
     <>
       {error && (
@@ -191,11 +199,30 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
         fullWidth
         maxWidth="lg"
         open={open}
-        onClose={close}
+        onClose={() => {
+          setSearchQuery("");
+          close();
+        }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <DialogContent>
+          <CompareRecords
+            open={openCompareModal}
+            close={closeCompareModal}
+            certData={data}
+            recordData={recordData}
+            refreshList={refreshList}
+          />
+          <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 2 }}>
+            <TextField
+              size="small"
+              label="Search"
+              variant="outlined"
+              sx={{ width: "300px" }}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </Box>
           <Box>
             <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
               <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -204,64 +231,69 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
                     <StyledTableCell>Name</StyledTableCell>
                     <StyledTableCell>Matching Fields</StyledTableCell>
                     <StyledTableCell>Percentage</StyledTableCell>
-                    {/* <StyledTableCell>Last Activity</StyledTableCell> */}
                     <StyledTableCell>Action</StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {records && records.length > 0 ? (
-                    records.map((rec) => {
-                      // Determine the fields to compare based on service_id
-                      const fieldsToCompare = Object.keys(rec).filter(
-                        (key) => key !== "Matches"
-                      );
+                  {filteredRecords && filteredRecords.length > 0 ? (
+                    filteredRecords.map((rec) => {
+                      let fieldsToCompare = Object.keys(rec).filter((key) => {
+                        if (data.spouse_name && key == "spouse_firstName") {
+                          return key;
+                        }
+                        if (data.spouse_name && key == "spouse_lastName") {
+                          return key;
+                        }
+                        if (data.spouse_name && key == "spouse_middleName") {
+                          return key;
+                        }
+                        if (data.birth_date && key == "birth_date") {
+                          return key;
+                        }
+                        if (data.preferred_date && key == "preferred_date") {
+                          return key;
+                        }
+                        if (data.contact_no && key == "contact_no") {
+                          return key;
+                        }
+                        if (data.birth_place && key == "birth_place") {
+                          return key;
+                        }
+                        if (data.birth_date && key == "birth_date") {
+                          return key;
+                        }
+                        if (data.first_name && key == "first_name") {
+                          return key;
+                        }
+                        if (key == "last_name") {
+                          return key;
+                        }
+                        if (key == "middle_name") {
+                          return key;
+                        }
+                        if (data.mother_name && key == "mother_name") {
+                          return key;
+                        }
+                        if (data.father_name && key == "father_name") {
+                          return key;
+                        }
+                      });
 
-                      // Count the number of matching fields
-                      const matchingFieldsCount = fieldsToCompare.reduce(
-                        (count, field) => {
-                          if (data.service_id === 2) {
-                            // Special handling for service_id 2
-                            if (field === "child_name") {
-                              const childNameMatches = [
-                                "first_name",
-                                "last_name",
-                              ].reduce((childCount, nameField) => {
-                                return data[nameField] ===
-                                  rec.child_name[nameField]
-                                  ? childCount + 1
-                                  : childCount;
-                              }, 0);
-                              return count + childNameMatches;
-                            }
-                          } else {
-                            // General case for other service_ids
-                            if (
-                              data[field] &&
-                              rec[field] &&
-                              data[field] === rec[field]
-                            ) {
-                              return count + 1;
-                            }
-                          }
-                          return count;
-                        },
-                        0
-                      );
+                      console.log("fieldsToCompare", fieldsToCompare);
 
-                      // Calculate the matching percentage
-                      const totalFields =
-                        fieldsToCompare.length +
-                        (data.service_id === 2 ? 2 : 0); // Add 2 for child_name fields
+                      const matchingFields = Object.keys(rec.Matches).length;
+
+                      const totalFields = fieldsToCompare.length;
                       const matchingPercentage = (
-                        (matchingFieldsCount / totalFields) *
+                        (matchingFields / totalFields) *
                         100
                       ).toFixed(2);
 
                       return (
                         <StyledTableRow key={rec.requestID}>
                           <StyledTableCell>
-                            {data.service_id == 2
-                              ? `${rec.child_name.first_name} ${rec.child_name.last_name}`
+                            {rec && data.service_id == 2
+                              ? `${rec.child_name?.first_name} ${rec.child_name?.last_name}`
                               : `${rec.first_name} ${rec.last_name}`}
                           </StyledTableCell>
                           <StyledTableCell>
@@ -272,31 +304,18 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
                                 sx={{ margin: "2px" }}
                               />
                             ))}
-                            {data.service_id === 2 && (
-                              <>
-                                {data.first_name ===
-                                  rec.child_name.first_name && (
-                                  <Chip
-                                    label={`first_name: ${rec.child_name.first_name}`}
-                                    sx={{ margin: "2px" }}
-                                  />
-                                )}
-                                {data.last_name ===
-                                  rec.child_name.last_name && (
-                                  <Chip
-                                    label={`last_name: ${rec.child_name.last_name}`}
-                                    sx={{ margin: "2px" }}
-                                  />
-                                )}
-                              </>
-                            )}
                           </StyledTableCell>
                           <StyledTableCell>
                             {`Matching: ${matchingPercentage}%`}
                           </StyledTableCell>
                           <StyledTableCell sx={{ textAlign: "center" }}>
-                            <VisibilityIcon className="cursor-pointer" />
-                            &nbsp;<span className="cursor-pointer">View</span>
+                            <Button
+                              variant="text"
+                              onClick={() => handleOpenCompareModal(rec)}
+                            >
+                              <VisibilityIcon className="cursor-pointer" />
+                              &nbsp;<span className="cursor-pointer">View</span>
+                            </Button>
                           </StyledTableCell>
                         </StyledTableRow>
                       );

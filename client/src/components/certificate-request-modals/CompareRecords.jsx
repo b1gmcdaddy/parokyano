@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -21,7 +21,7 @@ import util from "../../utils/DateTimeFormatter";
 import ConfirmationDialog from "../ConfirmationModal";
 import sendSMS from "../../utils/smsService";
 
-const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
+const CompareRecords = ({ open, close, certData, recordData, refreshList }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [error, setError] = useState(null);
@@ -87,7 +87,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
           details.page_no ||
           details.line_no ||
           details.record_id
-            ? {details}
+            ? { details }
             : {}),
         });
       }
@@ -114,7 +114,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
           details.line_no ||
           details.sponsor_no1 ||
           details.sponsor_no2
-            ? {details}
+            ? { details }
             : {}),
         });
       }
@@ -137,7 +137,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
           details.page_no ||
           details.line_no ||
           details.record_id
-            ? {details}
+            ? { details }
             : {}),
         });
         fetchWeddingData();
@@ -182,7 +182,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
   const fetchWeddingDetails = async (id) => {
     try {
       const response = await axios.get(`${config.API}/wedding/retrieve`, {
-        params: {reqID: id},
+        params: { reqID: id },
       });
 
       return response.data?.result[0];
@@ -284,11 +284,12 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -297,11 +298,12 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity="success" sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity="success" sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -314,23 +316,26 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
         open={open}
         onClose={close}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
-        <DialogContent sx={{padding: "3em"}}>
-          <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent sx={{ padding: "3em" }}>
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
             <Grid
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
                 margin: "10px",
-              }}>
+              }}
+            >
               <Typography
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
                   marginBottom: "10px",
                   fontSize: "20px",
-                }}>
+                }}
+              >
                 COMPARISON VIEW
               </Typography>
               <IconButton
@@ -341,20 +346,22 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                   right: 8,
                   top: 8,
                   color: theme.palette.grey[500],
-                })}>
+                })}
+              >
                 <CloseIcon />
               </IconButton>
             </Grid>
           </Box>
-          <Grid container spacing={1} sx={{marginTop: "1em"}}>
-            <Grid item xs={8}>
+          <Grid container spacing={1} sx={{ marginTop: "1em" }}>
+            <Grid item xs={5.5}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Typography
                     sx={{
                       fontWeight: "bold",
                       marginBottom: "10px",
-                    }}>
+                    }}
+                  >
                     {recordData.service_id == 5 || recordData.service_id == 6
                       ? "BAPTISM "
                       : recordData.service_id == 7
@@ -366,7 +373,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                 {/* START BAPTISM RECORD */}
                 {recordData.service_id == 5 || recordData.service_id == 6 ? (
                   <>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                       <label>First Name: </label>
                       <TextField
                         size="small"
@@ -380,7 +387,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                       <label>Middle Name: </label>
                       <TextField
                         size="small"
@@ -394,7 +401,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                       <label>Last Name: </label>
                       <TextField
                         size="small"
@@ -408,7 +415,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                       <label>Date of Birth: </label>
                       <TextField
                         size="small"
@@ -422,7 +429,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                       {recordData.service_id == 5 ||
                       recordData.service_id == 6 ? (
                         <label>Date of Baptism:</label>
@@ -446,7 +453,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                       <label>Contact Number: </label>
                       <TextField
                         size="small"
@@ -725,7 +732,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                   /////// END CONFIRMATION RECORD //////////
                 )}
 
-                <Grid item xs={4}>
+                {/* <Grid item xs={4}>
                   <label>Book no.: </label>
                   <TextField
                     size="small"
@@ -778,7 +785,7 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                       },
                     }}
                   />
-                </Grid>
+                </Grid> */}
               </Grid>
             </Grid>
             <Grid
@@ -789,17 +796,19 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                 justifyContent: "center",
                 alignItems: "center",
                 minHeight: "100%",
-              }}>
+              }}
+            >
               <Divider orientation="vertical" variant="middle" flexItem />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={5.5}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Typography
                     sx={{
                       fontWeight: "bold",
                       marginBottom: "10px",
-                    }}>
+                    }}
+                  >
                     CERTIFICATE REQUEST
                   </Typography>
                 </Grid>
@@ -1152,7 +1161,8 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
               justifyContent: "center",
               alignItems: "center",
               marginBottom: "16px",
-            }}>
+            }}
+          >
             <Grid
               item
               xs={12}
@@ -1161,7 +1171,8 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                 display: "flex",
                 justifyContent: "center",
                 gap: "20px",
-              }}>
+              }}
+            >
               <Button
                 variant="contained"
                 onClick={() => handleOpenDialog("approve")}
@@ -1171,7 +1182,8 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                   "&:hover": {
                     backgroundColor: "green",
                   },
-                }}>
+                }}
+              >
                 Confirm
               </Button>
               <Button
@@ -1184,7 +1196,8 @@ const CompareRecords = ({open, close, certData, recordData, refreshList}) => {
                   "&:hover": {
                     backgroundColor: "#dddddd",
                   },
-                }}>
+                }}
+              >
                 Close
               </Button>
             </Grid>

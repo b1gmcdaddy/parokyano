@@ -52,7 +52,7 @@ const inputstlying = {
 const CertificateWedding = () => {
   const id = 4;
   const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
+  // const hash = dateToday + generateHash().slice(0, 20);
   const [serviceInfo, setServiceInfo] = useState({});
   const [modalData, setModalData] = useState({});
   const [open, setOpen] = useState(false);
@@ -79,7 +79,7 @@ const CertificateWedding = () => {
       line_no: "",
     },
     service_id: id,
-    transaction_no: hash,
+    transaction_no: dateToday,
     date_requested: dateToday,
     purpose: "",
   });
