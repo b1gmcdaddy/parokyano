@@ -51,7 +51,6 @@ const inputstlying = {
 const CertificateBaptism = () => {
   const id = 3;
   const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [serviceInfo, setServiceInfo] = useState({});
   const [open, setOpen] = useState(false);
   const [modalData, setModalData] = useState({});
@@ -74,11 +73,23 @@ const CertificateBaptism = () => {
       line_no: "",
     },
     service_id: id,
-    transaction_no: hash,
+    transaction_no: "",
     date_requested: dateToday,
     purpose: "",
     preferred_date: null,
   });
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
 
   useEffect(() => {
     const fetchServiceInfo = async (e) => {
@@ -97,6 +108,7 @@ const CertificateBaptism = () => {
       }
     };
     fetchServiceInfo();
+    createTransactionNo();
   }, []);
 
   const handleChange = (e) => {

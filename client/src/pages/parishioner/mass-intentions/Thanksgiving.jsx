@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import NavParishioner from "../../../components/NavParishioner";
 import imageHeader from "../../../assets/imageHeader.jpg";
 import Header from "../../../components/Header";
@@ -12,9 +12,9 @@ import {
   FormHelperText,
   Box,
 } from "@mui/material";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import Footer from "../../../components/Footer";
 import config from "../../../config";
@@ -22,8 +22,8 @@ import axios from "axios";
 import all from "../../../components/PaymentModal";
 import generateHash from "../../../utils/GenerateHash";
 import ValidateForm from "../../../utils/Validators";
-import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import GCashQR from "../../../components/GCashQR";
 import util from "../../../utils/DateTimeFormatter";
 
@@ -60,8 +60,7 @@ const Thanksgiving = () => {
   });
   const id = 1;
   const dateToday = new Date().toJSON().slice(0, 10);
-  const [hash, setHash] = useState("");
-  const [schedule, setSchedule] = useState({slots: ["00:00:00"]});
+  const [schedule, setSchedule] = useState({ slots: ["00:00:00"] });
   const [modalData, setModalData] = useState({});
   const [openCash, setOpenCash] = useState(false);
   const [openGCash, setOpenGCash] = useState(false);
@@ -115,7 +114,7 @@ const Thanksgiving = () => {
 
   // event handlers for data values
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleIntention = (e) =>
@@ -128,8 +127,34 @@ const Thanksgiving = () => {
     }));
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.mass_date);
+  };
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
+
+  useEffect(() => {
+    createTransactionNo();
+  }, []);
+
+  const paymentInfo = {
+    transaction_no: formData.transaction_no,
+    fee: formData.donation_amount,
+    requirements: null,
+    message:
+      formData.payment_method === "cash"
+        ? "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!"
+        : "Your request has been received. You will receive a text once your payment has been verified! Thank you and God bless!",
   };
 
   const handleSubmit = async (e) => {
@@ -139,24 +164,7 @@ const Thanksgiving = () => {
 
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
-        const intentionCount = await generateHash();
-        const generatedHash = dateToday + id + intentionCount;
-        setHash(generatedHash);
-        const updatedFormData = {...formData, transaction_no: generatedHash};
-        await axios.post(
-          `${config.API}/request/create-intention`,
-          updatedFormData
-        );
-
-        const paymentInfo = {
-          transaction_no: updatedFormData.transaction_no,
-          fee: updatedFormData.donation_amount,
-          requirements: null,
-          message:
-            updatedFormData.payment_method === "cash"
-              ? "Note: Please go to the parish office during office hours to give your donation. Thank you and God bless!"
-              : "Your request has been received. You will receive a text once your payment has been verified! Thank you and God bless!",
-        };
+        await axios.post(`${config.API}/request/create-intention`, formData);
         setModalData(paymentInfo);
         setOpenCash(true);
       } catch (err) {
@@ -179,7 +187,7 @@ const Thanksgiving = () => {
         [e.target.name]: "",
       },
     }));
-    setIsChecked({...isChecked, [e.target.name]: e.target.checked});
+    setIsChecked({ ...isChecked, [e.target.name]: e.target.checked });
     console.log("clicked");
   };
 
@@ -192,7 +200,8 @@ const Thanksgiving = () => {
       />
       <Link
         to="/mass-intention-select"
-        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center">
+        className="max-w-[1440px] mt-8 md:mb-6 md:flex items-center"
+      >
         <FontAwesomeIcon icon={faArrowLeftLong} className="ml-8 md:mr-2" />
         <span className="xs:hidden md:flex">Return to Selection</span>
       </Link>
@@ -203,7 +212,7 @@ const Thanksgiving = () => {
       <all.CashPaymentModal open={openCash} data={modalData} />
       <GCashQR open={openGCash} close={() => setOpenGCash(false)} />
 
-      <Container maxWidth="md" sx={{marginBottom: "50px"}}>
+      <Container maxWidth="md" sx={{ marginBottom: "50px" }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6}>
@@ -326,12 +335,12 @@ const Thanksgiving = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={3} sx={{marginTop: {md: "18px"}}}>
-              <span style={{color: "red"}}>*</span>
+            <Grid item xs={12} sm={3} sx={{ marginTop: { md: "18px" } }}>
+              <span style={{ color: "red" }}>*</span>
               <label>Mass Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  slotProps={{textField: {fullWidth: true}}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   disablePast
                   size="small"
@@ -343,13 +352,13 @@ const Thanksgiving = () => {
                 />
               </LocalizationProvider>
               {/* {errors.mass_date != null && ( */}
-              <FormHelperText sx={{color: "red"}}>
+              <FormHelperText sx={{ color: "red" }}>
                 Date must be atleast 1 day from now to allow for processing time
               </FormHelperText>
             </Grid>
 
-            <Grid item xs={12} sm={3} sx={{marginTop: {md: "18px"}}}>
-              <span style={{color: "red"}}>*</span>
+            <Grid item xs={12} sm={3} sx={{ marginTop: { md: "18px" } }}>
+              <span style={{ color: "red" }}>*</span>
               <label>Time Slot:</label>
               <TextField
                 fullWidth
@@ -361,7 +370,8 @@ const Thanksgiving = () => {
                 onChange={handleChange}
                 value={formData.mass_time}
                 required
-                disabled={formData.mass_date == ""}>
+                disabled={formData.mass_date == ""}
+              >
                 {schedule.slots.map((time, index) => {
                   return (
                     <MenuItem key={index} value={time}>
@@ -373,7 +383,7 @@ const Thanksgiving = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Offered by:</label>
               <TextField
                 fullWidth
@@ -387,7 +397,7 @@ const Thanksgiving = () => {
             </Grid>
 
             <Grid item xs={12} sm={3}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Payment Method:</label>
               <TextField
                 fullWidth
@@ -398,7 +408,8 @@ const Thanksgiving = () => {
                 name="payment_method"
                 onChange={handleChange}
                 value={formData.payment_method}
-                required>
+                required
+              >
                 <MenuItem value="cash">Cash</MenuItem>
                 <MenuItem value="gcash">GCash</MenuItem>
               </TextField>
@@ -416,27 +427,27 @@ const Thanksgiving = () => {
                 required
               />
               {errors.donation_amount != null && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   {errors.donation_amount}
                 </FormHelperText>
               )}
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Contact number:</label>
               <TextField
                 fullWidth
                 variant="outlined"
                 size="small"
                 sx={inputstlying}
-                inputProps={{maxLength: 11}}
+                inputProps={{ maxLength: 11 }}
                 name="contact_no"
                 onChange={handleChange}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
@@ -449,11 +460,13 @@ const Thanksgiving = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                  }}>
+                  }}
+                >
                   <label>GCash Ref No:</label>
                   <span
                     onClick={openQR}
-                    className="cursor-pointer text-sm italic text-blue-800 hover:text-blue-400 hover:scale-105 duration-300">
+                    className="cursor-pointer text-sm italic text-blue-800 hover:text-blue-400 hover:scale-105 duration-300"
+                  >
                     View QR Code
                   </span>
                 </div>
@@ -464,10 +477,10 @@ const Thanksgiving = () => {
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
-                  inputProps={{maxLength: 13}}
+                  inputProps={{ maxLength: 13 }}
                 />
                 {errors.gcashRefNo != null && (
-                  <FormHelperText sx={{color: "red"}}>
+                  <FormHelperText sx={{ color: "red" }}>
                     {errors.gcashRefNo}
                   </FormHelperText>
                 )}
@@ -487,7 +500,8 @@ const Thanksgiving = () => {
                 isCaptchaChecked ? "bg-[#355173]" : "bg-[#868686]"
               }`}
               disabled={!isCaptchaChecked}
-              type="submit">
+              type="submit"
+            >
               SUBMIT REQUEST
             </button>
           </div>

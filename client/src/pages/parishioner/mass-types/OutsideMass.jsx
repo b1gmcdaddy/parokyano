@@ -56,12 +56,37 @@ const inputstlying = {
 const OutsideMass = () => {
   const id = 10;
   const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [captchaValue, setCaptchaValue] = useState(null);
   const [radioValue, setRadioValue] = useState("");
   const [open, setOpen] = useState(false);
   const [priestList, setPriestList] = useState([]);
   const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    first_name: "", // in the case of outside mass, this is the field for the celebration/celebrator
+    address: "",
+    contact_no: "",
+    requested_by: "", // this is the field for the contact person's name
+    relationship: null,
+    preferred_date: "",
+    preferred_time: "",
+    preferred_priest: null, // value is the  priest id
+    isParishioner: "",
+    transaction_no: "",
+    service_id: id,
+    type: null,
+  });
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
 
   useEffect(() => {
     const fetchPriest = async () => {
@@ -78,22 +103,8 @@ const OutsideMass = () => {
       }
     };
     fetchPriest();
+    createTransactionNo();
   }, []);
-
-  const [formData, setFormData] = useState({
-    first_name: "", // in the case of outside mass, this is the field for the celebration/celebrator
-    address: "",
-    contact_no: "",
-    requested_by: "", // this is the field for the contact person's name
-    relationship: null,
-    preferred_date: "",
-    preferred_time: "",
-    preferred_priest: null, // value is the  priest id
-    isParishioner: "",
-    transaction_no: hash,
-    service_id: id,
-    type: null,
-  });
 
   const modalData = {
     message:
@@ -122,17 +133,14 @@ const OutsideMass = () => {
     e.preventDefault();
     const validate = ValidateForm(formData);
     setErrors(validate);
-    console.log(validate);
     if (Object.keys(validate) == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-mass`, formData);
         setOpen(true);
-        console.log("success!");
       } catch (err) {
         console.error("error submitting to server", err);
       }
     }
-    return;
   };
 
   const handleRadioChange = (e) => {

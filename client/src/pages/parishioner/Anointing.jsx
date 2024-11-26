@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import NavParishioner from "../../components/NavParishioner";
 import imageHeader from "../../assets/imageHeader.jpg";
 import Header from "../../components/Header";
@@ -14,9 +14,9 @@ import {
   Box,
 } from "@mui/material";
 import Footer from "../../components/Footer";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeftLong} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import generateHash from "../../utils/GenerateHash";
 import axios from "axios";
@@ -28,18 +28,9 @@ import {
   TimeField,
   TimePicker,
 } from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ValidateForm from "../../utils/Validators";
-
-const containerStyle = {
-  margin: "0px",
-  padding: "0px",
-  display: "flex",
-  flexDirection: "column",
-  minHeight: "100vh",
-  minWidth: "100%",
-};
 
 const inputstlying = {
   "& .MuiOutlinedInput-root": {
@@ -59,9 +50,35 @@ const Anointing = () => {
   const [captchaValue, setCaptchaValue] = useState(null);
   const [open, setOpen] = useState(false);
   const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [priestList, setPriestList] = useState([]);
   const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    first_name: "",
+    age: "",
+    contact_no: "",
+    requested_by: "",
+    address: "",
+    relationship: "",
+    patient_status: "",
+    preferred_date: "",
+    preferred_time: "",
+    preferred_priest: "",
+    isParishioner: "",
+    transaction_no: "",
+    service_id: id,
+  });
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
 
   useEffect(() => {
     const fetchPriest = async () => {
@@ -78,23 +95,8 @@ const Anointing = () => {
       }
     };
     fetchPriest();
+    createTransactionNo();
   }, []);
-
-  const [formData, setFormData] = useState({
-    first_name: "",
-    age: "",
-    contact_no: "",
-    requested_by: "",
-    address: "",
-    relationship: "",
-    patient_status: "",
-    preferred_date: "",
-    preferred_time: null,
-    preferred_priest: null,
-    isParishioner: "",
-    transaction_no: hash,
-    service_id: id,
-  });
 
   const modalData = {
     message:
@@ -104,10 +106,9 @@ const Anointing = () => {
   };
 
   const handlesubmit = (e) => {
-    e.preventDefault;
+    e.preventDefault();
     const validate = ValidateForm(formData);
     setErrors(validate);
-    console.log(validate);
     if (Object.keys(validate) == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-anointing`, formData);
@@ -117,25 +118,20 @@ const Anointing = () => {
         console.log("error submitting to server", err);
       }
     }
-    return;
   };
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
-
-  useEffect(() => {
-    console.log(formData.preferred_time);
-  }, [formData.preferred_time]);
 
   const handleCaptchaChange = (value) => {
     setCaptchaValue(value);
@@ -160,11 +156,11 @@ const Anointing = () => {
 
       <NoPaymentModal open={open} data={modalData} />
 
-      <Container maxWidth="lg" sx={{marginBottom: "50px"}}>
+      <Container maxWidth="lg" sx={{ marginBottom: "50px" }}>
         <form>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Name: (of the person to be annointed)</label>
               <TextField
                 fullWidth
@@ -177,7 +173,7 @@ const Anointing = () => {
               />
             </Grid>
             <Grid item xs={3} sm={1}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Age:</label>
               <TextField
                 fullWidth
@@ -190,7 +186,7 @@ const Anointing = () => {
               />
             </Grid>
             <Grid item xs={9} sm={3}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Contact Number:</label>
               <TextField
                 fullWidth
@@ -198,18 +194,18 @@ const Anointing = () => {
                 size="small"
                 sx={inputstlying}
                 name="contact_no"
-                inputProps={{maxLength: 11}}
+                inputProps={{ maxLength: 11 }}
                 onChange={handleChange}
                 required
               />
               {errors.contact_no != null && (
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   {errors.contact_no}
                 </FormHelperText>
               )}
             </Grid>
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Requested By:</label>
               <TextField
                 fullWidth
@@ -223,7 +219,7 @@ const Anointing = () => {
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Address:</label>
               <TextField
                 fullWidth
@@ -236,7 +232,7 @@ const Anointing = () => {
               />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Relationship:</label>
               <TextField
                 fullWidth
@@ -249,7 +245,7 @@ const Anointing = () => {
               />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Patient Status:</label>
               <TextField
                 fullWidth
@@ -263,11 +259,11 @@ const Anointing = () => {
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  slotProps={{textField: {fullWidth: true}}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
@@ -278,25 +274,25 @@ const Anointing = () => {
                   required
                 />
                 {/* {errors.preferred_date != null && ( */}
-                <FormHelperText sx={{color: "red"}}>
+                <FormHelperText sx={{ color: "red" }}>
                   Date must be atleast 2 days from today to allow for processing
                   time
                 </FormHelperText>
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
-                  slotProps={{textField: {fullWidth: true}}}
+                  slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   size="small"
                   sx={inputstlying}
                   name="preferred_time"
                   onChange={(time) => handleTimeChange("preferred_time", time)}
                   renderInput={(params) => <TextField {...params} required />}
-                  timeSteps={{hours: 30, minutes: 30}} // if mabuang, delete hours
+                  timeSteps={{ hours: 30, minutes: 30 }} // if mabuang, delete hours
                   minTime={dayjs().set("hour", 5)}
                   maxTime={dayjs().set("hour", 18)}
                   required
@@ -304,7 +300,7 @@ const Anointing = () => {
               </LocalizationProvider>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <span style={{color: "red"}}>*</span>
+              <span style={{ color: "red" }}>*</span>
               <label>Preferred Priest:</label>
               <TextField
                 fullWidth
@@ -314,7 +310,8 @@ const Anointing = () => {
                 sx={inputstlying}
                 name="preferred_priest"
                 onChange={handleChange}
-                required>
+                required
+              >
                 {priestList.map((priest, index) => (
                   <MenuItem key={index} value={priest.priestID}>
                     {priest.first_name + " " + priest.last_name}
@@ -329,8 +326,9 @@ const Anointing = () => {
               sm={2}
               sx={{
                 display: "flex",
-                justifyContent: {xs: "center", sm: "flex-start"},
-              }}>
+                justifyContent: { xs: "center", sm: "flex-start" },
+              }}
+            >
               <label>Are you a Parishioner?</label>
             </Grid>
             <Grid item xs={6} sm={3}>
@@ -339,10 +337,11 @@ const Anointing = () => {
                 sx={{
                   marginTop: "-6px",
                   display: "flex",
-                  justifyContent: {xs: "center", sm: "flex-start"},
+                  justifyContent: { xs: "center", sm: "flex-start" },
                 }}
                 name="isParishioner"
-                onChange={handleChange}>
+                onChange={handleChange}
+              >
                 <FormControlLabel
                   value="1"
                   control={<Radio size="small" />}
@@ -361,10 +360,11 @@ const Anointing = () => {
               sm={7}
               sx={{
                 display: "flex",
-                justifyContent: {xs: "center", sm: "flex-end"},
-              }}>
+                justifyContent: { xs: "center", sm: "flex-end" },
+              }}
+            >
               <p>
-                <p style={{fontWeight: "bold", display: "inline"}}>Note: </p>
+                <p style={{ fontWeight: "bold", display: "inline" }}>Note: </p>
                 Please pick up the priest
               </p>
             </Grid>
@@ -382,7 +382,8 @@ const Anointing = () => {
               }`}
               disabled={!isCaptchaChecked}
               onClick={handlesubmit}
-              type="button">
+              type="button"
+            >
               SUBMIT REQUEST
             </button>
           </div>

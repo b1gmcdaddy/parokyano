@@ -56,9 +56,34 @@ const FuneralMass = () => {
   const dateToday = new Date().toJSON().slice(0, 10);
   const [open, setOpen] = useState(false);
   const [captchaValue, setCaptchaValue] = useState(null);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [priestList, setPriestList] = useState([]);
   const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    first_name: null, // in the case of outside mass, this is the field for the celebration/celebrator
+    address: null,
+    contact_no: null,
+    requested_by: null, // this is the field for the contact person's name
+    relationship: null,
+    preferred_date: null,
+    preferred_time: null,
+    preferred_priest: null, // value is the  priest id
+    isParishioner: null,
+    transaction_no: "",
+    service_id: id,
+    type: null,
+  });
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
 
   useEffect(() => {
     const fetchPriest = async () => {
@@ -75,22 +100,8 @@ const FuneralMass = () => {
       }
     };
     fetchPriest();
+    createTransactionNo();
   }, []);
-
-  const [formData, setFormData] = useState({
-    first_name: null, // in the case of outside mass, this is the field for the celebration/celebrator
-    address: null,
-    contact_no: null,
-    requested_by: null, // this is the field for the contact person's name
-    relationship: null,
-    preferred_date: null,
-    preferred_time: null,
-    preferred_priest: null, // value is the  priest id
-    isParishioner: null,
-    transaction_no: hash,
-    service_id: id,
-    type: null,
-  });
 
   const modalData = {
     message:
@@ -101,19 +112,16 @@ const FuneralMass = () => {
 
   const handlesubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
     const validate = ValidateForm(formData);
     setErrors(validate);
     if (Object.keys(validate) == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-mass`, formData);
-        console.log("success!");
         setOpen(true);
       } catch (err) {
         console.error("error submitting to server", err);
       }
     }
-    return;
   };
 
   const handleChange = (e) => {

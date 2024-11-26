@@ -52,7 +52,6 @@ const inputstlying = {
 const CertificateWedding = () => {
   const id = 4;
   const dateToday = new Date().toJSON().slice(0, 10);
-  const hash = dateToday + generateHash().slice(0, 20);
   const [serviceInfo, setServiceInfo] = useState({});
   const [modalData, setModalData] = useState({});
   const [open, setOpen] = useState(false);
@@ -74,15 +73,27 @@ const CertificateWedding = () => {
     },
     preferred_date: null,
     archive_info: {
-      book_no: "",
-      page_no: "",
-      line_no: "",
+      book_no: null,
+      page_no: null,
+      line_no: null,
     },
     service_id: id,
-    transaction_no: hash,
+    transaction_no: "",
     date_requested: dateToday,
     purpose: "",
   });
+
+  const createTransactionNo = async () => {
+    try {
+      const hash = await generateHash();
+      setFormData({
+        ...formData,
+        transaction_no: dateToday + id + hash,
+      });
+    } catch (err) {
+      console.error("error creating transaction no", err);
+    }
+  };
 
   useEffect(() => {
     const fetchServiceInfo = async (e) => {
@@ -100,6 +111,7 @@ const CertificateWedding = () => {
         console.error("error retrieving from server", err);
       }
     };
+    createTransactionNo();
     fetchServiceInfo();
   }, []);
 
@@ -132,6 +144,7 @@ const CertificateWedding = () => {
     e.preventDefault();
     const validate = ValidateForm(formData);
     setErrors(validate);
+    console.log(formData);
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-certificate`, formData);
