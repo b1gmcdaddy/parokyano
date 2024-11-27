@@ -107,6 +107,23 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
     }
   };
 
+  const [service2, setService2] = useState(null);
+  const fetchService2 = async () => {
+    try {
+      const response = await axios.get(
+        `${config.API}/service/retrieveByParams`,
+        {
+          params: {
+            id: data.service_id == 5 ? 6 : 5,
+          },
+        }
+      );
+      setService2(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const fetchSponsors = async (id) => {
     try {
       const response = await axios.get(`${config.API}/sponsor/retrieve`, {
@@ -216,6 +233,7 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
         });
         fetchPriest();
         fetchService();
+        fetchService2();
         fetchSponsors(data.requestID);
         fetchBaptismDetails(data.requestID);
         resolve();
@@ -423,14 +441,15 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
   };
 
   useEffect(() => {
-    console.log(dayjs(formData?.preferred_time, "HH:mm:ss").hour());
+    console.log("service2", service2);
+    console.log("service", service);
     if (
       dayjs(formData?.preferred_date).get("day") == 0 &&
       dayjs(formData?.preferred_time, "HH:mm:ss").hour() == 6
     ) {
       setFormData((prevState) => ({
         ...prevState,
-        donation: 800.0,
+        donation: service2?.serviceID == 6 ? service2?.fee : service?.fee,
       }));
       setFormData((prevState) => ({
         ...prevState,
@@ -439,7 +458,7 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
     } else {
       setFormData((prevState) => ({
         ...prevState,
-        donation: 1600.0,
+        donation: service2?.serviceID == 5 ? service2?.fee : service?.fee,
       }));
       setFormData((prevState) => ({
         ...prevState,
@@ -969,7 +988,7 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
                       timeSteps={{ hours: 30, minutes: 30 }}
-                      minTime={dayjs().set("hour", 6)}
+                      minTime={dayjs().set("hour", 5)}
                       maxTime={dayjs().set("hour", 19)}
                       type="time"
                       fullWidth

@@ -320,7 +320,7 @@ const Anointing = () => {
               >
                 {priestList.map((priest, index) => (
                   <MenuItem key={index} value={priest.priestID}>
-                    {priest.first_name + " " + priest.last_name}
+                    {"Fr. " + priest.first_name + " " + priest.last_name}
                   </MenuItem>
                 ))}
               </TextField>

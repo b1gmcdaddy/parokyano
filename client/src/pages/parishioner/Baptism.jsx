@@ -219,6 +219,7 @@ const Baptism = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("ok!");
     const validate = ValidateForm(formData);
     setErrors(validate);
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
