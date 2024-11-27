@@ -143,7 +143,7 @@ const Baptism = () => {
       const hash = await generateHash();
       setFormData({
         ...formData,
-        transaction_no: dateToday + 5 + hash,
+        transaction_no: `${dateToday}-5-${hash}`,
       });
     } catch (err) {
       console.error("error creating transaction no", err);

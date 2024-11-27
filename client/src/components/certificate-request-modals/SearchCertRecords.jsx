@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Box,
@@ -26,15 +26,13 @@ import ConfirmationDialog from "../ConfirmationModal";
 import sendSMS from "../../utils/smsService";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, {tableCellClasses} from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import {styled} from "@mui/material/styles";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
+import { styled } from "@mui/material/styles";
 
-const SearchCertRecords = ({open, data, close, refreshList}) => {
+const SearchCertRecords = ({ open, data, close, refreshList }) => {
   const [certType, setCertType] = useState(null);
   const [confirmationData, setConfirmationData] = useState([]);
   const [confirmationID, setConfirmationID] = useState(null);
@@ -47,7 +45,7 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
   const [currentAction, setCurrentAction] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const StyledTableCell = styled(TableCell)(({theme}) => ({
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "rgb(15 23 42)",
       color: theme.palette.common.white,
@@ -64,7 +62,7 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
     },
   }));
 
-  const StyledTableRow = styled(TableRow)(({theme}) => ({
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
     // "&:nth-of-type(odd)": {
     //   backgroundColor: theme.palette.action.hover,
     // },
@@ -110,7 +108,7 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
       searchRecords();
     }
 
-    console.log(data);
+    // console.log(data);
   }, [open, data]);
 
   const handleOpenCompareModal = (rec) => {
@@ -171,11 +169,12 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -184,11 +183,12 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity="info" sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity="info" sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -204,7 +204,8 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
           close();
         }}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
+        aria-describedby="alert-dialog-description"
+      >
         <DialogContent>
           <CompareRecords
             open={openCompareModal}
@@ -213,18 +214,24 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
             recordData={recordData}
             refreshList={refreshList}
           />
-          <Box sx={{display: "flex", justifyContent: "flex-start", mb: 2}}>
+          <Box sx={{ mb: 2 }}>
+            <Typography
+              variant="h6"
+              sx={{ textAlign: "center", fontWeight: "bold", marginBottom: 4 }}
+            >
+              Search Records
+            </Typography>
             <TextField
+              fullWidth
               size="small"
               label="Search"
               variant="outlined"
-              sx={{width: "300px"}}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </Box>
           <Box>
-            <TableContainer component={Paper} sx={{overflowX: "auto"}}>
-              <Table sx={{minWidth: 700}} aria-label="customized table">
+            <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
+              <Table sx={{ minWidth: 700 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
                     <StyledTableCell>Name</StyledTableCell>
@@ -300,17 +307,18 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                               <Chip
                                 key={key}
                                 label={`${key}: ${value}`}
-                                sx={{margin: "2px"}}
+                                sx={{ margin: "2px" }}
                               />
                             ))}
                           </StyledTableCell>
                           <StyledTableCell>
                             {`Matching: ${matchingPercentage}%`}
                           </StyledTableCell>
-                          <StyledTableCell sx={{textAlign: "center"}}>
+                          <StyledTableCell sx={{ textAlign: "center" }}>
                             <Button
                               variant="text"
-                              onClick={() => handleOpenCompareModal(rec)}>
+                              onClick={() => handleOpenCompareModal(rec)}
+                            >
                               <VisibilityIcon className="cursor-pointer" />
                               &nbsp;<span className="cursor-pointer">View</span>
                             </Button>
@@ -320,12 +328,48 @@ const SearchCertRecords = ({open, data, close, refreshList}) => {
                     })
                   ) : (
                     <StyledTableRow>
-                      <StyledTableCell>No records found</StyledTableCell>
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          alignItems: "center",
+                          marginTop: "4px",
+                        }}
+                      >
+                        <CancelIcon sx={{ color: "#A20D0D" }} />
+                        <Typography>No records found</Typography>
+                      </StyledTableCell>
+                      <StyledTableCell>N/A</StyledTableCell>
+                      <StyledTableCell>N/A</StyledTableCell>
+                      <StyledTableCell>
+                        <Button
+                          variant="contained"
+                          onClick={() => handleOpenDialog("cancel")}
+                          sx={{
+                            backgroundColor: "#A20D0D",
+                            "&:hover": {
+                              backgroundColor: "#CC4141",
+                            },
+                          }}
+                        >
+                          Cancel Cert Request
+                        </Button>
+                      </StyledTableCell>
                     </StyledTableRow>
                   )}
                 </TableBody>
               </Table>
             </TableContainer>
+
+            {/* START Confirmation Dialog */}
+            <ConfirmationDialog
+              open={dialogOpen}
+              onClose={() => setDialogOpen(false)}
+              action={currentAction}
+              onConfirm={cancelCertRequest}
+              service={"certificate"}
+            />
+            {/* END Confirmation Dialog */}
           </Box>
         </DialogContent>
       </Dialog>
