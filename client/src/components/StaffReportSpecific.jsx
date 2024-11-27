@@ -9,7 +9,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import axios from "axios";
 import config from "../config";
@@ -23,7 +23,7 @@ const last = formatDate(new Date(now.getFullYear(), now.getMonth() + 1, 1));
 
 const start = formatDate(new Date(now.getFullYear(), now.getMonth(), 1));
 
-const StaffReportSpecific = ({startDate, endDate, category}) => {
+const StaffReportSpecific = ({ startDate, endDate, category }) => {
   const [approved, setApproved] = useState(null);
   const [cancelled, setCancelled] = useState(null);
   const [pending, setPending] = useState(null);
@@ -85,10 +85,10 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
 
   return (
     <>
-      <Box sx={{display: "flex", alignItems: "center"}}>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <img
           src={logo}
-          style={{height: "auto", width: "10%", marginTop: "1em"}}
+          style={{ height: "auto", width: "10%", marginTop: "1em" }}
           alt="Logo"
         />
         <Typography>
@@ -96,9 +96,9 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
           Gethsemane Parish
         </Typography>
       </Box>
-      <Box sx={{textAlign: "center", margin: "auto"}}>
+      <Box sx={{ textAlign: "center", margin: "auto" }}>
         <Typography>Parokyano Generated Report</Typography>
-        <Typography sx={{fontStyle: "italic", fontSize: "14px"}}>
+        <Typography sx={{ fontStyle: "italic", fontSize: "14px" }}>
           {startDate && endDate ? (
             <span>
               {util.formatDate(startDate)} - {util.formatDate(endDate)}
@@ -109,18 +109,19 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
         </Typography>
       </Box>
 
-      <Box sx={{marginTop: "3em"}}>
+      <Box sx={{ marginTop: "3em" }}>
         <TableContainer component={Paper}>
-          <Table sx={{minWidth: 450}} aria-label="simple table">
+          <Table sx={{ minWidth: 450 }} aria-label="simple table">
             <TableHead>
-              <TableRow sx={{backgroundColor: "#D9D9D9"}}>
+              <TableRow sx={{ backgroundColor: "#D9D9D9" }}>
                 <TableCell
                   colSpan={5}
                   sx={{
                     fontWeight: "bold",
                     textTransform: "uppercase",
                     textAlign: "center",
-                  }}>
+                  }}
+                >
                   {serviceType}
                 </TableCell>
               </TableRow>
@@ -134,19 +135,20 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
                     fontSize: "1rem",
                     backgroundColor: "green",
                     color: "white",
-                  }}>
+                  }}
+                >
                   APPROVED
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Date Requested
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Date Approved
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Interval
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Fees Collected
                 </TableCell>
               </TableRow>
@@ -155,7 +157,9 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
                 approved?.map((data, index) => (
                   <TableRow key={index}>
                     <TableCell align="center">
-                      {data.first_name} {data.last_name}
+                      {data.first_name
+                        ? `${data.first_name} ${data.last_name}`
+                        : data.requested_by}
                     </TableCell>
                     <TableCell align="right">
                       {util.formatDate(data.date_requested)}
@@ -189,12 +193,14 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
                   <TableCell
                     colSpan={4}
                     align="right"
-                    sx={{fontWeight: 900, fontSize: "18px"}}>
+                    sx={{ fontWeight: 900, fontSize: "18px" }}
+                  >
                     <strong>TOTAL</strong>
                   </TableCell>
                   <TableCell
                     align="right"
-                    sx={{fontWeight: 900, fontSize: "18px"}}>
+                    sx={{ fontWeight: 900, fontSize: "18px" }}
+                  >
                     <strong>
                       ₱{" "}
                       {approved
@@ -213,7 +219,7 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
                 </TableRow>
               )}
 
-              <TableRow>
+              {/* <TableRow>
                 <TableCell
                   align="center"
                   sx={{
@@ -221,19 +227,20 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
                     fontSize: "1rem",
                     backgroundColor: "#ED8234",
                     color: "white",
-                  }}>
+                  }}
+                >
                   PENDING
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Date Requested
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Date Approved
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Interval
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Fees Collected
                 </TableCell>
               </TableRow>
@@ -263,19 +270,20 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
                     fontSize: "1rem",
                     backgroundColor: "#950000",
                     color: "white",
-                  }}>
+                  }}
+                >
                   CANCELLED
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Date Requested
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Date Cancelled
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Interval
                 </TableCell>
-                <TableCell align="right" sx={{fontWeight: "bold"}}>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Fees Collected
                 </TableCell>
               </TableRow>
@@ -295,7 +303,7 @@ const StaffReportSpecific = ({startDate, endDate, category}) => {
                     <TableCell align="right">{<i>N/A</i>}</TableCell>
                     <TableCell align="right">{<i>N/A</i>}</TableCell>
                   </TableRow>
-                ))}
+                ))} */}
             </TableBody>
           </Table>
         </TableContainer>

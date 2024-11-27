@@ -16,12 +16,12 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CloseIcon from "@mui/icons-material/Close";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import config from "../../../../config";
 import axios from "axios";
@@ -29,7 +29,7 @@ import Skeleton from "@mui/material/Skeleton";
 import sendSMS from "../../../../utils/smsService";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "40px"},
+  "& .MuiInputBase-root": { height: "40px" },
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -46,7 +46,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const AnointingApproved = ({open, data, handleClose, refreshList}) => {
+const AnointingApproved = ({ open, data, handleClose, refreshList }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState("");
   const [approver, setApprover] = useState({});
@@ -70,6 +70,7 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
     isParishioner: "",
     transaction_no: "",
     service_id: "",
+    end_time: "", // Added end_time field
   });
 
   const fetchService = async () => {
@@ -96,7 +97,7 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
           id: id,
         },
       });
-      console.log(response.data[0]);
+      // console.log(response.data[0]);
       if (response.status == 200) {
         setApprover(response.data[0]);
       }
@@ -148,13 +149,17 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
     refreshList();
   };
 
+  useEffect(() => {
+    console.log(formData.preferred_time);
+    console.log(formData.end_time);
+  }, [formData.end_time, formData.preferred_time]);
+
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
-    console.log(formData.preferred_date);
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   useEffect(() => {
@@ -174,7 +179,9 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
         patient_status: data.patient_status,
         payment_status: data.payment_status,
         service_id: data.service_id,
+        end_time: data.end_time, // Added end_time field
       });
+      console.log(data);
     }
   }, [open, data]);
 
@@ -188,8 +195,8 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
   };
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleConfirm = async (action) => {
@@ -253,6 +260,24 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
         break;
 
       case "reschedule": ////// RESCHEDULE
+        if (
+          dayjs(formData.end_time, "HH:mm:ss").isBefore(
+            dayjs(formData.preferred_time, "HH:mm:ss")
+          )
+        ) {
+          setError({
+            message: "Invalid Time Range",
+            details: "End time cannot be earlier than or equal to start time.",
+          });
+          break;
+        }
+        if (formData.end_time === formData.preferred_time) {
+          setError({
+            message: "Invalid Time Range",
+            details: "End time cannot be the same as start time.",
+          });
+          break;
+        }
         try {
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
@@ -277,6 +302,7 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
           const reschedule = {
             preferred_date: formData.preferred_date,
             preferred_time: formData.preferred_time,
+            end_time: formData.end_time,
             priest_id: formData.priest_id,
           };
 
@@ -319,11 +345,12 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -332,11 +359,12 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity={snackBarStyle} sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -346,17 +374,22 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {formData && priests ? (
           <>
-            <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
+            <DialogTitle sx={{ mt: 3, p: 2, textAlign: "center" }}>
               <b>Anointing of the Sick Request Information</b>
               <IconButton
                 aria-label="close"
                 onClick={handleClose}
-                sx={{position: "absolute", right: 8, top: 8}}>
+                sx={{ position: "absolute", right: 8, top: 8 }}
+              >
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
-              <Grid container spacing={2} sx={{padding: 3}}>
+              <Grid
+                container
+                spacing={2}
+                sx={{ padding: 3, display: "flex", justifyContent: "center" }}
+              >
                 <Grid item xs={12} sm={9}>
                   <label>Name:</label>
                   <TextField
@@ -432,7 +465,7 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                   <hr className="my-3" />
                 </Grid>
 
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={11}>
                   <label>Selected Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -440,10 +473,11 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                     name="priest_id"
                     onChange={handleChange}
                     select
-                    fullWidth>
+                    fullWidth
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
-                        {priest.first_name + " " + priest.last_name}
+                        {"Fr. " + priest.first_name + " " + priest.last_name}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -470,10 +504,10 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                   </LocalizationProvider>
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <label>Selected Time:</label>
+                  <label>Start Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
-                      timeSteps={{hours: 30, minutes: 30}}
+                      timeSteps={{ hours: 30, minutes: 30 }}
                       minTime={dayjs().set("hour", 7)}
                       maxTime={dayjs().set("hour", 20)}
                       fullWidth
@@ -492,7 +526,28 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
+                <Grid item xs={12} sm={3}>
+                  <label>End Time:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimePicker
+                      timeSteps={{ hours: 30, minutes: 30 }}
+                      minTime={dayjs().set("hour", 7)}
+                      maxTime={dayjs().set("hour", 20)}
+                      fullWidth
+                      sx={TextFieldStyle}
+                      value={
+                        formData.end_time
+                          ? dayjs(formData.end_time, "HH:mm:ss")
+                          : null
+                      }
+                      onChange={(time) => handleTimeChange("end_time", time)}
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item xs={12} sm={2} sx={{}}>
                   <Button
                     variant="contained"
                     onClick={() => handleOpenDialog("reschedule")}
@@ -502,8 +557,9 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#578A62"},
-                    }}>
+                      "&:hover": { bgcolor: "#578A62" },
+                    }}
+                  >
                     Reschedule
                   </Button>
                 </Grid>
@@ -527,7 +583,8 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                       justifyContent: "center",
                       backgroundColor: "#d1d1d1",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     {data.transaction_no}
                   </Paper>
                 </Grid>
@@ -541,7 +598,8 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <Grid
                   item
                   xs={12}
@@ -550,7 +608,8 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                     margin: "-40px 0 10px 0",
                     justifyContent: "center",
                     gap: "20px",
-                  }}>
+                  }}
+                >
                   <Button
                     variant="contained"
                     onClick={() => handleOpenDialog("update")}
@@ -560,8 +619,9 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#A58228"},
-                    }}>
+                      "&:hover": { bgcolor: "#A58228" },
+                    }}
+                  >
                     UPDATE
                   </Button>
 
@@ -574,8 +634,9 @@ const AnointingApproved = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#f44336"},
-                    }}>
+                      "&:hover": { bgcolor: "#f44336" },
+                    }}
+                  >
                     CANCEL
                   </Button>
                 </Grid>
