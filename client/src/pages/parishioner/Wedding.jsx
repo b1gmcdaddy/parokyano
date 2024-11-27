@@ -93,6 +93,7 @@ const Wedding = () => {
     sponsors: [{}, {}, {}, {}],
     transaction_no: "",
     service_id: id,
+    donation: 0,
     isParishioner: "",
   });
 

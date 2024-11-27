@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const db = require("./db");
 const _ = require("lodash");
-const {parse} = require("dotenv");
+const { parse } = require("dotenv");
 const dayjs = require("dayjs");
 
 const createRequestIntention = (req, res) => {
@@ -33,9 +33,9 @@ const createRequestIntention = (req, res) => {
     (err, result) => {
       if (err) {
         console.error("error submitting to db", err);
-        return res.status(500).json({status: 500, success: false});
+        return res.status(500).json({ status: 500, success: false });
       }
-      return res.status(200).json({success: true});
+      return res.status(200).json({ success: true });
     }
   );
 };
@@ -189,8 +189,8 @@ const createRequestWedding = async (req, res) => {
 
   try {
     const insertRequestQuery = `INSERT INTO request 
-      (first_name, middle_name, last_name, contact_no, relationship, transaction_no, service_id, date_requested, isParishioner)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      (first_name, middle_name, last_name, contact_no, relationship, transaction_no, service_id, date_requested, donation, isParishioner)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const insertRequestValues = [
       request.first_name,
@@ -201,6 +201,7 @@ const createRequestWedding = async (req, res) => {
       request.transaction_no,
       request.service_id,
       new Date(),
+      request.donation,
       request.isParishioner,
     ];
 
@@ -341,7 +342,7 @@ const createRequestBlessing = (req, res) => {
 };
 
 const retrieveByParams = (req, res) => {
-  const {col, val} = req.query;
+  const { col, val } = req.query;
 
   const query = `SELECT * FROM request WHERE ${col} = ?`;
 
@@ -350,13 +351,13 @@ const retrieveByParams = (req, res) => {
       console.error("error retrieving requests", err);
       return res.status(500);
     }
-    res.status(200).json({result});
+    res.status(200).json({ result });
   });
 };
 
 // for all tables
 const retrieveMultipleParams = (req, res) => {
-  const {col1, val1, col2, val2, order, page, limit} = req.query;
+  const { col1, val1, col2, val2, order, page, limit } = req.query;
   const offset = Number(page - 1) * parseInt(limit);
 
   const query = `SELECT r.*, s.name AS 'service_name' FROM request r, service s WHERE r.${col1} = ? AND r.${col2} = ? AND r.service_id = s.serviceID ORDER BY ${order} DESC LIMIT ? OFFSET ?`;
@@ -366,13 +367,13 @@ const retrieveMultipleParams = (req, res) => {
       console.error("error retrieving requests", err);
       return res.status(500);
     }
-    res.status(200).json({result});
+    res.status(200).json({ result });
   });
 };
 
 //only transactions
 const retrieveTransactions = (req, res) => {
-  const {col1, val1, col2, val2, order, page, limit} = req.query;
+  const { col1, val1, col2, val2, order, page, limit } = req.query;
   const offset = Number(page - 1) * parseInt(limit);
 
   const query = `SELECT r.*, s.name AS 'service_name' FROM request r, service s WHERE (r.${col1} = ? OR r.status = 'finished') AND r.${col2} = ? AND r.service_id = s.serviceID ORDER BY ${order} DESC LIMIT ? OFFSET ?`;
@@ -382,13 +383,13 @@ const retrieveTransactions = (req, res) => {
       console.error("error retrieving requests", err);
       return res.status(500);
     }
-    res.status(200).json({result});
+    res.status(200).json({ result });
   });
 };
 
 //para ni sa intentions print preview
 const retrieveMultipleDateFiltered = (req, res) => {
-  const {col1, val1, col2, val2, preferred_date, preferred_time} = req.query;
+  const { col1, val1, col2, val2, preferred_date, preferred_time } = req.query;
 
   const query = `SELECT * from request WHERE ${col1} =? AND ${col2} =? AND preferred_date = ? AND preferred_time = ? ORDER BY date_requested`;
 
@@ -400,14 +401,14 @@ const retrieveMultipleDateFiltered = (req, res) => {
         console.error("error retrieving reqs", err);
         return res.status(500);
       }
-      res.status(200).json({result});
+      res.status(200).json({ result });
     }
   );
 };
 
 // temporary for services table only
 const retrieveRequests = (req, res) => {
-  const {status, page, limit} = req.query;
+  const { status, page, limit } = req.query;
   const offset = (Number(page) - 1) * parseInt(limit);
 
   const query = `SELECT r.*, s.name AS 'service_name'
@@ -421,15 +422,15 @@ const retrieveRequests = (req, res) => {
   db.query(query, [status, parseInt(limit), offset], (err, result) => {
     if (err) {
       console.error("error retrieving requests", err);
-      return res.status(500).json({error: "Error retrieving requests"});
+      return res.status(500).json({ error: "Error retrieving requests" });
     }
-    res.status(200).json({result});
+    res.status(200).json({ result });
   });
 };
 
 // temporary for certs table
 const retrieveCerts = (req, res) => {
-  const {status, page, limit} = req.query;
+  const { status, page, limit } = req.query;
   console.log(page, limit);
   const offset = Number(page - 1) * parseInt(limit);
   console.log(offset);
@@ -440,7 +441,7 @@ const retrieveCerts = (req, res) => {
       console.error("error retrieving requests", err);
       return res.status(500);
     }
-    res.status(200).json({result});
+    res.status(200).json({ result });
   });
 };
 
@@ -453,13 +454,13 @@ const getCountRequests = (req, res) => {
       return res.status(500);
     }
     console.log(result[0].count);
-    res.status(200).json({count: result[0].count});
+    res.status(200).json({ count: result[0].count });
   });
 };
 
 // For Dashboard and possibly for generate report?
 const getCountRequestsDateFiltered = (req, res) => {
-  const {dateFilter} = req.query;
+  const { dateFilter } = req.query;
 
   const currentDate = new Date();
 
@@ -475,7 +476,7 @@ const getCountRequestsDateFiltered = (req, res) => {
       dateCondition = `YEAR(date_requested) = YEAR(CURDATE()) AND MONTH(date_requested) = MONTH(CURDATE())`;
       break;
     default:
-      return res.status(400).json({error: "Invalid date filter"});
+      return res.status(400).json({ error: "Invalid date filter" });
   }
   const queryA = `SELECT COUNT(*) as countA FROM request WHERE service_id = 1 AND status IN ('approved', 'pending') AND ${dateCondition}`;
   const queryB = `SELECT COUNT(*) as countB FROM request WHERE service_id IN (2, 3, 4) AND status IN ('approved', 'pending') AND ${dateCondition}`;
@@ -484,19 +485,19 @@ const getCountRequestsDateFiltered = (req, res) => {
   db.query(queryA, (errA, resultA) => {
     if (errA) {
       console.error("Error retrieving mass intentions count", errA);
-      return res.status(500).json({error: "Database error"});
+      return res.status(500).json({ error: "Database error" });
     }
 
     db.query(queryB, (errB, resultB) => {
       if (errB) {
         console.error("Error retrieving cert requests count", errB);
-        return res.status(500).json({error: "Database error"});
+        return res.status(500).json({ error: "Database error" });
       }
 
       db.query(queryC, (errC, resultC) => {
         if (errC) {
           console.error("Error retrieving service requests counts", errC);
-          return res.status(500).json({error: "Database error"});
+          return res.status(500).json({ error: "Database error" });
         }
         res.status(200).json({
           countA: resultA[0].countA,
@@ -527,10 +528,10 @@ const getUpcomingEvents = (req, res) => {
       console.error("Error retrieving approved requests:", err);
       return res
         .status(500)
-        .json({message: "An error occurred while retrieving requests."});
+        .json({ message: "An error occurred while retrieving requests." });
     }
 
-    res.status(200).json({success: true, data: result});
+    res.status(200).json({ success: true, data: result });
   });
 };
 
@@ -543,12 +544,12 @@ const getCountCerts = (req, res) => {
       return res.status(500);
     }
     console.log(result[0].count);
-    res.status(200).json({count: result[0].count});
+    res.status(200).json({ count: result[0].count });
   });
 };
 
 const getCount = (req, res) => {
-  const {col1, val1, col2, val2} = req.query;
+  const { col1, val1, col2, val2 } = req.query;
   const query = `SELECT COUNT(*) as count FROM request WHERE ${col1} = ? AND ${col2} = ?`;
   db.query(query, [val1, val2], (err, result) => {
     if (err) {
@@ -556,12 +557,12 @@ const getCount = (req, res) => {
       return res.status(500);
     }
     console.log(result[0].count);
-    res.status(200).json({count: result[0].count});
+    res.status(200).json({ count: result[0].count });
   });
 };
 
 const getSpecificSummary = (req, res) => {
-  const {startDate, endDate, category} = req.query;
+  const { startDate, endDate, category } = req.query;
 
   if (!startDate || !endDate) {
     return res.status(400).json("lacking dates..");
@@ -595,7 +596,7 @@ const getSpecificSummary = (req, res) => {
       console.error("Error retrieving approved requests", err);
       return res
         .status(500)
-        .json({error: "Error retrieving approved requests"});
+        .json({ error: "Error retrieving approved requests" });
     }
 
     db.query(queryCancelled, (err, cancelled) => {
@@ -603,7 +604,7 @@ const getSpecificSummary = (req, res) => {
         console.error("Error retrieving cancelled requests", err);
         return res
           .status(500)
-          .json({error: "Error retrieving cancelled requests"});
+          .json({ error: "Error retrieving cancelled requests" });
       }
 
       db.query(queryPending, (err, pending) => {
@@ -611,10 +612,10 @@ const getSpecificSummary = (req, res) => {
           console.error("Error retrieving pending requests", err);
           return res
             .status(500)
-            .json({error: "Error retrieving pending requests"});
+            .json({ error: "Error retrieving pending requests" });
         }
 
-        res.status(200).json({approved, cancelled, pending});
+        res.status(200).json({ approved, cancelled, pending });
       });
     });
   });
@@ -622,7 +623,7 @@ const getSpecificSummary = (req, res) => {
 
 //tested wid postman already..
 const getRequestSummary = (req, res) => {
-  const {startDate, endDate, category} = req.query;
+  const { startDate, endDate, category } = req.query;
 
   if (!startDate || !endDate) {
     return res.status(400).json("lacking dates..");
@@ -659,14 +660,16 @@ const getRequestSummary = (req, res) => {
       (err, baptisms) => {
         if (err) {
           console.error("error retrieving requests", err);
-          return res.status(500).json({error: "Error retrieving requests"});
+          return res.status(500).json({ error: "Error retrieving requests" });
         }
         db.query(
           `SELECT r.*, w.* FROM request r, wedding w WHERE (r.service_id = 7) AND r.requestID = w.request_id AND (r.status = 'approved' OR r.status = 'finished') AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' ${category}`,
           (err, weddings) => {
             if (err) {
               console.error("error retrieving requests", err);
-              return res.status(500).json({error: "Error retrieving requests"});
+              return res
+                .status(500)
+                .json({ error: "Error retrieving requests" });
             }
             db.query(
               `SELECT r.*, b.* FROM request r, baptism b WHERE (r.service_id = 6) AND r.requestID = b.request_id AND (r.status = 'approved' OR r.status = 'finished') AND r.date_requested BETWEEN '${startDate}' AND '${endDate}' ${category}`,
@@ -675,11 +678,11 @@ const getRequestSummary = (req, res) => {
                   console.error("error retrieving requests", err);
                   return res
                     .status(500)
-                    .json({error: "Error retrieving requests"});
+                    .json({ error: "Error retrieving requests" });
                 }
                 res
                   .status(200)
-                  .json({results, baptisms, weddings, baptismsGeneral});
+                  .json({ results, baptisms, weddings, baptismsGeneral });
               }
             );
           }
@@ -690,7 +693,7 @@ const getRequestSummary = (req, res) => {
 };
 
 const searchIntentions = (req, res) => {
-  const {col, val, status, page, limit} = req.query;
+  const { col, val, status, page, limit } = req.query;
   const enhancedVal = "%" + val + "%";
   const offset = Number(page - 1) * parseInt(limit);
   const query = `SELECT * FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}') AND service_id = 1 AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
@@ -708,13 +711,13 @@ const searchIntentions = (req, res) => {
       }
       console.log(count[0].count);
       console.log(result);
-      res.status(200).json({result, count});
+      res.status(200).json({ result, count });
     });
   });
 };
 
 const searchRequests = (req, res) => {
-  const {col, val, status, page, limit} = req.query;
+  const { col, val, status, page, limit } = req.query;
   const enhancedVal = "%" + val + "%";
   const offset = Number(page - 1) * parseInt(limit);
   const query = `SELECT r.*, s.name AS 'service_name' FROM request r INNER JOIN service s ON r.service_id = s.serviceID WHERE (r.requested_by LIKE '${enhancedVal}' OR r.transaction_no LIKE '${enhancedVal}' OR r.first_name LIKE '${enhancedVal}') AND r.service_id != 1 AND r.service_id != 2 AND r.service_id != 3 AND r.service_id != 4 AND r.status = ? ORDER BY r.date_requested DESC LIMIT ? OFFSET ?`;
@@ -731,13 +734,13 @@ const searchRequests = (req, res) => {
         return res.status(500);
       }
       console.log(count[0].count);
-      res.status(200).json({result, count});
+      res.status(200).json({ result, count });
     });
   });
 };
 
 const searchCertificates = (req, res) => {
-  const {col, val, status, page, limit} = req.query;
+  const { col, val, status, page, limit } = req.query;
   const enhancedVal = "%" + val + "%";
   const offset = Number(page - 1) * parseInt(limit);
   const query = `SELECT * FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}' OR first_name LIKE '${enhancedVal}') AND service_id IN (2, 3, 4)  AND status = ? ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
@@ -755,13 +758,13 @@ const searchCertificates = (req, res) => {
         return res.status(500);
       }
       console.log("searches", count[0].count);
-      res.status(200).json({result, count});
+      res.status(200).json({ result, count });
     });
   });
 };
 
 const searchTransactions = (req, res) => {
-  const {col, val, status, page, limit} = req.query;
+  const { col, val, status, page, limit } = req.query;
   const enhancedVal = "%" + val + "%";
   const offset = Number(page - 1) * parseInt(limit);
   const query = `SELECT * FROM request WHERE (requested_by LIKE '${enhancedVal}' OR transaction_no LIKE '${enhancedVal}' OR first_name LIKE '${enhancedVal}') AND status = 'approved' AND payment_status = 'paid' ORDER BY date_requested DESC LIMIT ? OFFSET ?`;
@@ -779,14 +782,15 @@ const searchTransactions = (req, res) => {
         return res.status(500);
       }
       console.log("searches", count[0].count);
-      res.status(200).json({result, count});
+      res.status(200).json({ result, count });
     });
   });
 };
 
 // possible to refactor these to a single query
 const approveService = (req, res) => {
-  const {col, val, col2, val2, col3, val3, col4, val4, col5, val5} = req.query;
+  const { col, val, col2, val2, col3, val3, col4, val4, col5, val5 } =
+    req.query;
 
   const query = `UPDATE request SET ${col} = ?, ${col2} = ?, ${col3} = ?, ${col4} = ?, transaction_date = ? WHERE ${col5} = ?`;
   db.query(
@@ -795,22 +799,22 @@ const approveService = (req, res) => {
     (err, results) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({message: "error!"});
+        return res.status(500).json({ message: "error!" });
       } else {
-        res.status(200).json({message: "success!"});
+        res.status(200).json({ message: "success!" });
       }
     }
   );
 };
 const approveIntention = (req, res) => {
-  const {col, val, col2, val2, col3, val3, col4, val4} = req.query;
+  const { col, val, col2, val2, col3, val3, col4, val4 } = req.query;
   console.log(req.query);
   const query = `UPDATE request SET ${col} = ?, ${col2} = ?, ${col3} = ?, transaction_date = ? WHERE ${col4} = ?`;
   db.query(query, [val, val2, val3, new Date(), val4], (err, results) => {
     if (err) {
       console.error(err);
     } else {
-      res.status(200).json({message: "success!"});
+      res.status(200).json({ message: "success!" });
     }
   });
   console.log(query);
@@ -818,7 +822,7 @@ const approveIntention = (req, res) => {
 
 // may be used for approval/cancellation/printing??
 const approveDynamic = (req, res) => {
-  const {col, val, col2, val2, col3, val3, col4, val4} = req.query;
+  const { col, val, col2, val2, col3, val3, col4, val4 } = req.query;
   const setClause = [];
   const values = [];
 
@@ -838,7 +842,7 @@ const approveDynamic = (req, res) => {
   }
 
   if (setClause.length == 0 || setClause == null) {
-    return res.status(400).json({message: "no data to update"});
+    return res.status(400).json({ message: "no data to update" });
   }
 
   if (col4 && val4) {
@@ -847,9 +851,9 @@ const approveDynamic = (req, res) => {
     db.query(query, values, (err, results) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({error: "update failed."});
+        return res.status(500).json({ error: "update failed." });
       }
-      res.status(200).json({message: "successful update"});
+      res.status(200).json({ message: "successful update" });
     });
     console.log(query);
   }
@@ -870,7 +874,7 @@ const searchCertRecords = (req, res) => {
     preferred_date,
     birth_date,
   } = req.query;
-  const {firstName, middleName, lastName} = spouse_name;
+  const { firstName, middleName, lastName } = spouse_name;
   console.log(req.query);
 
   const serviceId = req.query.service_id;
@@ -954,7 +958,9 @@ const searchCertRecords = (req, res) => {
   db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Error retrieving matching records", err);
-      return res.status(500).json({error: "Error retrieving matching records"});
+      return res
+        .status(500)
+        .json({ error: "Error retrieving matching records" });
     }
 
     const parsedResults = results.map((record) => {
@@ -1078,26 +1084,26 @@ const searchCertRecords = (req, res) => {
       record.Matches = matchingFields;
       return record;
     });
-    res.status(200).json({results: parsedResults});
+    res.status(200).json({ results: parsedResults });
   });
 };
 
 //single column update
 const updateByParams = (req, res) => {
-  const {col, val, id} = req.query;
+  const { col, val, id } = req.query;
   const query = `UPDATE request SET ${col} = ? WHERE requestID = ?`;
   db.query(query, [val, id], (err, result) => {
     if (err) {
       console.error("error updating request", err);
-      return res.status(500).json({message: "error"});
+      return res.status(500).json({ message: "error" });
     }
-    res.status(200).json({message: "success"});
+    res.status(200).json({ message: "success" });
   });
 };
 
 // experimental
 const updateBulk = (req, res) => {
-  const {formData, id} = req.body;
+  const { formData, id } = req.body;
   console.log(formData);
 
   const columns = Object.keys(formData)
@@ -1111,20 +1117,20 @@ const updateBulk = (req, res) => {
     (err, result) => {
       if (err) {
         console.error("Error updating request", err);
-        return res.status(500).json({message: "Error updating request"});
+        return res.status(500).json({ message: "Error updating request" });
       }
-      return res.status(200).json({message: "Update successful"});
+      return res.status(200).json({ message: "Update successful" });
     }
   );
 };
 
 const updateConfirmationCert = (req, res) => {
-  const {confirmationData, id} = req.body;
+  const { confirmationData, id } = req.body;
   if (!id) {
-    return res.status(400).json({message: "Missing record ID"});
+    return res.status(400).json({ message: "Missing record ID" });
   }
 
-  const {details, ...mainFields} = confirmationData;
+  const { details, ...mainFields } = confirmationData;
 
   const columns = Object.keys(mainFields)
     .map((key) => `${key} = ?`)
@@ -1159,20 +1165,20 @@ const updateConfirmationCert = (req, res) => {
   db.query(query, [...values, ...detailsValues, id], (err, result) => {
     if (err) {
       console.error("Error updating request", err);
-      return res.status(500).json({message: "Error updating request"});
+      return res.status(500).json({ message: "Error updating request" });
     }
-    return res.status(200).json({message: "Update successful"});
+    return res.status(200).json({ message: "Update successful" });
   });
 };
 
 const updateCerts = (req, res) => {
-  const {baptismData, id} = req.body;
+  const { baptismData, id } = req.body;
 
   if (!id) {
-    return res.status(400).json({message: "Missing record ID"});
+    return res.status(400).json({ message: "Missing record ID" });
   }
 
-  const {details, ...mainFields} = baptismData;
+  const { details, ...mainFields } = baptismData;
 
   const columns = Object.keys(mainFields)
     .map((key) => `${key} = ?`)
@@ -1205,20 +1211,20 @@ const updateCerts = (req, res) => {
   db.query(query, [...values, ...detailsValues, id], (err, result) => {
     if (err) {
       console.error("Error updating request", err);
-      return res.status(500).json({message: "Error updating request"});
+      return res.status(500).json({ message: "Error updating request" });
     }
-    return res.status(200).json({message: "Update successful"});
+    return res.status(200).json({ message: "Update successful" });
   });
 };
 
 const updateMarriageCert = (req, res) => {
-  const {marriageData, id} = req.body;
+  const { marriageData, id } = req.body;
 
   if (!id) {
-    return res.status(400).json({message: "Missing record ID"});
+    return res.status(400).json({ message: "Missing record ID" });
   }
 
-  const {spouse_name, details, ...mainFields} = marriageData;
+  const { spouse_name, details, ...mainFields } = marriageData;
   const columns = Object.keys(mainFields)
     .map((key) => `${key} = ?`)
     .join(", ");
@@ -1269,15 +1275,15 @@ const updateMarriageCert = (req, res) => {
     (err, result) => {
       if (err) {
         console.error("Error updating request", err);
-        return res.status(500).json({message: "Error updating request"});
+        return res.status(500).json({ message: "Error updating request" });
       }
-      return res.status(200).json({message: "Update successful"});
+      return res.status(200).json({ message: "Update successful" });
     }
   );
 };
 
 const addSponsorFee = (req, res) => {
-  const {requestID} = req.body;
+  const { requestID } = req.body;
 
   db.query(
     `SELECT donation FROM request WHERE requestID = ?`,
@@ -1285,7 +1291,7 @@ const addSponsorFee = (req, res) => {
     (err, result) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({message: "Error retrieving fee"});
+        return res.status(500).json({ message: "Error retrieving fee" });
       }
 
       const currentFee = result[0].donation || 0;
@@ -1296,11 +1302,11 @@ const addSponsorFee = (req, res) => {
         (err, result) => {
           if (err) {
             console.error(err);
-            return res.status(500).json({message: "Error updating fee"});
+            return res.status(500).json({ message: "Error updating fee" });
           }
           return res
             .status(200)
-            .json({message: "Fee updated successfully", newFee});
+            .json({ message: "Fee updated successfully", newFee });
         }
       );
     }
@@ -1308,7 +1314,7 @@ const addSponsorFee = (req, res) => {
 };
 
 const removeSponsorFee = (req, res) => {
-  const {requestID} = req.body;
+  const { requestID } = req.body;
 
   db.query(
     `SELECT donation FROM request WHERE requestID = ?`,
@@ -1316,7 +1322,7 @@ const removeSponsorFee = (req, res) => {
     (err, result) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({message: "Error retrieving fee"});
+        return res.status(500).json({ message: "Error retrieving fee" });
       }
 
       const currentFee = result[0].donation || 0;
@@ -1328,11 +1334,11 @@ const removeSponsorFee = (req, res) => {
         (err, result) => {
           if (err) {
             console.error(err);
-            return res.status(500).json({message: "Error updating fee"});
+            return res.status(500).json({ message: "Error updating fee" });
           }
           return res
             .status(200)
-            .json({message: "Fee updated successfully", newFee});
+            .json({ message: "Fee updated successfully", newFee });
         }
       );
     }
