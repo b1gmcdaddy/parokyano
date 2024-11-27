@@ -64,7 +64,7 @@ const retrieveSchedule = (req, res) => {
 };
 
 const updateService = (req, res) => {
-  const {col, val, serviceID} = req.body;
+  const { col, val, serviceID } = req.body;
 
   db.query(
     `UPDATE service SET ${col} = ? WHERE serviceID = ?`,
@@ -73,7 +73,7 @@ const updateService = (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.status(200).send({message: "Fee successfuly updated!"});
+        res.status(200).send({ message: "Fee successfuly updated!" });
       }
     }
   );
@@ -83,26 +83,26 @@ const updateService = (req, res) => {
 const getCountReq = (req, res) => {
   const query = `
     SELECT 
-      monthNames.month AS month, 
-      IFNULL(COUNT(request.date_requested), 0) AS requestCount
-    FROM (
-      SELECT 'January' AS month, 1 AS monthNum UNION ALL
-      SELECT 'February', 2 UNION ALL
-      SELECT 'March', 3 UNION ALL
-      SELECT 'April', 4 UNION ALL
-      SELECT 'May', 5 UNION ALL
-      SELECT 'June', 6 UNION ALL
-      SELECT 'July', 7 UNION ALL
-      SELECT 'August', 8 UNION ALL
-      SELECT 'September', 9 UNION ALL
-      SELECT 'October', 10 UNION ALL
-      SELECT 'November', 11 UNION ALL
-      SELECT 'December', 12
-    ) AS monthNames
-    LEFT JOIN request ON monthNames.monthNum = MONTH(request.date_requested) 
-      AND YEAR(request.date_requested) = YEAR(CURDATE())
-    GROUP BY monthNames.monthNum
-    ORDER BY monthNames.monthNum;
+  monthNames.month AS month, 
+  IFNULL(COUNT(request.date_requested), 0) AS requestCount
+FROM (
+  SELECT 'January' AS month, 1 AS monthNum UNION ALL
+  SELECT 'February', 2 UNION ALL
+  SELECT 'March', 3 UNION ALL
+  SELECT 'April', 4 UNION ALL
+  SELECT 'May', 5 UNION ALL
+  SELECT 'June', 6 UNION ALL
+  SELECT 'July', 7 UNION ALL
+  SELECT 'August', 8 UNION ALL
+  SELECT 'September', 9 UNION ALL
+  SELECT 'October', 10 UNION ALL
+  SELECT 'November', 11 UNION ALL
+  SELECT 'December', 12
+) AS monthNames
+LEFT JOIN request ON monthNames.monthNum = MONTH(request.date_requested) 
+  AND YEAR(request.date_requested) = YEAR(CURDATE())
+GROUP BY monthNames.monthNum, monthNames.month  
+ORDER BY monthNames.monthNum;
   `;
 
   ////////// QUERY FOR ONLY MONTHS WITH REQUESTS ///////////
@@ -117,7 +117,7 @@ const getCountReq = (req, res) => {
   db.query(query, (err, result) => {
     if (err) {
       console.error("Error retrieving request counts", err);
-      return res.status(500).json({error: "Internal Server Error"});
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     const counts = result.map((row) => ({
