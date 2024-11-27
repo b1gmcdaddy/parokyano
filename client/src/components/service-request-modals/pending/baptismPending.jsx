@@ -338,6 +338,10 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
               formData,
               id: data.requestID,
             }),
+            axios.put(`${config.API}/baptism/update-bulk`, {
+              details,
+              id: data.requestID,
+            }),
             axios.put(`${config.API}/request/approve-service`, null, {
               params: {
                 col: "status",
