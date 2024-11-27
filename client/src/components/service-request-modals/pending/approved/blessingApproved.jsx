@@ -505,7 +505,7 @@ const BlessingApproved = ({ open, data, handleClose, refreshList }) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} sm={2.7}>
+            <Grid item xs={12} sm={3.8}>
               <label>Selected Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -522,7 +522,7 @@ const BlessingApproved = ({ open, data, handleClose, refreshList }) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} sm={2.7}>
+            <Grid item xs={12} sm={3}>
               <label>Start Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
@@ -541,7 +541,7 @@ const BlessingApproved = ({ open, data, handleClose, refreshList }) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} sm={2.7}>
+            <Grid item xs={12} sm={3}>
               <label>End Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker

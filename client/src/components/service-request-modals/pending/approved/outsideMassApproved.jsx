@@ -495,7 +495,7 @@ const OutsideApproved = ({ open, data, handleClose, refreshList }) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={4}>
                   <label>Selected Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker

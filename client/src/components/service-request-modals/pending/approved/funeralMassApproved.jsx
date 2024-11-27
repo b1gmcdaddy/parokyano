@@ -469,7 +469,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose, refreshList }) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={2.5}>
+                <Grid item xs={12} sm={2.8}>
                   <label>Selected Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -490,7 +490,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose, refreshList }) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2.3}>
+                <Grid item xs={12} sm={2.5}>
                   <label>Start Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
@@ -513,7 +513,7 @@ const FuneralMassModalApproved = ({ open, data, handleClose, refreshList }) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2.3}>
+                <Grid item xs={12} sm={2.4}>
                   <label>End Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker

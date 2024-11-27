@@ -465,7 +465,7 @@ const AnointingApproved = ({ open, data, handleClose, refreshList }) => {
                   <hr className="my-3" />
                 </Grid>
 
-                <Grid item xs={12} sm={11}>
+                <Grid item xs={12} sm={12}>
                   <label>Selected Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -482,7 +482,7 @@ const AnointingApproved = ({ open, data, handleClose, refreshList }) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={4}>
                   <label>Selected Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -547,7 +547,7 @@ const AnointingApproved = ({ open, data, handleClose, refreshList }) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2} sx={{}}>
+                <Grid item xs={12} sm={2}>
                   <Button
                     variant="contained"
                     onClick={() => handleOpenDialog("reschedule")}

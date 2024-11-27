@@ -790,7 +790,7 @@ const BaptismApproved = ({ open, data, handleClose, refreshList }) => {
                   <hr className="my-1" />
                 </Grid>
 
-                <Grid item sm={4}>
+                <Grid item sm={12}>
                   <label>Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -808,7 +808,7 @@ const BaptismApproved = ({ open, data, handleClose, refreshList }) => {
                   </TextField>
                 </Grid>
 
-                <Grid item sm={3}>
+                <Grid item sm={4}>
                   <label>Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker

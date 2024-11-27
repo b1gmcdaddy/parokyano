@@ -144,6 +144,8 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
           ? dayjs(data?.preferred_date).format("YYYY-MM-DD")
           : null,
         preferred_time: data.preferred_time || "",
+        end_time: data?.preferred_time ? endTime(data.preferred_time, 2) : null,
+
         transaction_no: data.transaction_no || "",
         payment_status: data.payment_status || "",
         service_id: data.service_id || "",
@@ -243,7 +245,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
       fetchAvailability(
         formData?.preferred_date,
         formData?.preferred_time,
-        endTime(formData?.preferred_time, service.duration)
+        formData?.end_time
       );
     }
   }, [
@@ -382,18 +384,25 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
       case "approve": ///////////// APPROVE WEDDING ///////////
         try {
           if (formData.payment_status == "paid" && completeRequirements == 1) {
-            const res = await axios.put(`${config.API}/request/update-bulk`, {
-              formData: {
-                ...formData,
-                donation: formData.donation + paymentFee, // fee + additional from sponsors
-              },
-              id: data.requestID,
-            });
-
-            await axios.put(`${config.API}/wedding/update-bulk`, {
-              weddingInfo,
-              id: data.requestID,
-            });
+            if (
+              dayjs(formData.end_time, "HH:mm:ss").isBefore(
+                dayjs(formData.preferred_time, "HH:mm:ss")
+              )
+            ) {
+              setError({
+                message: "Invalid Time Range",
+                details:
+                  "End time cannot be earlier than or equal to start time.",
+              });
+              return;
+            }
+            if (formData.end_time === formData.preferred_time) {
+              setError({
+                message: "Invalid Time Range",
+                details: "End time cannot be the same as start time.",
+              });
+              return;
+            }
 
             const response = await axios.get(
               `${config.API}/priest/retrieve-schedule-by-params`,
@@ -402,7 +411,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                   priest: formData.priest_id,
                   date: formData.preferred_date,
                   start: formData.preferred_time,
-                  end: endTime(formData.preferred_time, service.duration),
+                  end: formData.end_time,
                 },
               }
             );
@@ -412,6 +421,18 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                 details: response.data?.details,
               });
             } else {
+              const res = await axios.put(`${config.API}/request/update-bulk`, {
+                formData: {
+                  ...formData,
+                  donation: formData.donation + paymentFee, // fee + additional from sponsors
+                },
+                id: data.requestID,
+              });
+
+              await axios.put(`${config.API}/wedding/update-bulk`, {
+                weddingInfo,
+                id: data.requestID,
+              });
               axios.put(`${config.API}/request/approve-service`, null, {
                 params: {
                   col: "status",
@@ -430,7 +451,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                 date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
                 activity: `Wedding of ${formData.first_name} and ${weddingInfo.spouse_firstName}`,
                 start_time: formData.preferred_time,
-                end_time: endTime(formData.preferred_time, service.duration),
+                end_time: formData.end_time,
                 priest_id: formData.priest_id,
                 request_id: formData.requestID,
               });
@@ -667,7 +688,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                 </Grid>
 
                 <Grid item xs={12} sm={3}>
-                  <label>Interview Priest:</label>
+                  <label>Priest:</label>
                   <TextField
                     select
                     fullWidth
@@ -754,22 +775,6 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                 {completeRequirements == 1 ? (
                   <>
                     <Grid item xs={12} sm={3}>
-                      <label>Wedding Priest:</label>
-                      <TextField
-                        select
-                        fullWidth
-                        sx={TextFieldStyle}
-                        value={formData.priest_id}
-                        onChange={handleChange}
-                      >
-                        {priests.map((priest) => (
-                          <MenuItem key={priest.id} value={priest.priestID}>
-                            {`${priest.first_name} ${priest.last_name}`}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    </Grid>
-                    <Grid item xs={12} sm={3}>
                       <label>Wedding Date:</label>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
@@ -798,7 +803,7 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                     </Grid>
 
                     <Grid item xs={12} sm={3}>
-                      <label>Wedding Time:</label>
+                      <label>Wedding Start Time:</label>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
                           fullWidth
@@ -818,6 +823,33 @@ const WeddingPending = ({ open, data, handleClose, refreshList }) => {
                           renderInput={(params) => (
                             <TextField {...params} required />
                           )}
+                        />
+                      </LocalizationProvider>
+                    </Grid>
+
+                    <Grid item sm={3}>
+                      <label>Wedding End Time:</label>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <TimePicker
+                          timeSteps={{ hours: 30, minutes: 30 }}
+                          minTime={dayjs().set("hour", 6)}
+                          maxTime={dayjs().set("hour", 19)}
+                          type="time"
+                          fullWidth
+                          name="end_time"
+                          value={
+                            formData.end_time
+                              ? dayjs(formData.end_time, "HH:mm:ss")
+                              : null
+                          }
+                          onChange={(time) =>
+                            handleTimeChange("end_time", time)
+                          }
+                          renderInput={(params) => (
+                            <TextField {...params} required />
+                          )}
+                          sx={TextFieldStyle}
+                          required
                         />
                       </LocalizationProvider>
                     </Grid>
