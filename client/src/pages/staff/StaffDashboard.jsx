@@ -108,22 +108,25 @@ const StaffDashboard = () => {
         `${config.API}/service/getCountReqPerMonth`
       );
       const data = response.data;
+      console.log(response.data);
 
-      const months = data.map((item) => item.month);
-      const requestCounts = data.map((item) => item.requestCount);
+      if (data) {
+        const months = data?.map((item) => item.month);
+        const requestCounts = data?.map((item) => item.requestCount);
 
-      setLineChartData({
-        labels: months,
-        datasets: [
-          {
-            data: requestCounts,
-            borderColor: "#355173",
-            backgroundColor: "rgba(53, 81, 115, 0.2)",
-            borderWidth: 2,
-            fill: true,
-          },
-        ],
-      });
+        setLineChartData({
+          labels: months,
+          datasets: [
+            {
+              data: requestCounts,
+              borderColor: "#355173",
+              backgroundColor: "rgba(53, 81, 115, 0.2)",
+              borderWidth: 2,
+              fill: true,
+            },
+          ],
+        });
+      }
     } catch (error) {
       console.error("Error fetching request data:", error);
     } finally {
@@ -441,7 +444,7 @@ const StaffDashboard = () => {
                             },
                             suggestedMax: function (context) {
                               const max = Math.max(
-                                ...context.chart.data.datasets[0].data
+                                ...context.chart.data?.datasets[0]?.data
                               );
                               return max + max * 0.1; // Add 10% padding
                             },
