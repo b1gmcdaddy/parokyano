@@ -469,6 +469,12 @@ const StaffDashboard = () => {
                               display: true,
                               text: "Number of Requests",
                             },
+                            suggestedMax: function (context) {
+                              const max = Math.max(
+                                ...context.chart.data.datasets[0].data
+                              );
+                              return max + max * 0.1; // Add 10% padding
+                            },
                           },
                         },
                       }}
