@@ -143,6 +143,13 @@ export default function ValidateForm(data) {
         errors.mother_age = "Age must be realistic.";
       }
     }
+
+    //age
+    if (data.age != null) {
+      if (data.age <= 0) {
+        errors.age = "Age must be a positive number.";
+      }
+    }
     
   return errors;
 }

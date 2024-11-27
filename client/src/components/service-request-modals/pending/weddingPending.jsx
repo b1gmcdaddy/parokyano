@@ -18,8 +18,8 @@ import {
   TimePicker,
 } from "@mui/x-date-pickers";
 import Snackbar from "@mui/material/Snackbar";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useState, useEffect} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useState, useEffect } from "react";
 import React from "react";
 import ConfirmationDialog from "../../ConfirmationModal";
 import axios from "axios";
@@ -31,7 +31,7 @@ import sendSMS from "../../../utils/smsService";
 import RequirementsModal from "../RequirementsModal";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "40px", bgcolor: "white"},
+  "& .MuiInputBase-root": { height: "40px", bgcolor: "white" },
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -51,7 +51,7 @@ const endTime = (timeString, hoursToAdd) => {
 const fetchWeddingDetails = async (id) => {
   try {
     const response = await axios.get(`${config.API}/wedding/retrieve`, {
-      params: {reqID: id},
+      params: { reqID: id },
     });
     return response.data?.result[0];
   } catch (err) {
@@ -60,7 +60,7 @@ const fetchWeddingDetails = async (id) => {
   }
 };
 
-const WeddingPending = ({open, data, handleClose, refreshList}) => {
+const WeddingPending = ({ open, data, handleClose, refreshList }) => {
   const [available, setAvailable] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completeRequirements, setCompleteRequirements] = useState(0);
@@ -126,6 +126,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
 
   useEffect(() => {
     setIsLoading(true);
+    fetchService();
     if (open && data) {
       setFormData({
         requestID: data.requestID || "",
@@ -146,22 +147,17 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
         transaction_no: data.transaction_no || "",
         payment_status: data.payment_status || "",
         service_id: data.service_id || "",
-        donation: data.donation || 0,
+        donation: data?.donation || 0,
       });
       fetchWeddingData();
       fetchPriest();
-      fetchService();
     }
     setTimeout(() => {
       setIsLoading(false);
     }, "500");
   }, [open, data]);
 
-  // ... existing code ...
-
   useEffect(() => {
-    if (!formData?.preferred_date || !formData?.preferred_time) return;
-
     try {
       const isSpecialSchedule =
         dayjs(formData.preferred_date).isValid() &&
@@ -169,32 +165,29 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
         dayjs(formData.preferred_date).day() === 0 && // Sunday
         dayjs(formData.preferred_time, "HH:mm:ss").hour() === 6; // 6 AM
 
-      // Set donation amount based on conditions
       setFormData((prevState) => ({
         ...prevState,
         donation: isSpecialSchedule
-          ? 1000.0 // Special schedule price
+          ? 1000.0 + paymentFee // Special schedule price
           : data?.isParishioner
-          ? 3000.0 // Parishioner price
-          : 3500.0, // Non-parishioner price
+          ? service.fee + paymentFee // Parishioner price
+          : service.fee + paymentFee + 500, // Non-parishioner price
       }));
 
-      // Optional: Log for debugging
-      console.log({
-        isSpecialSchedule,
-        isParishioner: data?.isParishioner,
-        baseFee: formData?.donation,
-        additionalFee: paymentFee,
-      });
+      // console.log({
+      //   isSpecialSchedule,
+      //   isParishioner: data?.isParishioner,
+      //   baseFee: service.fee,
+      //   additionalFee: paymentFee,
+      // });
     } catch (error) {
       console.error("Error calculating donation amount:", error);
-      // Fallback to default amount if there's an error
       setFormData((prevState) => ({
         ...prevState,
-        donation: 3500.0,
+        donation: service.fee,
       }));
     }
-  }, [formData?.preferred_date, formData?.preferred_time, data?.isParishioner]);
+  }, [formData?.preferred_date, formData?.preferred_time]);
 
   const closeInfoModal = (action) => {
     if (action == "approve") {
@@ -263,16 +256,16 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
 
   // START FORM HANDLERS AND CONTROLS
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   const handleOpenDialog = (action) => {
@@ -391,10 +384,10 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
           if (formData.payment_status == "paid" && completeRequirements == 1) {
             const res = await axios.put(`${config.API}/request/update-bulk`, {
               formData: {
-                ...formData, // Spread the existing form data
-                donation: formData.donation + paymentFee, // Update the donation field
+                ...formData,
+                donation: formData.donation + paymentFee, // fee + additional from sponsors
               },
-              id: data.requestID, // Include the request ID
+              id: data.requestID,
             });
 
             await axios.put(`${config.API}/wedding/update-bulk`, {
@@ -475,11 +468,12 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -488,11 +482,12 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity={snackBarStyle} sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -502,17 +497,18 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {!isLoading ? (
           <>
-            <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
+            <DialogTitle sx={{ mt: 3, p: 2, textAlign: "center" }}>
               <b>Wedding Request Information</b>
               <IconButton
                 aria-label="close"
                 onClick={handleClose}
-                sx={{position: "absolute", right: 8, top: 8}}>
+                sx={{ position: "absolute", right: 8, top: 8 }}
+              >
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
-              <Grid container spacing={2} sx={{padding: 3}}>
+              <Grid container spacing={2} sx={{ padding: 3 }}>
                 <Grid item xs={12} sm={4}>
                   <label>Groom's First Name:</label>
                   <TextField
@@ -587,7 +583,8 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     value={formData.relationship}
                     fullWidth
                     select
-                    sx={TextFieldStyle}>
+                    sx={TextFieldStyle}
+                  >
                     <MenuItem value="Civilly Married">Civilly Married</MenuItem>
                     <MenuItem value="Live-in for under 4 years">
                       Live-in for under 4 years
@@ -602,7 +599,8 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   <label>
                     Payment:
                     <strong>
-                      {paymentFee != null
+                      {formData?.preferred_date != null &&
+                      formData?.preferred_time != null
                         ? ` ₱${parseFloat(
                             paymentFee + formData?.donation
                           ).toLocaleString(undefined, {
@@ -618,14 +616,15 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     value={formData?.payment_status}
                     select
                     fullWidth
-                    sx={TextFieldStyle}>
+                    sx={TextFieldStyle}
+                  >
                     <MenuItem value="unpaid">Unpaid</MenuItem>
                     <MenuItem value="paid">Paid</MenuItem>
                   </TextField>
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-                  <Typography sx={{display: "inline-block"}}>
+                  <Typography sx={{ display: "inline-block" }}>
                     Requirements:
                   </Typography>
                   <Typography
@@ -640,7 +639,8 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                         formData.payment_status == "paid"
                           ? "green"
                           : "red",
-                    }}>
+                    }}
+                  >
                     {completeRequirements == 1 &&
                     formData.payment_status == "paid" ? (
                       <span className="font-bold">COMPLETE</span>
@@ -674,7 +674,8 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     name="priest_id"
                     sx={TextFieldStyle}
                     value={formData.priest_id}
-                    onChange={handleChange}>
+                    onChange={handleChange}
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.id} value={priest.priestID}>
                         {`${priest.first_name} ${priest.last_name}`}
@@ -688,6 +689,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     <DatePicker
                       fullWidth
                       name="interview_date"
+                      disablePast
                       sx={TextFieldStyle}
                       value={
                         formData.interview_date
@@ -709,7 +711,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
                       fullWidth
-                      timeSteps={{hours: 30, minutes: 30}}
+                      timeSteps={{ hours: 30, minutes: 30 }}
                       minTime={dayjs().set("hour", 6)}
                       maxTime={dayjs().set("hour", 19)}
                       name="interview_time"
@@ -738,8 +740,9 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                       marginTop: "24px",
                       height: "40px",
                       color: "white",
-                      "&:hover": {bgcolor: "#4C74A5"},
-                    }}>
+                      "&:hover": { bgcolor: "#4C74A5" },
+                    }}
+                  >
                     Assign INTERVIEW
                   </Button>
                 </Grid>
@@ -757,7 +760,8 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                         fullWidth
                         sx={TextFieldStyle}
                         value={formData.priest_id}
-                        onChange={handleChange}>
+                        onChange={handleChange}
+                      >
                         {priests.map((priest) => (
                           <MenuItem key={priest.id} value={priest.priestID}>
                             {`${priest.first_name} ${priest.last_name}`}
@@ -770,6 +774,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           fullWidth
+                          disablePast
                           minDate={
                             formData.interview_date
                               ? dayjs(formData.interview_date).add(1, "day")
@@ -797,7 +802,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
                           fullWidth
-                          timeSteps={{hours: 30, minutes: 30}}
+                          timeSteps={{ hours: 30, minutes: 30 }}
                           minTime={dayjs().set("hour", 6)}
                           maxTime={dayjs().set("hour", 19)}
                           name="preferred_time"
@@ -844,8 +849,9 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                           height: "40px",
                           fontWeight: "bold",
                           color: "#355173",
-                          "&:hover": {bgcolor: "#f9f9f9"},
-                        }}>
+                          "&:hover": { bgcolor: "#f9f9f9" },
+                        }}
+                      >
                         CONFIRM WEDDING
                       </Button>
                     </Grid>
@@ -860,11 +866,12 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "center",
-                  }}>
-                  <Typography variant="body2" sx={{marginRight: "5px"}}>
+                  }}
+                >
+                  <Typography variant="body2" sx={{ marginRight: "5px" }}>
                     Transaction Code:
                   </Typography>
-                  <Typography variant="body2" sx={{fontWeight: "bold"}}>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     {formData.transaction_no}
                   </Typography>
                 </Grid>
@@ -878,7 +885,8 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <Grid
                   item
                   xs={12}
@@ -887,7 +895,8 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                     margin: "-40px 0 10px 0",
                     justifyContent: "center",
                     gap: "20px",
-                  }}>
+                  }}
+                >
                   <Button
                     variant="contained"
                     onClick={() => handleOpenDialog("update")}
@@ -897,8 +906,9 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#A58228"},
-                    }}>
+                      "&:hover": { bgcolor: "#A58228" },
+                    }}
+                  >
                     UPDATE
                   </Button>
 
@@ -911,8 +921,9 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#f44336"},
-                    }}>
+                      "&:hover": { bgcolor: "#f44336" },
+                    }}
+                  >
                     CANCEL
                   </Button>
                 </Grid>
@@ -921,7 +932,7 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
           </>
         ) : (
           // Skeleton loading effect for the entire form
-          <Grid container spacing={2} sx={{padding: 8}}>
+          <Grid container spacing={2} sx={{ padding: 8 }}>
             <Grid item sm={12}>
               <Skeleton variant="text" width="80%" height={30} />
             </Grid>
@@ -930,20 +941,20 @@ const WeddingPending = ({open, data, handleClose, refreshList}) => {
                 <Skeleton variant="rectangular" width="100%" height={40} />
               </Grid>
             ))}
-            <Grid item sm={12} sx={{mt: 2}}>
+            <Grid item sm={12} sx={{ mt: 2 }}>
               <Skeleton variant="rectangular" width="30%" height={40} />
             </Grid>
-            <Grid item sm={12} sx={{mt: 1}}>
+            <Grid item sm={12} sx={{ mt: 1 }}>
               <Skeleton variant="text" width="50%" height={30} />
               <Skeleton variant="rectangular" width="100%" height={150} />
             </Grid>
-            <Grid item sm={12} sx={{mt: 2}}>
+            <Grid item sm={12} sx={{ mt: 2 }}>
               <Skeleton variant="rectangular" width="30%" height={40} />
               <Skeleton
                 variant="rectangular"
                 width="30%"
                 height={40}
-                sx={{ml: 2}}
+                sx={{ ml: 2 }}
               />
             </Grid>
           </Grid>

@@ -18,7 +18,6 @@ import util from "../utils/DateTimeFormatter";
 
 const formatDate = (date) => date.toISOString().split("T")[0];
 const now = new Date();
-//   const lastMonth =
 const last = formatDate(new Date(now.getFullYear(), now.getMonth() + 1, 1));
 
 const start = formatDate(new Date(now.getFullYear(), now.getMonth(), 1));
@@ -27,6 +26,7 @@ const StaffReportSpecific = ({ startDate, endDate, category }) => {
   const [approved, setApproved] = useState(null);
   const [cancelled, setCancelled] = useState(null);
   const [pending, setPending] = useState(null);
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   let serviceType =
     category == 1
@@ -79,10 +79,6 @@ const StaffReportSpecific = ({ startDate, endDate, category }) => {
     getSummaryReport();
   }, [startDate, endDate, category]);
 
-  // useEffect(() => {
-  //   getSummaryReport();
-  // }, []);
-
   return (
     <>
       <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -96,9 +92,22 @@ const StaffReportSpecific = ({ startDate, endDate, category }) => {
           Gethsemane Parish
         </Typography>
       </Box>
-      <Box sx={{ textAlign: "center", margin: "auto" }}>
-        <Typography>Parokyano Generated Report</Typography>
+      <Box sx={{ textAlign: "center", margin: "auto", marginTop: "1.5em" }}>
+        <Typography
+          sx={{
+            fontWeight: "bold",
+            letterSpacing: 1.5,
+            fontSize: "1rem",
+            textTransform: "uppercase",
+          }}
+        >
+          Parokyano Generated Report
+        </Typography>
         <Typography sx={{ fontStyle: "italic", fontSize: "14px" }}>
+          Generated on: {util.formatDate(new Date())}
+          <br />
+          Created by: {currentUser.name}
+          <br />
           {startDate && endDate ? (
             <span>
               {util.formatDate(startDate)} - {util.formatDate(endDate)}
@@ -262,7 +271,7 @@ const StaffReportSpecific = ({ startDate, endDate, category }) => {
                   </TableRow>
                 ))}
 
-              <TableRow>
+              {/* <TableRow>
                 <TableCell
                   align="center"
                   sx={{
@@ -286,9 +295,9 @@ const StaffReportSpecific = ({ startDate, endDate, category }) => {
                 <TableCell align="right" sx={{ fontWeight: "bold" }}>
                   Fees Collected
                 </TableCell>
-              </TableRow>
+              </TableRow> */}
 
-              {cancelled &&
+              {/* {cancelled &&
                 cancelled?.map((data, index) => (
                   <TableRow key={index}>
                     <TableCell align="center">

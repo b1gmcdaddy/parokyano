@@ -46,7 +46,8 @@ const fetchWeddingDetails = async (id) => {
 
 const RequirementsModal = ({id, type, onClose}) => {
   const [open, setOpen] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState("");
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
   const handleOpen = () => setOpen(true);
   const [tabValue, setTabValue] = useState(0);
   const [selectedWeddingId, setSelectedWeddingId] = useState(null);
@@ -276,10 +277,8 @@ const RequirementsModal = ({id, type, onClose}) => {
 
   const handleClose = () => {
     setOpen(false);
-    setSaveSuccess("");
     if (onClose) {
       onClose();
-      setSaveSuccess("");
     }
   };
 
@@ -297,10 +296,10 @@ const RequirementsModal = ({id, type, onClose}) => {
         `${config.API}/wedding/requirements/${selectedWeddingId}`,
         reqs
       );
-      setSaveSuccess("Update Requirements Successful!");
+      setSuccess("Successfully updated requirements!");
       fetchWeddingDetails(id);
     } catch (error) {
-      setSaveSuccess("Update Failed");
+      setError("Update Failed");
       fetchWeddingDetails(id);
     }
   };
@@ -321,6 +320,30 @@ const RequirementsModal = ({id, type, onClose}) => {
       </Button>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        {success && (
+          <Snackbar
+            anchorOrigin={{vertical: "top", horizontal: "center"}}
+            open={true}
+            autoHideDuration={5000}
+            onClose={() => {
+              setSuccess(null);
+            }}>
+            <Alert severity="success" sx={{width: "100%"}}>
+              <AlertTitle>{success}</AlertTitle>
+            </Alert>
+          </Snackbar>
+        )}
+        {error && (
+          <Snackbar
+            anchorOrigin={{vertical: "top", horizontal: "center"}}
+            open={true}
+            autoHideDuration={5000}
+            onClose={() => setError(null)}>
+            <Alert severity="error" sx={{width: "100%"}}>
+              <AlertTitle>{error}</AlertTitle>
+            </Alert>
+          </Snackbar>
+        )}
         <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
           <b>Manage Wedding Requirements</b>
           <IconButton
@@ -694,6 +717,9 @@ const RequirementsModal = ({id, type, onClose}) => {
                         marginLeft: 2,
                         backgroundColor: "#D9D9D9",
                         color: "black",
+                        "&:hover": {
+                          backgroundColor: "#E5E4E2",
+                        },
                       }}>
                       Close
                     </Button>
@@ -796,7 +822,10 @@ const RequirementsModal = ({id, type, onClose}) => {
                             Catholic?
                           </TableCell>
                           <TableCell
-                            sx={{fontWeight: "bold", width: "10%"}}></TableCell>
+                            sx={{
+                              fontWeight: "bold",
+                              width: "10%",
+                            }}></TableCell>
                         </TableRow>
                       </TableHead>
 
@@ -829,15 +858,6 @@ const RequirementsModal = ({id, type, onClose}) => {
                   </TableContainer>
                 </Grid>
               </>
-            )}
-          </Grid>
-
-          {/* Success Message */}
-          <Grid item sm={12} sx={{marginTop: "10px", textAlign: "center"}}>
-            {saveSuccess === "Update Requirements Successful!" ? (
-              <Typography sx={{color: "green"}}>{saveSuccess}</Typography>
-            ) : (
-              <Typography>{saveSuccess}</Typography>
             )}
           </Grid>
         </Box>

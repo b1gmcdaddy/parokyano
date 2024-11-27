@@ -83,7 +83,7 @@ const Petition = () => {
       const hash = await generateHash();
       setFormData({
         ...formData,
-        transaction_no: dateToday + id + hash,
+        transaction_no: `${dateToday}-${id}-${hash}`,
       });
     } catch (err) {
       console.error("error creating transaction no", err);

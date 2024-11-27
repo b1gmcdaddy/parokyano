@@ -401,7 +401,7 @@ const ConfirmationCertInfoModal = ({open, data, close, refreshList}) => {
         date_requested: formatDate(data.date_requested),
         purpose: data.purpose,
         transaction_no: data.transaction_no,
-        service_id: 3,
+        service_id: 2,
       });
     }
     console.log(data);

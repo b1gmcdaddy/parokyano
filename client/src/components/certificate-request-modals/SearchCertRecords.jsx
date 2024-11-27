@@ -31,8 +31,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { styled } from "@mui/material/styles";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 const SearchCertRecords = ({ open, data, close, refreshList }) => {
   const [certType, setCertType] = useState(null);
@@ -110,7 +108,7 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
       searchRecords();
     }
 
-    console.log(data);
+    // console.log(data);
   }, [open, data]);
 
   const handleOpenCompareModal = (rec) => {
@@ -216,12 +214,18 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
             recordData={recordData}
             refreshList={refreshList}
           />
-          <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 2 }}>
+          <Box sx={{ mb: 2 }}>
+            <Typography
+              variant="h6"
+              sx={{ textAlign: "center", fontWeight: "bold", marginBottom: 4 }}
+            >
+              Search Records
+            </Typography>
             <TextField
+              fullWidth
               size="small"
               label="Search"
               variant="outlined"
-              sx={{ width: "300px" }}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </Box>
@@ -324,12 +328,48 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
                     })
                   ) : (
                     <StyledTableRow>
-                      <StyledTableCell>No records found</StyledTableCell>
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          alignItems: "center",
+                          marginTop: "4px",
+                        }}
+                      >
+                        <CancelIcon sx={{ color: "#A20D0D" }} />
+                        <Typography>No records found</Typography>
+                      </StyledTableCell>
+                      <StyledTableCell>N/A</StyledTableCell>
+                      <StyledTableCell>N/A</StyledTableCell>
+                      <StyledTableCell>
+                        <Button
+                          variant="contained"
+                          onClick={() => handleOpenDialog("cancel")}
+                          sx={{
+                            backgroundColor: "#A20D0D",
+                            "&:hover": {
+                              backgroundColor: "#CC4141",
+                            },
+                          }}
+                        >
+                          Cancel Cert Request
+                        </Button>
+                      </StyledTableCell>
                     </StyledTableRow>
                   )}
                 </TableBody>
               </Table>
             </TableContainer>
+
+            {/* START Confirmation Dialog */}
+            <ConfirmationDialog
+              open={dialogOpen}
+              onClose={() => setDialogOpen(false)}
+              action={currentAction}
+              onConfirm={cancelCertRequest}
+              service={"certificate"}
+            />
+            {/* END Confirmation Dialog */}
           </Box>
         </DialogContent>
       </Dialog>

@@ -68,9 +68,9 @@ const CertificateBaptism = () => {
     spouse_name: null,
     baptism_date: null,
     archive_info: {
-      book_no: "",
-      page_no: "",
-      line_no: "",
+      book_no: null,
+      page_no: null,
+      line_no: null,
     },
     service_id: id,
     transaction_no: "",
@@ -84,7 +84,7 @@ const CertificateBaptism = () => {
       const hash = await generateHash();
       setFormData({
         ...formData,
-        transaction_no: dateToday + id + hash,
+        transaction_no: `${dateToday}-${id}-${hash}`,
       });
     } catch (err) {
       console.error("error creating transaction no", err);
