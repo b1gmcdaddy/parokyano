@@ -4,7 +4,7 @@ const mysql = require("mysql2");
 const app = require("./routes");
 const cors = require("cors");
 require("dotenv").config();
-const {CronJob} = require("cron");
+const { CronJob } = require("cron");
 
 const pool = mysql.createPool({
   host: process.env.MYSQL_ADDON_HOST,
