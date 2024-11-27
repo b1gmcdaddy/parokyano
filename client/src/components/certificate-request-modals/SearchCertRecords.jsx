@@ -194,7 +194,7 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
     birth_place: "Birth Place",
     ...(data.service_id === 3 && { preferred_date: "Baptism Date" }),
     ...(data.service_id === 2 && { preferred_date: "Confirmation Date" }),
-    ...(data.service_id === 4 && { preferred_date: "Marriage Date" }),
+    ...(data.service_id === 4 && { preferred_date: "Wedding Date" }),
     spouse_firstName: "Spouse's First Name",
     spouse_lastName: "Spouse's Last Name",
     spouse_middleName: "Spouse's Middle Name",
