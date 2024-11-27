@@ -313,75 +313,81 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
           });
           return;
         }
-        try {
-          const response = await axios.get(
-            `${config.API}/priest/retrieve-schedule-by-params`,
-            {
-              params: {
-                priest: formData.priest_id,
-                date: formData.preferred_date,
-                start: formData.preferred_time,
-                end: formData.end_time,
-              },
+        if (
+          formData.payment_status == "paid" &&
+          details.birthCert == 1 &&
+          details.parent_marriageCert == 1
+        ) {
+          try {
+            const response = await axios.get(
+              `${config.API}/priest/retrieve-schedule-by-params`,
+              {
+                params: {
+                  priest: formData.priest_id,
+                  date: formData.preferred_date,
+                  start: formData.preferred_time,
+                  end: formData.end_time,
+                },
+              }
+            );
+            console.log(response);
+            if (Object.keys(response.data).length > 0 || response.data != "") {
+              setError({
+                message: response.data.message,
+                details: response.data?.details,
+              });
+              return;
             }
-          );
-          console.log(response);
-          if (Object.keys(response.data).length > 0 || response.data != "") {
-            setError({
-              message: response.data.message,
-              details: response.data?.details,
-            });
-            return;
+            await Promise.all([
+              axios.put(`${config.API}/request/update-bulk`, {
+                formData,
+                id: data.requestID,
+              }),
+              axios.put(`${config.API}/baptism/update-bulk`, {
+                details,
+                id: data.requestID,
+              }),
+              axios.put(`${config.API}/request/approve-service`, null, {
+                params: {
+                  col: "status",
+                  val: "approved",
+                  col2: "payment_status",
+                  val2: "paid",
+                  col3: "user_id",
+                  val3: currentUser.id,
+                  col4: "priest_id",
+                  val4: formData.priest_id,
+                  col5: "requestID",
+                  val5: data.requestID,
+                },
+              }),
+              console.log("request success!"),
+
+              axios.post(`${config.API}/priest/createPriestSched`, {
+                date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
+                activity: `Baptism for ${formData.first_name} ${formData.last_name}`,
+                start_time: formData.preferred_time,
+                end_time: formData.end_time,
+                priest_id: formData.priest_id,
+                request_id: data.requestID,
+              }),
+              console.log("priest sched success!"),
+
+              axios.post(`${config.API}/logs/create`, {
+                activity: `Approved Baptism for ${formData.first_name} ${formData.last_name}`,
+                user_id: currentUser.id,
+                request_id: data.requestID,
+              }),
+              console.log("logs success!"),
+              sendSMS(data.service_id, formData, "approve"),
+              closeInfoModal("approve"),
+              refreshList(),
+            ]);
+          } catch (err) {
+            console.log("error submitting to server", err);
+          } finally {
+            refreshList();
           }
-          await Promise.all([
-            axios.put(`${config.API}/request/update-bulk`, {
-              formData,
-              id: data.requestID,
-            }),
-            axios.put(`${config.API}/baptism/update-bulk`, {
-              details,
-              id: data.requestID,
-            }),
-            axios.put(`${config.API}/request/approve-service`, null, {
-              params: {
-                col: "status",
-                val: "approved",
-                col2: "payment_status",
-                val2: "paid",
-                col3: "user_id",
-                val3: currentUser.id,
-                col4: "priest_id",
-                val4: formData.priest_id,
-                col5: "requestID",
-                val5: data.requestID,
-              },
-            }),
-            console.log("request success!"),
-
-            axios.post(`${config.API}/priest/createPriestSched`, {
-              date: dayjs(formData.preferred_date).format("YYYY-MM-DD"),
-              activity: `Baptism for ${formData.first_name} ${formData.last_name}`,
-              start_time: formData.preferred_time,
-              end_time: formData.end_time,
-              priest_id: formData.priest_id,
-              request_id: data.requestID,
-            }),
-            console.log("priest sched success!"),
-
-            axios.post(`${config.API}/logs/create`, {
-              activity: `Approved Baptism for ${formData.first_name} ${formData.last_name}`,
-              user_id: currentUser.id,
-              request_id: data.requestID,
-            }),
-            console.log("logs success!"),
-            sendSMS(data.service_id, formData, "approve"),
-            closeInfoModal("approve"),
-            refreshList(),
-          ]);
-        } catch (err) {
-          console.log("error submitting to server", err);
-        } finally {
-          refreshList();
         }
         break;
       case "update": /// UPDATE BAPTISM REQUEST/////
