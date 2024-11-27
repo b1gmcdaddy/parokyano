@@ -217,14 +217,15 @@ const Baptism = () => {
         : "Your request for baptism has been received. Make sure to provide all the requirements to the parish. You will receive a text once your payment has been verified! Thank you and God bless!",
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     console.log("ok!");
     const validate = ValidateForm(formData);
     setErrors(validate);
+    console.log(validate);
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
-        await axios.post(`${config.API}/request/create-baptism`, formData);
+        axios.post(`${config.API}/request/create-baptism`, formData);
 
         setModalData(cashModalInfo);
         setOpenCash(true);

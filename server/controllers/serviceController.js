@@ -82,7 +82,7 @@ const updateService = (req, res) => {
 // for dashboard line chart
 const getCountReq = (req, res) => {
   const query = `
-    SELECT 
+  SELECT 
   monthNames.month AS month, 
   IFNULL(COUNT(request.date_requested), 0) AS requestCount
 FROM (
@@ -101,8 +101,9 @@ FROM (
 ) AS monthNames
 LEFT JOIN request ON monthNames.monthNum = MONTH(request.date_requested) 
   AND YEAR(request.date_requested) = YEAR(CURDATE())
-GROUP BY monthNames.monthNum, monthNames.month  
+GROUP BY monthNames.monthNum, monthNames.month  -- Added monthNames.month here
 ORDER BY monthNames.monthNum;
+
   `;
 
   ////////// QUERY FOR ONLY MONTHS WITH REQUESTS ///////////

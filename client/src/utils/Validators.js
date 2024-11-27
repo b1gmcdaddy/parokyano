@@ -117,47 +117,48 @@ export default function ValidateForm(data) {
   //   });
   // } change kay i.uniform sa uban age field nga number ang type
 
-  if (data.sponsors != null) {
+  if (data.sponsors != null && data.service_id == 7) {
     data.sponsors.forEach((sponsor, index) => {
       if (!Number.isInteger(Number(sponsor.age))) {
         errors[`sponsor_${index}_age`] = "Age must be a whole number.";
       } else if (sponsor.age <= 0) {
         errors[`sponsor_${index}_age`] = "Age must be a positive number.";
       } else if (sponsor.age < 18) {
-        errors[`sponsor_${index}_age`] = "Sponsor must be at least 18 years old.";
+        errors[`sponsor_${index}_age`] =
+          "Sponsor must be at least 18 years old.";
       }
     });
   }
 
-    // Validate father and mother age
-    if (data?.details?.father_age != null) {
-      if (!Number.isInteger(Number(data.details.father_age))) {
-        errors.father_age = "Age must be a whole number.";
-      } else if (data.details.father_age <= 0) {
-        errors.father_age = "Age must be a positive number.";
-      } else if (data.details.father_age < 12) {
-        errors.father_age = "Age must be realistic.";
-      }
+  // Validate father and mother age
+  if (data?.details?.father_age != null) {
+    if (!Number.isInteger(Number(data.details.father_age))) {
+      errors.father_age = "Age must be a whole number.";
+    } else if (data.details.father_age <= 0) {
+      errors.father_age = "Age must be a positive number.";
+    } else if (data.details.father_age < 12) {
+      errors.father_age = "Age must be realistic.";
     }
-  
-    if (data?.details?.mother_age != null) {
-      if (!Number.isInteger(Number(data.details.mother_age))) {
-        errors.mother_age = "Age must be a whole number.";
-      } else if (data.details.mother_age <= 0) {
-        errors.mother_age = "Age must be a positive number.";
-      } else if (data.details.mother_age < 12) {
-        errors.mother_age = "Age must be realistic.";
-      }
-    }
+  }
 
-    //age
-    if (data.age != null) {
-      if (!Number.isInteger(Number(data.age))) {
-        errors.age = "Age must be a whole number.";
-      } else if (data.age <= 0) {
-        errors.age = "Age must be a positive number.";
-      }
+  if (data?.details?.mother_age != null) {
+    if (!Number.isInteger(Number(data.details.mother_age))) {
+      errors.mother_age = "Age must be a whole number.";
+    } else if (data.details.mother_age <= 0) {
+      errors.mother_age = "Age must be a positive number.";
+    } else if (data.details.mother_age < 12) {
+      errors.mother_age = "Age must be realistic.";
     }
-    
+  }
+
+  //age
+  if (data.age != null) {
+    if (!Number.isInteger(Number(data.age))) {
+      errors.age = "Age must be a whole number.";
+    } else if (data.age <= 0) {
+      errors.age = "Age must be a positive number.";
+    }
+  }
+
   return errors;
 }
