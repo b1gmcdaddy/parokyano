@@ -463,7 +463,7 @@ const OutsidePending = ({ open, data, handleClose, refreshList }) => {
                   <hr className="my-3" />
                 </Grid>
 
-                <Grid item sm={4}>
+                <Grid item sm={12}>
                   <label>Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -480,7 +480,7 @@ const OutsidePending = ({ open, data, handleClose, refreshList }) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item sm={3}>
+                <Grid item sm={4}>
                   <label>Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
