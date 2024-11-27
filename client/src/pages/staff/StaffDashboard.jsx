@@ -107,24 +107,7 @@ const StaffDashboard = () => {
       const response = await axios.get(
         `${config.API}/service/getCountReqPerMonth`
       );
-      const data = response.data || []; // Ensure data is at least an empty array
-
-      // If no data, set default empty state
-      if (!data.length) {
-        setLineChartData({
-          labels: [],
-          datasets: [
-            {
-              data: [],
-              borderColor: "#355173",
-              backgroundColor: "rgba(53, 81, 115, 0.2)",
-              borderWidth: 2,
-              fill: true,
-            },
-          ],
-        });
-        return;
-      }
+      const data = response.data;
 
       const months = data.map((item) => item.month);
       const requestCounts = data.map((item) => item.requestCount);
@@ -143,19 +126,6 @@ const StaffDashboard = () => {
       });
     } catch (error) {
       console.error("Error fetching request data:", error);
-      // Set empty state on error
-      setLineChartData({
-        labels: [],
-        datasets: [
-          {
-            data: [],
-            borderColor: "#355173",
-            backgroundColor: "rgba(53, 81, 115, 0.2)",
-            borderWidth: 2,
-            fill: true,
-          },
-        ],
-      });
     } finally {
       setLoading(false);
     }
