@@ -47,7 +47,7 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "rgb(15 23 42)",
+      backgroundColor: "#355173",
       color: theme.palette.common.white,
       fontSize: 18,
       height: 50,
@@ -159,11 +159,47 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
   };
 
   const filteredRecords = records
+    .filter((rec) => {
+      const searchFields = [
+        rec.first_name,
+        rec.middle_name,
+        rec.last_name,
+        rec.contact_no,
+        rec.mother_name,
+        rec.father_name,
+        rec.birth_place,
+        rec.preferred_date,
+        rec.spouse_firstName,
+        rec.spouse_lastName,
+        rec.spouse_middleName,
+        rec.birth_date,
+      ];
+      return searchFields.some((field) =>
+        field?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    })
     .filter((rec) => Object.keys(rec.Matches).length > 0)
     .sort(
       (a, b) => Object.keys(b.Matches).length - Object.keys(a.Matches).length
     )
     .slice(0, 10);
+
+  const keyLabels = {
+    first_name: "First Name",
+    middle_name: "Middle Name",
+    last_name: "Last Name",
+    contact_no: "Contact Number",
+    mother_name: "Mother's Name",
+    father_name: "Father's Name",
+    birth_place: "Birth Place",
+    ...(data.service_id === 3 && { preferred_date: "Baptism Date" }),
+    ...(data.service_id === 2 && { preferred_date: "Confirmation Date" }),
+    ...(data.service_id === 4 && { preferred_date: "Marriage Date" }),
+    spouse_firstName: "Spouse's First Name",
+    spouse_lastName: "Spouse's Last Name",
+    spouse_middleName: "Spouse's Middle Name",
+    birth_date: "Birth Date",
+  };
 
   return (
     <>
@@ -306,7 +342,7 @@ const SearchCertRecords = ({ open, data, close, refreshList }) => {
                             {Object.entries(rec.Matches).map(([key, value]) => (
                               <Chip
                                 key={key}
-                                label={`${key}: ${value}`}
+                                label={`${keyLabels[key]}: ${value}`}
                                 sx={{ margin: "2px" }}
                               />
                             ))}
