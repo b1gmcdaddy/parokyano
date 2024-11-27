@@ -421,7 +421,7 @@ const WakePending = ({ open, data, handleClose, refreshList }) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item sm={3}>
+                <Grid item sm={4}>
                   <label>Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker

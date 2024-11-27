@@ -453,7 +453,7 @@ const FuneralMassModalPending = ({ open, data, handleClose, refreshList }) => {
                   <hr className="my-3" />
                 </Grid>
 
-                <Grid item sm={4}>
+                <Grid item sm={12}>
                   <label>Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -470,7 +470,7 @@ const FuneralMassModalPending = ({ open, data, handleClose, refreshList }) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item sm={2.7}>
+                <Grid item sm={4}>
                   <label>Date:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -490,7 +490,7 @@ const FuneralMassModalPending = ({ open, data, handleClose, refreshList }) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item sm={2.5}>
+                <Grid item sm={3}>
                   <label>Start Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
@@ -513,7 +513,7 @@ const FuneralMassModalPending = ({ open, data, handleClose, refreshList }) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item sm={2.5}>
+                <Grid item sm={3}>
                   <label>End Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
