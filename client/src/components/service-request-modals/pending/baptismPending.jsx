@@ -469,7 +469,7 @@ const BaptismPending = ({ open, data, handleClose, refreshList }) => {
         service_id: 5,
       }));
     }
-  }, [formData?.preferred_date, formData?.preferred_time]);
+  }, [formData?.preferred_date, formData?.preferred_time, formData?.end_time]);
 
   return (
     <>
