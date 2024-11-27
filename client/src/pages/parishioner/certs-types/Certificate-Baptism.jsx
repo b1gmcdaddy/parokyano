@@ -25,6 +25,7 @@ import generateHash from "../../../utils/GenerateHash";
 import all from "../../../components/PaymentModal";
 import ValidateForm from "../../../utils/Validators";
 import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 const containerStyle = {
   margin: "0px",
@@ -117,6 +118,16 @@ const CertificateBaptism = () => {
 
   const handleDateChange = (name, date) => {
     setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
+
+    if (name === "birth_date" && formData.baptism_date) {
+    const birthDate = date ? dayjs(date).startOf("day") : null;
+    const baptismDate = dayjs(formData.baptism_date).startOf("day");
+
+    if (birthDate && baptismDate.isBefore(birthDate)) {
+      setFormData({ ...formData, baptism_date: "" });
+      //console.log("date change");
+    }
+  }
   };
 
   const handleArchive = (e) => {
@@ -307,6 +318,8 @@ const CertificateBaptism = () => {
                   slotProps={{ textField: { fullWidth: true } }}
                   variant="outlined"
                   disableFuture
+                  value={formData.baptism_date ? dayjs(formData.baptism_date) : null}
+                  minDate={formData.birth_date ? dayjs(formData.birth_date) : null}
                   size="small"
                   sx={inputstlying}
                   name="baptism_date"
