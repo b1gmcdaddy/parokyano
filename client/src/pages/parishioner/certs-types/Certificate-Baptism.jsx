@@ -148,6 +148,28 @@ const CertificateBaptism = () => {
     if (Object.keys(validate).length == 0 && validate.constructor == Object) {
       try {
         axios.post(`${config.API}/request/create-certificate`, formData);
+
+        if (formData.birth_date) {
+          const birth = new Date(formData.birth_date);
+          const today = new Date();
+          const legalAge = 18;
+  
+          const age = today.getFullYear() - birth.getFullYear();
+          const monthDiff = today.getMonth() - birth.getMonth();
+          const dayDiff = today.getDate() - birth.getDate();
+  
+          if (
+            age < legalAge ||
+            (age === legalAge &&
+              (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
+          ) {
+            if (!Array.isArray(serviceInfo.requirements)) {
+              serviceInfo.requirements = [];
+            }
+            serviceInfo.requirements.push("Parent Consent");
+          }
+        }
+
         const paymentInfo = {
           fee: serviceInfo.fee,
           transaction_no: formData.transaction_no,

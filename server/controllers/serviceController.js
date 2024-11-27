@@ -82,38 +82,28 @@ const updateService = (req, res) => {
 // for dashboard line chart
 const getCountReq = (req, res) => {
   const query = `
-  SELECT 
-  monthNames.month AS month, 
-  IFNULL(COUNT(request.date_requested), 0) AS requestCount
-FROM (
-  SELECT 'January' AS month, 1 AS monthNum UNION ALL
-  SELECT 'February', 2 UNION ALL
-  SELECT 'March', 3 UNION ALL
-  SELECT 'April', 4 UNION ALL
-  SELECT 'May', 5 UNION ALL
-  SELECT 'June', 6 UNION ALL
-  SELECT 'July', 7 UNION ALL
-  SELECT 'August', 8 UNION ALL
-  SELECT 'September', 9 UNION ALL
-  SELECT 'October', 10 UNION ALL
-  SELECT 'November', 11 UNION ALL
-  SELECT 'December', 12
-) AS monthNames
-LEFT JOIN request ON monthNames.monthNum = MONTH(request.date_requested) 
-  AND YEAR(request.date_requested) = YEAR(CURDATE())
-GROUP BY monthNames.monthNum, monthNames.month  -- Added monthNames.month here
-ORDER BY monthNames.monthNum;
-
+    SELECT 
+      monthNames.month AS month, 
+      COUNT(request.date_requested) AS requestCount
+    FROM (
+      SELECT 'January' AS month, 1 AS monthNum UNION ALL
+      SELECT 'February', 2 UNION ALL
+      SELECT 'March', 3 UNION ALL
+      SELECT 'April', 4 UNION ALL
+      SELECT 'May', 5 UNION ALL
+      SELECT 'June', 6 UNION ALL
+      SELECT 'July', 7 UNION ALL
+      SELECT 'August', 8 UNION ALL
+      SELECT 'September', 9 UNION ALL
+      SELECT 'October', 10 UNION ALL
+      SELECT 'November', 11 UNION ALL
+      SELECT 'December', 12
+    ) AS monthNames
+    LEFT JOIN request ON monthNames.monthNum = MONTH(request.date_requested) 
+      AND YEAR(request.date_requested) = YEAR(CURDATE())
+    GROUP BY monthNames.monthNum, monthNames.month
+    ORDER BY monthNames.monthNum;
   `;
-
-  ////////// QUERY FOR ONLY MONTHS WITH REQUESTS ///////////
-  //  SELECT
-  //   DATE_FORMAT(date_requested, '%M') AS month,
-  //   COUNT(*) AS requestCount
-  // FROM request
-  // WHERE YEAR(date_requested) = YEAR(CURDATE())
-  // GROUP BY MONTH(date_requested)
-  // ORDER BY MONTH(date_requested);
 
   db.query(query, (err, result) => {
     if (err) {
@@ -123,7 +113,7 @@ ORDER BY monthNames.monthNum;
 
     const counts = result.map((row) => ({
       month: row.month,
-      requestCount: row.requestCount,
+      requestCount: row.requestCount || 0,
     }));
 
     res.status(200).json(counts);
