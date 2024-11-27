@@ -802,7 +802,7 @@ const BaptismApproved = ({ open, data, handleClose, refreshList }) => {
                   >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
-                        {priest.first_name + " " + priest.last_name}
+                        {"Fr. " + priest.first_name + " " + priest.last_name}
                       </MenuItem>
                     ))}
                   </TextField>

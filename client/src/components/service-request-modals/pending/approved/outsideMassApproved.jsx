@@ -22,9 +22,9 @@ import dayjs from "dayjs";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CloseIcon from "@mui/icons-material/Close";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import config from "../../../../config";
 import axios from "axios";
@@ -32,7 +32,7 @@ import Skeleton from "@mui/material/Skeleton";
 import sendSMS from "../../../../utils/smsService";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "40px"},
+  "& .MuiInputBase-root": { height: "40px" },
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -49,7 +49,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const OutsideApproved = ({open, data, handleClose, refreshList}) => {
+const OutsideApproved = ({ open, data, handleClose, refreshList }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
@@ -68,6 +68,7 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
     contact_no: "",
     preferred_date: "",
     preferred_time: "",
+    end_time: "",
     priest_id: "",
     isParishioner: "",
     transaction_no: "",
@@ -127,12 +128,12 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
   }, [open]);
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    setFormData({ ...formData, [name]: time.format("HH:mm:ss") });
   };
 
   const closeInfoModal = (action) => {
@@ -169,6 +170,7 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
         contact_no: data.contact_no,
         preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
         preferred_time: data.preferred_time,
+        end_time: data.end_time,
         priest_id: data.priest_id,
         isParishioner: data.isParishioner,
         transaction_no: data.transaction_no,
@@ -200,8 +202,8 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
   };
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value}));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleConfirm = async (action) => {
@@ -266,6 +268,24 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
         break;
 
       case "reschedule": ////// RESCHEDULE
+        if (
+          dayjs(formData.end_time, "HH:mm:ss").isBefore(
+            dayjs(formData.preferred_time, "HH:mm:ss")
+          )
+        ) {
+          setError({
+            message: "Invalid Time Range",
+            details: "End time cannot be earlier than or equal to start time.",
+          });
+          break;
+        }
+        if (formData.end_time === formData.preferred_time) {
+          setError({
+            message: "Invalid Time Range",
+            details: "End time cannot be the same as start time.",
+          });
+          break;
+        }
         try {
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
@@ -274,7 +294,7 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                 priest: formData.priest_id,
                 date: formData.preferred_date,
                 start: formData.preferred_time,
-                end: endTime(formData.preferred_time, service.duration),
+                end: formData.end_time,
               },
             }
           );
@@ -290,6 +310,7 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
           const reschedule = {
             preferred_date: formData.preferred_date,
             preferred_time: formData.preferred_time,
+            end_time: formData.end_time,
             priest_id: formData.priest_id,
           };
 
@@ -303,7 +324,7 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
               date: formData.preferred_date,
               activity: `Outside Mass for ${formData.first_name}`,
               start_time: formData.preferred_time,
-              end_time: endTime(formData.preferred_time, service.duration),
+              end_time: formData.end_time,
               priest_id: formData.priest_id,
               request_id: data.requestID,
             }),
@@ -333,11 +354,12 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -346,11 +368,12 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity={snackBarStyle} sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -360,27 +383,29 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
         {formData && priests ? (
           <>
-            <DialogTitle sx={{m: 0, p: 2, textAlign: "center"}}>
+            <DialogTitle sx={{ m: 0, p: 2, textAlign: "center" }}>
               <b>Outside Mass Request Information</b>
               <IconButton
                 aria-label="close"
                 onClick={handleClose}
-                sx={{position: "absolute", right: 8, top: 8}}>
+                sx={{ position: "absolute", right: 8, top: 8 }}
+              >
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
-              <Grid container spacing={2} sx={{padding: 3}}>
+              <Grid container spacing={2} sx={{ padding: 3 }}>
                 <Grid item xs={12} sm={12}>
                   <RadioGroup
                     row
                     name="type"
                     onChange={(e) => {
                       handleRadioChange(e);
-                      setFormData({...formData, type: e.target.value});
+                      setFormData({ ...formData, type: e.target.value });
                     }}
-                    sx={{marginTop: "-5px"}}
-                    value={formData.type}>
+                    sx={{ marginTop: "-5px" }}
+                    value={formData.type}
+                  >
                     <FormControlLabel
                       value="chapel"
                       control={<Radio size="small" />}
@@ -402,7 +427,7 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                       name="otherValue"
                       onChange={handleOtherChange}
                       sx={{
-                        "& .MuiInputBase-root": {height: "30px"},
+                        "& .MuiInputBase-root": { height: "30px" },
                         opacity: isOtherSelected ? 1 : 0.4,
                         marginTop: "5px",
                       }}
@@ -453,7 +478,7 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                   <hr className="my-3" />
                 </Grid>
 
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={12}>
                   <label>Selected Priest:</label>
                   <TextField
                     value={formData.priest_id}
@@ -461,10 +486,11 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                     name="priest_id"
                     onChange={handleChange}
                     select
-                    fullWidth>
+                    fullWidth
+                  >
                     {priests.map((priest) => (
                       <MenuItem key={priest.priestID} value={priest.priestID}>
-                        {priest.first_name + " " + priest.last_name}
+                        {"Fr. " + priest.first_name + " " + priest.last_name}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -491,11 +517,11 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                   </LocalizationProvider>
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <label>Selected Time:</label>
+                  <label>Start Time:</label>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
                       fullWidth
-                      timeSteps={{hours: 30, minutes: 30}}
+                      timeSteps={{ hours: 30, minutes: 30 }}
                       minTime={dayjs().set("hour", 6)}
                       maxTime={dayjs().set("hour", 19)}
                       sx={TextFieldStyle}
@@ -513,7 +539,26 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
+                <Grid item xs={12} sm={3}>
+                  <label>End Time:</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimePicker
+                      fullWidth
+                      timeSteps={{ hours: 30, minutes: 30 }}
+                      minTime={dayjs().set("hour", 6)}
+                      maxTime={dayjs().set("hour", 19)}
+                      sx={TextFieldStyle}
+                      value={
+                        data.end_time ? dayjs(data.end_time, "HH:mm:ss") : null
+                      }
+                      onChange={(time) => handleTimeChange("end_time", time)}
+                      renderInput={(params) => (
+                        <TextField {...params} required />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
                   <Button
                     variant="contained"
                     onClick={() => handleOpenDialog("reschedule")}
@@ -523,8 +568,9 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#578A62"},
-                    }}>
+                      "&:hover": { bgcolor: "#578A62" },
+                    }}
+                  >
                     Reschedule
                   </Button>
                 </Grid>
@@ -548,7 +594,8 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                       justifyContent: "center",
                       backgroundColor: "#d1d1d1",
                       fontWeight: "bold",
-                    }}>
+                    }}
+                  >
                     {data.transaction_no}
                   </Paper>
                 </Grid>
@@ -562,7 +609,8 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <Grid
                   item
                   xs={12}
@@ -571,7 +619,8 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                     margin: "-40px 0 10px 0",
                     justifyContent: "center",
                     gap: "20px",
-                  }}>
+                  }}
+                >
                   <Button
                     variant="contained"
                     onClick={() => handleOpenDialog("update")}
@@ -581,8 +630,9 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#A58228"},
-                    }}>
+                      "&:hover": { bgcolor: "#A58228" },
+                    }}
+                  >
                     UPDATE
                   </Button>
 
@@ -595,8 +645,9 @@ const OutsideApproved = ({open, data, handleClose, refreshList}) => {
                       height: "40px",
                       fontWeight: "bold",
                       color: "white",
-                      "&:hover": {bgcolor: "#f44336"},
-                    }}>
+                      "&:hover": { bgcolor: "#f44336" },
+                    }}
+                  >
                     CANCEL
                   </Button>
                 </Grid>

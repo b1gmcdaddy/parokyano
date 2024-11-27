@@ -513,8 +513,8 @@ const AnointingApproved = ({ open, data, handleClose, refreshList }) => {
                       fullWidth
                       sx={TextFieldStyle}
                       value={
-                        data.preferred_time
-                          ? dayjs(data.preferred_time, "HH:mm:ss")
+                        formData.preferred_time
+                          ? dayjs(formData.preferred_time, "HH:mm:ss")
                           : null
                       }
                       onChange={(time) =>

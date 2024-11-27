@@ -22,8 +22,8 @@ import {
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {useEffect, useState} from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../ConfirmationModal";
 import util from "../../../../utils/DateTimeFormatter";
 import axios from "axios";
@@ -32,7 +32,7 @@ import dayjs from "dayjs";
 import sendSMS from "../../../../utils/smsService";
 
 const TextFieldStyle = {
-  "& .MuiInputBase-root": {height: "40px"},
+  "& .MuiInputBase-root": { height: "40px" },
 };
 
 const endTime = (timeString, hoursToAdd) => {
@@ -49,7 +49,7 @@ const endTime = (timeString, hoursToAdd) => {
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
-const BlessingApproved = ({open, data, handleClose, refreshList}) => {
+const BlessingApproved = ({ open, data, handleClose, refreshList }) => {
   const [radioValue, setRadioValue] = useState("");
   const [otherValue, setOtherValue] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -69,6 +69,7 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
     contact_no: "",
     preferred_date: "",
     preferred_time: "",
+    end_time: "", // Added end_time field
     priest_id: "",
     isParishioner: "",
     transaction_no: "",
@@ -86,6 +87,7 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
         contact_no: data.contact_no,
         preferred_date: dayjs(data.preferred_date).format("YYYY-MM-DD"),
         preferred_time: data.preferred_time,
+        end_time: data.end_time, // Set end_time based on preferred_time and service duration
         priest_id: data.priest_id,
         isParishioner: data.isParishioner,
         transaction_no: data.transaction_no,
@@ -195,18 +197,22 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
   };
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const isOtherSelected = radioValue === "others";
 
   const handleDateChange = (name, date) => {
-    setFormData({...formData, [name]: date.format("YYYY-MM-DD")});
+    setFormData({ ...formData, [name]: date.format("YYYY-MM-DD") });
     console.log(formData.preferred_date);
   };
 
   const handleTimeChange = (name, time) => {
-    setFormData({...formData, [name]: time.format("HH:mm:ss")});
+    const formattedTime = time.format("HH:mm:ss");
+    setFormData({
+      ...formData,
+      [name]: formattedTime,
+    });
   };
 
   const handleConfirm = async (action) => {
@@ -271,6 +277,24 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
         break;
 
       case "reschedule": ////// RESCHEDULE
+        if (
+          dayjs(formData.end_time, "HH:mm:ss").isBefore(
+            dayjs(formData.preferred_time, "HH:mm:ss")
+          )
+        ) {
+          setError({
+            message: "Invalid Time Range",
+            details: "End time cannot be earlier than or equal to start time.",
+          });
+          break;
+        }
+        if (formData.end_time === formData.preferred_time) {
+          setError({
+            message: "Invalid Time Range",
+            details: "End time cannot be the same as start time.",
+          });
+          break;
+        }
         try {
           const response = await axios.get(
             `${config.API}/priest/retrieve-schedule-by-params`,
@@ -279,7 +303,7 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                 priest: formData.priest_id,
                 date: formData.preferred_date,
                 start: formData.preferred_time,
-                end: endTime(formData.preferred_time, service.duration),
+                end: formData.end_time,
               },
             }
           );
@@ -295,6 +319,7 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
           const reschedule = {
             preferred_date: formData.preferred_date,
             preferred_time: formData.preferred_time,
+            end_time: formData.end_time,
             priest_id: formData.priest_id,
           };
 
@@ -308,7 +333,7 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
               date: formData.preferred_date,
               activity: `Blessing for ${formData.first_name} at ${formData.address}`,
               start_time: formData.preferred_time,
-              end_time: endTime(formData.preferred_time, service.duration),
+              end_time: formData.end_time,
               priest_id: formData.priest_id,
               request_id: data.requestID,
             }),
@@ -337,11 +362,12 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
     <>
       {error && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setError(null)}>
-          <Alert severity="error" sx={{width: "100%"}}>
+          onClose={() => setError(null)}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
             <AlertTitle>{error.message}</AlertTitle>
             {error.details}
           </Alert>
@@ -350,11 +376,12 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
 
       {success && (
         <Snackbar
-          anchorOrigin={{vertical: "top", horizontal: "center"}}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           open={true}
           autoHideDuration={5000}
-          onClose={() => setSuccess(null)}>
-          <Alert severity={snackBarStyle} sx={{width: "100%"}}>
+          onClose={() => setSuccess(null)}
+        >
+          <Alert severity={snackBarStyle} sx={{ width: "100%" }}>
             <AlertTitle>{success.message}</AlertTitle>
             {success.details}
           </Alert>
@@ -362,24 +389,26 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
       )}
 
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose}>
-        <DialogTitle sx={{mt: 3, p: 2, textAlign: "center"}}>
+        <DialogTitle sx={{ mt: 3, p: 2, textAlign: "center" }}>
           <b>Blessing Request Information</b>
           <IconButton
             aria-label="close"
             onClick={handleClose}
-            sx={{position: "absolute", right: 8, top: 8}}>
+            sx={{ position: "absolute", right: 8, top: 8 }}
+          >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <Grid container spacing={2} sx={{padding: 3}}>
+          <Grid container spacing={2} sx={{ padding: 3 }}>
             <Grid item sm={12}>
               <RadioGroup
                 row
                 name="type"
-                sx={{marginTop: "-5px"}}
+                sx={{ marginTop: "-5px" }}
                 value={formData.type}
-                onChange={handleRadioChange}>
+                onChange={handleRadioChange}
+              >
                 <FormControlLabel
                   value="House Blessing"
                   control={<Radio size="small" />}
@@ -415,7 +444,8 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                 name="first_name"
                 onChange={handleChange}
                 size="small"
-                value={formData.first_name}></TextField>
+                value={formData.first_name}
+              ></TextField>
             </Grid>
 
             <Grid item sm={4}>
@@ -458,7 +488,7 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
               <hr className="my-3" />
             </Grid>
 
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={12}>
               <label>Selected Priest:</label>
               <TextField
                 value={formData.priest_id}
@@ -466,15 +496,16 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                 name="priest_id"
                 onChange={handleChange}
                 select
-                fullWidth>
+                fullWidth
+              >
                 {priests.map((priest) => (
                   <MenuItem key={priest.priestID} value={priest.priestID}>
-                    {priest.first_name + " " + priest.last_name}
+                    {"Fr. " + priest.first_name + " " + priest.last_name}
                   </MenuItem>
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={2.7}>
               <label>Selected Date:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -491,18 +522,18 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} sm={3}>
-              <label>Selected Time:</label>
+            <Grid item xs={12} sm={2.7}>
+              <label>Start Time:</label>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
                   fullWidth
-                  timeSteps={{hours: 30, minutes: 30}}
+                  timeSteps={{ hours: 30, minutes: 30 }}
                   minTime={dayjs().set("hour", 6)}
                   maxTime={dayjs().set("hour", 19)}
                   sx={TextFieldStyle}
                   value={
-                    data.preferred_time
-                      ? dayjs(data.preferred_time, "HH:mm:ss")
+                    formData.preferred_time
+                      ? dayjs(formData.preferred_time, "HH:mm:ss")
                       : null
                   }
                   onChange={(time) => handleTimeChange("preferred_time", time)}
@@ -510,7 +541,26 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} sm={2} sx={{margin: "auto"}}>
+            <Grid item xs={12} sm={2.7}>
+              <label>End Time:</label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  fullWidth
+                  timeSteps={{ hours: 30, minutes: 30 }}
+                  minTime={dayjs().set("hour", 6)}
+                  maxTime={dayjs().set("hour", 19)}
+                  sx={TextFieldStyle}
+                  value={
+                    formData.end_time
+                      ? dayjs(formData.end_time, "HH:mm:ss")
+                      : null
+                  }
+                  onChange={(time) => handleTimeChange("end_time", time)}
+                  renderInput={(params) => <TextField {...params} required />}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} sm={2} sx={{ margin: "auto" }}>
               <Button
                 variant="contained"
                 onClick={() => handleOpenDialog("reschedule")}
@@ -520,8 +570,9 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                   height: "40px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#578A62"},
-                }}>
+                  "&:hover": { bgcolor: "#578A62" },
+                }}
+              >
                 Reschedule
               </Button>
             </Grid>
@@ -545,7 +596,8 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                   justifyContent: "center",
                   backgroundColor: "#d1d1d1",
                   fontWeight: "bold",
-                }}>
+                }}
+              >
                 {data.transaction_no}
               </Paper>
             </Grid>
@@ -559,7 +611,8 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-            }}>
+            }}
+          >
             <Grid
               item
               sm={12}
@@ -568,7 +621,8 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                 margin: "-40px 0 10px 0",
                 justifyContent: "center",
                 gap: "20px",
-              }}>
+              }}
+            >
               <Button
                 variant="contained"
                 onClick={() => handleOpenDialog("update")}
@@ -578,8 +632,9 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                   height: "40px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#A58228"},
-                }}>
+                  "&:hover": { bgcolor: "#A58228" },
+                }}
+              >
                 UPDATE
               </Button>
               <Button
@@ -591,8 +646,9 @@ const BlessingApproved = ({open, data, handleClose, refreshList}) => {
                   height: "40px",
                   fontWeight: "bold",
                   color: "white",
-                  "&:hover": {bgcolor: "#f44336"},
-                }}>
+                  "&:hover": { bgcolor: "#f44336" },
+                }}
+              >
                 CANCEL
               </Button>
             </Grid>
