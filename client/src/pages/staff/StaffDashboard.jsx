@@ -422,6 +422,8 @@ const StaffDashboard = () => {
                             display: true,
                             align: "top",
                             anchor: "end",
+                            offset: 10, // Add vertical offset
+                            clamp: true,
                             font: {
                               weight: "bold",
                               size: 12,
@@ -441,6 +443,9 @@ const StaffDashboard = () => {
                             title: {
                               display: true,
                               text: "Number of Requests",
+                            },
+                            ticks: {
+                              padding: 30,
                             },
                             // suggestedMax: function (context) {
                             //   const max = Math.max(
