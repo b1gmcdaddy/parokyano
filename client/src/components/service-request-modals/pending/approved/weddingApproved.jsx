@@ -132,7 +132,7 @@ const WeddingApproved = ({ open, data, handleClose, refreshList }) => {
           ? dayjs(data.preferred_date).format("YYYY-MM-DD")
           : null,
         preferred_time: data.preferred_time || null,
-        end_time: data?.preferred_time ? endTime(data.preferred_time, 2) : null,
+        end_time: data?.end_time || null,
         transaction_no: data.transaction_no,
         payment_status: data.payment_status,
         service_id: data.service_id,
